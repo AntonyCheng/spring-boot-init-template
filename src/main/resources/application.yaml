@@ -71,10 +71,10 @@ spring:
   # todo:修改rabbitmq配置
   rabbitmq:
     # 单机RabbitMQ
-    #host: 127.0.0.1
+    #host: xxx.xxx.xxx.xxx
     #port: 5672
     # 集群RabbitMQ
-    addresses: xxx.xxx.xxx.xxx:5672,xxx.xxx.xxx.xxx:5673,xxx.xxx.xxx.xxx:5674
+    addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
     virtual-host: /
     username: admin
     password: admin123456
@@ -94,7 +94,7 @@ spring:
     # 单机地址
     host: xxx.xxx.xxx.xxx
     # 单机端口，默认为6379
-    port: 6379
+    port: 26378
     #    # 集群地址
     #    cluster:
     #      nodes:
@@ -120,7 +120,7 @@ redisson:
   # redis单机版本
   singleServerConfig:
     # 单机地址（一定要在redis协议下）
-    address: redis://xxx.xxx.xxx.xxx:6379
+    address: redis://xxx.xxx.xxx.xxx:26378
     # 数据库索引
     database: 0
     # 密码（考虑是否需要密码）
@@ -137,7 +137,7 @@ redisson:
     idleConnectionTimeout: 10000
 #  # redis集群版本
 #  clusterServersConfig:
-#    # redis集群节点
+#    # redis集群节点（一定要在redis协议下）
 #    nodeAddresses:
 #      - redis://xxx.xxx.xxx.xxx:16379
 #      - redis://xxx.xxx.xxx.xxx:16380

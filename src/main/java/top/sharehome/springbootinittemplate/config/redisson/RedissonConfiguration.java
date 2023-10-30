@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.redisson;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.JsonJacksonCodec;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
  * @author AntonyCheng
  */
 @Configuration
+@Slf4j
 public class RedissonConfiguration {
     @Resource
     private RedissonProperties redissonProperties;
@@ -46,7 +48,9 @@ public class RedissonConfiguration {
                     .setConnectionPoolSize(singleServerConfig.getConnectionPoolSize());
             // 这里进行数据返回是为了避免单机配置和集群配置同时打开时造成的错误，
             // 如果需要使用redis集群，那么就需要认真核对application配置中的相关项，注释掉其中不需要的部分
-            return Redisson.create(config);
+            RedissonClient redissonClient = Redisson.create(config);
+            log.info("redis连接成功，服务器地址：{}",singleServerConfig.getAddress());
+            return redissonClient;
         }
         RedissonProperties.ClusterServersConfig clusterServersConfig = redissonProperties.getClusterServersConfig();
         if (ObjectUtil.isNotNull(clusterServersConfig)) {
@@ -64,6 +68,8 @@ public class RedissonConfiguration {
                     .setSubscriptionMode(SubscriptionMode.MASTER)
                     .setNodeAddresses(clusterServersConfig.getNodeAddresses());
         }
-        return Redisson.create(config);
+        RedissonClient redissonClient = Redisson.create(config);
+        log.info("redis连接成功，服务器集群地址：{}",clusterServersConfig.getNodeAddresses());
+        return redissonClient;
     }
 }
