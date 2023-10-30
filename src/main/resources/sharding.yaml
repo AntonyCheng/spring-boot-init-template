@@ -1,0 +1,104 @@
+# todo:修改MySQL配置
+dataSources:
+  master:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 50
+    minPoolSize: 1
+#  # 从库在需要时开启
+#  slave:
+#    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+#    username: root
+#    password: 123456
+#    connectionTimeoutMilliseconds: 30000
+#    idleTimeoutMilliseconds: 60000
+#    maxLifetimeMilliseconds: 1800000
+#    maxPoolSize: 50
+#    minPoolSize: 1
+props:
+  sql-show: true
+rules:
+  - !ENCRYPT
+    # 首先定义加密算法
+    encryptors:
+      # MD5加密算法
+      md5_encryptor:
+        type: MD5
+        props:
+          salt: salt
+    tables:
+      # 加密user表中的数据
+      t_user:
+        columns:
+          # 加密密码
+          user_password:
+            cipherColumn: user_password
+            encryptorName: md5_encryptor
+# todo：以下都是示例，可以解除注释直接替换，但是由于框架配置复杂，这里建议按照格式重新写，保留样例以便于修改
+#rules:
+#  # 读写分离（从库开启后开启）
+#  - !READWRITE_SPLITTING
+#    dataSources:
+#      readwrite_ds:
+#        staticStrategy:
+#          writeDataSourceName: master
+#          readDataSourceNames:
+#            - slave
+#        loadBalancerName: random
+#    loadBalancers:
+#      random:
+#        type: RANDOM
+#  # 数据加密在需要时开启
+#  - !ENCRYPT
+#    # 首先定义加密算法
+#    encryptors:
+#      # MD5加密算法
+#      md5_encryptor:
+#        type: MD5
+#        props:
+#          salt: salt
+#      # AES加密算法
+#      aes_encryptor:
+#        type: AES
+#        props:
+#          aes-key-value: abcdefghijklmnopqrstuvwxyz
+#      # RC4加密算法
+#      rc4_encryptor:
+#        type: RC4
+#        props:
+#          rc4-key-value: abcdefghijklmnopqrstuvwxyz
+#      # 针对Like模糊查询的加密算法
+#      like_encryptor:
+#        type: CHAR_DIGEST_LIKE
+#      # 除以上加密方法之外还支持SM3和SM4的加密，详情见：https://shardingsphere.apache.org/document/5.3.2/cn/user-manual/common-config/builtin-algorithm/encrypt/
+#    tables:
+#      # 表名
+#      table_name:
+#        columns:
+#          # 列名——单向加密
+#          md5_columns:
+#            # 加密的列名
+#            cipherColumn: md5_columns
+#            # 加密的算法
+#            encryptorName: md5_encryptor
+#          # 列名——对称加密
+#          aes_columns:
+#            # 加密的列名
+#            cipherColumn: aes_columns
+#            # 加密的算法
+#            encryptorName: aes_encryptor
+#          # 列名——模糊查询字段加密
+#          like_columns:
+#            # 加密的列名
+#            cipherColumn: like_columns
+#            # 数据库中需要新建一个列名来保存模糊查询算法处理后的明文
+#            likeQueryColumn: save_like_columns
+#            likeQueryEncryptorName: like_encryptor

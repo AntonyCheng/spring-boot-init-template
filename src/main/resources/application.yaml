@@ -1,0 +1,229 @@
+# 服务概况 ---- 可自定义
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # 连接数满后的排队数，默认为100
+    accept-count: 1000
+    threads:
+      # tomcat最大线程数，默认为200
+      max: 800
+      # Tomcat启动初始化的线程数，默认值10
+      min-spare: 100
+# 日志配置 ---- 可自定义
+logging:
+  level:
+    top.sharehome: debug
+    org.springframework: warn
+# 公共配置文件
+spring:
+  # 项目前置工作 ---- 可自定义
+  application:
+    name: spring-boot-init-template
+  freemarker:
+    check-template-location: false
+  # 文件上传 ---- 可自定义
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 10MB
+      # 设置总上传的文件大小
+      max-request-size: 20MB
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  # mysql配置
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:sharding.yaml
+    druid:
+      # 初始连接数 ---- 可自定义
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置连接超时时间
+      connectTimeout: 30000
+      # 配置网络超时时间
+      socketTimeout: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      webStatFilter:
+        enabled: true
+  main:
+    allow-bean-definition-overriding: true
+  # todo:修改rabbitmq配置
+  rabbitmq:
+    # 单机RabbitMQ
+    #host: 127.0.0.1
+    #port: 5672
+    # 集群RabbitMQ
+    addresses: xxx.xxx.xxx.xxx:5672,xxx.xxx.xxx.xxx:5673,xxx.xxx.xxx.xxx:5674
+    virtual-host: /
+    username: admin
+    password: admin123456
+    # 消息确认（ACK）
+    publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)
+    publisher-returns: true #确认消息已发送到队列(Queue)
+    template:
+      mandatory: true
+    # 是否手动ACK
+    listener:
+      direct:
+        acknowledge-mode: manual
+      simple:
+        acknowledge-mode: manual
+  # todo:修改redis配置
+  redis:
+    # 单机地址
+    host: xxx.xxx.xxx.xxx
+    # 单机端口，默认为6379
+    port: 6379
+    #    # 集群地址
+    #    cluster:
+    #      nodes:
+    #        - xxx.xxx.xxx.xxx:16379
+    #        - xxx.xxx.xxx.xxx:16380
+    #        - xxx.xxx.xxx.xxx:16381
+    #        - xxx.xxx.xxx.xxx:16382
+    #        - xxx.xxx.xxx.xxx:16383
+    #        - xxx.xxx.xxx.xxx:16384
+    # 数据库索引
+    database: 0
+    # 密码（考虑是否需要密码）
+    password: 123456
+    # 连接超时时间
+    timeout: 3s
+
+# todo：修改redisson配置
+redisson:
+  # 线程池数量
+  threads: 4
+  # Netty线程池数量
+  nettyThreads: 8
+  # redis单机版本
+  singleServerConfig:
+    # 单机地址（一定要在redis协议下）
+    address: redis://xxx.xxx.xxx.xxx:6379
+    # 数据库索引
+    database: 0
+    # 密码（考虑是否需要密码）
+    password: 123456
+    # 命令等待超时，单位：毫秒
+    timeout: 3000
+    # 发布和订阅连接池大小
+    subscriptionConnectionPoolSize: 50
+    # 最小空闲连接数
+    connectionMinimumIdleSize: 8
+    # 连接池大小
+    connectionPoolSize: 32
+    # 连接空闲超时，单位：毫秒
+    idleConnectionTimeout: 10000
+#  # redis集群版本
+#  clusterServersConfig:
+#    # redis集群节点
+#    nodeAddresses:
+#      - redis://xxx.xxx.xxx.xxx:16379
+#      - redis://xxx.xxx.xxx.xxx:16380
+#      - redis://xxx.xxx.xxx.xxx:16381
+#      - redis://xxx.xxx.xxx.xxx:16382
+#      - redis://xxx.xxx.xxx.xxx:16383
+#      - redis://xxx.xxx.xxx.xxx:16384
+#    # 密码（考虑是否需要密码）
+#    password: 123456
+#    # master最小空闲连接数
+#    masterConnectionMinimumIdleSize: 32
+#    # master连接池大小
+#    masterConnectionPoolSize: 64
+#    # slave最小空闲连接数
+#    slaveConnectionMinimumIdleSize: 32
+#    # slave连接池大小
+#    slaveConnectionPoolSize: 64
+#    # 连接空闲超时，单位：毫秒
+#    idleConnectionTimeout: 10000
+#    # 命令等待超时，单位：毫秒
+#    timeout: 3000
+#    # 发布和订阅连接池大小
+#    subscriptionConnectionPoolSize: 50
+
+# todo：Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # token有效期 设为一天 (必定过期) 单位: 秒
+  timeout: 86400
+  # 多端不同 token 有效期 可查看 LoginHelper.loginByDevice 方法自定义
+  # token最低活跃时间 (指定时间无操作就过期) 单位: 秒
+  active-timeout: 1800
+  # Same-Token的有效期 (单位: 秒)(默认一天）
+  # same-token-timeout: 600
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: false
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  # 使用 jwt-simple 模式后，is-share=false 恒等于 false。
+  is-share: false
+  # 是否尝试从header里读取token
+  is-read-header: true
+  # 是否尝试从cookie里读取token
+  is-read-cookie: true
+  # token前缀（这个需要从前端修改后传入进来）
+  # token-prefix: "Bearer"
+  # jwt秘钥
+  jwt-secret-key: abcdefghijklmnopqrstuvwxyz
+  # 开启日志
+  is-log: on
+
+# MyBatisPlus配置
+# https://baomidou.com/config/
+mybatis-plus:
+  # 启动时是否检查 MyBatis XML 文件的存在，默认不检查
+  check-config-location: false
+  # 对应的 XML 文件位置
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: top.sharehome.*.*.entity
+  configuration:
+    # 自动驼峰命名规则（camel case）映射
+    map-underscore-to-camel-case: false
+    # MyBatis 自动映射策略
+    # NONE：不启用 PARTIAL：只对非嵌套 resultMap 自动映射 FULL：对所有 resultMap 自动映射
+    auto-mapping-behavior: PARTIAL
+    # MyBatis 自动映射时未知列或未知属性处理策
+    # NONE：不做处理 WARNING：打印相关警告 FAILING：抛出异常和详细信息
+    auto-mapping-unknown-column-behavior: NONE
+    # 更详细的日志输出 会有性能损耗 org.apache.ibatis.logging.stdout.StdOutImpl
+    # 关闭日志记录 (可单纯使用 p6spy 分析) org.apache.ibatis.logging.nologging.NoLoggingImpl
+    # 默认日志输出 org.apache.ibatis.logging.slf4j.Slf4jImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    # 是否打印 Logo banner
+    banner: true
+    db-config:
+      # 主键类型
+      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 排除中划线的UUID UUID 普通的UUID
+      id-type: ASSIGN_ID
+      # 逻辑删除的字段
+      logic-delete-field: isDeleted
+      # 逻辑已删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+      insert-strategy: not_null
+      update-strategy: not_null
+      where-strategy: not_null
