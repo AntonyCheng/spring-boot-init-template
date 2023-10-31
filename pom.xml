@@ -152,7 +152,7 @@
         </dependency>
 
         <!-- todo:需要MQ时再打开 -->
-        <!-- rabbitmq 依赖配置 -->
+        <!-- rabbitMQ 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
