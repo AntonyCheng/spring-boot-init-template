@@ -58,7 +58,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.18</version>
+            <version>5.8.22</version>
         </dependency>
 
         <!-- apache common 依赖配置 -->
@@ -164,28 +164,28 @@
         </dependency>
 
         <!-- todo:需要ES时再打开 -->
-        <!-- &lt;!&ndash; logstash 依赖配置 &ndash;&gt;-->
-        <!-- <dependency>-->
-        <!--     <groupId>net.logstash.logback</groupId>-->
-        <!--     <artifactId>logstash-logback-encoder</artifactId>-->
-        <!--     <version>7.2</version>-->
-        <!-- </dependency>-->
-        <!-- &lt;!&ndash; ES 依赖配置 &ndash;&gt;-->
-        <!-- <dependency>-->
-        <!--     <groupId>cn.easy-es</groupId>-->
-        <!--     <artifactId>easy-es-boot-starter</artifactId>-->
-        <!--     <version>1.1.1</version>-->
-        <!-- </dependency>-->
-        <!-- <dependency>-->
-        <!--     <groupId>org.elasticsearch</groupId>-->
-        <!--     <artifactId>elasticsearch</artifactId>-->
-        <!--     <version>7.14.0</version>-->
-        <!-- </dependency>-->
-        <!-- <dependency>-->
-        <!--     <groupId>org.elasticsearch.client</groupId>-->
-        <!--     <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-        <!--     <version>7.14.0</version>-->
-        <!-- </dependency>-->
+        <!-- logstash 依赖配置 -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.2</version>
+        </dependency>
+        <!-- ES 依赖配置 -->
+        <dependency>
+            <groupId>org.dromara.easy-es</groupId>
+            <artifactId>easy-es-boot-starter</artifactId>
+            <version>2.0.0-beta4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.14.0</version>
+        </dependency>
 
         <!-- okHttp 依赖配置 -->
         <dependency>

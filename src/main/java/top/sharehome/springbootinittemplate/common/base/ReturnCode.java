@@ -5,6 +5,7 @@ package top.sharehome.springbootinittemplate.common.base;
  * 返回码规范如下：
  * 200------操作成功
  * 500------操作失败
+ * 600------系统警告
  * 1XXXX----后端逻辑错误
  * 2XXXX----数据库错误
  * 3XXXX----网络组件错误
@@ -109,6 +110,11 @@ public enum ReturnCode {
      * 参数格式不匹配 13002
      */
     PARAMETER_FORMAT_MISMATCH(13002, "参数格式不匹配"),
+
+    /**
+     * 用户请求次数太多 13003
+     */
+    TOO_MANY_REQUESTS(13003, "用户请求次数太多"),
 
     /**
      * 用户上传文件异常 14000
