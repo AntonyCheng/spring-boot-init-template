@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,13 +49,20 @@ public class UserController {
     /**
      * 用户登陆
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     @SaIgnore
-    public R<UserLoginVo> login(@RequestBody @Validated(GetGroup.class) UserLoginDto userLoginDto) {
+    public R<UserLoginVo> login(@RequestBody @Validated(PostGroup.class) UserLoginDto userLoginDto) {
         UserLoginVo loginUser = userService.login(userLoginDto);
         if (!StpUtil.isLogin()) {
             StpUtil.login(loginUser.getId());
             StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
+        } else {
+            // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉原账号
+            if (ObjectUtils.notEqual(StpUtil.getLoginId(), loginUser.getId())) {
+                StpUtil.logout();
+                StpUtil.login(loginUser.getId());
+                StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
+            }
         }
         return R.ok(loginUser);
     }

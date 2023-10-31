@@ -78,7 +78,7 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void remove(String key) {
+    public static void delete(String key) {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + key).delete();
     }
 
@@ -179,7 +179,7 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void removeString(String key) {
+    public static void deleteString(String key) {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key).delete();
     }
 
@@ -236,7 +236,7 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void removeList(String key) {
+    public static void deleteList(String key) {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + LIST_PREFIX + key).delete();
     }
 
@@ -293,7 +293,7 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void removeSet(String key) {
+    public static void deleteSet(String key) {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + SET_PREFIX + key).delete();
     }
 
@@ -354,7 +354,7 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void removeMap(String key) {
+    public static void deleteMap(String key) {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + MAP_PREFIX + key).delete();
     }
 }
