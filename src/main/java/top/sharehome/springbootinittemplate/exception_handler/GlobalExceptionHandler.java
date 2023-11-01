@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.exception;
+package top.sharehome.springbootinittemplate.exception_handler;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
@@ -17,8 +17,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
+import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeTransactionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
