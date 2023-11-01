@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.redis.CacheUtils;
