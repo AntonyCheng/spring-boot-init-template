@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.redis.CacheUtils;
@@ -34,7 +34,7 @@ class MainApplicationTests {
         // 设置用户密码
         user.setPassword("123456");
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getRole, user.getRole());
+        userLambdaQueryWrapper.eq(User::getRole, "admin");
         if (ObjectUtils.isEmpty(userService.getOne(userLambdaQueryWrapper))) {
             userService.save(user);
             log.info("\n管理员身份创建成功！");

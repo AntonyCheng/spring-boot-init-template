@@ -107,7 +107,7 @@ spring:
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
-    password: 123456
+    #password: 123456
     # 连接超时时间
     timeout: 3s
 
@@ -124,7 +124,7 @@ redisson:
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
-    password: 123456
+    #password: 123456
     # 命令等待超时，单位：毫秒
     timeout: 3000
     # 发布和订阅连接池大小

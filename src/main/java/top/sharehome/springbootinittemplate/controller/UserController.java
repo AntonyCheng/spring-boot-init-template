@@ -9,9 +9,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.common.validate.GetGroup;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
-import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.user.UserLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserRegisterDto;
 import top.sharehome.springbootinittemplate.model.vo.user.UserLoginVo;
@@ -57,8 +56,9 @@ public class UserController {
             StpUtil.login(loginUser.getId());
             StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
         } else {
-            // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉原账号
-            if (ObjectUtils.notEqual(StpUtil.getLoginId(), loginUser.getId())) {
+            // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉当前登录账号。
+            Long loginId = Long.valueOf(StpUtil.getLoginId().toString());
+            if (ObjectUtils.notEqual(loginId, loginUser.getId())) {
                 StpUtil.logout();
                 StpUtil.login(loginUser.getId());
                 StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
