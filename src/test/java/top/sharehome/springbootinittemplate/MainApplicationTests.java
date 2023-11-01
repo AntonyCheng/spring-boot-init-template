@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate;
 
+import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -7,18 +8,23 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
-import top.sharehome.springbootinittemplate.utils.redis.CacheUtils;
-import top.sharehome.springbootinittemplate.utils.redis.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.cos.CosUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
 @SpringBootTest
-@Slf4j
 class MainApplicationTests {
     @Resource
     UserService userService;
@@ -37,10 +43,10 @@ class MainApplicationTests {
         userLambdaQueryWrapper.eq(User::getRole, user.getRole());
         if (ObjectUtils.isEmpty(userService.getOne(userLambdaQueryWrapper))) {
             userService.save(user);
-            log.info("\n管理员身份创建成功！");
+            System.out.println("\n管理员身份创建成功！");
             // 创建之后切记前往数据库修改这条数据的"user_role"字段为"admin"
         } else {
-            log.info("\n管理员身份已经存在！");
+            System.out.println("\n管理员身份已经存在！");
         }
     }
 
@@ -52,7 +58,7 @@ class MainApplicationTests {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getRole, "admin");
         User admin = userService.getOne(userLambdaQueryWrapper);
-        log.info("\n修改前的admin={}", admin);
+        System.out.println(admin);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.eq(User::getId, admin.getId())
                 // 修改管理员账号
@@ -61,7 +67,7 @@ class MainApplicationTests {
                 .set(User::getPassword, "123456");
         userService.update(userLambdaUpdateWrapper);
         admin = userService.getOne(userLambdaQueryWrapper);
-        log.info("\n修改后的admin={}", admin);
+        System.out.println(admin);
     }
 
     /**
@@ -117,23 +123,42 @@ class MainApplicationTests {
      */
     @Test
     void testRateLimitUtils() throws InterruptedException {
-        for (int i = 0; i < 5; i++) {
-            try{
+        try {
+            for (int i = 0; i < 5; i++) {
                 RateLimitUtils.doRateLimit("test");
                 System.out.println(i);
-            }catch (CustomizeReturnException e){
-                System.out.println("请求太多，请稍后");
             }
+        } catch (CustomizeReturnException e) {
+            System.out.println("请求太多，请稍后");
         }
         ThreadUtils.sleep(Duration.ofSeconds(2));
-        for (int i = 0; i < 10; i++) {
-            try{
+        try {
+            for (int i = 0; i < 10; i++) {
                 RateLimitUtils.doRateLimit("test");
                 System.out.println(i);
-            }catch (CustomizeReturnException e){
-                System.out.println("请求太多，请稍后");
             }
+        } catch (CustomizeReturnException e) {
+            System.out.println("请求太多，请稍后");
         }
+    }
+
+    /**
+     * 测试腾讯云COS工具类——上传
+     */
+    @Test
+    void testCosUtilsUpload() throws IOException {
+        File file = new File("README.md");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
+        System.out.println(CosUtils.upload(multipartFile, "test/init"));
+    }
+
+    /**
+     * 测试腾讯云COS工具类——删除
+     */
+    @Test
+    void testCosUtilsDelete() throws IOException {
+        CosUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/01/fd59d69bfe2543719fc1e426a4cfedb6_README.md");
     }
 
 }

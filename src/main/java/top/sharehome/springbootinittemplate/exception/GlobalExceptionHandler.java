@@ -17,6 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 
@@ -198,6 +199,17 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomizeReturnException.class)
     public R<String> handleCustomizeReturnException(CustomizeReturnException e) {
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
+    }
+
+    /**
+     * 自定义文件异常
+     */
+    @ExceptionHandler(CustomizeFileException.class)
+    public R<String> handleCustomizeFileException(CustomizeFileException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

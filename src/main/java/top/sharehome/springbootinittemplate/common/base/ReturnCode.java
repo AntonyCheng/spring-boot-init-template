@@ -122,29 +122,44 @@ public enum ReturnCode {
     FILE_UPLOAD_EXCEPTION(14000, "用户上传文件异常"),
 
     /**
-     * 用户上传文件类型不匹配 14001
+     * 用户没有上传文件 14001
      */
-    USER_UPLOADED_FILE_TYPE_MISMATCH(14001, "用户上传文件类型不匹配"),
+    USER_DO_NOT_UPLOAD_FILE(14001, "用户没有上传文件"),
 
     /**
-     * 用户上传文件太大 14002
+     * 用户上传文件类型不匹配 14002
      */
-    USER_UPLOADED_FILE_IS_TOO_LARGE(14002, "用户上传文件太大"),
+    USER_UPLOADED_FILE_TYPE_MISMATCH(14002, "用户上传文件类型不匹配"),
 
     /**
-     * 用户上传图片太大 14003
+     * 用户上传文件太大 14003
      */
-    USER_UPLOADED_IMAGE_IS_TOO_LARGE(14003, "用户上传图片太大"),
+    USER_UPLOADED_FILE_IS_TOO_LARGE(14003, "用户上传文件太大"),
 
     /**
-     * 用户上传视频太大 14004
+     * 用户上传图片太大 14004
      */
-    USER_UPLOADED_VIDEO_IS_TOO_LARGE(14004, "用户上传视频太大"),
+    USER_UPLOADED_IMAGE_IS_TOO_LARGE(14004, "用户上传图片太大"),
 
     /**
-     * 用户上传压缩文件太大 14005
+     * 用户上传视频太大 14005
      */
-    USER_UPLOADED_ZIP_IS_TOO_LARGE(14005, "用户上传压缩文件太大"),
+    USER_UPLOADED_VIDEO_IS_TOO_LARGE(14005, "用户上传视频太大"),
+
+    /**
+     * 用户上传压缩文件太大 14006
+     */
+    USER_UPLOADED_ZIP_IS_TOO_LARGE(14006, "用户上传压缩文件太大"),
+
+    /**
+     * 用户文件地址异常 14007
+     */
+    USER_FILE_ADDRESS_IS_ABNORMAL(14007, "用户文件地址异常"),
+
+    /**
+     * 用户文件删除异常 14008
+     */
+    USER_FILE_DELETION_IS_ABNORMAL(14008, "用户文件删除异常"),
 
     /**
      * 数据库服务出错 20000

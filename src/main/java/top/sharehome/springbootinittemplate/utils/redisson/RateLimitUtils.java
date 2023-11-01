@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redis;
+package top.sharehome.springbootinittemplate.utils.redisson;
 
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;

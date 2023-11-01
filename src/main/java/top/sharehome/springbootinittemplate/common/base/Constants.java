@@ -96,4 +96,9 @@ public interface Constants {
      * 只包含数字和英文的正则表达式
      */
     String REGEX_NUMBER_AND_LETTER = "^[0-9a-zA-Z]+$";
+
+    /**
+     * 未知文件类型后缀
+     */
+    String UNKNOWN_FILE_TYPE_SUFFIX = ".unknown";
 }
