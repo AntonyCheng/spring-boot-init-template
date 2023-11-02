@@ -5,6 +5,13 @@ server:
     context-path: /
   http2:
     enabled: true
+  # 选择undertow服务器配置
+  undertow:
+    url-charset: UTF-8
+    threads:
+      io: 16
+      worker: 256
+    buffer-size: 1024
   # 选择tomcat服务器配置
   tomcat:
     # tomcat的URI编码
@@ -16,13 +23,6 @@ server:
       max: 800
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
-  # 选择undertow服务器配置
-  undertow:
-    url-charset: UTF-8
-    threads:
-      io: 16
-      worker: 256
-    buffer-size: 1024
 # 日志配置 ---- 可自定义
 logging:
   level:
