@@ -13,10 +13,11 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
  * 限流工具类
  *
  * @author AntonyCheng
- * @since 2023/10/30 20:04:36
  */
+
 @Component
 public class RateLimitUtils {
+
     /**
      * 被封装的redisson客户端对象
      */
@@ -37,4 +38,5 @@ public class RateLimitUtils {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
         }
     }
+
 }

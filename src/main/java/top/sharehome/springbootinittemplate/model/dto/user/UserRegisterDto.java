@@ -16,8 +16,8 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
  * 用户注册Dto类
  *
  * @author AntonyCheng
- * @since 2023/10/4 16:58:43
  */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,4 +45,5 @@ public class UserRegisterDto implements Serializable {
     private String checkPassword;
 
     private static final long serialVersionUID = -535414393059407250L;
+
 }

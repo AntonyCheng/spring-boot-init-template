@@ -11,9 +11,11 @@ import java.util.List;
  *
  * @author AntonyCheng
  */
+
 @Data
 @ConfigurationProperties(prefix = "redisson")
 public class RedissonProperties {
+
     /**
      * 线程池数量,默认值 = 当前处理核数量 * 2
      */
@@ -34,6 +36,9 @@ public class RedissonProperties {
      */
     private ClusterServersConfig clusterServersConfig;
 
+    /**
+     * 单例服务配置
+     */
     @Data
     @NoArgsConstructor
     public static class SingleServerConfig {
@@ -47,6 +52,9 @@ public class RedissonProperties {
         private int idleConnectionTimeout;
     }
 
+    /**
+     * 集群服务配置
+     */
     @Data
     @NoArgsConstructor
     public static class ClusterServersConfig {
@@ -60,4 +68,5 @@ public class RedissonProperties {
         private int timeout;
         private int subscriptionConnectionPoolSize;
     }
+
 }

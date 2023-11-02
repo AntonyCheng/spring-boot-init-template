@@ -9,6 +9,8 @@ import top.sharehome.springbootinittemplate.model.entity.User;
  *
  * @author AntonyCheng
  */
+
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
+
 }

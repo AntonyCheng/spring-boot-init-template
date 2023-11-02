@@ -25,15 +25,20 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  *
  * @author AntonyCheng
  */
+
 @RestController
 @RequestMapping("/user")
 @SaCheckLogin
 public class UserController {
+
     @Resource
     private UserService userService;
 
     /**
      * 用户注册
+     *
+     * @param userRegisterDto 用户注册Dto类
+     * @return 返回注册结果
      */
     @PostMapping("/register")
     @SaIgnore
@@ -47,6 +52,9 @@ public class UserController {
 
     /**
      * 用户登陆
+     *
+     * @param userLoginDto 用户登陆Dto类
+     * @return 返回登陆用户信息
      */
     @PostMapping("/login")
     @SaIgnore
@@ -68,10 +76,13 @@ public class UserController {
 
     /**
      * 用户退出
+     *
+     * @return 返回退出结果
      */
     @GetMapping("/logout")
     public R<String> logout() {
         StpUtil.logout();
         return R.ok("logout");
     }
+
 }

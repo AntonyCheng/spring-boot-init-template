@@ -7,6 +7,7 @@ package top.sharehome.springbootinittemplate.common.base;
  */
 
 public interface HttpStatus {
+
     /**
      * 操作成功
      */
@@ -91,4 +92,5 @@ public interface HttpStatus {
      * 系统警告消息
      */
     int WARN = 600;
+
 }

@@ -7,4 +7,5 @@ package top.sharehome.springbootinittemplate.common.validate;
  */
 
 public interface PutGroup {
+
 }

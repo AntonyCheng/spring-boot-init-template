@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class R<T> {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -138,4 +139,5 @@ public class R<T> {
     public static <T> R<T> warn(String msg, T data) {
         return restResult(data, WARN, msg);
     }
+
 }

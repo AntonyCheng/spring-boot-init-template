@@ -8,11 +8,12 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
  * 自定义文件异常
  *
  * @author AntonyCheng
- * @since 2023/11/1 22:53:37
  */
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CustomizeFileException extends RuntimeException {
+
     private ReturnCode returnCode;
 
     private String msg;
@@ -36,4 +37,5 @@ public class CustomizeFileException extends RuntimeException {
     public String getMessage() {
         return msg == null ? returnCode.getMsg() : msg;
     }
+
 }

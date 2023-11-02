@@ -22,8 +22,10 @@ import javax.annotation.Resource;
  *
  * @author AntonyCheng
  */
+
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
     @Resource
     private UserMapper userMapper;
 
@@ -57,4 +59,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         BeanUtils.copyProperties(userInDatabase, userLoginVo);
         return userLoginVo;
     }
+
 }

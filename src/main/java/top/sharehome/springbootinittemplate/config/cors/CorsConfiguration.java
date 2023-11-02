@@ -9,8 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  *
  * @author AntonyCheng
  */
+
 @Configuration
 public class CorsConfiguration implements WebMvcConfigurer {
+
+    /**
+     * 添加跨域配置
+     *
+     * @param registry 跨域注册器
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         // 覆盖所有请求
@@ -23,4 +30,5 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("*");
     }
+
 }

@@ -7,6 +7,7 @@ package top.sharehome.springbootinittemplate.common.base;
  */
 
 public interface Constants {
+
     /**
      * UTF-8 字符集
      */
@@ -101,4 +102,5 @@ public interface Constants {
      * 未知文件类型后缀
      */
     String UNKNOWN_FILE_TYPE_SUFFIX = ".unknown";
+
 }

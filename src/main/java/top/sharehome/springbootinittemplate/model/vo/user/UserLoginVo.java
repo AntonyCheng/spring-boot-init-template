@@ -10,12 +10,13 @@ import java.io.Serializable;
  * 用户登陆Vo类
  *
  * @author AntonyCheng
- * @since 2023/10/4 20:40:28
  */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginVo implements Serializable {
+
     /**
      * 用户ID
      */
@@ -42,4 +43,5 @@ public class UserLoginVo implements Serializable {
     private String role;
 
     private static final long serialVersionUID = 3559885844441381994L;
+
 }

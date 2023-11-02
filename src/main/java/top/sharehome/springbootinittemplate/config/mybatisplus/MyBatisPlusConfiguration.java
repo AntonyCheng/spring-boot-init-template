@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author AntonyCheng
  */
+
 @Configuration
 public class MyBatisPlusConfiguration {
+
     /**
      * 基于AOP思想进行mybatis-plus的分页操作
      */
@@ -21,4 +23,5 @@ public class MyBatisPlusConfiguration {
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return mybatisPlusInterceptor;
     }
+
 }

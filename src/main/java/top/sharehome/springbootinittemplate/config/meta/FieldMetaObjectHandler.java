@@ -11,8 +11,10 @@ import java.time.LocalDateTime;
  *
  * @author AntonyCheng
  */
+
 @Component
 public class FieldMetaObjectHandler implements MetaObjectHandler {
+
     /**
      * 需要处理的字段名——updateTime
      */
@@ -65,4 +67,5 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
             metaObject.setValue(UPDATE_TIME, LocalDateTime.now());
         }
     }
+
 }

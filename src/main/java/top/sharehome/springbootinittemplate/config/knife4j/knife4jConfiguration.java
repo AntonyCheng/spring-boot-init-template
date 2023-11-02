@@ -14,9 +14,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *
  * @author AntonyCheng
  */
+
 @EnableSwagger2
 @Configuration
 public class knife4jConfiguration {
+
     @Bean
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -31,4 +33,5 @@ public class knife4jConfiguration {
                 .paths(PathSelectors.any())
                 .build();
     }
+
 }

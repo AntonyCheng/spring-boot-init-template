@@ -13,6 +13,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CustomizeReturnException extends RuntimeException {
+
     private ReturnCode returnCode;
 
     private String msg;
@@ -36,4 +37,5 @@ public class CustomizeReturnException extends RuntimeException {
     public String getMessage() {
         return msg == null ? returnCode.getMsg() : msg;
     }
+
 }

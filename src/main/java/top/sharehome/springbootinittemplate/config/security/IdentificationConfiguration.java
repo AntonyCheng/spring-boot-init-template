@@ -18,11 +18,14 @@ import top.sharehome.springbootinittemplate.common.base.HttpStatus;
  *
  * @author AntonyCheng
  */
+
 @Configuration
 public class IdentificationConfiguration implements WebMvcConfigurer {
 
     /**
      * 注册sa-token的拦截器
+     *
+     * @param registry 拦截器注册器
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -54,4 +57,5 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
     public StpLogic getStpLogicJwt() {
         return new StpLogicJwtForSimple();
     }
+
 }

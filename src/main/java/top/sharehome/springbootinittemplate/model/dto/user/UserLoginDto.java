@@ -12,8 +12,8 @@ import java.io.Serializable;
  * 用户登陆Dto类
  *
  * @author AntonyCheng
- * @since 2023/10/4 20:23:18
  */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +32,5 @@ public class UserLoginDto implements Serializable {
     private String password;
 
     private static final long serialVersionUID = -2121896284587465661L;
+
 }

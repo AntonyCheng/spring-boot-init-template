@@ -25,7 +25,6 @@ public class ExcelIntegerConverter implements Converter<Integer> {
         return null;
     }
 
-
     @Override
     public Integer convertToJavaData(ReadCellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         return Integer.parseInt(cellData.getStringValue());
@@ -35,4 +34,5 @@ public class ExcelIntegerConverter implements Converter<Integer> {
     public WriteCellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         return new WriteCellData<>(String.valueOf(value));
     }
+
 }

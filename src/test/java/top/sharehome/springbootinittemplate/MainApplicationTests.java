@@ -1,9 +1,7 @@
 package top.sharehome.springbootinittemplate;
 
-import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
@@ -24,8 +22,15 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
+/**
+ * 测试类
+ *
+ * @author AntonyCheng
+ */
+
 @SpringBootTest
 class MainApplicationTests {
+
     @Resource
     UserService userService;
 
@@ -157,7 +162,7 @@ class MainApplicationTests {
      * 测试腾讯云COS工具类——删除
      */
     @Test
-    void testCosUtilsDelete() throws IOException {
+    void testCosUtilsDelete() {
         CosUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/01/fd59d69bfe2543719fc1e426a4cfedb6_README.md");
     }
 

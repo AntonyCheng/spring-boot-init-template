@@ -10,6 +10,13 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
+/**
+ * 消息队列RabbitMQ消费端配置
+ *
+ * @author AntonyCheng
+ */
+
 @Component
 public class RabbitMqConsumer {
 
@@ -36,4 +43,5 @@ public class RabbitMqConsumer {
             channel.basicNack(tag, false, true);
         }
     }
+
 }

@@ -13,11 +13,13 @@ import java.time.LocalDateTime;
  *
  * @author AntonyCheng
  */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "t_user")
 public class User implements Serializable {
+
     /**
      * 用户ID
      */
@@ -92,4 +94,5 @@ public class User implements Serializable {
     public static final String COL_UPDATE_TIME = "update_time";
 
     public static final String COL_IS_DELETED = "is_deleted";
+
 }

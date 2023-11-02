@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,11 +36,12 @@ import java.util.concurrent.*;
  * 腾讯云COS配置
  *
  * @author AntonyCheng
- * @since 2023/11/1 22:37:36
  */
+
 @Component
 @Slf4j
 public class CosConfiguration {
+
     @Value("${tencent.cos.region}")
     private String regionName;
     /**
@@ -222,4 +222,5 @@ public class CosConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
         }
     }
+
 }

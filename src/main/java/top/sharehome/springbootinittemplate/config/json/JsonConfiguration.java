@@ -12,10 +12,14 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  *
  * @author AntonyCheng
  */
+
 @JsonComponent
 public class JsonConfiguration {
+
     /**
      * 添加 Long 转 json 精度丢失的配置
+     *
+     * @param builder Json处理器
      */
     @Bean
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
@@ -26,4 +30,5 @@ public class JsonConfiguration {
         objectMapper.registerModule(module);
         return objectMapper;
     }
+
 }

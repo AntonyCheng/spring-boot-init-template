@@ -14,10 +14,17 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author AntonyCheng
  */
+
 @Slf4j
 @Configuration
 public class RabbitMqConfiguration {
 
+    /**
+     * 注册RabbitTemplate实例
+     *
+     * @param connectionFactory 连接工厂接口
+     * @return 返回结果
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -52,11 +59,22 @@ public class RabbitMqConfiguration {
 
     public static final String QUEUE_NAME = "DemoQueue";
 
+    /**
+     * 注册交换机实例
+     *
+     * @return 返回交换机实例
+     */
     @Bean
     public Exchange demoExchange() {
         return new TopicExchange(EXCHANGE_NAME, true, false, null);
     }
 
+    /**
+     * 注册队列实例
+     *
+     * @param connectionFactory 连接工厂接口
+     * @return 返回结果
+     */
     @Bean
     public Queue demoQueue(ConnectionFactory connectionFactory) {
         Queue queue = new Queue(QUEUE_NAME, true, false, false, null);
@@ -66,8 +84,16 @@ public class RabbitMqConfiguration {
         return queue;
     }
 
+    /**
+     * 返回绑定关系
+     *
+     * @param demoQueue    队列实例名称
+     * @param demoExchange 交换机实例名称
+     * @return 返回结果
+     */
     @Bean
     public Binding demoBinding(Queue demoQueue, Exchange demoExchange) {
         return BindingBuilder.bind(demoQueue).to(demoExchange).with("demo.*").noargs();
     }
+
 }

@@ -81,7 +81,7 @@ spring:
   # todo:修改rabbitmq配置
   rabbitmq:
     # 单机RabbitMQ
-    host: 192.168.116.100
+    host: x.x.x.x
     port: 25671
     # 集群RabbitMQ
     #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674

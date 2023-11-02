@@ -21,6 +21,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  *
  * @author AntonyCheng
  */
+
 @Component
 public class AuthorizationConfiguration implements StpInterface {
 
@@ -29,7 +30,7 @@ public class AuthorizationConfiguration implements StpInterface {
      *
      * @param loginId   账号id
      * @param loginType 账号类型
-     * @return
+     * @return 返回结果
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
@@ -44,7 +45,7 @@ public class AuthorizationConfiguration implements StpInterface {
      *
      * @param loginId   账号id
      * @param loginType 账号类型
-     * @return
+     * @return 返回结果
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
@@ -54,4 +55,5 @@ public class AuthorizationConfiguration implements StpInterface {
         String userRole = session.get(USER_ROLE_KEY, "");
         return Collections.singletonList(userRole);
     }
+
 }

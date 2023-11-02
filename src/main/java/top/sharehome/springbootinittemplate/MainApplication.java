@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author AntonyCheng
  */
+
 @SpringBootApplication
 @MapperScan("top.sharehome.springbootinittemplate.mapper")
 @EnableScheduling

@@ -19,6 +19,7 @@ import javax.annotation.Resource;
  *
  * @author AntonyCheng
  */
+
 @Configuration
 @Slf4j
 public class RedissonConfiguration {
@@ -72,4 +73,5 @@ public class RedissonConfiguration {
         log.info("redis连接成功，服务器集群地址：{}",clusterServersConfig.getNodeAddresses());
         return redissonClient;
     }
+
 }

@@ -9,10 +9,11 @@ import top.sharehome.springbootinittemplate.config.cos.CosConfiguration;
  * 腾讯云COS工具类
  *
  * @author AntonyCheng
- * @since 2023/11/1 23:10:00
  */
+
 @Component
 public class CosUtils {
+
     /**
      * 被封装的COS对象
      */
@@ -37,4 +38,5 @@ public class CosUtils {
     public static void delete(String url) {
         COS_CONFIGURATION.deleteInCos(url);
     }
+
 }

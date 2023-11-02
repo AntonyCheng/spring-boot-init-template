@@ -1,5 +1,8 @@
 package top.sharehome.springbootinittemplate.common.base;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * todo：这里主要记录开发者个人的返回码枚举值，模板中扮演的角色是HttpStatus的补充，主要搭配自定义异常和统一返回类一起使用
  * 返回码规范如下：
@@ -14,6 +17,7 @@ package top.sharehome.springbootinittemplate.common.base;
  * @author AntonyCheng
  */
 
+@Getter
 public enum ReturnCode {
 
     /**
@@ -195,11 +199,4 @@ public enum ReturnCode {
         this.msg = msg;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
 }

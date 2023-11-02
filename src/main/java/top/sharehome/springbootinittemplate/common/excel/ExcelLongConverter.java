@@ -34,4 +34,5 @@ public class ExcelLongConverter implements Converter<Long> {
     public WriteCellData<String> convertToExcelData(Long value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         return new WriteCellData<>(String.valueOf(value));
     }
+
 }
