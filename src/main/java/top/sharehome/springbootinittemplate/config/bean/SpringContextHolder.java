@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Spring容器类
+ * Spring容器上下文类
  *
  * @author AntonyCheng
  * @since 2023/10/30 20:04:36

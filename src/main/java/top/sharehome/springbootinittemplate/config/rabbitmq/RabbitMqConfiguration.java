@@ -17,9 +17,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class RabbitMqConfiguration {
-    public static final String EXCHANGE_NAME = "DemoExchange";
-
-    public static final String QUEUE_NAME = "DemoQueue";
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
@@ -49,6 +46,11 @@ public class RabbitMqConfiguration {
         });
         return rabbitTemplate;
     }
+
+    // todo：下面是交换机和队列的相关定义
+    public static final String EXCHANGE_NAME = "DemoExchange";
+
+    public static final String QUEUE_NAME = "DemoQueue";
 
     @Bean
     public Exchange demoExchange() {

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redis;
+package top.sharehome.springbootinittemplate.utils.redisson;
 
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -7,7 +7,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.exception_handler.exception.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 /**
  * 限流工具类

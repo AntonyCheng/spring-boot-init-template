@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.common.meta_handler;
+package top.sharehome.springbootinittemplate.config.meta;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author AntonyCheng
  */
 @Component
-public class MyMetaObjectHandler implements MetaObjectHandler {
+public class FieldMetaObjectHandler implements MetaObjectHandler {
     /**
      * 需要处理的字段名——updateTime
      */

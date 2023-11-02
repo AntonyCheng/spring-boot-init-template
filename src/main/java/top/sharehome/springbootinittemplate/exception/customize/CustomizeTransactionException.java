@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.exception_handler.exception;
+package top.sharehome.springbootinittemplate.exception.customize;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,33 +1,33 @@
-package top.sharehome.springbootinittemplate.exception_handler.exception;
+package top.sharehome.springbootinittemplate.exception.customize;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 
 /**
- * 自定义返回错误异常类
+ * 自定义文件异常
  *
  * @author AntonyCheng
+ * @since 2023/11/1 22:53:37
  */
-
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeReturnException extends RuntimeException {
+public class CustomizeFileException extends RuntimeException {
     private ReturnCode returnCode;
 
     private String msg;
 
-    public <T> CustomizeReturnException() {
+    public <T> CustomizeFileException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = null;
     }
 
-    public <T> CustomizeReturnException(ReturnCode returnCode) {
+    public <T> CustomizeFileException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = null;
     }
 
-    public <T> CustomizeReturnException(ReturnCode returnCode, String msg) {
+    public <T> CustomizeFileException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = msg;
     }
