@@ -3,6 +3,9 @@ server:
   port: 38080
   servlet:
     context-path: /
+  http2:
+    enabled: true
+  # 选择tomcat服务器配置
   tomcat:
     # tomcat的URI编码
     uri-encoding: UTF-8
@@ -13,6 +16,13 @@ server:
       max: 800
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
+  # 选择undertow服务器配置
+  undertow:
+    url-charset: UTF-8
+    threads:
+      io: 16
+      worker: 256
+    buffer-size: 1024
 # 日志配置 ---- 可自定义
 logging:
   level:
@@ -71,7 +81,7 @@ spring:
   # todo:修改rabbitmq配置
   rabbitmq:
     # 单机RabbitMQ
-    host: xxx.xxx.xxx.xxx
+    host: 192.168.116.100
     port: 25671
     # 集群RabbitMQ
     #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
@@ -92,7 +102,7 @@ spring:
   # todo:修改redis配置
   redis:
     # 单机地址
-    host: xxx.xxx.xxx.xxx
+    host: x.x.x.x
     # 单机端口，默认为6379
     port: 26378
     # 集群地址
@@ -120,7 +130,7 @@ redisson:
   # redis单机版本
   singleServerConfig:
     # 单机地址（一定要在redis协议下）
-    address: redis://xxx.xxx.xxx.xxx:26378
+    address: redis://x.x.x.x:26378
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
@@ -165,7 +175,7 @@ redisson:
 # todo：Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
   enable: false
-  address: xxx.xxx.xxx.xxx:29200
+  address: x.x.x.x:29200
   #username:
   #password:
 
