@@ -169,6 +169,14 @@ easy-es:
   #username:
   #password:
 
+# todo：腾讯云OSS配置
+tencent:
+  cos:
+    region: ap-chengdu
+    secret-id: XXX
+    secret-key: XXX
+    bucket-name: test-XXX
+
 # todo：Sa-Token配置
 sa-token:
   # token名称 (同时也是cookie名称)
