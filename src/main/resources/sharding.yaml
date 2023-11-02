@@ -3,7 +3,7 @@ dataSources:
   master:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://x.x.x.x:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
     connectionTimeoutMilliseconds: 30000
