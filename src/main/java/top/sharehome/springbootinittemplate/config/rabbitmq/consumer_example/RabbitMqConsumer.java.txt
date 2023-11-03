@@ -16,7 +16,6 @@ import java.io.IOException;
  *
  * @author AntonyCheng
  */
-
 @Component
 public class RabbitMqConsumer {
 

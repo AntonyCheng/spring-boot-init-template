@@ -22,7 +22,6 @@ import javax.annotation.Resource;
  *
  * @author AntonyCheng
  */
-
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 

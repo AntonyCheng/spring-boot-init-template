@@ -4,6 +4,7 @@ import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
@@ -14,8 +15,8 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
  *
  * @author AntonyCheng
  */
-
 @Component
+@ConditionalOnProperty(value = {"redisson.singleServerConfig.enableSingle","redisson.clusterServersConfig.enableCluster"},havingValue = "true")
 public class RateLimitUtils {
 
     /**

@@ -5,7 +5,6 @@ package top.sharehome.springbootinittemplate.common.base;
  *
  * @author AntonyCheng
  */
-
 public interface HttpStatus {
 
     /**

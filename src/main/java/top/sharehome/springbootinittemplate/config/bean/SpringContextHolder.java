@@ -12,7 +12,6 @@ import java.util.Map;
  *
  * @author AntonyCheng
  */
-
 @Component
 public class SpringContextHolder implements ApplicationContextAware {
 

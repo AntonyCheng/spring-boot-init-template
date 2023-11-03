@@ -11,7 +11,6 @@ import top.sharehome.springbootinittemplate.model.vo.user.UserLoginVo;
  *
  * @author AntonyCheng
  */
-
 public interface UserService extends IService<User> {
 
     /**

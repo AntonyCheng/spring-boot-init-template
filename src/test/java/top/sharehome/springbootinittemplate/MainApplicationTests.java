@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
-import top.sharehome.springbootinittemplate.utils.cos.CosUtils;
+import top.sharehome.springbootinittemplate.utils.oss.tencent.CosUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
 
@@ -27,7 +27,6 @@ import java.util.*;
  *
  * @author AntonyCheng
  */
-
 @SpringBootTest
 class MainApplicationTests {
 
@@ -84,7 +83,7 @@ class MainApplicationTests {
         CacheUtils.putString("test", "test");
         System.out.println(CacheUtils.getString("test"));
         System.out.println(CacheUtils.existsString("test"));
-        CacheUtils.deleteString("test");
+//        CacheUtils.deleteString("test");
 
         // 测试List
         List<String> l = new ArrayList<String>() {
@@ -163,7 +162,7 @@ class MainApplicationTests {
      */
     @Test
     void testCosUtilsDelete() {
-        CosUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/01/fd59d69bfe2543719fc1e426a4cfedb6_README.md");
+        CosUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/03/5591bee0dcc14ad6b20d7fb8d78414f7_README.md");
     }
 
 }

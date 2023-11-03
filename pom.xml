@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.16</version>
+        <version>2.7.17</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.sharehome</groupId>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!-- todo：若要使用Undertow作为服务器，那就需要排除Tomcat的相关依赖，该模板默认使用Undertow -->
+            <!-- 若要使用Undertow作为服务器，那就需要排除Tomcat的相关依赖，该模板默认使用Undertow -->
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -91,22 +91,23 @@
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>
-            <version>1.36.0</version>
+            <version>1.37.0</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot-starter</artifactId>
-            <version>1.36.0</version>
+            <version>1.37.0</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-jwt</artifactId>
-            <version>1.36.0</version>
+            <version>1.37.0</version>
         </dependency>
+        <!-- todo：如果要搭配Redis进行权限校验，那么打开以下注解 -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
-            <version>1.36.0</version>
+            <version>1.37.0</version>
         </dependency>
 
         <!-- MySQL 依赖配置（搭配shardingsphere 5.2.1-5.3.2 一起使用，druid版本控制在1.2.16以下，这种搭配主要是想完成数据库加密、主从库和分库分表的操作，后续会继续更新） -->
@@ -131,7 +132,6 @@
             <version>5.3.2</version>
         </dependency>
 
-        <!-- todo:需要Redis时再打开 -->
         <!-- redis 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -159,7 +159,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- todo:需要ES时再打开 -->
         <!-- logstash 依赖配置 -->
         <dependency>
             <groupId>net.logstash.logback</groupId>
@@ -226,6 +225,13 @@
             <artifactId>itext7-core</artifactId>
             <version>7.2.5</version>
             <type>pom</type>
+        </dependency>
+
+        <!-- 分布式定时任务-->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>2.4.0</version>
         </dependency>
 
         <!-- okHttp 依赖配置 -->

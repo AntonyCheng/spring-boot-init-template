@@ -25,7 +25,6 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  *
  * @author AntonyCheng
  */
-
 @RestController
 @RequestMapping("/user")
 @SaCheckLogin
@@ -65,7 +64,7 @@ public class UserController {
             StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
         } else {
             // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉原账号
-            if (ObjectUtils.notEqual(StpUtil.getLoginId(), loginUser.getId())) {
+            if (ObjectUtils.notEqual(Long.parseLong((String)StpUtil.getLoginId()), loginUser.getId())) {
                 StpUtil.logout();
                 StpUtil.login(loginUser.getId());
                 StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());

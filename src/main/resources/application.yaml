@@ -81,7 +81,7 @@ spring:
   # todo:修改rabbitmq配置
   rabbitmq:
     # 单机RabbitMQ
-    host: x.x.x.x
+    host: xxx.xxx.xxx.xxx
     port: 25671
     # 集群RabbitMQ
     #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
@@ -99,29 +99,35 @@ spring:
         acknowledge-mode: manual
       simple:
         acknowledge-mode: manual
-  # todo:修改redis配置
-  redis:
-    # 单机地址
-    host: x.x.x.x
-    # 单机端口，默认为6379
-    port: 26378
-    # 集群地址
-    #cluster:
-    #  nodes:
-    #    - xxx.xxx.xxx.xxx:16379
-    #    - xxx.xxx.xxx.xxx:16380
-    #    - xxx.xxx.xxx.xxx:16381
-    #    - xxx.xxx.xxx.xxx:16382
-    #    - xxx.xxx.xxx.xxx:16383
-    #    - xxx.xxx.xxx.xxx:16384
-    # 数据库索引
-    database: 1
-    # 密码（考虑是否需要密码）
-    password: 123456
-    # 连接超时时间
-    timeout: 3s
+  # todo:修改redis配置（这里的redis主要用于鉴权认证等模板自带服务，主要与SaToken中使用Jwt时搭配使用，如果SaToken中相关服务没开启，不建议打开以下配置）
+  #redis:
+  #  # 单机地址
+  #  host: xxx.xxx.xxx.xxx
+  #  # 单机端口，默认为6379
+  #  port: 26378
+  #  # 集群地址
+  #  #cluster:
+  #  #  nodes:
+  #  #    - xxx.xxx.xxx.xxx:16379
+  #  #    - xxx.xxx.xxx.xxx:16380
+  #  #    - xxx.xxx.xxx.xxx:16381
+  #  #    - xxx.xxx.xxx.xxx:16382
+  #  #    - xxx.xxx.xxx.xxx:16383
+  #  #    - xxx.xxx.xxx.xxx:16384
+  #  # 数据库索引
+  #  database: 2
+  #  # 密码（考虑是否需要密码）
+  #  password: 123456
+  #  # 连接超时时间
+  #  timeout: 3s
+  #  lettuce:
+  #    pool:
+  #      max-idle: 16
+  #      max-active: 32
+  #      min-idle: 8
 
-# todo：修改redisson配置
+# 修改redisson配置（这里的redisson主要用来系统业务逻辑的缓存服务）
+# 如果同时开启单机版本和集群版本，两者均会被校验连接，但是只有单机版本生效
 redisson:
   # 线程池数量
   threads: 4
@@ -129,8 +135,10 @@ redisson:
   nettyThreads: 8
   # redis单机版本
   singleServerConfig:
+    # todo：是否启动单机Redis缓存
+    enableSingle: false
     # 单机地址（一定要在redis协议下）
-    address: redis://x.x.x.x:26378
+    address: redis://xxx.xxx.xxx.xxx:26378
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
@@ -146,48 +154,81 @@ redisson:
     # 连接空闲超时，单位：毫秒
     idleConnectionTimeout: 10000
   # redis集群版本
-  #clusterServersConfig:
-  #  # redis集群节点（一定要在redis协议下）
-  #  nodeAddresses:
-  #    - redis://xxx.xxx.xxx.xxx:26379
-  #    - redis://xxx.xxx.xxx.xxx:26380
-  #    - redis://xxx.xxx.xxx.xxx:26381
-  #    - redis://xxx.xxx.xxx.xxx:26382
-  #    - redis://xxx.xxx.xxx.xxx:26383
-  #    - redis://xxx.xxx.xxx.xxx:26384
-  #  # 密码（考虑是否需要密码）
-  #  password: 123456
-  #  # master最小空闲连接数
-  #  masterConnectionMinimumIdleSize: 32
-  #  # master连接池大小
-  #  masterConnectionPoolSize: 64
-  #  # slave最小空闲连接数
-  #  slaveConnectionMinimumIdleSize: 32
-  #  # slave连接池大小
-  #  slaveConnectionPoolSize: 64
-  #  # 连接空闲超时，单位：毫秒
-  #  idleConnectionTimeout: 10000
-  #  # 命令等待超时，单位：毫秒
-  #  timeout: 3000
-  #  # 发布和订阅连接池大小
-  #  subscriptionConnectionPoolSize: 50
+  clusterServersConfig:
+    # todo：是否启动集群Redis
+    enableCluster: false
+    # redis集群节点（一定要在redis协议下）
+    nodeAddresses:
+      - redis://xxx.xxx.xxx.xxx:26379
+      - redis://xxx.xxx.xxx.xxx:26380
+      - redis://xxx.xxx.xxx.xxx:26381
+      - redis://xxx.xxx.xxx.xxx:26382
+      - redis://xxx.xxx.xxx.xxx:26383
+      - redis://xxx.xxx.xxx.xxx:26384
+    # 密码（考虑是否需要密码）
+    password: 123456
+    # master最小空闲连接数
+    masterConnectionMinimumIdleSize: 32
+    # master连接池大小
+    masterConnectionPoolSize: 64
+    # slave最小空闲连接数
+    slaveConnectionMinimumIdleSize: 32
+    # slave连接池大小
+    slaveConnectionPoolSize: 64
+    # 连接空闲超时，单位：毫秒
+    idleConnectionTimeout: 10000
+    # 命令等待超时，单位：毫秒
+    timeout: 3000
+    # 发布和订阅连接池大小
+    subscriptionConnectionPoolSize: 50
 
-# todo：Easy-ES配置，需要使用ES时将enable改为true
+# Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
-  enable: true
-  address: x.x.x.x:29200
+  # todo：是否启动（预先关闭）
+  enable: false
+  address: xxx.xxx.xxx.xxx:29200
   #username:
   #password:
 
-# todo：腾讯云OSS配置
+# 腾讯云COS配置
 tencent:
   cos:
+    # todo：是否开启（预先关闭）
+    enable: false
+    # 地域
     region: ap-chengdu
-    secret-id: XXX
-    secret-key: XXX
-    bucket-name: test-XXX
+    # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    secretId: xxx
+    # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    secretKey: xxx
+    # 桶名称
+    bucketName: test-xxx
 
-# todo：Sa-Token配置
+# Xxl-Job配置
+xxl:
+  job:
+    # todo：是否开启（预先关闭）
+    enable: false
+    # Xxl-Job监控面板地址
+    adminAddresses: http://localhost:38079/xxl-job-admin
+    # Xxl-Job token
+    accessToken: xxl-job
+    # 执行器配置
+    executor:
+      # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: xxl-job-executor
+      # 执行器端口号 执行器从38080开始往后写
+      port: 38081
+      # 执行器注册：默认IP:PORT
+      address:
+      # 执行器IP：默认自动获取IP
+      ip:
+      # 执行器运行日志文件存储磁盘路径
+      logpath: ./logs/${spring.application.name}/xxl-job
+      # 执行器日志文件保存天数：大于3生效
+      logretentiondays: 30
+
+# Sa-Token配置
 sa-token:
   # token名称 (同时也是cookie名称)
   token-name: Authorization
@@ -213,6 +254,12 @@ sa-token:
   jwt-secret-key: abcdefghijklmnopqrstuvwxyz
   # 开启日志
   is-log: on
+  # todo：是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
+  isAuthorization: true
+  # todo：是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
+  isIdentification: true
+  # todo：是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
+  isJwt: false
 
 # MyBatisPlus配置
 # https://baomidou.com/config/
@@ -220,7 +267,7 @@ mybatis-plus:
   # 启动时是否检查 MyBatis XML 文件的存在，默认不检查
   check-config-location: false
   # 对应的 XML 文件位置
-  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  mapper-locations: classpath:mapper/*Mapper.xml
   # 实体扫描，多个package用逗号或者分号分隔
   type-aliases-package: top.sharehome.*.*.entity
   configuration:

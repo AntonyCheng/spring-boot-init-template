@@ -17,7 +17,6 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
  *
  * @author AntonyCheng
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

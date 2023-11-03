@@ -11,7 +11,6 @@ import java.util.List;
  *
  * @author AntonyCheng
  */
-
 @Data
 @ConfigurationProperties(prefix = "redisson")
 public class RedissonProperties {
@@ -42,6 +41,10 @@ public class RedissonProperties {
     @Data
     @NoArgsConstructor
     public static class SingleServerConfig {
+        /**
+         * 是否启动单机Redis
+         */
+        private boolean enableSingle;
         private String address;
         private int database;
         private String password;
@@ -58,6 +61,10 @@ public class RedissonProperties {
     @Data
     @NoArgsConstructor
     public static class ClusterServersConfig {
+        /**
+         * 是否启动集群Redis
+         */
+        private boolean enableCluster;
         private List<String> nodeAddresses;
         private String password;
         private int masterConnectionMinimumIdleSize;

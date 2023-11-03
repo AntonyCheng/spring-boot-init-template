@@ -16,7 +16,6 @@ import lombok.Getter;
  *
  * @author AntonyCheng
  */
-
 @Getter
 public enum ReturnCode {
 

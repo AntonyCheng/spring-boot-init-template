@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.utils.redisson;
 
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 
@@ -17,6 +18,7 @@ import java.util.Set;
  * @author AntonyCheng
  */
 @Component
+@ConditionalOnProperty(value = {"redisson.singleServerConfig.enableSingle", "redisson.clusterServersConfig.enableCluster"}, havingValue = "true")
 public class CacheUtils {
     /**
      * 被封装的redisson客户端对象
@@ -81,7 +83,7 @@ public class CacheUtils {
         REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + key).delete();
     }
 
-    private static final String STRING_PREFIX = "STRING_";
+    private static final String STRING_PREFIX = CACHE_KEY_PREFIX + "STRING_";
 
     /**
      * 设置String类型缓存
@@ -90,7 +92,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putString(String key, String value) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.set(value);
     }
 
@@ -102,7 +104,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static void putString(String key, String value, long expired) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.set(value, Duration.ofSeconds(expired));
     }
 
@@ -113,7 +115,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putStringIfExists(String key, String value) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.setIfExists(value);
     }
 
@@ -125,7 +127,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static void putStringIfExists(String key, String value, long expired) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.setIfExists(value, Duration.ofSeconds(expired));
     }
 
@@ -136,7 +138,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putStringIfAbsent(String key, String value) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.setIfAbsent(value);
     }
 
@@ -148,7 +150,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static void putStringIfAbsent(String key, String value, long expired) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         bucket.setIfAbsent(value, Duration.ofSeconds(expired));
     }
 
@@ -159,7 +161,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static String getString(String key) {
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key, StringCodec.INSTANCE);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(STRING_PREFIX + key, StringCodec.INSTANCE);
         return bucket.get();
     }
 
@@ -170,7 +172,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static boolean existsString(String key) {
-        return REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getBucket(STRING_PREFIX + key).isExists();
     }
 
     /**
@@ -179,10 +181,10 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteString(String key) {
-        REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + STRING_PREFIX + key).delete();
+        REDISSON_CLIENT.getBucket(STRING_PREFIX + key).delete();
     }
 
-    private static final String LIST_PREFIX = "LIST_";
+    private static final String LIST_PREFIX = CACHE_KEY_PREFIX + "LIST_";
 
     /**
      * 设置List类型缓存
@@ -192,7 +194,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putList(String key, List<T> valueList) {
-        RList<T> list = REDISSON_CLIENT.getList(CACHE_KEY_PREFIX + LIST_PREFIX + key);
+        RList<T> list = REDISSON_CLIENT.getList(LIST_PREFIX + key);
         list.addAll(valueList);
     }
 
@@ -204,7 +206,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putList(String key, List<T> valueList, long expired) {
-        RList<T> list = REDISSON_CLIENT.getList(CACHE_KEY_PREFIX + LIST_PREFIX + key);
+        RList<T> list = REDISSON_CLIENT.getList(LIST_PREFIX + key);
         list.addAll(valueList);
         list.expire(Duration.ofSeconds(expired));
     }
@@ -217,7 +219,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static <T> List<T> getList(String key) {
-        return REDISSON_CLIENT.getList(CACHE_KEY_PREFIX + LIST_PREFIX + key);
+        return REDISSON_CLIENT.getList(LIST_PREFIX + key);
     }
 
     /**
@@ -227,7 +229,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static boolean existsList(String key) {
-        return REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + LIST_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getBucket(LIST_PREFIX + key).isExists();
     }
 
     /**
@@ -236,10 +238,10 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteList(String key) {
-        REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + LIST_PREFIX + key).delete();
+        REDISSON_CLIENT.getBucket(LIST_PREFIX + key).delete();
     }
 
-    private static final String SET_PREFIX = "SET_";
+    private static final String SET_PREFIX = CACHE_KEY_PREFIX + "SET_";
 
     /**
      * 设置Set类型缓存
@@ -249,7 +251,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSet(String key, Set<T> valueSet) {
-        RSet<T> set = REDISSON_CLIENT.getSet(CACHE_KEY_PREFIX + SET_PREFIX + key);
+        RSet<T> set = REDISSON_CLIENT.getSet(SET_PREFIX + key);
         set.addAll(valueSet);
     }
 
@@ -261,7 +263,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSet(String key, Set<T> valueSet, long expired) {
-        RSet<T> set = REDISSON_CLIENT.getSet(CACHE_KEY_PREFIX + SET_PREFIX + key);
+        RSet<T> set = REDISSON_CLIENT.getSet(SET_PREFIX + key);
         set.addAll(valueSet);
         set.expire(Duration.ofSeconds(expired));
     }
@@ -274,7 +276,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static <T> Set<T> getSet(String key) {
-        return REDISSON_CLIENT.getSet(CACHE_KEY_PREFIX + SET_PREFIX + key);
+        return REDISSON_CLIENT.getSet(SET_PREFIX + key);
     }
 
     /**
@@ -284,7 +286,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static boolean existsSet(String key) {
-        return REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + SET_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getBucket(SET_PREFIX + key).isExists();
     }
 
     /**
@@ -293,10 +295,10 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteSet(String key) {
-        REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + SET_PREFIX + key).delete();
+        REDISSON_CLIENT.getBucket(SET_PREFIX + key).delete();
     }
 
-    private static final String MAP_PREFIX = "MAP_";
+    private static final String MAP_PREFIX = CACHE_KEY_PREFIX + "MAP_";
 
     /**
      * 设置Map类型缓存
@@ -307,7 +309,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMap(String key, Map<K, V> valueMap) {
-        RMap<K, V> map = REDISSON_CLIENT.getMap(CACHE_KEY_PREFIX + MAP_PREFIX + key);
+        RMap<K, V> map = REDISSON_CLIENT.getMap(MAP_PREFIX + key);
         map.putAll(valueMap);
     }
 
@@ -320,7 +322,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMap(String key, Map<K, V> valueMap, long expired) {
-        RMap<K, V> map = REDISSON_CLIENT.getMap(CACHE_KEY_PREFIX + MAP_PREFIX + key);
+        RMap<K, V> map = REDISSON_CLIENT.getMap(MAP_PREFIX + key);
         map.putAll(valueMap);
         map.expire(Duration.ofSeconds(expired));
     }
@@ -334,7 +336,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static <K, V> Map<K, V> getMap(String key) {
-        RMap<K, V> map = REDISSON_CLIENT.getMap(CACHE_KEY_PREFIX + MAP_PREFIX + key);
+        RMap<K, V> map = REDISSON_CLIENT.getMap(MAP_PREFIX + key);
         return new HashMap<K, V>(map);
     }
 
@@ -345,7 +347,7 @@ public class CacheUtils {
      * @return 返回结果
      */
     public static boolean existsMap(String key) {
-        return REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + MAP_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getBucket(MAP_PREFIX + key).isExists();
     }
 
     /**
@@ -354,6 +356,6 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteMap(String key) {
-        REDISSON_CLIENT.getBucket(CACHE_KEY_PREFIX + MAP_PREFIX + key).delete();
+        REDISSON_CLIENT.getBucket(MAP_PREFIX + key).delete();
     }
 }

@@ -9,7 +9,6 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
  *
  * @author AntonyCheng
  */
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CustomizeReturnException extends RuntimeException {

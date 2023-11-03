@@ -7,6 +7,7 @@ import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.same.SaSameUtil;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.util.SaResult;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,8 +19,8 @@ import top.sharehome.springbootinittemplate.common.base.HttpStatus;
  *
  * @author AntonyCheng
  */
-
 @Configuration
+@ConditionalOnProperty(prefix = "sa-token",name = "isIdentification",havingValue = "true")
 public class IdentificationConfiguration implements WebMvcConfigurer {
 
     /**
@@ -48,14 +49,6 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
                     }
                 })
                 .setError(e -> SaResult.error("认证失败，无法访问系统资源").setCode(HttpStatus.UNAUTHORIZED));
-    }
-
-    /**
-     * Sa-Token 整合 jwt (Simple 简单模式)
-     */
-    @Bean
-    public StpLogic getStpLogicJwt() {
-        return new StpLogicJwtForSimple();
     }
 
 }

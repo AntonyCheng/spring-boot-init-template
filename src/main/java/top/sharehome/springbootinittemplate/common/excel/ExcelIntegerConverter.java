@@ -12,7 +12,6 @@ import com.alibaba.excel.metadata.property.ExcelContentProperty;
  *
  * @author AntonyCheng
  */
-
 public class ExcelIntegerConverter implements Converter<Integer> {
 
     @Override
