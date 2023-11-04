@@ -35,7 +35,7 @@ import javax.validation.ValidationException;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // todo：该todo到下一个todo之间的异常均为系统自带异常，抛出的错误码被包含在HttpStatus接口中
+    // todo 该todo到下一个todo之间的异常均为系统自带异常，抛出的错误码被包含在HttpStatus接口中
 
     /**
      * 用户权限异常
@@ -222,7 +222,7 @@ public class GlobalExceptionHandler {
         return R.fail(HttpStatus.WARN, message);
     }
 
-    // todo：该todo以下的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
+    // todo 该todo以下的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
 
     /**
      * 自定义数据库事务异常

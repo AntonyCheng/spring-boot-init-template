@@ -1,7 +1,7 @@
 package top.sharehome.springbootinittemplate.common.base;
 
 /**
- * todo：基于HTTP请求固有的响应状态码设计，是整个模板的返回码的顶层结构
+ * todo 基于HTTP请求固有的响应状态码设计，是整个模板的返回码的顶层结构
  *
  * @author AntonyCheng
  */

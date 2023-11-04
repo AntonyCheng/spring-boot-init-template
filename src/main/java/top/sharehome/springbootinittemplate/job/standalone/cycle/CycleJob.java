@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * 循环任务
- * todo：打开注解即可DI执行
+ * todo 打开注解即可DI执行
  *
  * @author AntonyCheng
  */

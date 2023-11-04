@@ -14,7 +14,7 @@
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
     </properties>
     <dependencies>
         <!-- SpringBoot 依赖配置 -->
@@ -103,7 +103,6 @@
             <artifactId>sa-token-jwt</artifactId>
             <version>1.37.0</version>
         </dependency>
-        <!-- todo：如果要搭配Redis进行权限校验，那么打开以下注解 -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
@@ -119,7 +118,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.3.1</version>
+            <version>3.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -147,7 +146,6 @@
             <version>3.23.5</version>
         </dependency>
 
-        <!-- todo:需要MQ时再打开 -->
         <!-- rabbitMQ 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -78,14 +78,16 @@ spring:
         enabled: true
   main:
     allow-bean-definition-overriding: true
-  # todo:修改rabbitmq配置
+  # 修改rabbitmq配置
   rabbitmq:
-    # 单机RabbitMQ
+    # todo 是否开启RabbitMQ（预先关闭）
+    enable: false
+    # 单机RabbitMQ（单价模式配置和集群模式配置只能存在一个）
     host: xxx.xxx.xxx.xxx
     port: 25671
-    # 集群RabbitMQ
+    # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
     #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
-    #virtual-host: /
+    virtual-host: /
     username: admin
     password: admin123456
     # 消息确认（ACK）
@@ -99,34 +101,40 @@ spring:
         acknowledge-mode: manual
       simple:
         acknowledge-mode: manual
-  # todo:修改redis配置（这里的redis主要用于鉴权认证等模板自带服务，主要与SaToken中使用Jwt时搭配使用，如果SaToken中相关服务没开启，不建议打开以下配置）
-  #redis:
-  #  # 单机地址
-  #  host: xxx.xxx.xxx.xxx
-  #  # 单机端口，默认为6379
-  #  port: 26378
-  #  # 集群地址
-  #  #cluster:
-  #  #  nodes:
-  #  #    - xxx.xxx.xxx.xxx:16379
-  #  #    - xxx.xxx.xxx.xxx:16380
-  #  #    - xxx.xxx.xxx.xxx:16381
-  #  #    - xxx.xxx.xxx.xxx:16382
-  #  #    - xxx.xxx.xxx.xxx:16383
-  #  #    - xxx.xxx.xxx.xxx:16384
-  #  # 数据库索引
-  #  database: 2
-  #  # 密码（考虑是否需要密码）
-  #  password: 123456
-  #  # 连接超时时间
-  #  timeout: 3s
-  #  lettuce:
-  #    pool:
-  #      max-idle: 16
-  #      max-active: 32
-  #      min-idle: 8
+  autoconfigure:
+    exclude:
+      # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，redisson相关配置也需要依赖这个类，预先关闭）
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，建议与RedisAutoConfiguration同步，预先关闭）
+      - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
+  # 修改系统redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的缓存服务，主要与SaToken中使用Jwt时搭配使用，如果SaToken中相关服务没开启，不建议打开redis配置）
+  redis:
+    # 单机地址（单价模式配置和集群模式配置只能存在一个）
+    host: xxx.xxx.xxx.xxx
+    # 单机端口，默认为6379
+    port: 26378
+    # 集群地址（单价模式配置和集群模式配置只能存在一个）
+    #cluster:
+    #  nodes:
+    #    - xxx.xxx.xxx.xxx:16379
+    #    - xxx.xxx.xxx.xxx:16380
+    #    - xxx.xxx.xxx.xxx:16381
+    #    - xxx.xxx.xxx.xxx:16382
+    #    - xxx.xxx.xxx.xxx:16383
+    #    - xxx.xxx.xxx.xxx:16384
+    # 数据库索引
+    database: 0
+    # 密码（考虑是否需要密码）
+    password: 123456
+    # 连接超时时间
+    timeout: 3s
+    lettuce:
+      pool:
+        min-idle: 8
+        max-idle: 16
+        max-active: 32
 
-# 修改redisson配置（这里的redisson主要用来系统业务逻辑的缓存服务）
+# 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
 # 如果同时开启单机版本和集群版本，两者均会被校验连接，但是只有单机版本生效
 redisson:
   # 线程池数量
@@ -135,8 +143,8 @@ redisson:
   nettyThreads: 8
   # redis单机版本
   singleServerConfig:
-    # todo：是否启动单机Redis缓存
-    enableSingle: false
+    # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
+    enableSingle: true
     # 单机地址（一定要在redis协议下）
     address: redis://xxx.xxx.xxx.xxx:26378
     # 数据库索引
@@ -155,7 +163,7 @@ redisson:
     idleConnectionTimeout: 10000
   # redis集群版本
   clusterServersConfig:
-    # todo：是否启动集群Redis
+    # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
     enableCluster: false
     # redis集群节点（一定要在redis协议下）
     nodeAddresses:
@@ -184,7 +192,7 @@ redisson:
 
 # Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
-  # todo：是否启动（预先关闭）
+  # todo 是否启动（预先关闭）
   enable: false
   address: xxx.xxx.xxx.xxx:29200
   #username:
@@ -193,7 +201,7 @@ easy-es:
 # 腾讯云COS配置
 tencent:
   cos:
-    # todo：是否开启（预先关闭）
+    # todo 是否开启（预先关闭）
     enable: false
     # 地域
     region: ap-chengdu
@@ -207,7 +215,7 @@ tencent:
 # Xxl-Job配置
 xxl:
   job:
-    # todo：是否开启（预先关闭）
+    # todo 是否开启（预先关闭）
     enable: false
     # Xxl-Job监控面板地址
     adminAddresses: http://localhost:38079/xxl-job-admin
@@ -254,11 +262,11 @@ sa-token:
   jwt-secret-key: abcdefghijklmnopqrstuvwxyz
   # 开启日志
   is-log: on
-  # todo：是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
+  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
   isAuthorization: true
-  # todo：是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
+  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
   isIdentification: true
-  # todo：是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
+  # todo 是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
   isJwt: false
 
 # MyBatisPlus配置

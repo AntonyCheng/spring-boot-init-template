@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.sharehome.springbootinittemplate.model.dto.user.UserLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserRegisterDto;
 import top.sharehome.springbootinittemplate.model.entity.User;
+import top.sharehome.springbootinittemplate.model.vo.user.UserInfoVo;
 import top.sharehome.springbootinittemplate.model.vo.user.UserLoginVo;
 
 /**
@@ -27,5 +28,12 @@ public interface UserService extends IService<User> {
      * @return 返回登陆用户信息
      */
     UserLoginVo login(UserLoginDto userLoginDto);
+
+    /**
+     * 获取登陆用户信息
+     *
+     * @return 返回用户信息结果
+     */
+    UserInfoVo info(Long loginId);
 
 }

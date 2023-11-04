@@ -81,7 +81,7 @@ public class R<T> {
         return SUCCESS == ret.getCode();
     }
 
-    // todo:成功响应方法
+    // todo 成功响应方法
     public static <T> R<T> ok() {
         return restResult(null, SUCCESS, SUCCESS_MSG);
     }
@@ -98,7 +98,7 @@ public class R<T> {
         return restResult(data, SUCCESS, msg);
     }
 
-    // todo:失败响应方法
+    // todo 失败响应方法
     public static <T> R<T> fail() {
         return restResult(null, FAIL, FAIL_MSG);
     }
@@ -127,7 +127,7 @@ public class R<T> {
         return restResult(data, returnCode.getCode(), returnCode.getMsg());
     }
 
-    // todo:警告响应方法
+    // todo 警告响应方法
     public static <T> R<T> warn() {
         return restResult(null, WARN, WARN_MSG);
     }

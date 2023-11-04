@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 一次任务
  * 实现CommandLineRunner接口，可实现系统初始化操作
- * todo：打开Component注解即可DI执行
+ * todo 打开Component注解即可DI执行
  *
  * @author AntonyCheng
  */

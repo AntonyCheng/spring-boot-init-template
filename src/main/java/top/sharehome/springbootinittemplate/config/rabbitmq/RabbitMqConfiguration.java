@@ -5,18 +5,18 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * todo:需要时打开所有注解即可
  * 消息队列RabbitMQ配置
  *
  * @author AntonyCheng
  */
-
 @Slf4j
 @Configuration
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
 public class RabbitMqConfiguration {
 
     /**
@@ -51,10 +51,11 @@ public class RabbitMqConfiguration {
                     returnedMessage.getExchange(),
                     returnedMessage.getRoutingKey());
         });
+        log.info("rabbitmq配置成功");
         return rabbitTemplate;
     }
 
-    // todo：下面是交换机和队列的相关定义
+    // todo 下面是交换机和队列的相关定义
     public static final String EXCHANGE_NAME = "DemoExchange";
 
     public static final String QUEUE_NAME = "DemoQueue";

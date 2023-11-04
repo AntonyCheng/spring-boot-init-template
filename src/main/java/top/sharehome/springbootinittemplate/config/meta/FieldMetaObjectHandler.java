@@ -30,7 +30,7 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
     public static final String IS_DELETED = "isDeleted";
 
     /**
-     * todo：如果有自己的一套鉴权系统，请去掉这个自动填充项
+     * todo 如果有自己的一套鉴权系统，请去掉这个自动填充项
      * 需要处理的字段名——role
      */
     public static final String ROLE = "role";

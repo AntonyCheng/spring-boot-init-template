@@ -1,7 +1,9 @@
 package top.sharehome.springbootinittemplate.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.user.UserLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserRegisterDto;
 import top.sharehome.springbootinittemplate.model.entity.User;
+import top.sharehome.springbootinittemplate.model.vo.user.UserInfoVo;
 import top.sharehome.springbootinittemplate.model.vo.user.UserLoginVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 
@@ -46,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public UserLoginVo login(UserLoginDto userLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, userLoginDto.getAccount())
@@ -57,6 +61,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserLoginVo userLoginVo = new UserLoginVo();
         BeanUtils.copyProperties(userInDatabase, userLoginVo);
         return userLoginVo;
+    }
+
+    @Override
+    public UserInfoVo info(Long loginId) {
+        User userInDatabase = userMapper.selectById(loginId);
+        if (ObjectUtils.isEmpty(userInDatabase)) {
+            StpUtil.logout(loginId);
+            throw new CustomizeReturnException(ReturnCode.ACCESS_UNAUTHORIZED);
+        }
+        UserInfoVo userInfoVo = new UserInfoVo();
+        BeanUtils.copyProperties(userInDatabase, userInfoVo);
+        return userInfoVo;
     }
 
 }

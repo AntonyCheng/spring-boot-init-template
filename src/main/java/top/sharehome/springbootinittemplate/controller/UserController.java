@@ -13,6 +13,7 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.user.UserLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserRegisterDto;
+import top.sharehome.springbootinittemplate.model.vo.user.UserInfoVo;
 import top.sharehome.springbootinittemplate.model.vo.user.UserLoginVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 
@@ -64,7 +65,7 @@ public class UserController {
             StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
         } else {
             // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉原账号
-            if (ObjectUtils.notEqual(Long.parseLong((String)StpUtil.getLoginId()), loginUser.getId())) {
+            if (ObjectUtils.notEqual(Long.parseLong((String) StpUtil.getLoginId()), loginUser.getId())) {
                 StpUtil.logout();
                 StpUtil.login(loginUser.getId());
                 StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
@@ -74,11 +75,23 @@ public class UserController {
     }
 
     /**
+     * 获取登陆用户信息
+     *
+     * @return 返回用户信息结果
+     */
+    @GetMapping("/ingo")
+    public R<UserInfoVo> info() {
+        Long loginId = Long.valueOf((String) StpUtil.getLoginId());
+        UserInfoVo info = userService.info(loginId);
+        return R.ok(info);
+    }
+
+    /**
      * 用户退出
      *
      * @return 返回退出结果
      */
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public R<String> logout() {
         StpUtil.logout();
         return R.ok("logout");

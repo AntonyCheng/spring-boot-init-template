@@ -12,6 +12,8 @@ import org.redisson.config.ReadMode;
 import org.redisson.config.SubscriptionMode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,10 @@ import javax.annotation.Resource;
 @EnableConfigurationProperties(RedissonProperties.class)
 @AllArgsConstructor
 @Slf4j
+@ConditionalOnProperty(value = {
+        "redisson.singleServerConfig.enableSingle",
+        "redisson.clusterServersConfig.enableCluster"
+}, havingValue = "true")
 public class RedissonConfiguration {
 
     private final RedissonProperties redissonProperties;
@@ -54,7 +60,7 @@ public class RedissonConfiguration {
                     .setConnectionPoolSize(singleServerConfig.getConnectionPoolSize());
         }
         RedissonClient redissonClient = Redisson.create(config);
-        log.info("redis连接成功，服务器地址：{}", singleServerConfig.getAddress());
+        log.info("redisson配置成功，服务器地址：{}", singleServerConfig.getAddress());
         return redissonClient;
     }
 
@@ -82,7 +88,7 @@ public class RedissonConfiguration {
                     .setNodeAddresses(clusterServersConfig.getNodeAddresses());
         }
         RedissonClient redissonClient = Redisson.create(config);
-        log.info("redis连接成功，服务器集群地址：{}", clusterServersConfig.getNodeAddresses());
+        log.info("redisson配置成功，服务器集群地址：{}", clusterServersConfig.getNodeAddresses());
         return redissonClient;
     }
 }

@@ -1,9 +1,9 @@
-# todo:修改MySQL配置
+# todo 修改MySQL配置
 dataSources:
   master:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.116.100:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
     connectionTimeoutMilliseconds: 30000
@@ -24,7 +24,10 @@ dataSources:
   #  maxPoolSize: 50
   #  minPoolSize: 1
 props:
+  # 显示SQL
   sql-show: true
+  # 开启简单SQL显示模式
+  sql-simple: true
 rules:
   - !ENCRYPT
     # 首先定义加密算法
@@ -42,7 +45,7 @@ rules:
           user_password:
             cipherColumn: user_password
             encryptorName: md5_encryptor
-# todo：以下都是示例，可以解除注释直接替换，但是由于框架配置复杂，这里建议按照格式重新写，保留样例以便于修改
+# todo 以下都是示例，可以解除注释直接替换，但是由于框架配置复杂，这里建议按照格式重新写，保留样例以便于修改
 #rules:
 #  # 读写分离（从库开启后开启）
 #  - !READWRITE_SPLITTING

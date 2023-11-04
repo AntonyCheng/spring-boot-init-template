@@ -44,7 +44,7 @@ class MainApplicationTests {
         // 设置用户密码
         user.setPassword("123456");
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getRole, user.getRole());
+        userLambdaQueryWrapper.eq(User::getRole, "admin");
         if (ObjectUtils.isEmpty(userService.getOne(userLambdaQueryWrapper))) {
             userService.save(user);
             System.out.println("\n管理员身份创建成功！");
@@ -83,7 +83,7 @@ class MainApplicationTests {
         CacheUtils.putString("test", "test");
         System.out.println(CacheUtils.getString("test"));
         System.out.println(CacheUtils.existsString("test"));
-//        CacheUtils.deleteString("test");
+        CacheUtils.deleteString("test");
 
         // 测试List
         List<String> l = new ArrayList<String>() {
