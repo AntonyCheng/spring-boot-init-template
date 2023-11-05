@@ -10,6 +10,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Redis配置类
  *
@@ -28,8 +30,16 @@ public class RedisConfiguration extends CachingConfigurerSupport {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-        log.info("redis配置成功");
+        log.info(">>>>>>>>>>> redis config init.");
         return redisTemplate;
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ redis config DI.");
     }
 
 }

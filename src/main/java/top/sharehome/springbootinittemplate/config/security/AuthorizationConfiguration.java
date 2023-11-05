@@ -3,10 +3,12 @@ package top.sharehome.springbootinittemplate.config.security;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  */
 @Component
 @ConditionalOnProperty(prefix = "sa-token",name = "isAuthorization",havingValue = "true")
+@Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 
     /**
@@ -55,6 +58,14 @@ public class AuthorizationConfiguration implements StpInterface {
         SaSession session = StpUtil.getSessionByLoginId(loginId);
         String userRole = session.get(USER_ROLE_KEY, "");
         return Collections.singletonList(userRole);
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ authorization config DI.");
     }
 
 }

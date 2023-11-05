@@ -7,7 +7,7 @@
 
  Date: 30/10/2023 16:25:18
 */
-CREATE database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_unicode_ci;
+CREATE database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_general_ci;
 use
     `init_db`;
 
@@ -40,6 +40,6 @@ CREATE TABLE `t_user`
 -- ----------------------------
 INSERT INTO `t_user`
 VALUES (1709543990343753729, 'admin', '3042d7230c565a47d72a21d39759cb3d', NULL, NULL, 'admin', '2023-10-04 20:20:24',
-        '2023-10-04 12:20:34', 0);
+        '2023-10-01 12:00:00', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

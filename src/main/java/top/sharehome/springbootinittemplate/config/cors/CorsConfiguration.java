@@ -1,8 +1,11 @@
 package top.sharehome.springbootinittemplate.config.cors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.PostConstruct;
 
 /**
  * 全局跨域配置
@@ -10,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author AntonyCheng
  */
 @Configuration
+@Slf4j
 public class CorsConfiguration implements WebMvcConfigurer {
 
     /**
@@ -28,6 +32,15 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("*");
+        log.info(">>>>>>>>>>> cors config init.");
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ cors config DI.");
     }
 
 }

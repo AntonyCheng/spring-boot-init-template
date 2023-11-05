@@ -1,10 +1,12 @@
 package top.sharehome.springbootinittemplate.config.bean;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
@@ -13,6 +15,7 @@ import java.util.Map;
  * @author AntonyCheng
  */
 @Component
+@Slf4j
 public class SpringContextHolder implements ApplicationContextAware {
 
     /**
@@ -26,6 +29,7 @@ public class SpringContextHolder implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringContextHolder.context = applicationContext;
+        log.info(">>>>>>>>>>> spring context holder config init.");
     }
 
     /**
@@ -79,6 +83,14 @@ public class SpringContextHolder implements ApplicationContextAware {
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return context.getBean(name, clazz);
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ spring context holder config DI.");
     }
 
 }

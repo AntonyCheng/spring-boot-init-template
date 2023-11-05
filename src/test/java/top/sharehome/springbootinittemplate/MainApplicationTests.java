@@ -85,6 +85,12 @@ class MainApplicationTests {
         System.out.println(CacheUtils.existsString("test"));
         CacheUtils.deleteString("test");
 
+        // 测试数字
+        CacheUtils.putNumber("test", 9999999999L);
+        System.out.println(CacheUtils.getNumberDoubleValue("test"));
+        System.out.println(CacheUtils.existsNumber("test"));
+        CacheUtils.deleteNumber("test");
+
         // 测试List
         List<String> l = new ArrayList<String>() {
             {

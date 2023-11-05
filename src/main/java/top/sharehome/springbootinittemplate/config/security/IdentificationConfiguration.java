@@ -7,12 +7,15 @@ import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.same.SaSameUtil;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.util.SaResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
+
+import javax.annotation.PostConstruct;
 
 /**
  * SaToken认证配置
@@ -21,6 +24,7 @@ import top.sharehome.springbootinittemplate.common.base.HttpStatus;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "sa-token",name = "isIdentification",havingValue = "true")
+@Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
 
     /**
@@ -49,6 +53,14 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
                     }
                 })
                 .setError(e -> SaResult.error("认证失败，无法访问系统资源").setCode(HttpStatus.UNAUTHORIZED));
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ identification config DI.");
     }
 
 }

@@ -225,11 +225,18 @@
             <type>pom</type>
         </dependency>
 
-        <!-- 分布式定时任务-->
+        <!-- XXL-JOB分布式定时任务-->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
             <version>2.4.0</version>
+        </dependency>
+
+        <!-- SpringBootAdmin监控平台 -->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-client</artifactId>
+            <version>2.7.4</version>
         </dependency>
 
         <!-- okHttp 依赖配置 -->

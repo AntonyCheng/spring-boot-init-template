@@ -1,9 +1,11 @@
 package top.sharehome.springbootinittemplate.config.meta;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 /**
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
  * @author AntonyCheng
  */
 @Component
+@Slf4j
 public class FieldMetaObjectHandler implements MetaObjectHandler {
 
     /**
@@ -65,6 +68,14 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
         if (metaObject.hasSetter(UPDATE_TIME)) {
             metaObject.setValue(UPDATE_TIME, LocalDateTime.now());
         }
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ meta object config DI.");
     }
 
 }

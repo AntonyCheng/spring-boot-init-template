@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -29,10 +30,6 @@ import javax.annotation.Resource;
 @EnableConfigurationProperties(RedissonProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(value = {
-        "redisson.singleServerConfig.enableSingle",
-        "redisson.clusterServersConfig.enableCluster"
-}, havingValue = "true")
 public class RedissonConfiguration {
 
     private final RedissonProperties redissonProperties;
@@ -60,7 +57,7 @@ public class RedissonConfiguration {
                     .setConnectionPoolSize(singleServerConfig.getConnectionPoolSize());
         }
         RedissonClient redissonClient = Redisson.create(config);
-        log.info("redisson配置成功，服务器地址：{}", singleServerConfig.getAddress());
+        log.info(">>>>>>>>>>> redisson config init by redis standalone,address：{}.", singleServerConfig.getAddress());
         return redissonClient;
     }
 
@@ -88,7 +85,15 @@ public class RedissonConfiguration {
                     .setNodeAddresses(clusterServersConfig.getNodeAddresses());
         }
         RedissonClient redissonClient = Redisson.create(config);
-        log.info("redisson配置成功，服务器集群地址：{}", clusterServersConfig.getNodeAddresses());
+        log.info(">>>>>>>>>>> redisson config init by redis cluster,addresses：{}.", clusterServersConfig.getNodeAddresses());
         return redissonClient;
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ redisson config DI.");
     }
 }

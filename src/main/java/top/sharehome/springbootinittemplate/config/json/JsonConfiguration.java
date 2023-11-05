@@ -3,9 +3,13 @@ package top.sharehome.springbootinittemplate.config.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import javax.annotation.PostConstruct;
 
 /**
  * SpringMVC JSON 配置
@@ -13,6 +17,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  * @author AntonyCheng
  */
 @JsonComponent
+@Slf4j
 public class JsonConfiguration {
 
     /**
@@ -27,7 +32,16 @@ public class JsonConfiguration {
         module.addSerializer(Long.class, ToStringSerializer.instance);
         module.addSerializer(Long.TYPE, ToStringSerializer.instance);
         objectMapper.registerModule(module);
+        log.info(">>>>>>>>>>> json config init.");
         return objectMapper;
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ json config DI.");
     }
 
 }

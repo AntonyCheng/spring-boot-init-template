@@ -1,0 +1,8 @@
+server:
+  port: 38078
+spring:
+  boot:
+    admin:
+      context-path: /spring-boot-admin
+  thymeleaf:
+    check-template-location: false

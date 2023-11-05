@@ -8,6 +8,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 /**
  * XXL-JOB配置文件
  * 需要用到XXL-JOB时，先将visual/xxl-job-admin部署上
@@ -25,7 +27,6 @@ public class XxlJobConfiguration {
 
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor() {
-        log.info(">>>>>>>>>>> xxl-job config init.");
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdminAddresses());
         xxlJobSpringExecutor.setAccessToken(xxlJobProperties.getAccessToken());
@@ -36,8 +37,16 @@ public class XxlJobConfiguration {
         xxlJobSpringExecutor.setPort(executor.getPort());
         xxlJobSpringExecutor.setLogPath(executor.getLogpath());
         xxlJobSpringExecutor.setLogRetentionDays(executor.getLogretentiondays());
-
+        log.info(">>>>>>>>>>> xxl-job config init.");
         return xxlJobSpringExecutor;
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ xxl-job config DI.");
     }
 
 }

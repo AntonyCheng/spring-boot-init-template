@@ -28,8 +28,33 @@ logging:
   level:
     top.sharehome: debug
     org.springframework: warn
+# 纳入SpringBootAdmin监控体系
+management:
+  # 排除一些组件的健康检查，交给开发自己维护，防止SpringBootAdmin检测导致项目启动报错
+  health:
+    elasticsearch:
+      enabled: false
+    rabbit:
+      enabled: false
+    redis:
+      enabled: false
+    mail:
+      enabled: false
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /manage
+      exposure:
+        include: '*'
 # 公共配置文件
 spring:
+  # 配置SpringBootAdmin项目所在地址
+  boot:
+    admin:
+      client:
+        # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+        enabled: false
+        url: http://localhost:38078/spring-boot-admin
   # 项目前置工作 ---- 可自定义
   application:
     name: spring-boot-init-template
@@ -144,7 +169,7 @@ redisson:
   # redis单机版本
   singleServerConfig:
     # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
-    enableSingle: true
+    enableSingle: false
     # 单机地址（一定要在redis协议下）
     address: redis://xxx.xxx.xxx.xxx:26378
     # 数据库索引

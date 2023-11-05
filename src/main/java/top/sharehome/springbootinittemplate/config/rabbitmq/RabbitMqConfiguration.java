@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 /**
  * 消息队列RabbitMQ配置
  *
@@ -51,7 +53,7 @@ public class RabbitMqConfiguration {
                     returnedMessage.getExchange(),
                     returnedMessage.getRoutingKey());
         });
-        log.info("rabbitmq配置成功");
+        log.info(">>>>>>>>>>> rabbitmq config init.");
         return rabbitTemplate;
     }
 
@@ -95,6 +97,14 @@ public class RabbitMqConfiguration {
     @Bean
     public Binding demoBinding(Queue demoQueue, Exchange demoExchange) {
         return BindingBuilder.bind(demoQueue).to(demoExchange).with("demo.*").noargs();
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ rabbitmq config DI.");
     }
 
 }

@@ -27,6 +27,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -208,6 +209,14 @@ public class CosConfiguration {
         } catch (CosClientException e) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
         }
+    }
+
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    public void initDi() {
+        log.info("############ tencent cos config DI.");
     }
 
 }
