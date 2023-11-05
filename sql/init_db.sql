@@ -1,18 +1,15 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql-standalone-cloud
- Source Server Type    : MySQL
- Source Server Version : 80028 (8.0.28)
- Source Host           : 121.36.90.144:23305
- Source Schema         : init_db
-
  Target Server Type    : MySQL
  Target Server Version : 80028 (8.0.28)
  File Encoding         : 65001
 
  Date: 30/10/2023 16:25:18
 */
+CREATE database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_unicode_ci;
+use
+    `init_db`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

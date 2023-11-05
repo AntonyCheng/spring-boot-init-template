@@ -212,7 +212,7 @@ tencent:
     # 桶名称
     bucketName: test-xxx
 
-# Xxl-Job配置
+# Xxl-Job配置（如果是导入了模板sql，那么登陆账号/密码为：admin/123456）
 xxl:
   job:
     # todo 是否开启（预先关闭）
