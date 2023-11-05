@@ -30,7 +30,7 @@ logging:
     org.springframework: warn
 # 纳入SpringBootAdmin监控体系
 management:
-  # 排除一些组件的健康检查，交给开发自己维护，防止SpringBootAdmin检测导致项目启动报错
+  # 排除一些组件的健康检查，交给开发者自己维护，防止SpringBootAdmin检测导致项目启动报错
   health:
     elasticsearch:
       enabled: false
