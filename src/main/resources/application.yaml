@@ -2,7 +2,7 @@
 server:
   port: 38080
   servlet:
-    context-path: /
+    context-path: /api
   http2:
     enabled: true
   # 选择undertow服务器配置
