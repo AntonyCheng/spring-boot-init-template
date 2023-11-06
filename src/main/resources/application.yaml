@@ -162,6 +162,7 @@ spring:
     password: 123456
     # 连接超时时间
     timeout: 3s
+    # redis连接池
     lettuce:
       pool:
         min-idle: 8
@@ -232,9 +233,10 @@ easy-es:
   #username:
   #password:
 
-# 腾讯云COS配置
-tencent:
-  cos:
+# 对象存储配置
+oss:
+  # 腾讯云COS配置
+  tencent:
     # todo 是否开启（预先关闭）
     enable: false
     # 地域

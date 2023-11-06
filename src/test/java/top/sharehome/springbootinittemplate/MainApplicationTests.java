@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
-import top.sharehome.springbootinittemplate.utils.oss.tencent.CosUtils;
+import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
 
@@ -160,7 +160,7 @@ class MainApplicationTests {
         File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
-        System.out.println(CosUtils.upload(multipartFile, "test/init"));
+        System.out.println(TencentUtils.upload(multipartFile, "test/init"));
     }
 
     /**
@@ -168,7 +168,7 @@ class MainApplicationTests {
      */
     @Test
     void testCosUtilsDelete() {
-        CosUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/03/5591bee0dcc14ad6b20d7fb8d78414f7_README.md");
+        TencentUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/03/5591bee0dcc14ad6b20d7fb8d78414f7_README.md");
     }
 
 }

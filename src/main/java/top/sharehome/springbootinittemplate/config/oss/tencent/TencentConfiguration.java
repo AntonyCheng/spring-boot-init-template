@@ -41,13 +41,13 @@ import java.util.concurrent.*;
  * @author AntonyCheng
  */
 @Configuration
-@EnableConfigurationProperties(CosProperties.class)
+@EnableConfigurationProperties(TencentProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(prefix = "tencent.cos", name = "enable", havingValue = "true")
-public class CosConfiguration {
+@ConditionalOnProperty(prefix = "oss.tencent", name = "enable", havingValue = "true")
+public class TencentConfiguration {
 
-    private final CosProperties cosProperties;
+    private final TencentProperties tencentProperties;
 
     /**
      * 获取COSClient客户端
@@ -55,10 +55,10 @@ public class CosConfiguration {
      * @return 返回CosClient客户端
      */
     private COSClient getCosClient() {
-        COSCredentials cred = new BasicCOSCredentials(cosProperties.getSecretId(), cosProperties.getSecretKey());
+        COSCredentials cred = new BasicCOSCredentials(tencentProperties.getSecretId(), tencentProperties.getSecretKey());
         // 设置 bucket 的地域
         // clientConfig 中包含了设置 region, https(默认 http), 超时, 代理等 set 方法, 使用可参见源码或者常见问题 Java SDK 部分。
-        Region region = new Region(cosProperties.getRegion());
+        Region region = new Region(tencentProperties.getRegion());
         ClientConfig clientConfig = new ClientConfig(region);
         // 这里建议设置使用 https 协议
         // 从 5.6.54 版本开始，默认使用了 https
@@ -157,16 +157,15 @@ public class CosConfiguration {
             TransferManager transferManager = createTransferManager();
 
             String namePrefix = UUID.randomUUID().toString().replaceAll("-", "");
-            String dataTime = new DateTime().toString("yyyy/MM/dd");
             // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = rootPath + "/" + dataTime + "/" + namePrefix + "_" + filename;
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? namePrefix + "_" + filename : rootPath + "/" + namePrefix + "_" + filename;
             // 本地文件路径
             // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
             InputStream inputStream = file.getInputStream();
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(inputStream.available());
 
-            PutObjectRequest putObjectRequest = new PutObjectRequest(cosProperties.getBucketName(), key, inputStream, objectMetadata);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
 
             // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
             // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
@@ -189,7 +188,7 @@ public class CosConfiguration {
         } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return Constants.HTTPS + cosProperties.getBucketName() + ".cos." + cosProperties.getRegion() + ".myqcloud.com/" + key;
+        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
     }
 
     /**
@@ -205,7 +204,7 @@ public class CosConfiguration {
         }
         String key = split[1];
         try {
-            cosClient.deleteObject(cosProperties.getBucketName(), key);
+            cosClient.deleteObject(tencentProperties.getBucketName(), key);
         } catch (CosClientException e) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
         }

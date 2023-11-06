@@ -11,12 +11,14 @@ import org.redisson.config.Config;
 import org.redisson.config.ReadMode;
 import org.redisson.config.SubscriptionMode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,7 +38,7 @@ public class RedissonConfiguration {
 
     private final ObjectMapper objectMapper;
 
-    @Bean
+    @Bean("singleClient")
     @ConditionalOnProperty(prefix = "redisson.singleServerConfig", name = "enableSingle", havingValue = "true")
     public RedissonClient singleClient() {
         Config config = new Config();
@@ -61,8 +63,9 @@ public class RedissonConfiguration {
         return redissonClient;
     }
 
-    @Bean(autowireCandidate = false)
+    @Bean
     @ConditionalOnProperty(prefix = "redisson.clusterServersConfig", name = "enableCluster", havingValue = "true")
+    @ConditionalOnMissingBean(name = {"singleClient"})
     public RedissonClient clusterClient() {
         Config config = new Config();
         config.setThreads(redissonProperties.getThreads())

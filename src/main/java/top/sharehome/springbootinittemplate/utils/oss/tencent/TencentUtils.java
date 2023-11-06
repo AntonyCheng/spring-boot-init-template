@@ -4,7 +4,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.tencent.CosConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.tencent.TencentConfiguration;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 腾讯云COS工具类
@@ -12,13 +15,13 @@ import top.sharehome.springbootinittemplate.config.oss.tencent.CosConfiguration;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "tencent.cos", name = "enable", havingValue = "true")
-public class CosUtils {
+@ConditionalOnProperty(prefix = "oss.tencent", name = "enable", havingValue = "true")
+public class TencentUtils {
 
     /**
      * 被封装的COS对象
      */
-    private static final CosConfiguration COS_CONFIGURATION = SpringContextHolder.getBean(CosConfiguration.class);
+    private static final TencentConfiguration COS_CONFIGURATION = SpringContextHolder.getBean(TencentConfiguration.class);
 
     /**
      * 上传文件

@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "tencent.cos")
-public class CosProperties {
+@ConfigurationProperties(prefix = "oss.tencent")
+public class TencentProperties {
 
     /**
      * 是否开启

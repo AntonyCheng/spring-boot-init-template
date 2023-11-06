@@ -37,4 +37,9 @@ public interface CachePrefixConstants {
      */
     String MAP_PREFIX = CACHE_KEY_PREFIX + "MAP_";
 
+    /**
+     * 限流Key前缀
+     */
+    String RATE_LIMIT_PREFIX = "RATE_";
+
 }
