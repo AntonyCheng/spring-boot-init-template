@@ -84,13 +84,13 @@
 
 ## 快速上手
 
-> 拉取项目模板之后需要确保所有依赖下载完成
+> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于application.yaml文件。
 
 ### 必须执行
 
-1. 执行 `sql/init_db.sql` 和 `sql/init_xxl_job.sql` 
+1. 执行 `sql/init_db.sql` 和 `sql/init_xxl_job.sql` 文件；
 
-2. 修改 `src/main/resources/sharding.yaml` 文件
+2. 修改 `src/main/resources/sharding.yaml` 文件：
 
    ```yaml
    dataSources:
@@ -116,13 +116,126 @@
 
 **说明**：该项目中存在两种 Redis 服务，第一种是系统缓存服务（**对应整合Redis**），第二种是业务缓存服务（**对应整合Redisson**）。前者承担系统框架本身的缓存服务，例如用户分布式登陆信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
 
-##### 整合Redis
+##### 整合Redis（系统缓存）
 
-系统缓存服务主要为一些依赖spring-boot-starter-data-redis原生操作的框架
+系统缓存服务主要为一些依赖spring-boot-starter-data-redis原生操作的框架而设计，例如模板中用于校验权限的 SaToken 框架就有借用 Redis 进行分布式登陆或校验的需求，系统缓存的过程对开发者能做到透明。
 
-##### 整合Redisson
+1. 取消排除 `RedisAutoConfiguration`  依赖：
 
-===> 未完待续
+   ```yaml
+   spring:
+     autoconfigure:
+       exclude:
+         # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，redisson相关配置也需要依赖这个类，预先关闭）
+         #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+   ```
+
+2. 修改Redis相关配置，切记注意单机模式和集群模式无法共存，默认开启单机模式，注释掉集群模式相关代码，同时默认没有密码，所以密码也被注释掉：
+
+   ```yaml
+   spring: 
+     # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+     redis:
+       # 单机地址（单价模式配置和集群模式配置只能存在一个）
+       host: redis IP
+       # 单机端口，默认为6379
+       port: redis 端口
+       # 集群地址（单价模式配置和集群模式配置只能存在一个）
+       #cluster:
+       #  nodes:
+       #    - xxx.xxx.xxx.xxx:16379
+       #    - xxx.xxx.xxx.xxx:16380
+       #    - xxx.xxx.xxx.xxx:16381
+       #    - xxx.xxx.xxx.xxx:16382
+       #    - xxx.xxx.xxx.xxx:16383
+       #    - xxx.xxx.xxx.xxx:16384
+       # 数据库索引
+       database: 0
+       # 密码（考虑是否需要密码）
+       #password: 123456
+       # 连接超时时间
+       timeout: 3s
+       # redis连接池
+       lettuce:
+         pool:
+           min-idle: 8
+           max-idle: 16
+           max-active: 32
+   ```
+
+3. 此时项目就能够直接启动，Redis相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了spring-boot-starter-data-redis中RedisTemplate的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入Redis之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见**整合Redisson**；
+
+##### 整合Redisson（业务缓存）
+
+业务缓存服务主要是为了满足开发者在编码过程中的缓存需求，例如接口限流、分布式锁等。
+
+1. 首先完成**整合Redis**步骤，两者整合的Redis数据源可以不相同，如果相同，建议使用不同的数据库进行存储两种不同缓存的存储；
+
+2. 修改Redisson配置，此时单机版本和集群版本的启动状态可以自定义：
+
+   - 都不开启（都为false）：系统不会将 Redisson 相关依赖纳入发转控制容器中；
+   - 仅开启一个；
+   - 都开启（都为true）：系统只会参考单机版本的Redisson配置；
+
+   ```yaml
+   # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
+   # 如果同时开启单机版本和集群版本，只有单机版本生效
+   redisson:
+     # 线程池数量
+     threads: 4
+     # Netty线程池数量
+     nettyThreads: 8
+     # redis单机版本
+     singleServerConfig:
+       # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
+       enableSingle: true
+       # 单机地址（一定要在redis协议下）
+       address: redis://xxx.xxx.xxx.xxx:xxxx
+       # 数据库索引
+       database: 1
+       # 密码（考虑是否需要密码）
+       #password: 123456
+       # 命令等待超时，单位：毫秒
+       timeout: 3000
+       # 发布和订阅连接池大小
+       subscriptionConnectionPoolSize: 50
+       # 最小空闲连接数
+       connectionMinimumIdleSize: 8
+       # 连接池大小
+       connectionPoolSize: 32
+       # 连接空闲超时，单位：毫秒
+       idleConnectionTimeout: 10000
+     # redis集群版本
+     clusterServersConfig:
+       # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+       enableCluster: false
+       # redis集群节点（一定要在redis协议下）
+       nodeAddresses:
+         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:xxxx
+       # 密码（考虑是否需要密码）
+       #password: 123456
+       # master最小空闲连接数
+       masterConnectionMinimumIdleSize: 32
+       # master连接池大小
+       masterConnectionPoolSize: 64
+       # slave最小空闲连接数
+       slaveConnectionMinimumIdleSize: 32
+       # slave连接池大小
+       slaveConnectionPoolSize: 64
+       # 连接空闲超时，单位：毫秒
+       idleConnectionTimeout: 10000
+       # 命令等待超时，单位：毫秒
+       timeout: 3000
+       # 发布和订阅连接池大小
+       subscriptionConnectionPoolSize: 50
+   ```
+
+3. 此时项目就能够直接启动，Redisson相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对Redisson进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 和限流工具类 RateLimitUtils 供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 
