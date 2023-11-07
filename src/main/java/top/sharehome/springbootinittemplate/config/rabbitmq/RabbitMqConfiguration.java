@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * 消息队列RabbitMQ配置
+ * 消息队列RabbitMQ实例配置
  *
  * @author AntonyCheng
  */
@@ -39,14 +39,14 @@ public class RabbitMqConfiguration {
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             System.out.println(ack);
             if (ack) {
-                log.info("\n确认消息成功送到交换机(Exchange)，相关数据：{}", correlationData);
+                log.info(">>>>>>>>>> 确认消息成功送到交换机(Exchange)，相关数据：{}", correlationData);
             } else {
-                log.error("\n确认消息没能送到交换机(Exchange)，相关数据：{}，错误原因：{}", correlationData, cause);
+                log.error(">>>>>>>>>> 确认消息没能送到交换机(Exchange)，相关数据：{}，错误原因：{}", correlationData, cause);
             }
         });
         //确认消息送到队列(Queue)回调，只有出错了才会有响应。
         rabbitTemplate.setReturnsCallback(returnedMessage -> {
-            log.error("\n确认消息没能送到队列(Queue)，发生消息：{}，回应码：{}，回应信息：{}，交换机：{}，路由键值：{}",
+            log.error(">>>>>>>>>> 确认消息没能送到队列(Queue)，发生消息：{}，回应码：{}，回应信息：{}，交换机：{}，路由键值：{}",
                     returnedMessage.getMessage(),
                     returnedMessage.getReplyCode(),
                     returnedMessage.getReplyText(),
@@ -55,48 +55,6 @@ public class RabbitMqConfiguration {
         });
         log.info(">>>>>>>>>>> rabbitmq config init.");
         return rabbitTemplate;
-    }
-
-    // todo 下面是交换机和队列的相关定义
-    public static final String EXCHANGE_NAME = "DemoExchange";
-
-    public static final String QUEUE_NAME = "DemoQueue";
-
-    /**
-     * 注册交换机实例
-     *
-     * @return 返回交换机实例
-     */
-    @Bean
-    public Exchange demoExchange() {
-        return new TopicExchange(EXCHANGE_NAME, true, false, null);
-    }
-
-    /**
-     * 注册队列实例
-     *
-     * @param connectionFactory 连接工厂接口
-     * @return 返回结果
-     */
-    @Bean
-    public Queue demoQueue(ConnectionFactory connectionFactory) {
-        Queue queue = new Queue(QUEUE_NAME, true, false, false, null);
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
-        rabbitAdmin.setAutoStartup(true);
-        rabbitAdmin.declareQueue(queue);
-        return queue;
-    }
-
-    /**
-     * 返回绑定关系
-     *
-     * @param demoQueue    队列实例名称
-     * @param demoExchange 交换机实例名称
-     * @return 返回结果
-     */
-    @Bean
-    public Binding demoBinding(Queue demoQueue, Exchange demoExchange) {
-        return BindingBuilder.bind(demoQueue).to(demoExchange).with("demo.*").noargs();
     }
 
     /**

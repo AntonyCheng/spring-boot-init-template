@@ -132,6 +132,7 @@ spring:
       mandatory: true
     # 是否手动ACK
     listener:
+      type: simple
       direct:
         acknowledge-mode: manual
       simple:
