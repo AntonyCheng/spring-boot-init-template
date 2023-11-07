@@ -2,16 +2,20 @@ package top.sharehome.springbootinittemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.apache.calcite.Demo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import top.sharehome.springbootinittemplate.config.rabbitmq.customize.DemoRabbitMq;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
+import top.sharehome.springbootinittemplate.utils.rabbitmq.RabbitMqUtils;
+import top.sharehome.springbootinittemplate.utils.rabbitmq.model.RabbitMqMessage;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
 
@@ -169,6 +173,16 @@ class MainApplicationTests {
     @Test
     void testCosUtilsDelete() {
         TencentUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/03/5591bee0dcc14ad6b20d7fb8d78414f7_README.md");
+    }
+
+    /**
+     * TODO 测试RabbitMqUtils
+     */
+    @Test
+    void testRabbitMqUtils() {
+        RabbitMqUtils.send("abc", DemoRabbitMq.class);
+        RabbitMqMessage receive = RabbitMqUtils.receive(DemoRabbitMq.class);
+        System.out.println(receive);
     }
 
 }

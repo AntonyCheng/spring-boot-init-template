@@ -1,6 +1,8 @@
-package top.sharehome.springbootinittemplate.config.rabbitmq.base;
+package top.sharehome.springbootinittemplate.utils.rabbitmq.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -9,8 +11,9 @@ import lombok.experimental.Accessors;
  * @author AntonyCheng
  */
 @Data
-@Accessors(chain = true)
-public class BaseMsg {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RabbitMqMessage {
 
     /**
      * 消息id
