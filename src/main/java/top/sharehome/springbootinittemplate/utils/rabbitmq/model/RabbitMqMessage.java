@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 消息队列消息基类
+ * 消息队列消息类
  *
  * @author AntonyCheng
  */

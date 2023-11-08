@@ -2,14 +2,16 @@ package top.sharehome.springbootinittemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import org.apache.calcite.Demo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import top.sharehome.springbootinittemplate.config.rabbitmq.customize.DemoRabbitMq;
+import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
+import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMq;
+import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDelay;
+import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDlx;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
@@ -176,13 +178,33 @@ class MainApplicationTests {
     }
 
     /**
-     * TODO 测试RabbitMqUtils
+     * 测试RabbitMqUtils
      */
     @Test
-    void testRabbitMqUtils() {
-        RabbitMqUtils.send("abc", DemoRabbitMq.class);
-        RabbitMqMessage receive = RabbitMqUtils.receive(DemoRabbitMq.class);
-        System.out.println(receive);
+    void testRabbitMqUtils() throws InterruptedException {
+        RabbitMqUtils.defaultSendMq("1", "1");
+        RabbitMqMessage rabbitMqMessage = RabbitMqUtils.defaultReceiveMsg();
+        System.out.println(rabbitMqMessage);
+        System.out.println("=====1=====");
+
+        RabbitMqUtils.defaultSendMqWithDlx("2", "22");
+        RabbitMqMessage rabbitMqMessage1 = RabbitMqUtils.defaultReceiveMsgWithDlx();
+        System.out.println(rabbitMqMessage1);
+        System.out.println("=====2=====");
+
+        RabbitMqUtils.defaultSendMqWithDlx("3", "333");
+        ThreadUtils.sleep(Duration.ofSeconds(20));
+        RabbitMqMessage rabbitMqMessage2 = RabbitMqUtils.defaultReceiveMsgWithDlx();
+        System.out.println(rabbitMqMessage2);
+        RabbitMqMessage rabbitMqMessage3 = RabbitMqUtils.defaultReceiveMsgWithDlxInDlx();
+        System.out.println(rabbitMqMessage3);
+        System.out.println("=====3=====");
+
+        RabbitMqUtils.defaultSendMqWithDelay("4", "444");
+        RabbitMqMessage rabbitMqMessage4 = RabbitMqUtils.defaultReceiveMsgWithDelay();
+        System.out.println(rabbitMqMessage4);
+        System.out.println("=====4=====");
+
     }
 
 }

@@ -37,7 +37,6 @@ public class RabbitMqConfiguration {
         //为了避免解除单例模式，这里将交换机回调和队列回调写进配置类中，这样就不用去设置非单例模式
         //确认消息送到交换机(Exchange)回调
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            System.out.println(ack);
             if (ack) {
                 log.info(">>>>>>>>>> 确认消息成功送到交换机(Exchange)，相关数据：{}", correlationData);
             } else {
