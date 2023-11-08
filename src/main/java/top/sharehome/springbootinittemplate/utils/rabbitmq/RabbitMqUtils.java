@@ -183,7 +183,7 @@ public class RabbitMqUtils {
      */
     public static void sendMq(Object message, Class<? extends BaseCustomizeMq> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeName;
             String bindingRouteKey;
             try {
@@ -215,7 +215,7 @@ public class RabbitMqUtils {
      */
     public static void sendMq(String msgId, Object message, Class<? extends BaseCustomizeMq> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeName;
             String bindingRouteKey;
             try {
@@ -247,7 +247,7 @@ public class RabbitMqUtils {
     public static RabbitMqMessage receiveMsg(Class<? extends BaseCustomizeMq> rabbitmqClass) {
         String className = rabbitmqClass.getName();
         String queueName;
-        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMq", className.split(rabbitmqClass.getPackage().getName())[1])) {
             try {
                 Field queueNameField = rabbitmqClass.getField("QUEUE_NAME");
                 queueName = (String) queueNameField.get(null);
@@ -274,7 +274,7 @@ public class RabbitMqUtils {
      */
     public static void sendMqWithDlx(Object message, Class<? extends BaseCustomizeMqWithDlx> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeWithDlxName;
             String bindingWithDlxRoutingKey;
             try {
@@ -306,7 +306,7 @@ public class RabbitMqUtils {
      */
     public static void sendMqWithDlx(String msgId, Object message, Class<? extends BaseCustomizeMqWithDlx> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeWithDlxName;
             String bindingWithDlxRoutingKey;
             try {
@@ -338,7 +338,7 @@ public class RabbitMqUtils {
     public static RabbitMqMessage receiveMsgWithDlx(Class<? extends BaseCustomizeMqWithDlx> rabbitmqClass) {
         String className = rabbitmqClass.getName();
         String queueWithDlxName;
-        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackage().getName())[1])) {
             try {
                 Field queueWithDlxNameField = rabbitmqClass.getField("QUEUE_WITH_DLX_NAME");
                 queueWithDlxName = (String) queueWithDlxNameField.get(null);
@@ -366,7 +366,7 @@ public class RabbitMqUtils {
     public static RabbitMqMessage receiveMsgWithDlxInDlx(Class<? extends BaseCustomizeMqWithDlx> rabbitmqClass) {
         String className = rabbitmqClass.getName();
         String dlxQueueName;
-        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDlx", className.split(rabbitmqClass.getPackage().getName())[1])) {
             try {
                 Field dlxQueueNameField = rabbitmqClass.getField("DLX_QUEUE_NAME");
                 dlxQueueName = (String) dlxQueueNameField.get(null);
@@ -393,7 +393,7 @@ public class RabbitMqUtils {
      */
     public static void sendMqWithDelay(Object message, Class<? extends BaseCustomizeMqWithDelay> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeWithDelayName;
             String bindingWithDelayRoutingKey;
             try {
@@ -425,7 +425,7 @@ public class RabbitMqUtils {
      */
     public static void sendMqWithDelay(String msgId, Object message, Class<? extends BaseCustomizeMqWithDelay> rabbitmqClass) {
         String className = rabbitmqClass.getName();
-        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackage().getName())[1])) {
             String exchangeWithDelayName;
             String bindingWithDelayRoutingKey;
             try {
@@ -457,7 +457,7 @@ public class RabbitMqUtils {
     public static RabbitMqMessage receiveMsgWithDelay(Class<? extends BaseCustomizeMqWithDelay> rabbitmqClass) {
         String className = rabbitmqClass.getName();
         String delayDlxQueueName;
-        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackageName())[1])) {
+        if (!StringUtils.equals("BaseCustomizeMqWithDelay", className.split(rabbitmqClass.getPackage().getName())[1])) {
             try {
                 Field delayDlxQueueNameField = rabbitmqClass.getField("DELAY_DLX_QUEUE_NAME");
                 delayDlxQueueName = (String) delayDlxQueueNameField.get(null);

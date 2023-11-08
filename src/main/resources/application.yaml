@@ -117,13 +117,17 @@ spring:
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
     enable: false
-    # 单机RabbitMQ（单价模式配置和集群模式配置只能存在一个）
+    # 单机 RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
     host: xxx.xxx.xxx.xxx
+    # 单机 RabbitMQ 端口
     port: 25671
     # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
     #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
+    # 虚拟主机
     virtual-host: /
+    # 用户名
     username: admin
+    # 密码
     password: admin123456
     # 消息确认（ACK）
     publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)

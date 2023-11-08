@@ -5,30 +5,6 @@
 
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
-* [SpringBoot初始化模板](#springboot初始化模板)
-  * [模板特点](#模板特点)
-    * [主流框架](#主流框架)
-    * [业务特性](#业务特性)
-  * [业务功能](#业务功能)
-    * [示例业务](#示例业务)
-    * [单元测试](#单元测试)
-  * [快速上手](#快速上手)
-    * [必须执行](#必须执行)
-    * [可选执行](#可选执行)
-      * [整合缓存服务](#整合缓存服务)
-        * [整合Redis（系统缓存）](#整合redis系统缓存)
-        * [整合Redisson（业务缓存）](#整合redisson业务缓存)
-      * [整合消息队列](#整合消息队列)
-      * [整合ElasticSearch](#整合elasticsearch)
-      * [整合对象存储服务](#整合对象存储服务)
-        * [整合腾讯云COS](#整合腾讯云cos)
-        * [整合MinIO](#整合minio)
-        * [整合阿里云OSS](#整合阿里云oss)
-      * [配置SaToken](#配置satoken)
-      * [配置XXL-JOB](#配置xxl-job)
-      * [配置SpringBootAdmin](#配置springbootadmin)
-  * [申明&联系我](#申明联系我)
-
 ## 模板特点
 
 ### 主流框架
@@ -125,7 +101,6 @@
        url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
-   ......
    ```
 
    > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 框架，理解相关配置；
@@ -138,7 +113,7 @@
 
 #### 整合缓存服务
 
-**说明**：该项目中存在两种 Redis 服务，第一种是系统缓存服务（**对应整合Redis**），第二种是业务缓存服务（**对应整合Redisson**）。前者承担系统框架本身的缓存服务，例如用户分布式登陆信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
+**说明**：该模板中存在两种 Redis 服务，第一种是系统缓存服务（**对应整合Redis**），第二种是业务缓存服务（**对应整合Redisson**）。前者承担系统框架本身的缓存服务，例如用户分布式登陆信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
 
 ##### 整合Redis（系统缓存）
 
@@ -263,7 +238,61 @@
 
 #### 整合消息队列
 
-===> 未完待续
+**说明**：该模板中存在一套较为全面的 RabbitMQ 消息队列解决方案，具有消费者手动 ACK 示例、死信队列、延迟队列等特性，开发者不仅可以直接使用模板中存在的默认队列，还可以根据自己的需求对原有的解决方案进行拓展以设计出满足自身项目特色的消息队列，同时该模板对拓展的消息队列具有一定规则性兼容。
+
+##### 激活消息队列
+
+1. 启动消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除），然后根据自己搭建的 RabbitMQ 进行相关配置：
+
+   ```yaml
+   spring: 
+     # 修改rabbitmq配置
+     rabbitmq:
+       # todo 是否开启RabbitMQ（预先关闭）
+       enable: true
+       # 单机RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
+       host: xxx.xxx.xxx.xxx
+       # 单机RabbitMQ端口
+       port: 25671
+       # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
+       #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
+       # 使用到的虚拟主机
+       virtual-host: /
+       # 用户名
+       username: admin
+       # 密码
+       password: admin123456
+       # 消息确认（ACK）
+       publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)
+       publisher-returns: true #确认消息已发送到队列(Queue)
+       template:
+         mandatory: true
+       # 是否手动ACK
+       listener:
+         type: simple
+         direct:
+           acknowledge-mode: manual
+         simple:
+           acknowledge-mode: manual
+   ```
+
+2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，在 `utils/rabbitmq/RabbitMqUtils` 工具类中设计由“default”开头的方法，当然开发者也可以通过一定规则自定义消息队列，这些消息队列会与 RabbitMqUtils工具类兼容。
+
+##### 自定义消息队列
+
+1. 关于自定义消息队列，这里给出最简单的方式，首先开发者需要考虑自定义哪种形式的消息队列：
+
+   - 普通消息队列：即最基础的消息队列，能够支持最基本的消息投递和消息消费的能力，简单易懂；
+   - 带有死信队列的消息队列：与普通消息队列相比，带有死信队列的消息队列能够在消息被拒绝消费之后选择将消息列入死信队列中，而并不是直接丢弃或者再次扔进队列中等待消费，这种的应用场景多用于不可丢失消息的处理或者对拒绝消费的消息再处理；
+   - 延迟队列：投递消息之后并不能从队列中马上取出消息进行消费。
+
+   这些具体的消息队列特性往往需要开发者掌握一定的前置知识基础；
+
+2. 然后粘贴 `config/default_mq/DefaultRabbitMq` 类，复制到 `config/customize_mq` 包中，并且重命名（在 DefaultRabbitMq 的文档注释中有具体说明），注意不要和 DefaultRabbitMq 类重复，不然会造成反转控制冲突，这里假设命名成 TestRabbitMq；
+
+3. 在 TestRabbitMq 中进行文本替换，将所有“default”替换成“test”即可，如果想要使用自定义的消息队列配置，直接使用 RabbitMqUtils 工具类中形参带有“Class”的方法即可（详情见 RabbitMqUtils 文档注释）。
+
+注意：这里只给出了最简单的自定义方式，开发者在理解这种“替换”变换和阅读相关源码的基础上可以对模板进行更加自定义的改造。
 
 #### 整合ElasticSearch
 
@@ -284,6 +313,16 @@
 ===> 未完待续
 
 #### 配置SaToken
+
+##### 开启鉴权
+
+===> 未完待续
+
+##### 开启认证
+
+===> 未完待续
+
+##### 开启JWT
 
 ===> 未完待续
 

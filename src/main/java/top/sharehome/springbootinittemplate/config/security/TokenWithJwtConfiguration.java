@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 public class TokenWithJwtConfiguration {
 
     /**
-     * Sa-Token 整合 jwt (Simple 简单模式，一共有三种模式，详情见：https://sa-token.cc/doc.html#/plugin/jwt-extend)
+     * Sa-Token 整合 jwt (该模板使用 Simple 简单模式，一共有三种模式，详情见：https://sa-token.cc/doc.html#/plugin/jwt-extend)
      */
     @Bean
     public StpLogic getStpLogicJwt() {
