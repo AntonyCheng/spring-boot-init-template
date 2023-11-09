@@ -234,10 +234,49 @@ redisson:
 # Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
   # todo 是否启动（预先关闭）
-  enable: false
+  enable: true
+  # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
   address: xxx.xxx.xxx.xxx:29200
+  # 如果无账号密码则可不配置此行
   #username:
+  # 如果无账号密码则可不配置此行
   #password:
+  # 默认为http 可缺省
+  schema: http
+  # 默认为true 打印banner 若您不期望打印banner,可配置为false
+  banner: false
+  # 心跳策略时间 单位:ms
+  keep-alive-millis: 30000
+  # 连接超时时间 单位:ms
+  connect-timeout: 5000
+  # 通信超时时间 单位:ms
+  socket-timeout: 600000
+  # 连接请求超时时间 单位:ms
+  connection-request-timeout: 5000
+  # 最大连接数 单位:个
+  max-conn-total: 100
+  # 最大连接路由数 单位:个
+  max-conn-per-route: 100
+  global-config:
+    # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,,默认开启此模式
+    process-index-mode: manual
+    # 开启控制台打印通过本框架生成的DSL语句,默认为开启,测试稳定后的生产环境建议关闭,以提升少量性能
+    print-dsl: true
+    # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁.
+    distributed: false
+    # 重建索引超时时间 单位小时,默认72H 可根据ES中存储的数据量调整
+    reindexTimeOutHours: 72
+    # 异步处理索引是否阻塞主线程 默认阻塞 数据量过大时调整为非阻塞异步进行 项目启动更快
+    async-process-index-blocking: true
+    db-config:
+      # 是否开启下划线转驼峰 默认为false
+      map-underscore-to-camel-case: false
+      # 索引前缀,可用于区分环境  默认为空 用法和MP的tablePrefix一样的作用和用法
+      index-prefix: template_
+      # id生成策略 customize为自定义,id值由用户生成,比如取MySQL中的数据id,如缺省此项配置,则id默认策略为es自动生成
+      id-type: customize
+      # 数据刷新策略,默认为不刷新,若对数据时效性要求比较高,可以调整为immediate,但性能损耗高,也可以调整为折中的wait_until
+      refresh-policy: immediate
 
 # 对象存储配置
 oss:
