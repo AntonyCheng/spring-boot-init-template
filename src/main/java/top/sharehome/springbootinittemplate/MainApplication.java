@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate;
 
+import org.dromara.easyes.starter.register.EsMapperScan;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ import top.sharehome.springbootinittemplate.utils.rabbitmq.RabbitMqUtils;
  */
 @SpringBootApplication
 @MapperScan("top.sharehome.springbootinittemplate.mapper")
+@EsMapperScan("top.sharehome.springbootinittemplate.elastisearch.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @EnableConfigurationProperties

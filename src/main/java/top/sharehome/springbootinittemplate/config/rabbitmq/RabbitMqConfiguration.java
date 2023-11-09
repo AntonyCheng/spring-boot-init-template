@@ -27,7 +27,7 @@ public class RabbitMqConfiguration {
      * @param connectionFactory 连接工厂接口
      * @return 返回结果
      */
-    @Bean
+    @Bean("rabbitTemplateBean")
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         //设置开启Mandatory,才能触发回调函数,无论消息推送结果怎么样都强制调用回调函数(设置消息进入交换机后未被队列接收的消息不被丢弃由broker保存,false为丢弃)

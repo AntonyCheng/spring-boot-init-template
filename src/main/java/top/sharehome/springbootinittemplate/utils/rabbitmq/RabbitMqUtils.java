@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDelay;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDlx;
-import top.sharehome.springbootinittemplate.config.rabbitmq.RabbitMqConfiguration;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDelay;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDlx;
@@ -27,14 +26,14 @@ import java.util.UUID;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnBean(RabbitMqConfiguration.class)
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
 @Slf4j
 public class RabbitMqUtils {
 
     /**
      * 被封装的RabbitMq客户端
      */
-    private static final RabbitTemplate RABBITMQ_TEMPLATE = SpringContextHolder.getBean(RabbitTemplate.class);
+    private static final RabbitTemplate RABBITMQ_TEMPLATE = (RabbitTemplate) SpringContextHolder.getBean("rabbitTemplateBean");
 
     /**
      * 向默认的不带有死信队列的消息队列发送消息
@@ -71,7 +70,7 @@ public class RabbitMqUtils {
      * @return 返回消息体
      */
     public static RabbitMqMessage defaultReceiveMsg() {
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMq.QUEUE_NAME,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMq.QUEUE_NAME, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -113,7 +112,7 @@ public class RabbitMqUtils {
      * @return 返回消息体
      */
     public static RabbitMqMessage defaultReceiveMsgWithDlx() {
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.QUEUE_WITH_DLX_NAME,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.QUEUE_WITH_DLX_NAME, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -126,7 +125,7 @@ public class RabbitMqUtils {
      * @return 返回消息体
      */
     public static RabbitMqMessage defaultReceiveMsgWithDlxInDlx() {
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.DLX_QUEUE_NAME,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.DLX_QUEUE_NAME, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -136,7 +135,7 @@ public class RabbitMqUtils {
     /**
      * 向默认的延迟队列发送消息
      *
-     * @param message       消息体
+     * @param message 消息体
      */
     public static void defaultSendMqWithDelay(Object message) {
         String msgText = JSON.toJSONString(message);
@@ -150,8 +149,8 @@ public class RabbitMqUtils {
     /**
      * 向默认的延迟队列发送消息
      *
-     * @param msgId         消息ID
-     * @param message       消息体
+     * @param msgId   消息ID
+     * @param message 消息体
      */
     public static void defaultSendMqWithDelay(String msgId, Object message) {
         String msgText = JSON.toJSONString(message);
@@ -168,7 +167,7 @@ public class RabbitMqUtils {
      * @return 返回消息体
      */
     public static RabbitMqMessage defaultReceiveMsgWithDelay() {
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDelay.DELAY_DLX_QUEUE_NAME,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDelay.DELAY_DLX_QUEUE_NAME, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -259,7 +258,7 @@ public class RabbitMqUtils {
             log.error(">>>>>>>>>> the custom rabbitmq [{}] is incorrect", className);
             return null;
         }
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueName,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueName, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -350,7 +349,7 @@ public class RabbitMqUtils {
             log.error(">>>>>>>>>> the custom rabbitmq with dlx [{}] is incorrect", className);
             return null;
         }
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueWithDlxName,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueWithDlxName, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -378,7 +377,7 @@ public class RabbitMqUtils {
             log.error(">>>>>>>>>> the custom rabbitmq with dlx [{}] is incorrect", className);
             return null;
         }
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(dlxQueueName,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(dlxQueueName, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }
@@ -469,7 +468,7 @@ public class RabbitMqUtils {
             log.error(">>>>>>>>>> the custom rabbitmq with delay [{}] is incorrect", className);
             return null;
         }
-        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(delayDlxQueueName,3000L);
+        Object res = RABBITMQ_TEMPLATE.receiveAndConvert(delayDlxQueueName, 3000L);
         if (ObjectUtils.isEmpty(res)) {
             return null;
         }

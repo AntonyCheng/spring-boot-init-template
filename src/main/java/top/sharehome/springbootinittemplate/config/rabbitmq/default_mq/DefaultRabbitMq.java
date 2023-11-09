@@ -5,10 +5,9 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import top.sharehome.springbootinittemplate.config.rabbitmq.RabbitMqConfiguration;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
 
 /**
@@ -19,7 +18,7 @@ import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
  */
 @Slf4j
 @Component
-@ConditionalOnBean(RabbitMqConfiguration.class)
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
 public class DefaultRabbitMq extends BaseCustomizeMq {
 
     /**

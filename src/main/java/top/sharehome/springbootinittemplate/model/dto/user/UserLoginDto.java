@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.model.dto.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.GetGroup;
 
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserLoginDto implements Serializable {
 
     /**

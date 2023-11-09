@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.model.dto.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserRegisterDto implements Serializable {
 
     /**
