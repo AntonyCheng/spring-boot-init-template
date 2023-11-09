@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.elastisearch.entity;
+package top.sharehome.springbootinittemplate.elasticsearch.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

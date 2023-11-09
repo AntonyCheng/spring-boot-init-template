@@ -54,7 +54,7 @@
 - **工具类**
   - Lombok 1.18.30
   - hutool 5.8.22
-  - commons-lang3
+  - commons-lang 3
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -72,7 +72,7 @@
     - elasticsearch 7.14.0
     - elasticsearch-rest-high-level-client 7.14.0
     - logstash-logback-encoder 7.3
-  - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎操作的开源框架
+  - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎，可以像Mybatis-Plus操作MySQL一样操作的开源框架
 - **对象存储（OSS）**
   - 腾讯云 COS 5.6.155
   - MinIO 8.5.6
@@ -82,7 +82,7 @@
   - itext 7.2.5
 - **外接平台**
   - XXL-JOB 2.4.0 == 分布式定时任务管理平台
-  - SpringBootAdmin 2.7.4 == 监控平台
+  - SpringBootAdmin 2.7.4 == SpringBoot服务监控平台
 
 ### 业务特性
 
@@ -102,18 +102,18 @@
 
 ### 示例业务
 
-- 提供模板SQL示例文件（业务数据库&XXL-JOB数据库）
-- 用户登陆、注册、注销、信息获取
-- Spring Scheduler 单机版定时任务示例
+- 提供模板 SQL 示例文件（业务数据库 & XXL-JOB数据库）；
+- 用户登陆、注册、注销、信息获取；
+- Spring Scheduler 单机版定时任务示例。
 
 ### 单元测试
 
-- JUnit5 单元测试
-- 示例单元测试类
+- JUnit5 单元测试；
+- 示例单元测试类。
 
 ## 快速上手
 
-> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于application.yaml文件。
+> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于 application.yaml 文件。
 
 ### 必须执行
 
@@ -127,7 +127,7 @@
        dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
        # 修改url地址
-       url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+       url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
    ```
@@ -142,11 +142,11 @@
 
 #### 整合缓存服务
 
-**说明**：该模板中存在两种 Redis 服务，第一种是系统缓存服务（**对应整合Redis**），第二种是业务缓存服务（**对应整合Redisson**）。前者承担系统框架本身的缓存服务，例如用户分布式登陆信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
+**说明**：该模板中存在两种 Redis 服务，第一种是系统缓存服务（**对应整合 Redis **），第二种是业务缓存服务（**对应整合 Redisson **）。前者承担系统框架本身的缓存服务，例如用户分布式登陆信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
 
 ##### 整合Redis（系统缓存）
 
-系统缓存服务主要为一些依赖spring-boot-starter-data-redis原生操作的框架而设计，例如模板中用于校验权限的 SaToken 框架就有借用 Redis 进行分布式登陆或校验的需求，系统缓存的过程对开发者能做到透明。
+系统缓存服务主要为一些依赖 spring-boot-starter-data-redis 原生操作的框架而设计，例如模板中用于校验权限的 SaToken 框架就有借用 Redis 进行分布式登陆或校验的需求，系统缓存的过程对开发者能做到透明。
 
 1. 取消排除 `RedisAutoConfiguration`  依赖：
 
@@ -158,25 +158,25 @@
          #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
    ```
 
-2. 修改Redis相关配置，切记注意单机模式和集群模式无法共存，默认开启单机模式，注释掉集群模式相关代码，同时默认没有密码，所以密码也被注释掉：
+2. 修改 Redis 相关配置，切记注意单机模式和集群模式无法共存，默认开启单机模式，注释掉集群模式相关代码，同时默认没有密码，所以密码也被注释掉：
 
    ```yaml
    spring: 
      # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
      redis:
        # 单机地址（单价模式配置和集群模式配置只能存在一个）
-       host: redis IP
+       host: xxx.xxx.xxx.xxx
        # 单机端口，默认为6379
-       port: redis 端口
+       port: 6379
        # 集群地址（单价模式配置和集群模式配置只能存在一个）
        #cluster:
        #  nodes:
-       #    - xxx.xxx.xxx.xxx:16379
-       #    - xxx.xxx.xxx.xxx:16380
-       #    - xxx.xxx.xxx.xxx:16381
-       #    - xxx.xxx.xxx.xxx:16382
-       #    - xxx.xxx.xxx.xxx:16383
-       #    - xxx.xxx.xxx.xxx:16384
+       #    - xxx.xxx.xxx.xxx:6379
+       #    - xxx.xxx.xxx.xxx:6380
+       #    - xxx.xxx.xxx.xxx:6381
+       #    - xxx.xxx.xxx.xxx:6382
+       #    - xxx.xxx.xxx.xxx:6383
+       #    - xxx.xxx.xxx.xxx:6384
        # 数据库索引
        database: 0
        # 密码（考虑是否需要密码）
@@ -191,19 +191,19 @@
            max-active: 32
    ```
 
-3. 此时项目就能够直接启动，Redis相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了spring-boot-starter-data-redis中RedisTemplate的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入Redis之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见**整合Redisson**；
+3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见**整合 Redisson **。
 
 ##### 整合Redisson（业务缓存）
 
 业务缓存服务主要是为了满足开发者在编码过程中的缓存需求，例如接口限流、分布式锁等。
 
-1. 首先完成**整合Redis**步骤，两者整合的Redis数据源可以不相同，如果相同，建议使用不同的数据库进行存储两种不同缓存的存储；
+1. 首先完成**整合 Redis **步骤，两者整合的Redis数据源可以不相同，如果相同，建议使用不同的数据库进行存储两种不同缓存的存储；
 
-2. 修改Redisson配置，此时单机版本和集群版本的启动状态可以自定义：
+2. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
-   - 都不开启（都为false）：系统不会将 Redisson 相关依赖纳入发转控制容器中；
+   - 都不开启（都为 false ）：系统不会将 Redisson 相关依赖纳入发转控制容器中；
    - 仅开启一个；
-   - 都开启（都为true）：系统只会参考单机版本的Redisson配置；
+   - 都开启（都为 true ）：系统只会参考单机版本的 Redisson 配置；
 
    ```yaml
    # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
@@ -218,7 +218,7 @@
        # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
        enableSingle: true
        # 单机地址（一定要在redis协议下）
-       address: redis://xxx.xxx.xxx.xxx:xxxx
+       address: redis://xxx.xxx.xxx.xxx:6379
        # 数据库索引
        database: 1
        # 密码（考虑是否需要密码）
@@ -239,12 +239,12 @@
        enableCluster: false
        # redis集群节点（一定要在redis协议下）
        nodeAddresses:
-         - redis://xxx.xxx.xxx.xxx:xxxx
-         - redis://xxx.xxx.xxx.xxx:xxxx
-         - redis://xxx.xxx.xxx.xxx:xxxx
-         - redis://xxx.xxx.xxx.xxx:xxxx
-         - redis://xxx.xxx.xxx.xxx:xxxx
-         - redis://xxx.xxx.xxx.xxx:xxxx
+         - redis://xxx.xxx.xxx.xxx:6379
+         - redis://xxx.xxx.xxx.xxx:6380
+         - redis://xxx.xxx.xxx.xxx:6381
+         - redis://xxx.xxx.xxx.xxx:6382
+         - redis://xxx.xxx.xxx.xxx:6383
+         - redis://xxx.xxx.xxx.xxx:6384
        # 密码（考虑是否需要密码）
        #password: 123456
        # master最小空闲连接数
@@ -263,7 +263,7 @@
        subscriptionConnectionPoolSize: 50
    ```
 
-3. 此时项目就能够直接启动，Redisson相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对Redisson进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 和限流工具类 RateLimitUtils 供开发者使用，使用参考示例单元测试类。
+3. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 和限流工具类 RateLimitUtils 供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 
@@ -271,20 +271,20 @@
 
 ##### 激活消息队列
 
-1. 启动消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除），然后根据自己搭建的 RabbitMQ 进行相关配置：
+1. 修改消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除），然后根据自己搭建的 RabbitMQ 进行相关配置：
 
    ```yaml
    spring: 
-     # 修改rabbitmq配置
+     # 修改Rabbitmq配置
      rabbitmq:
-       # todo 是否开启RabbitMQ（预先关闭）
+       # todo 是否开启RabbitMQ （预先关闭）
        enable: true
        # 单机RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
        host: xxx.xxx.xxx.xxx
        # 单机RabbitMQ端口
-       port: 25671
+       port: 5672
        # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
-       #addresses: xxx.xxx.xxx.xxx:25672,xxx.xxx.xxx.xxx:25673,xxx.xxx.xxx.xxx:25674
+       #addresses: xxx.xxx.xxx.xxx:5672,xxx.xxx.xxx.xxx:5673,xxx.xxx.xxx.xxx:5674
        # 使用到的虚拟主机
        virtual-host: /
        # 用户名
@@ -313,7 +313,7 @@
 
    - 普通消息队列：即最基础的消息队列，能够支持最基本的消息投递和消息消费的能力，简单易懂；
    - 带有死信队列的消息队列：与普通消息队列相比，带有死信队列的消息队列能够在消息被拒绝消费之后选择将消息列入死信队列中，而并不是直接丢弃或者再次扔进队列中等待消费，这种的应用场景多用于不可丢失消息的处理或者对拒绝消费的消息再处理；
-   - 延迟队列：投递消息之后并不能从队列中马上取出消息进行消费。
+   - 延迟队列：投递消息之后并不能从队列中马上取出消息进行消费；
 
    这些具体的消息队列特性往往需要开发者掌握一定的前置知识基础；
 
@@ -325,7 +325,92 @@
 
 #### 整合ElasticSearch
 
-===> 未完待续
+与其说是整合 ElasticSearch 搜索引擎，不如说是整合 Easy-ES 框架，正因为 Easy-ES 框架过于强大， ElasticSearch 那种繁琐的操作才能得以简化，但是不要依赖这个工具而不去深入了解学习 ElasticSearch 这个伟大的搜索引擎，Easy-ES 的开发者就已经说得很明白了：这套框架的是站在 elasticsearch-rest-high-level-client 和 Mybatis-Plus 的肩膀上创作的，而前者的底层操作逻辑正是 ElasticSearch 的操作逻辑。
+
+在使用该模板中的 ElasticSearch 相关功能之前一定要前往 Easy-ES 官网将快速入门部分通读一遍，要有一个大概的了解才能容易上手。
+
+1. 修改 Easy-ES 相关配置，重点关注 ElasticSearch 的部署地址，由于框架自身原因， ElasticSearch 的相关依赖被固定在 **7.14.0** ，好在 ElasticSearch 在小版本之间兼容性还不错，所以理论上部署 7.x.x 的 EalsticSearch 即可满足要求，当然推荐部署 7.14.0 版本的 ElasticSearch ，然而 ElasticSearch 7.x.x 这个大版本依旧在更新维护，所以可以放心使用：
+
+   ```yaml
+   # Easy-ES配置，需要使用ElasticSearch时将enable改为true
+   easy-es:
+     # todo 是否启动（预先关闭）
+     enable: true
+     # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
+     address: xxx.xxx.xxx.xxx:9200
+     # 如果无账号密码则可不配置此行
+     #username:
+     # 如果无账号密码则可不配置此行
+     #password:
+     # 默认为http 可缺省
+     schema: http
+     # 默认为true 打印banner 若您不期望打印banner,可配置为false
+     banner: false
+     # 心跳策略时间 单位:ms
+     keep-alive-millis: 30000
+     # 连接超时时间 单位:ms
+     connect-timeout: 5000
+     # 通信超时时间 单位:ms
+     socket-timeout: 600000
+     # 连接请求超时时间 单位:ms
+     connection-request-timeout: 5000
+     # 最大连接数 单位:个
+     max-conn-total: 100
+     # 最大连接路由数 单位:个
+     max-conn-per-route: 100
+     global-config:
+       # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,,默认开启此模式
+       process-index-mode: manual
+       # 开启控制台打印通过本框架生成的DSL语句,默认为开启,测试稳定后的生产环境建议关闭,以提升少量性能
+       print-dsl: true
+       # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁.
+       distributed: false
+       # 重建索引超时时间 单位小时,默认72H可根据ES中存储的数据量调整
+       reindexTimeOutHours: 72
+       # 异步处理索引是否阻塞主线程 默认阻塞 数据量过大时调整为非阻塞异步进行 项目启动更快
+       async-process-index-blocking: true
+       db-config:
+         # 是否开启下划线转驼峰 默认为false
+         map-underscore-to-camel-case: false
+         # 索引前缀,可用于区分环境  默认为空 用法和MP的tablePrefix一样的作用和用法
+         index-prefix: template_
+         # id生成策略 customize为自定义,id值由用户生成,比如取MySQL中的数据id,如缺省此项配置,则id默认策略为es自动生成
+         id-type: customize
+         # 数据刷新策略,默认为不刷新,若对数据时效性要求比较高,可以调整为immediate,但性能损耗高,也可以调整为折中的wait_until
+         refresh-policy: immediate
+   ```
+
+2. 配置完之后已经就能够使用一些方法了，但是并不是全部，想要让框架功能得以发挥就必须有操作 Mybatis-Plus 的思想，具体代码示例在最后一步，下面仅作文字说明；
+
+3. 准备一个包来存放属于 Easy-ES 映射接口，然后在项目启动类上使用 @EsMapperScan 注解注明该包的全包名：
+
+   ```java
+   ......
+   @EsMapperScan("xxx.xxx.xxx.mapper")
+   ......
+   public class MainApplication {
+   
+       public static void main(String[] args) {
+           SpringApplication.run(MainApplication.class, args);
+       }
+   
+   }
+   ```
+
+4. 创建一个包来存放属于 Easy-ES 的实体类，在实体类上使用 @IndexName 注解注明该类所对应的索引名（类似于 MySQL 中的表名），强制该模型存在一个 id 字段来作为实体类的 id ，这个 id 非常重要，在 Easy-ES 框架有许多方法依赖实体类 id；
+
+   ```java
+   ......
+   @IndexName("t_user")
+   ......
+   public class UserEs implements Serializable {
+       ......
+       private Long id;
+       ......
+   }
+   ```
+
+5. 该模板中也提供了使用的一个范例，在 `elasticsearch` 包中，同时在测试用例中也存在相关框架操作，如果还想了解更多，请在 Easy-ES 官网自行学习。
 
 #### 整合对象存储服务
 

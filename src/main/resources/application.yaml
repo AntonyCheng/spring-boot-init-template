@@ -234,7 +234,7 @@ redisson:
 # Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
   # todo 是否启动（预先关闭）
-  enable: true
+  enable: false
   # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
   address: xxx.xxx.xxx.xxx:29200
   # 如果无账号密码则可不配置此行

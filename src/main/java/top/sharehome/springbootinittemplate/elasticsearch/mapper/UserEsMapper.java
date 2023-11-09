@@ -1,7 +1,7 @@
-package top.sharehome.springbootinittemplate.elastisearch.mapper;
+package top.sharehome.springbootinittemplate.elasticsearch.mapper;
 
 import org.dromara.easyes.core.core.BaseEsMapper;
-import top.sharehome.springbootinittemplate.elastisearch.entity.UserEs;
+import top.sharehome.springbootinittemplate.elasticsearch.entity.UserEs;
 
 /**
  * 用户UserEsMapper类
