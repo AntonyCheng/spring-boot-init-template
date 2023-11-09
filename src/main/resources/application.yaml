@@ -84,7 +84,7 @@ spring:
   # mysql配置
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:sharding.yaml
+    url: jdbc:shardingsphere:classpath:mysql.yaml
     druid:
       # 初始连接数 ---- 可自定义
       initialSize: 5
