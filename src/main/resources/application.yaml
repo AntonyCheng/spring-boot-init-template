@@ -32,11 +32,13 @@ server:
       max: 800
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
+
 # 日志配置 ---- 可自定义
 logging:
   level:
     top.sharehome: debug
     org.springframework: warn
+
 # 纳入SpringBootAdmin监控体系
 management:
   # 排除一些组件的健康检查，交给开发者自己维护，防止SpringBootAdmin检测导致项目启动报错
@@ -56,6 +58,7 @@ management:
       base-path: /manage
       exposure:
         include: '*'
+
 # 公共配置文件
 spring:
   # 配置SpringBootAdmin项目所在地址
@@ -293,6 +296,19 @@ oss:
     # 桶名称
     bucketName: test-xxx
 
+# 配置SpringBoot任务调度
+schedule:
+  # 全量任务配置
+  once:
+    # todo 是否开启全量任务（预先关闭）
+    enable: false
+  # 循环任务配置
+  cycle:
+    # todo 是否开启循环任务（预先关闭）
+    enable: false
+    # 线程池大小（开启则必填）
+    threadPool: 10
+
 # Xxl-Job配置（如果是导入了模板sql，那么登陆账号/密码为：admin/123456）
 xxl:
   job:
@@ -308,9 +324,9 @@ xxl:
       appname: xxl-job-executor
       # 执行器端口号 执行器从38080开始往后写
       port: 38081
-      # 执行器注册：默认IP:PORT
+      # 执行器注册：默认IP:PORT（appname不为空，该处则可为空）
       address:
-      # 执行器IP：默认自动获取IP
+      # 执行器IP：默认自动获取IP（appname不为空，该处则可为空）
       ip:
       # 执行器运行日志文件存储磁盘路径
       logpath: ./logs/${spring.application.name}/xxl-job
@@ -319,6 +335,12 @@ xxl:
 
 # Sa-Token配置
 sa-token:
+  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
+  enableAuthorization: true
+  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
+  enableIdentification: true
+  # todo 是否使用jwt（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  enableJwt: false
   # token名称 (同时也是cookie名称)
   token-name: Authorization
   # token有效期 设为一天 (必定过期) 单位: 秒
@@ -343,12 +365,6 @@ sa-token:
   jwt-secret-key: abcdefghijklmnopqrstuvwxyz
   # 开启日志
   is-log: on
-  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
-  isAuthorization: true
-  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
-  isIdentification: true
-  # todo 是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
-  isJwt: false
 
 # MyBatisPlus配置
 # https://baomidou.com/config/

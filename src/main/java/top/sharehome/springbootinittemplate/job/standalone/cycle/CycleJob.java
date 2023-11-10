@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.job.standalone.cycle;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,9 @@ import java.util.Date;
  *
  * @author AntonyCheng
  */
-//@Component
+@Component
 @Slf4j
+@ConditionalOnProperty(prefix = "schedule.cycle", name = "enable", havingValue = "true")
 public class CycleJob {
 
     /**

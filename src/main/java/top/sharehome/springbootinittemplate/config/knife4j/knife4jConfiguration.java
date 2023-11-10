@@ -76,7 +76,7 @@ public class knife4jConfiguration {
      * 依赖注入日志输出
      */
     @PostConstruct
-    public void initDi() {
+    private void initDi() {
         log.info("############ knife4j config DI.");
     }
 

@@ -1,6 +1,8 @@
 server:
   port: 38078
 spring:
+  application:
+    name: spring-boot-admin
   boot:
     admin:
       context-path: /spring-boot-admin

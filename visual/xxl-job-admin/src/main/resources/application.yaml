@@ -17,6 +17,8 @@ management:
     mail:
       enabled: false
 spring:
+  application:
+    name: xxl-job-admin
   # 配置SpringBootAdmin项目所在地址
   boot:
     admin:

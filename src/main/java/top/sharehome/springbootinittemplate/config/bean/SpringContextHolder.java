@@ -89,7 +89,7 @@ public class SpringContextHolder implements ApplicationContextAware {
      * 依赖注入日志输出
      */
     @PostConstruct
-    public void initDi() {
+    private void initDi() {
         log.info("############ spring context holder config DI.");
     }
 

@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.redisson;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -40,6 +41,7 @@ public class RedissonProperties {
      */
     @Data
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class SingleServerConfig {
         /**
          * 是否启动单机Redis
@@ -60,6 +62,7 @@ public class RedissonProperties {
      */
     @Data
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class ClusterServersConfig {
         /**
          * 是否启动集群Redis

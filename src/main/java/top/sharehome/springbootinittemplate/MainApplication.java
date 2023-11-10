@@ -17,7 +17,7 @@ import top.sharehome.springbootinittemplate.utils.rabbitmq.RabbitMqUtils;
  */
 @SpringBootApplication
 @MapperScan("top.sharehome.springbootinittemplate.mapper")
-@EsMapperScan("top.sharehome.springbootinittemplate.elastisearch.mapper")
+@EsMapperScan("top.sharehome.springbootinittemplate.elasticsearch.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @EnableConfigurationProperties

@@ -5,35 +5,6 @@
 
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
-* [SpringBoot初始化模板](#springboot初始化模板)
-  * [模板特点](#模板特点)
-    * [主流框架](#主流框架)
-    * [业务特性](#业务特性)
-  * [业务功能](#业务功能)
-    * [示例业务](#示例业务)
-    * [单元测试](#单元测试)
-  * [快速上手](#快速上手)
-    * [必须执行](#必须执行)
-    * [可选执行](#可选执行)
-      * [整合缓存服务](#整合缓存服务)
-        * [整合Redis（系统缓存）](#整合redis系统缓存)
-        * [整合Redisson（业务缓存）](#整合redisson业务缓存)
-      * [整合消息队列](#整合消息队列)
-        * [激活消息队列](#激活消息队列)
-        * [自定义消息队列](#自定义消息队列)
-      * [整合ElasticSearch](#整合elasticsearch)
-      * [整合对象存储服务](#整合对象存储服务)
-        * [整合腾讯云COS](#整合腾讯云cos)
-        * [整合MinIO](#整合minio)
-        * [整合阿里云OSS](#整合阿里云oss)
-      * [配置SaToken](#配置satoken)
-        * [开启鉴权](#开启鉴权)
-        * [开启认证](#开启认证)
-        * [开启JWT](#开启jwt)
-      * [配置XXL-JOB](#配置xxl-job)
-      * [配置SpringBootAdmin](#配置springbootadmin)
-  * [申明&联系我](#申明联系我)
-
 ## 模板特点
 
 ### 主流框架
@@ -138,7 +109,7 @@
 
 ### 可选执行
 
-> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 代办进行标识。
+> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 代办进行标识，请务必**“必须执行”**。
 
 #### 整合缓存服务
 
@@ -414,9 +385,37 @@
 
 #### 整合对象存储服务
 
+**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据；
+
 ##### 整合腾讯云COS
 
-===> 未完待续
+该模块中整合腾讯云 COS 非常容易，仅仅需要开发者开通腾讯云 COS 服务，从中获取到一些必要的参数：
+
+- region ==> 地域
+- secretId ==> 用户公钥
+- secretKey ==> 用户私钥
+- bucketName ==> 桶名称
+
+然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+
+```yaml
+# 对象存储配置
+oss:
+  # 腾讯云COS配置
+  tencent:
+    # todo 是否开启（预先关闭）
+    enable: true
+    # 地域
+    region: ap-chengdu
+    # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    secretId: xxx
+    # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    secretKey: xxx
+    # 桶名称
+    bucketName: test-xxx
+```
+
+修改完之后即可使用模板中对象存储工具类 `TencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合MinIO
 
@@ -428,25 +427,234 @@
 
 #### 配置SaToken
 
+**说明**：与其说配置 SaToken ，不如说是介绍该模板中封装的三个 SaToken 特性：
+
+```yaml
+# Sa-Token配置
+sa-token:
+  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
+  enableAuthorization: true
+  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
+  enableIdentification: true
+  # todo 是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
+  enableJwt: false
+```
+
+至于 SaToken 具体的使用说明，请前往其官方网站仔细阅读文档，接下来以文字的方式对三个封装后的特性挨个介绍。
+
 ##### 开启鉴权
 
-===> 未完待续
+鉴权其实就是查看某个用户对于某个接口、某个功能或者某个服务是否具有操作的权限，在该模板自带的数据库中有一个 `t_user` 表，表里有一个 `role` 角色字段，框架自带的业务逻辑就是用户登陆后会保存一个登录信息，每次操作之前都去登录信息中获取角色信息， SaToken 框架会自动去对比角色信息，从而做到鉴权，当然开发者们可以按照自己的需求去设计鉴权内容，并不使用 `role` 角色字段，所以要求开发者自行编写符合自己需求的代码，而需要更改的文件就是 `config/security/AuthorizationConfiguration` 类：
+
+```java
+@Component
+@ConditionalOnProperty(prefix = "sa-token",name = "isAuthorization",havingValue = "true")
+@Slf4j
+public class AuthorizationConfiguration implements StpInterface {
+
+    /**
+     * 重写权限方法
+     *
+     * @param loginId   账号id
+     * @param loginType 账号类型
+     * @return 返回结果
+     */
+    @Override
+    public List<String> getPermissionList(Object loginId, String loginType) {
+        // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
+        // 由于此处设计主要针对于接口权限，所以权限通常有多个，上帝权限和个别极端情况除外
+        // 需要使用"."将每一级权限给分离开来，支持权限通配符操作，"*"表示上帝权限
+        return Collections.singletonList("*");
+    }
+
+    /**
+     * 重写角色方法
+     *
+     * @param loginId   账号id
+     * @param loginType 账号类型
+     * @return 返回结果
+     */
+    @Override
+    public List<String> getRoleList(Object loginId, String loginType) {
+        // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
+        // 由于此处设计主要针对于用户角色，所以角色通常只有一个，个别情况除外
+        SaSession session = StpUtil.getSessionByLoginId(loginId);
+        String userRole = session.get(USER_ROLE_KEY, "");
+        return Collections.singletonList(userRole);
+    }
+
+}
+```
 
 ##### 开启认证
 
-===> 未完待续
+认证主要负责校验用户的在线状态，大多数系统的认证逻辑就是用户没有登陆就不能使用绝大部分系统功能，该模板默认实现认证功能，但是在长期的开发过程中就会发现各式各样的框架型模板调试过程会因为认证功能而变得麻烦。所以该模板允许开发者决定是否开启认证功能，也就是说开发者能够不需要登陆去调试代码，也可以发布不需要登陆的 Web 项目。
 
 ##### 开启JWT
 
-===> 未完待续
+JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
 
 #### 配置XXL-JOB
 
-===> 未完待续
+XXL-JOB 是一个开箱即用的轻量级分布式任务调度系统，其核心设计目标是开发迅速、学习简单、轻量级、易扩展，在开源社区广泛流行，已在多家公司投入使用。 XXL-JOB 开源协议采用的是 GPL ，因此云厂商无法直接商业化托管该产品，各大中小企业需要自建，增加了学习成本、机器成本、人工运维成本，在真正接入 XXL-JOB 分布式任务调度系统之前，开发者先了解一下在 SpringBoot 项目中最简单的任务调度方式。
+
+##### SpringBoot任务调度
+
+SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称为“定时任务”，模板中这样的定时任务主要分为两类，第一类是全量任务，第二类是循环任务；
+
+1. 在编码之前首先修改 `application.yaml` 配置文件：
+
+   ```yaml
+   # 配置SpringBoot任务调度
+   schedule:
+     # 全量任务配置
+     once:
+       # todo 是否开启全量任务（预先关闭）
+       enable: true
+     # 循环任务配置
+     cycle:
+       # todo 是否开启循环任务（预先关闭）
+       enable: true
+       # 线程池大小（开启则必填）
+       threadPool: 10
+   ```
+
+2. 全量任务指的是在 SpringBoot 项目程序启动时所执行的任务，举个例子：有一些非常常用的数据存储于 MySQL 当中，为了提高系统性能，我们通常会把这些数据存入 Redis 缓存当中，然后每次 Redis 中访问数据，此时就应该考虑是否开启全量任务进行数据“内存化”的操作，简而言之，全量任务就类似于整个系统的初始化任务；
+
+   全量任务需要实现 CommandLineRunner 接口，重写接口中的 run 方法即可，模板中示例代码被放在 `job/standalone/once` 包中：
+
+   ```java
+   @Component
+   public class OnceJob implements CommandLineRunner {
+   
+       @Override
+       public void run(String... args) throws Exception {
+           ......
+       }
+   
+   }
+   ```
+
+3. 循环任务指的是现实意义上的定时任务，举个例子：当我们每天凌晨 3 点需要更新系统的 Redis 缓存，不现实的做法就是写一个对外接口，维护人员在每天凌晨 3 点去手动调用，或者非常麻烦的做法就是额外写一个功能脚本，对它进行维护和运行，面对这样的问题需求， SpringBoot 框架已经给出了相对应的解决方案，即循环任务；
+
+   循环任务需要在需要循环的任务上使用 @Scheduled 注解，该注解中有两个比较重要的字段：fixedDelay 和 cron ，前者就是以 SpringBoot 项目启动时间为基准往后间隔固定时长运行任务，后者就是以 Crontab 表达式为基准运行任务，模板中示例代码放在 `job/standalone/once` 包中：
+
+   ```java
+   @Component
+   public class CycleJob {
+   
+       /**
+        * 固定间隔时间任务
+        * 注解表示一分钟执行一次
+        */
+       @Scheduled(fixedDelay = 60 * 1000)
+       public void fixedTimeJob() {
+           ......
+       }
+   
+       /**
+        * 定时任务
+        * 注解使用Cron表达式(cron = "秒 分 时 天 月 周")
+        */
+       @Scheduled(cron = "0 * * * * *")
+       public void scheduledTimeJob() {
+           ......
+       }
+   
+   }
+   ```
+
+##### XXL-JOB任务调度
+
+1. 部署 XXL-JOB 分布式调度系统控制面板；
+
+   想要使用 XXL-JOB 分布式任务调度系统的功能，就需要先部署一个 XXL-JOB 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XXL-JOB 模块来部署一个 XXL-JOB 分布式调度系统控制面板，在 `visual` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XXL-JOB 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
+
+   ```yaml
+   spring:
+     # 配置XXL-JOB的MySQL数据库
+     datasource:
+       url: jdbc:mysql://xxx.xxx.xxx.xxx:3305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+       username: root
+       password: 123456
+       driver-class-name: com.mysql.cj.jdbc.Driver
+       type: com.zaxxer.hikari.HikariDataSource
+       hikari:
+         minimum-idle: 10
+         maximum-pool-size: 30
+         auto-commit: true
+         idle-timeout: 30000
+         pool-name: HikariCP
+         max-lifetime: 900000
+         connection-timeout: 10000
+         connection-test-query: SELECT 1
+         validation-timeout: 1000
+   ```
+
+   部署完成之后即可启动 XXL-JOB 分布式调度系统控制面板，启动成功即表示部署成功；
+
+2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 XXL-JOB 控制面板地址正确的前提下打开 `enable` 配置项：
+
+   ```yaml
+   # Xxl-Job配置（如果是导入了模板sql，那么登陆账号/密码为：admin/123456）
+   xxl:
+     job:
+       # todo 是否开启（预先关闭）
+       enable: true
+       # Xxl-Job监控面板地址
+       adminAddresses: http://localhost:38079/xxl-job-admin
+       # Xxl-Job token
+       accessToken: xxl-job
+       # 执行器配置
+       executor:
+         # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
+         appname: xxl-job-executor
+         # 执行器端口号 执行器从38080开始往后写
+         port: 38081
+         # 执行器注册：默认IP:PORT（appname不为空，该处则可为空）
+         address:
+         # 执行器IP：默认自动获取IP（appname不为空，该处则可为空）
+         ip:
+         # 执行器运行日志文件存储磁盘路径
+         logpath: ./logs/${spring.application.name}/xxl-job
+         # 执行器日志文件保存天数：大于3生效
+         logretentiondays: 30
+   ```
+
+3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/service/SampleService` 类中，至此模板中关于 XXL-JOB 的内容就结束了，如果想要使用 XXL-JOB 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
 
 #### 配置SpringBootAdmin
 
-===> 未完待续
+SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XXL-JOB 一样需要先部署，当然在该模板中的 `visual` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
+
+```yaml
+server:
+  port: 38078
+spring:
+  application:
+    name: spring-boot-admin
+  boot:
+    admin:
+      context-path: /spring-boot-admin
+  thymeleaf:
+    check-template-location: false
+```
+
+即 `http://localhost:38078/spring-boot-admin` ，接下来就去整合其他模块，修改模板模块中的 `application.yaml` 文件，更改 enable 配置项：
+
+```yaml
+# 公共配置文件
+spring:
+  # 配置SpringBootAdmin项目所在地址
+  boot:
+    admin:
+      client:
+        # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+        enabled: true
+        url: http://localhost:38078/spring-boot-admin
+```
+
+如果还想将 XXL-JOB 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。
 
 ## 申明&联系我
 

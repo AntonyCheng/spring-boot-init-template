@@ -60,7 +60,7 @@ public class RabbitMqConfiguration {
      * 依赖注入日志输出
      */
     @PostConstruct
-    public void initDi() {
+    private void initDi() {
         log.info("############ rabbitmq config DI.");
     }
 

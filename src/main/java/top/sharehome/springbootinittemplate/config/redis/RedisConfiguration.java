@@ -38,7 +38,7 @@ public class RedisConfiguration extends CachingConfigurerSupport {
      * 依赖注入日志输出
      */
     @PostConstruct
-    public void initDi() {
+    private void initDi() {
         log.info("############ redis config DI.");
     }
 

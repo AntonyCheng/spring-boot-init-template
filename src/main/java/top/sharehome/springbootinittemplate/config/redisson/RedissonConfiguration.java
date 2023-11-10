@@ -96,7 +96,7 @@ public class RedissonConfiguration {
      * 依赖注入日志输出
      */
     @PostConstruct
-    public void initDi() {
+    private void initDi() {
         log.info("############ redisson config DI.");
     }
 }
