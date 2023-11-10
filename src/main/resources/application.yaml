@@ -363,21 +363,21 @@ mybatis-plus:
     # 自动驼峰命名规则（camel case）映射
     map-underscore-to-camel-case: false
     # MyBatis 自动映射策略
-    # NONE：不启用 PARTIAL：只对非嵌套 resultMap 自动映射 FULL：对所有 resultMap 自动映射
+    # NONE 不启用；PARTIAL 只对非嵌套；resultMap 自动映射；FULL 对所有；resultMap 自动映射；
     auto-mapping-behavior: PARTIAL
     # MyBatis 自动映射时未知列或未知属性处理策
-    # NONE：不做处理 WARNING：打印相关警告 FAILING：抛出异常和详细信息
+    # NONE 不做处理； WARNING 打印相关警告；FAILING 抛出异常和详细信息；
     auto-mapping-unknown-column-behavior: NONE
     # 更详细的日志输出 会有性能损耗 org.apache.ibatis.logging.stdout.StdOutImpl
     # 关闭日志记录 (可单纯使用 p6spy 分析) org.apache.ibatis.logging.nologging.NoLoggingImpl
     # 默认日志输出 org.apache.ibatis.logging.slf4j.Slf4jImpl
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     # 是否打印 Logo banner
     banner: true
     db-config:
       # 主键类型
-      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 排除中划线的UUID UUID 普通的UUID
+      # AUTO 自增；NONE 空；INPUT 用户输入；ASSIGN_ID 雪花算法；ASSIGN_UUID 排除中划线的UUID；UUID 普通的UUID；
       id-type: ASSIGN_ID
       # 逻辑删除的字段
       logic-delete-field: isDeleted

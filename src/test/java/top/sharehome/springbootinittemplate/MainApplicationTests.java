@@ -41,7 +41,10 @@ class MainApplicationTests {
     @Resource
     private UserService userService;
 
-    @Resource
+    /**
+     * 引入属于Easy-ES的映射类，当测试ElasticSearch时将@Resource注解打开，测试其他示例代码时将其关闭
+     */
+    //@Resource
     private UserEsMapper userEsMapper;
 
     /**
