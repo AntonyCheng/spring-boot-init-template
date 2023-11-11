@@ -301,9 +301,9 @@ oss:
     enable: false
     # 域名 以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com。
     endpoint: https://oss-xx-xxx.aliyuncs.com
-    # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    # 用户的 SecretId
     secretId: xxx
-    # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    # 用户的 SecretKey
     secretKey: xxx
     # 桶名称
     bucketName: xxx

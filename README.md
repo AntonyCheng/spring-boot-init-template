@@ -385,7 +385,7 @@
 
 #### 整合对象存储服务
 
-**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据；
+**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据，其中腾讯云 COS 和 MinIO 是可以对文件进行网页预览的，而阿里云 OSS 则需要配置自定义域名，所以针对于个人的中小型项目，推荐优先使用腾讯云 COS 和 MinIO 对象存储服务，以免给自己挖坑。
 
 ##### 整合腾讯云COS
 
@@ -419,11 +419,66 @@ oss:
 
 ##### 整合MinIO
 
-===> 未完待续
+该模块中整合 MinIO 非常容易，仅仅需要开发者部署 MinIO 服务，从中获取到一些必要的参数：
+
+- endpoint ==> 域名
+- enableTls ==> 是否开启TLS
+- secretId ==> 用户公钥
+- secretKey ==> 用户私钥
+- bucketName ==> 桶名称
+
+然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+
+```yaml
+# 对象存储配置
+oss:
+  # MinIO OSS配置
+  minio:
+    # todo 是否开启（预先关闭）
+    enable: false
+    # 域名（格式：【ip:port】）
+    endpoint: xxx.xxx.xxx.xxx:9000
+    # 是否开启TLS
+    enableTls: false
+    # 用户的 SecretId
+    secretId: xxx
+    # 用户的 SecretKey
+    secretKey: xxx
+    # 桶名称
+    bucketName: xxx
+```
+
+修改完之后即可使用模板中对象存储工具类 `MinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合阿里云OSS
 
-===> 未完待续
+该模块中整合阿里云 OSS 非常容易，仅仅需要开发者开通阿里云 OSS 服务，从中获取到一些必要的参数：
+
+- endpoint==> 域名
+- secretId ==> 用户公钥
+- secretKey ==> 用户私钥
+- bucketName ==> 桶名称
+
+然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+
+```yaml
+# 对象存储配置
+oss:
+  # 阿里云OSS配置
+  ali:
+    # todo 是否开启（预先关闭）
+    enable: false
+    # 域名 以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com。
+    endpoint: https://oss-xx-xxx.aliyuncs.com
+    # 用户的 SecretId
+    secretId: xxx
+    # 用户的 SecretKey
+    secretKey: xxx
+    # 桶名称
+    bucketName: xxx
+```
+
+修改完之后即可使用模板中对象存储工具类 `AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 #### 配置SaToken
 
