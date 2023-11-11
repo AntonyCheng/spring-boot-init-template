@@ -49,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
     public UserLoginVo login(UserLoginDto userLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, userLoginDto.getAccount())
@@ -64,6 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
     public UserInfoVo info(Long loginId) {
         User userInDatabase = userMapper.selectById(loginId);
         if (ObjectUtils.isEmpty(userInDatabase)) {

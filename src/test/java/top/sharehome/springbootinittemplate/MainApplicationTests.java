@@ -16,6 +16,8 @@ import top.sharehome.springbootinittemplate.elasticsearch.mapper.UserEsMapper;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
+import top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils;
+import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
 import top.sharehome.springbootinittemplate.utils.rabbitmq.RabbitMqUtils;
 import top.sharehome.springbootinittemplate.utils.rabbitmq.model.RabbitMqMessage;
@@ -44,7 +46,7 @@ class MainApplicationTests {
     /**
      * 引入属于Easy-ES的映射类，当测试ElasticSearch时将@Resource注解打开，测试其他示例代码时将其关闭
      */
-    @Resource
+    //@Resource
     private UserEsMapper userEsMapper;
 
     /**
@@ -170,8 +172,8 @@ class MainApplicationTests {
      * 测试腾讯云COS工具类——上传
      */
     @Test
-    void testCosUtilsUpload() throws IOException {
-        File file = new File("README.md");
+    void testTencentUtilsUpload() throws IOException {
+        File file = new File("蓬勃.psd");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(TencentUtils.upload(multipartFile, "test/init"));
@@ -181,8 +183,46 @@ class MainApplicationTests {
      * 测试腾讯云COS工具类——删除
      */
     @Test
-    void testCosUtilsDelete() {
-        TencentUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/2023/11/03/5591bee0dcc14ad6b20d7fb8d78414f7_README.md");
+    void testTencentUtilsDelete() {
+        TencentUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/61f122e335934970be3f2b14eeef37c8_README.md");
+    }
+
+    /**
+     * 测试阿里云OSS工具类——上传
+     */
+    @Test
+    void testAliUtilsUpload() throws IOException {
+        File file = new File("蓬勃.psd");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
+        System.out.println(AliUtils.upload(multipartFile, "test/init"));
+    }
+
+    /**
+     * 测试阿里云OSS工具类——删除
+     */
+    @Test
+    void testAliUtilsDelete() {
+        AliUtils.delete("https://antonychengtest.oss-cn-beijing.aliyuncs.com/test/init/33ce4679377b48e9a733d95deaf43975_README.md");
+    }
+
+    /**
+     * 测试MinIO工具类——上传
+     */
+    @Test
+    void testMinioUtilsUpload() throws IOException {
+        File file = new File("蓬勃.psd");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
+        System.out.println(MinioUtils.upload(multipartFile, "test/init"));
+    }
+
+    /**
+     * 测试MinIO工具类——删除
+     */
+    @Test
+    void testMinioUtilsDelete() {
+        MinioUtils.delete("http://8.219.59.31:9000/test/test/init/92a3aab57fcd491b89674273e0b87c11_README.md");
     }
 
     /**

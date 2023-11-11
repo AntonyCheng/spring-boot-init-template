@@ -21,7 +21,7 @@ public class TencentUtils {
     /**
      * 被封装的COS对象
      */
-    private static final TencentConfiguration COS_CONFIGURATION = SpringContextHolder.getBean(TencentConfiguration.class);
+    private static final TencentConfiguration TENCENT_CONFIGURATION = SpringContextHolder.getBean(TencentConfiguration.class);
 
     /**
      * 上传文件
@@ -31,7 +31,7 @@ public class TencentUtils {
      * @return 返回结果
      */
     public static String upload(MultipartFile file, String rootPath) {
-        return COS_CONFIGURATION.uploadToCos(file, rootPath);
+        return TENCENT_CONFIGURATION.uploadToCos(file, rootPath);
     }
 
     /**
@@ -40,7 +40,7 @@ public class TencentUtils {
      * @param url 文件所在地址
      */
     public static void delete(String url) {
-        COS_CONFIGURATION.deleteInCos(url);
+        TENCENT_CONFIGURATION.deleteInCos(url);
     }
 
 }

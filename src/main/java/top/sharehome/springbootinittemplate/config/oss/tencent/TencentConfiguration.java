@@ -52,7 +52,7 @@ public class TencentConfiguration {
     /**
      * 获取COSClient客户端
      *
-     * @return 返回CosClient客户端
+     * @return 返回COSClient客户端
      */
     private COSClient getCosClient() {
         COSCredentials cred = new BasicCOSCredentials(tencentProperties.getSecretId(), tencentProperties.getSecretKey());
@@ -121,7 +121,7 @@ public class TencentConfiguration {
         while (!transfer.isDone()) {
             try {
                 // 每 5 秒获取一次进度
-                ThreadUtils.sleep(Duration.ofSeconds(5));
+                ThreadUtils.sleep(Duration.ofSeconds(1));
             } catch (InterruptedException e) {
                 return false;
             }
@@ -198,7 +198,7 @@ public class TencentConfiguration {
      */
     public void deleteInCos(String url) {
         COSClient cosClient = getCosClient();
-        String[] split = url.split(".myqcloud.com/");
+        String[] split = url.split(tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/");
         if (split.length != 2) {
             throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
         }
