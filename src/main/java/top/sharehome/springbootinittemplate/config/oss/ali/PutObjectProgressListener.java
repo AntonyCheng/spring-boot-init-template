@@ -6,9 +6,6 @@ import com.aliyun.oss.event.ProgressListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ThreadUtils;
-
-import java.time.Duration;
 
 /**
  * 进度条监听器
@@ -17,6 +14,7 @@ import java.time.Duration;
  */
 @Slf4j
 public class PutObjectProgressListener implements ProgressListener {
+
     private long bytesWritten = 0;
 
     @Getter
@@ -45,4 +43,5 @@ public class PutObjectProgressListener implements ProgressListener {
                 break;
         }
     }
+
 }

@@ -3,9 +3,7 @@ package top.sharehome.springbootinittemplate.config.security;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.interceptor.SaInterceptor;
-import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.same.SaSameUtil;
-import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.util.SaResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +21,7 @@ import javax.annotation.PostConstruct;
  * @author AntonyCheng
  */
 @Configuration
-@ConditionalOnProperty(prefix = "sa-token",name = "isIdentification",havingValue = "true")
+@ConditionalOnProperty(prefix = "sa-token", name = "isIdentification", havingValue = "true")
 @Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
 

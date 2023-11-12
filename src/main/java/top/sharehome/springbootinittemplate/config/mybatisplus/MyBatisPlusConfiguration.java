@@ -35,4 +35,5 @@ public class MyBatisPlusConfiguration {
     private void initDi() {
         log.info("############ mybatis plus config DI.");
     }
+
 }

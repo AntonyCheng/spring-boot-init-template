@@ -111,4 +111,5 @@ public class AliConfiguration {
     private void initDi() {
         log.info("############ ali oss config DI.");
     }
+
 }

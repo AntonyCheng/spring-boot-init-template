@@ -1,11 +1,9 @@
 package top.sharehome.springbootinittemplate.config.oss.minio;
 
 import cn.hutool.core.io.FileUtil;
-import com.qcloud.cos.exception.CosClientException;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
-import io.minio.errors.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +17,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileExc
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**

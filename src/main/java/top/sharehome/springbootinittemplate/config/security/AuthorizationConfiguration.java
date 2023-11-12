@@ -6,11 +6,8 @@ import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import top.sharehome.springbootinittemplate.mapper.UserMapper;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +22,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "sa-token",name = "isAuthorization",havingValue = "true")
+@ConditionalOnProperty(prefix = "sa-token", name = "isAuthorization", havingValue = "true")
 @Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 

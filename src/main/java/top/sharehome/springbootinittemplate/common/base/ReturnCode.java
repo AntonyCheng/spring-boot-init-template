@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.common.base;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**

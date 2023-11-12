@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.utils.redisson;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

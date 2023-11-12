@@ -19,12 +19,13 @@ import java.io.IOException;
  */
 //@Component
 public class RabbitMqConsumer {
+
     /**
      * 使用带有死信队列的消息队列时参考以下代码
      *
      * @param message 信息本体
      * @param channel 通道
-     * @param tag 当前消息在队列中的索引
+     * @param tag     当前消息在队列中的索引
      * @throws IOException 抛出异常
      */
     @RabbitHandler
@@ -56,7 +57,7 @@ public class RabbitMqConsumer {
      *
      * @param message 信息本体
      * @param channel 通道
-     * @param tag 当前消息在队列中的索引
+     * @param tag     当前消息在队列中的索引
      * @throws IOException 抛出异常
      */
     @RabbitHandler
