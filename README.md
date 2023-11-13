@@ -109,7 +109,7 @@
 
 ### 可选执行
 
-> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 代办进行标识，请务必**“必须执行”**。
+> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 代办进行标识，请务必“**必须执行**”。
 
 #### 整合缓存服务
 
@@ -172,9 +172,9 @@
 
 2. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
-   - 都不开启（都为 false ）：系统不会将 Redisson 相关依赖纳入发转控制容器中；
+   - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
    - 仅开启一个；
-   - 都开启（都为 true ）：系统只会参考单机版本的 Redisson 配置；
+   - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
    # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
@@ -276,7 +276,7 @@
            acknowledge-mode: manual
    ```
 
-2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，在 `utils/rabbitmq/RabbitMqUtils` 工具类中设计由“default”开头的方法，当然开发者也可以通过一定规则自定义消息队列，这些消息队列会与 RabbitMqUtils工具类兼容。
+2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，它们在 `utils/rabbitmq/RabbitMqUtils` 工具类中由“default”开头的方法，当然开发者也可以通过一定规则自定义消息队列，这些消息队列会与 RabbitMqUtils 工具类兼容。
 
 ##### 自定义消息队列
 
