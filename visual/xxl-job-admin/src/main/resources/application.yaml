@@ -41,7 +41,7 @@ spring:
       number_format: 0.##########
   # 配置XXL-JOB的MySQL数据库
   datasource:
-    url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.116.100:23305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver

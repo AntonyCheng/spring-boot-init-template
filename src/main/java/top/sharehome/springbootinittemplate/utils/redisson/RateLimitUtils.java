@@ -25,7 +25,20 @@ public class RateLimitUtils {
      */
     private static final RedissonClient REDISSON_CLIENT = SpringContextHolder.getBean(RedissonClient.class);
 
-    private int rate = 2;
+    /**
+     * 限流单位时间，单位：秒
+     */
+    private final static long RATE = 2;
+
+    /**
+     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     */
+    private final static long RATE_INTERVAL = 1;
+
+    /**
+     * 每个操作所要消耗的令牌数
+     */
+    private final static long PERMITS = 1;
 
     /**
      * 限流操作
@@ -35,12 +48,11 @@ public class RateLimitUtils {
     public static void doRateLimit(String key) {
         // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
         RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(CachePrefixConstants.RATE_LIMIT_PREFIX + key);
-        rateLimiter.trySetRate(RateType.OVERALL, 2, 1, RateIntervalUnit.SECONDS);
+        rateLimiter.trySetRate(RateType.OVERALL, RATE, RATE_INTERVAL, RateIntervalUnit.SECONDS);
         // 每当一个操作来了后，请求一个令牌
-        boolean canOp = rateLimiter.tryAcquire(1);
+        boolean canOp = rateLimiter.tryAcquire(PERMITS);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
         }
     }
-
 }
