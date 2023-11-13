@@ -4,7 +4,6 @@ import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,7 +19,6 @@ public class PutObjectProgressListener implements ProgressListener {
     @Getter
     private boolean succeed = false;
 
-    @SneakyThrows
     @Override
     public void progressChanged(ProgressEvent progressEvent) {
         long bytes = progressEvent.getBytes();

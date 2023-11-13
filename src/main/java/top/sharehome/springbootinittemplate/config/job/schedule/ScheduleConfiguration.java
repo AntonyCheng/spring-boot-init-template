@@ -1,12 +1,14 @@
-package top.sharehome.springbootinittemplate.config.schedule;
+package top.sharehome.springbootinittemplate.config.job.schedule;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import top.sharehome.springbootinittemplate.config.job.schedule.condition.ScheduleCycleCondition;
+import top.sharehome.springbootinittemplate.config.job.schedule.properties.ScheduleProperties;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.Executors;
@@ -22,7 +24,7 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 @EnableConfigurationProperties(ScheduleProperties.class)
 @Configuration
-@ConditionalOnProperty(prefix = "schedule.cycle", name = "enable", havingValue = "true")
+@Conditional(ScheduleCycleCondition.class)
 public class ScheduleConfiguration implements SchedulingConfigurer {
 
     private final ScheduleProperties scheduleProperties;

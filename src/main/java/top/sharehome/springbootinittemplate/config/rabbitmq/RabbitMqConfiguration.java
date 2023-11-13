@@ -3,9 +3,10 @@ package top.sharehome.springbootinittemplate.config.rabbitmq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
 
 import javax.annotation.PostConstruct;
 
@@ -16,7 +17,7 @@ import javax.annotation.PostConstruct;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
+@Conditional(RabbitMqCondition.class)
 public class RabbitMqConfiguration {
 
     /**

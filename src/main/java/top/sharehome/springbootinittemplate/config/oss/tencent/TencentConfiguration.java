@@ -17,12 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ThreadUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.oss.tencent.condition.OssTencentCondition;
+import top.sharehome.springbootinittemplate.config.oss.tencent.properties.TencentProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
@@ -43,7 +45,7 @@ import java.util.concurrent.*;
 @EnableConfigurationProperties(TencentProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(prefix = "oss.tencent", name = "enable", havingValue = "true")
+@Conditional(OssTencentCondition.class)
 public class TencentConfiguration {
 
     private final TencentProperties tencentProperties;

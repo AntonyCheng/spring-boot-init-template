@@ -6,12 +6,13 @@ import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.same.SaSameUtil;
 import cn.dev33.satoken.util.SaResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
+import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
 
 import javax.annotation.PostConstruct;
 
@@ -21,7 +22,7 @@ import javax.annotation.PostConstruct;
  * @author AntonyCheng
  */
 @Configuration
-@ConditionalOnProperty(prefix = "sa-token", name = "isIdentification", havingValue = "true")
+@Conditional(IdentificationCondition.class)
 @Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
 

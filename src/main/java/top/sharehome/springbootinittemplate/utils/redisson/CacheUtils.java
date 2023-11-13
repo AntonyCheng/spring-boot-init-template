@@ -2,9 +2,10 @@ package top.sharehome.springbootinittemplate.utils.redisson;
 
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
+import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.utils.redisson.constants.CachePrefixConstants;
 
 import java.time.Duration;
@@ -19,7 +20,7 @@ import java.util.Set;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(value = {"redisson.singleServerConfig.enableSingle", "redisson.clusterServersConfig.enableCluster"}, havingValue = "true")
+@Conditional(RedissonCondition.class)
 public class CacheUtils {
 
     /**

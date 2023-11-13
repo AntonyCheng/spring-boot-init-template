@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDelay;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDlx;
+import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDelay;
 import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDlx;
@@ -26,7 +27,7 @@ import java.util.UUID;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
+@Conditional(RabbitMqCondition.class)
 @Slf4j
 public class RabbitMqUtils {
 

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.job;
+package top.sharehome.springbootinittemplate.config.job.xxljob.properties;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

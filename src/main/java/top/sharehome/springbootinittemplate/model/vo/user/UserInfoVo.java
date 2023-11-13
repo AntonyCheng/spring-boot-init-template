@@ -11,7 +11,6 @@ import java.io.Serializable;
  * 获取用户信息Vo类
  *
  * @author AntonyCheng
- * @since 2023/11/4 23:12:54
  */
 @Data
 @AllArgsConstructor

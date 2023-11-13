@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.schedule;
+package top.sharehome.springbootinittemplate.config.job.schedule.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

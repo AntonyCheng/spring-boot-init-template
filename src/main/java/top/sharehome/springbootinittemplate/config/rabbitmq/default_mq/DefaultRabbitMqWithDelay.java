@@ -5,10 +5,11 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDelay;
+import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
+@Conditional(RabbitMqCondition.class)
 public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
 
     /**

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.minio;
+package top.sharehome.springbootinittemplate.config.oss.minio.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

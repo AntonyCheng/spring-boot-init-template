@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.rabbitmq;
+package top.sharehome.springbootinittemplate.config.rabbitmq.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

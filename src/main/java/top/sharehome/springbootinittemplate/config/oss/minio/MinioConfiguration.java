@@ -7,12 +7,14 @@ import io.minio.RemoveObjectArgs;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.oss.minio.condition.OssMinioCondition;
+import top.sharehome.springbootinittemplate.config.oss.minio.properties.MinioProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
@@ -29,7 +31,7 @@ import java.util.UUID;
 @EnableConfigurationProperties(MinioProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(prefix = "oss.minio", name = "enable", havingValue = "true")
+@Conditional(OssMinioCondition.class)
 public class MinioConfiguration {
 
     private final MinioProperties minioProperties;

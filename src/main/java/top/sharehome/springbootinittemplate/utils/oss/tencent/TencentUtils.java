@@ -1,9 +1,10 @@
 package top.sharehome.springbootinittemplate.utils.oss.tencent;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
+import top.sharehome.springbootinittemplate.config.oss.tencent.condition.OssTencentCondition;
 import top.sharehome.springbootinittemplate.config.oss.tencent.TencentConfiguration;
 
 /**
@@ -12,7 +13,7 @@ import top.sharehome.springbootinittemplate.config.oss.tencent.TencentConfigurat
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "oss.tencent", name = "enable", havingValue = "true")
+@Conditional(OssTencentCondition.class)
 public class TencentUtils {
 
     /**

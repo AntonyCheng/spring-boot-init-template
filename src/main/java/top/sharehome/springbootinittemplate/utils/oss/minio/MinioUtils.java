@@ -1,10 +1,11 @@
 package top.sharehome.springbootinittemplate.utils.oss.minio;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.oss.minio.MinioConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.minio.condition.OssMinioCondition;
 
 /**
  * MinIO工具类
@@ -12,7 +13,7 @@ import top.sharehome.springbootinittemplate.config.oss.minio.MinioConfiguration;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "oss.minio", name = "enable", havingValue = "true")
+@Conditional(OssMinioCondition.class)
 public class MinioUtils {
 
     /**

@@ -503,7 +503,6 @@ sa-token:
 
 ```java
 @Component
-@ConditionalOnProperty(prefix = "sa-token",name = "isAuthorization",havingValue = "true")
 @Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 

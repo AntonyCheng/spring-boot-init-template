@@ -1,12 +1,14 @@
-package top.sharehome.springbootinittemplate.config.job;
+package top.sharehome.springbootinittemplate.config.job.xxljob;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.job.xxljob.condition.XxlJobCondition;
+import top.sharehome.springbootinittemplate.config.job.xxljob.properties.XxlJobProperties;
 
 import javax.annotation.PostConstruct;
 
@@ -20,7 +22,7 @@ import javax.annotation.PostConstruct;
 @EnableConfigurationProperties(XxlJobProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(prefix = "xxl.job", name = "enable", havingValue = "true")
+@Conditional(XxlJobCondition.class)
 public class XxlJobConfiguration {
 
     private final XxlJobProperties xxlJobProperties;

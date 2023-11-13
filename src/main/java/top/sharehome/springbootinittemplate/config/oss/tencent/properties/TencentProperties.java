@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.tencent;
+package top.sharehome.springbootinittemplate.config.oss.tencent.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

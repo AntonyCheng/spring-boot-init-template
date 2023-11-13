@@ -11,10 +11,14 @@ import org.redisson.config.Config;
 import org.redisson.config.ReadMode;
 import org.redisson.config.SubscriptionMode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonClusterCondition;
+import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
+import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonSingleCondition;
+import top.sharehome.springbootinittemplate.config.redisson.properties.RedissonProperties;
 
 import javax.annotation.PostConstruct;
 
@@ -27,14 +31,15 @@ import javax.annotation.PostConstruct;
 @EnableConfigurationProperties(RedissonProperties.class)
 @AllArgsConstructor
 @Slf4j
+@Conditional(RedissonCondition.class)
 public class RedissonConfiguration {
 
     private final RedissonProperties redissonProperties;
 
     private final ObjectMapper objectMapper;
 
-    @Bean("singleClient")
-    @ConditionalOnProperty(prefix = "redisson.singleServerConfig", name = "enableSingle", havingValue = "true")
+    @Bean("RedissonSingleClient")
+    @Conditional(RedissonSingleCondition.class)
     public RedissonClient singleClient() {
         Config config = new Config();
         config.setThreads(redissonProperties.getThreads())
@@ -58,9 +63,9 @@ public class RedissonConfiguration {
         return redissonClient;
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "redisson.clusterServersConfig", name = "enableCluster", havingValue = "true")
-    @ConditionalOnMissingBean(name = {"singleClient"})
+    @Bean("RedissonClusterClient")
+    @Conditional(RedissonClusterCondition.class)
+    @ConditionalOnMissingBean(name = {"RedissonSingleClient"})
     public RedissonClient clusterClient() {
         Config config = new Config();
         config.setThreads(redissonProperties.getThreads())

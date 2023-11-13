@@ -3,9 +3,10 @@ package top.sharehome.springbootinittemplate.config.security;
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.stp.StpLogic;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.security.condition.TokenWithJwtCondition;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +16,7 @@ import javax.annotation.PostConstruct;
  * @author AntonyCheng
  */
 @Configuration
-@ConditionalOnProperty(prefix = "sa-token", name = "isJwt", havingValue = "true")
+@Conditional(TokenWithJwtCondition.class)
 @Slf4j
 public class TokenWithJwtConfiguration {
 

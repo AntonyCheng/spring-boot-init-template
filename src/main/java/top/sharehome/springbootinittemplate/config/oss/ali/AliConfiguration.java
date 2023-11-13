@@ -9,12 +9,14 @@ import com.aliyun.oss.model.PutObjectRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.oss.ali.condition.OssAliCondition;
+import top.sharehome.springbootinittemplate.config.oss.ali.properties.AliProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
@@ -32,7 +34,7 @@ import java.util.UUID;
 @EnableConfigurationProperties(AliProperties.class)
 @AllArgsConstructor
 @Slf4j
-@ConditionalOnProperty(prefix = "oss.ali", name = "enable", havingValue = "true")
+@Conditional(OssAliCondition.class)
 public class AliConfiguration {
 
     private final AliProperties aliProperties;

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.security;
+package top.sharehome.springbootinittemplate.config.security.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

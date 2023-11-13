@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.redisson;
+package top.sharehome.springbootinittemplate.config.redisson.properties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +25,21 @@ public class RedissonProperties {
      * Netty线程池数量,默认值 = 当前处理核数量 * 2
      */
     private int nettyThreads;
+
+    /**
+     * 限流单位时间，单位：秒
+     */
+    private long limitRate;
+
+    /**
+     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     */
+    private long limitRateInterval;
+
+    /**
+     * 每个操作所要消耗的令牌数
+     */
+    private long limitPermits;
 
     /**
      * 单机服务配置

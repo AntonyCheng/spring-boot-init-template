@@ -1,10 +1,11 @@
 package top.sharehome.springbootinittemplate.utils.oss.ali;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.oss.ali.AliConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.ali.condition.OssAliCondition;
 
 /**
  * 阿里云OSS工具类
@@ -12,7 +13,7 @@ import top.sharehome.springbootinittemplate.config.oss.ali.AliConfiguration;
  * @author AntonyCheng
  */
 @Component
-@ConditionalOnProperty(prefix = "oss.ali", name = "enable", havingValue = "true")
+@Conditional(OssAliCondition.class)
 public class AliUtils {
 
     /**

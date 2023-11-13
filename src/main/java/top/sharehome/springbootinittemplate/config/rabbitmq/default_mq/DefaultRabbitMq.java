@@ -5,10 +5,11 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
+import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
 
 /**
  * 默认的不带有死信队列的消息队列实例配置
@@ -18,7 +19,7 @@ import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "enable", havingValue = "true")
+@Conditional(RabbitMqCondition.class)
 public class DefaultRabbitMq extends BaseCustomizeMq {
 
     /**
