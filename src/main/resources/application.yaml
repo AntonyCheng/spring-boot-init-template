@@ -174,9 +174,14 @@ spring:
     # redis连接池
     lettuce:
       pool:
+        # 最小空闲连接数
         min-idle: 8
-        max-idle: 16
-        max-active: 32
+        # 最大空闲连接数
+        max-idle: 25
+        # 最大活动连接数
+        max-active: 50
+        # 最大等待时间/ms
+        max-wait: 3000
 
 # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
