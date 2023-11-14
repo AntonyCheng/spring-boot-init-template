@@ -18,6 +18,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 
@@ -259,6 +260,17 @@ public class GlobalExceptionHandler {
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
         return R.fail(code, msg);
+    }
+
+    /**
+     * 自定义数据库事务异常
+     *
+     * @param e 异常
+     */
+    @ExceptionHandler(CustomizeLockException.class)
+    public R<String> handleCustomizeLockException(CustomizeLockException e) {
+        log.error(e.getMessage(), e);
+        return R.fail(e.getReturnCode());
     }
 
 }

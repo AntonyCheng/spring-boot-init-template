@@ -186,7 +186,12 @@ public enum ReturnCode {
     /**
      * 网关服务出错 30003
      */
-    GATEWAY_SERVICE_ERROR(30003, "网关服务出错");
+    GATEWAY_SERVICE_ERROR(30003, "网关服务出错"),
+
+    /**
+     * 分布式锁服务出错 30004
+     */
+    LOCK_SERVICE_ERROR(30004, "分布式锁服务出错");
 
     final private int code;
 

@@ -5,7 +5,7 @@ package top.sharehome.springbootinittemplate.utils.redisson.constants;
  *
  * @author AntonyCheng
  */
-public interface CachePrefixConstants {
+public interface KeyPrefixConstants {
 
     /**
      * 不带有类型的缓存Key前缀
@@ -41,5 +41,10 @@ public interface CachePrefixConstants {
      * 限流Key前缀
      */
     String RATE_LIMIT_PREFIX = "RATE_";
+
+    /**
+     * 分布式锁Key前缀
+     */
+    String LOCK_PREFIX = "LOCK_";
 
 }

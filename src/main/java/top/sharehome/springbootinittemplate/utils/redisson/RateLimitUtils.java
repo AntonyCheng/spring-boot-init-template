@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.CachePrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
 
 /**
  * 限流工具类
@@ -64,7 +64,7 @@ public class RateLimitUtils {
      */
     public static void doRateLimit(String key) {
         // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(CachePrefixConstants.RATE_LIMIT_PREFIX + key);
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
         // 每当一个操作来了后，请求一个令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
