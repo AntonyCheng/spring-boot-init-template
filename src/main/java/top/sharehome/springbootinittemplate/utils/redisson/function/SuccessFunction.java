@@ -6,7 +6,7 @@ package top.sharehome.springbootinittemplate.utils.redisson.function;
  * @author AntonyCheng
  */
 @FunctionalInterface
-public interface VoidFunction {
+public interface SuccessFunction {
 
     void method();
 

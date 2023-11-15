@@ -191,7 +191,12 @@ public enum ReturnCode {
     /**
      * 分布式锁服务出错 30004
      */
-    LOCK_SERVICE_ERROR(30004, "分布式锁服务出错");
+    LOCK_SERVICE_ERROR(30004, "分布式锁服务出错"),
+
+    /**
+     * 分布式锁设计出错 30005
+     */
+    LOCK_DESIGN_ERROR(30005, "分布式锁设计出错");
 
     final private int code;
 

@@ -36,13 +36,14 @@ import javax.validation.ValidationException;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // todo 该todo到下一个todo之间的异常均为系统自带异常，抛出的错误码被包含在HttpStatus接口中
+    // todo 第一个todo中的异常均为系统自带异常，抛出的错误码被包含在HttpStatus接口中
 
     /**
      * 用户权限异常
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(NotPermissionException.class)
     public R<Void> handleNotPermissionException(NotPermissionException e, HttpServletRequest request) {
@@ -56,6 +57,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(NotRoleException.class)
     public R<Void> handleNotRoleException(NotRoleException e, HttpServletRequest request) {
@@ -69,6 +71,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(NotLoginException.class)
     public R<Void> handleNotLoginException(NotLoginException e, HttpServletRequest request) {
@@ -82,6 +85,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(SameTokenInvalidException.class)
     public R<Void> handleSameTokenInvalidException(SameTokenInvalidException e, HttpServletRequest request) {
@@ -95,6 +99,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public R<Void> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
@@ -108,6 +113,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(MissingPathVariableException.class)
     public R<Void> handleMissingPathVariableException(MissingPathVariableException e, HttpServletRequest request) {
@@ -121,6 +127,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public R<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
@@ -134,6 +141,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(RuntimeException.class)
     public R<Void> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
@@ -147,6 +155,7 @@ public class GlobalExceptionHandler {
      *
      * @param e       异常
      * @param request 请求
+     * @return 返回结果
      */
     @ExceptionHandler(Exception.class)
     public R<Void> handleException(Exception e, HttpServletRequest request) {
@@ -159,6 +168,7 @@ public class GlobalExceptionHandler {
      * Validation校验注解校验异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(ValidationException.class)
     public R<Void> handleValidationException(ValidationException e) {
@@ -170,6 +180,7 @@ public class GlobalExceptionHandler {
      * Validation校验注解校验异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public R<Void> handleConstraintViolationException(ConstraintViolationException e) {
@@ -181,6 +192,7 @@ public class GlobalExceptionHandler {
      * 路径不存在异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public R<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
@@ -192,6 +204,7 @@ public class GlobalExceptionHandler {
      * 数据重复异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(DuplicateKeyException.class)
     public R<Void> handleDuplicateKeyException(DuplicateKeyException e) {
@@ -203,6 +216,7 @@ public class GlobalExceptionHandler {
      * 方法参数校验异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -215,6 +229,7 @@ public class GlobalExceptionHandler {
      * 自定义验证异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(BindException.class)
     public R<Void> handleBindException(BindException e) {
@@ -223,12 +238,13 @@ public class GlobalExceptionHandler {
         return R.fail(HttpStatus.WARN, message);
     }
 
-    // todo 该todo以下的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
+    // todo 第一个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
 
     /**
      * 自定义数据库事务异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(CustomizeTransactionException.class)
     public R<String> handleCustomizeTransactionException(CustomizeTransactionException e) {
@@ -240,6 +256,7 @@ public class GlobalExceptionHandler {
      * 自定义返回异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(CustomizeReturnException.class)
     public R<String> handleCustomizeReturnException(CustomizeReturnException e) {
@@ -253,6 +270,7 @@ public class GlobalExceptionHandler {
      * 自定义文件异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(CustomizeFileException.class)
     public R<String> handleCustomizeFileException(CustomizeFileException e) {
@@ -266,6 +284,7 @@ public class GlobalExceptionHandler {
      * 自定义数据库事务异常
      *
      * @param e 异常
+     * @return 返回结果
      */
     @ExceptionHandler(CustomizeLockException.class)
     public R<String> handleCustomizeLockException(CustomizeLockException e) {

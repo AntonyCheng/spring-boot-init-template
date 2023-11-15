@@ -1,11 +1,15 @@
 package top.sharehome.springbootinittemplate.redisson;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.LockUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.function.SuccessFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.function.VoidFunction;
 
 import java.time.Duration;
 import java.util.*;
@@ -16,6 +20,7 @@ import java.util.*;
  * @author AntonyCheng
  */
 @SpringBootTest
+@Slf4j
 public class TestRedisson {
 
     /**
@@ -93,6 +98,79 @@ public class TestRedisson {
             }
         } catch (CustomizeReturnException e) {
             System.out.println("请求太多，请稍后");
+        }
+    }
+
+    /**
+     * 测试无论获取锁成功与否均无返回值的分布式锁
+     */
+    @Test
+    void testLockUtils1() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    int finalI = i + 1;
+                    LockUtils.lockEvent("test", (VoidFunction) () -> {
+                        System.out.println("子线程第" + finalI + "次拿到锁");
+                        try {
+                            ThreadUtils.sleep(Duration.ofMillis(1000));
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        System.out.println("子线程第" + finalI + "次释放锁");
+                    });
+                }
+            }
+        }).start();
+        for (int i = 0; i < 10; i++) {
+            int finalI = i + 1;
+            LockUtils.lockEvent("test", (VoidFunction) () -> {
+                System.out.println("主线程第" + finalI + "次拿到锁");
+                try {
+                    ThreadUtils.sleep(Duration.ofMillis(1000));
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("主线程第" + finalI + "次释放锁");
+            });
+        }
+        while (true) {
+        }
+    }
+
+    /**
+     * 测试无论获取锁成功与否均带有boolean类型返回值的分布式锁
+     * 这个和测试无论获取锁成功与否均带有自定义类型返回值的分布式锁大同小异
+     */
+    @Test
+    void testLockUtils2() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    int finalI = i + 1;
+                    boolean result = LockUtils.lockEvent("test", (SuccessFunction) () -> {
+                        System.out.println("子线程第" + finalI + "次拿到锁");
+                        System.out.println("子线程第" + finalI + "次释放锁");
+                    });
+                    if (!result) {
+                        System.out.println("子线程第" + finalI + "次没拿到锁");
+                    }
+                }
+            }
+        }).start();
+        for (int i = 0; i < 10; i++) {
+            int finalI = i + 1;
+            boolean result = LockUtils.lockEvent("test", (SuccessFunction) () -> {
+                System.out.println("主线程第" + finalI + "次拿到锁");
+                System.out.println("主线程第" + finalI + "次释放锁");
+            });
+            if (!result) {
+                System.out.println("主线程第" + finalI + "次没拿到锁");
+            }
+        }
+        while (true) {
         }
     }
 

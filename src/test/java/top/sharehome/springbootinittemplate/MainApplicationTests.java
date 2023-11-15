@@ -3,15 +3,12 @@ package top.sharehome.springbootinittemplate;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.UserService;
-import top.sharehome.springbootinittemplate.utils.redisson.LockUtils;
 
 import javax.annotation.Resource;
-import java.time.Duration;
 
 /**
  * 测试类
@@ -65,50 +62,9 @@ class MainApplicationTests {
         System.out.println(admin);
     }
 
-    @Test
-    void testLockUtils() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LockUtils.lock("test", 0, 3000, () -> {
-                    try {
-                        System.out.println("tok");
-                        ThreadUtils.sleep(Duration.ofSeconds(1));
-                        return "tok";
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }, () -> {
-                    System.out.println("tfail");
-                    return "tfail";
-                });
-            }
-        }).start();
-        LockUtils.lock("test", 0, 3000, () -> {
-            try {
-                System.out.println("ok");
-                ThreadUtils.sleep(Duration.ofSeconds(10));
-                return "ok";
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }, () -> {
-            System.out.println("fail");
-            return "fail";
-        });
-    }
-
 
     public static void main(String[] args) {
-        User user1 = new User();
-        user1.setId(123L);
-        user1.setName("123");
-
-        User user2 = new User();
-        user2.setId(123L).setName("123");
-
-        System.out.println(user1);
-        System.out.println(user2);
+        System.out.println("hello world");
     }
 
 }
