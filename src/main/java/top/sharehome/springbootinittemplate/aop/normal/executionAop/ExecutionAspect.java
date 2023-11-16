@@ -6,19 +6,30 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 /**
- * 示例切面类
+ * Pointcut注解value参数为execution型的切面类
+ * 该类型格式为："execution(方法修饰关键字 返回值类型 接入切面的方法 (方法形参类型))"
+ * 相关说明如下：
+ * 1、方法修饰关键字  ==> 方法修饰关键字可以忽略不写，形如 protected、private static、public static final等；
+ * 2、返回值类型     ==> 返回值类型不可以忽略不写，基本类型或者Java中包含的引用类型可以直接使用，形如int、String等，
+ * 如果是自定义类型，需要写清楚包名，形如top.sharehome.model.entity.User等，如果返回值对切面没影响，那么就用*表示
+ * 所有返回值类型均可；
+ * 3、接入切面的方法  ==> 使用execution型的切面类需要将切入点精确到方法，比如top.sharehome.method.DemoMethod类
+ * 中有demoMethod()方法，那么就需要写成top.sharehome.method.DemoMethod.demoMethod，当然也可以用*进行模糊占位
+ * 处理，例如 top.sharehome.*.*.demoMethod 或 top.sharehome.*.*.* 或 top.sharehome..*.* 或 demo* 或 *；
+ * 4、方法形参类型    ==> 方法形参类型指的是接入切面的方法的形参类型，这里的形式参数写法和返回值类型大同小异，如果有多个，
+ * 那就使用逗号隔开，形如(String)、(int,long)，如果方法形参类型对切面没影响，那么就用(..)表示任何形式的形参均可；
  *
  * @author AntonyCheng
  */
 @Component
 @EnableAspectJAutoProxy
 @Aspect
-public class DemoAspect {
+public class ExecutionAspect {
 
     /**
      * 定义切入点方法
      */
-    @Pointcut("execution(public * com.example.aop.service.impl.DemoServiceImpl.* (..))")
+    @Pointcut("execution(public * top..*.aop..*.ExecutionService.* (..))")
     private void pointCutMethod() {
 
     }

@@ -1,10 +1,16 @@
 package top.sharehome.springbootinittemplate.aop.normal.executionAop.service.impl;
 
-import com.example.aop.service.DemoService;
 import org.springframework.stereotype.Service;
+import top.sharehome.springbootinittemplate.aop.normal.executionAop.service.ExecutionService;
 
+/**
+ * 针对切点参数为execution型的切面类的服务实现类
+ *
+ * @author AntonyCheng
+ */
 @Service
-public class DemoServiceImpl implements DemoService {
+public class ExecutionServiceImpl implements ExecutionService {
+
     @Override
     public void doMethod1() {
         System.out.println("DemoServiceImpl.doMethod1()");
@@ -21,4 +27,5 @@ public class DemoServiceImpl implements DemoService {
         System.out.println("DemoServiceImpl.doMethod3()");
         throw new Exception("some exception");
     }
+
 }
