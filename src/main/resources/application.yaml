@@ -68,6 +68,11 @@ spring:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
         url: http://localhost:38078/spring-boot-admin
+        username: admin
+        password: admin123456
+        instance:
+          service-host-type: ip
+          name: ${spring.application.name}
   # 项目前置工作 ---- 可自定义
   application:
     name: spring-boot-init-template

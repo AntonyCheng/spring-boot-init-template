@@ -28,6 +28,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<!-- starter-test：junit + spring-test + mockito -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,6 +60,7 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>${mybatis-spring-boot-starter.version}</version>
 		</dependency>
+
 		<!-- mysql -->
 		<dependency>
 			<groupId>com.mysql</groupId>

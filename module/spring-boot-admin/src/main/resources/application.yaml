@@ -3,6 +3,10 @@ server:
 spring:
   application:
     name: spring-boot-admin
+  security:
+    user:
+      name: admin
+      password: admin123456
   boot:
     admin:
       context-path: /spring-boot-admin

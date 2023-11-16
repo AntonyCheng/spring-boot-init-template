@@ -24,8 +24,13 @@ spring:
     admin:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
-        enabled: false
+        enabled: true
         url: http://localhost:38078/spring-boot-admin
+        username: admin
+        password: admin123456
+        instance:
+          service-host-type: ip
+          name: ${spring.application.name}
   mvc:
     servlet:
       load-on-startup: 0

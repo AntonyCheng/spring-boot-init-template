@@ -652,7 +652,7 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
 
 1. 部署 XXL-JOB 分布式调度系统控制面板；
 
-   想要使用 XXL-JOB 分布式任务调度系统的功能，就需要先部署一个 XXL-JOB 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XXL-JOB 模块来部署一个 XXL-JOB 分布式调度系统控制面板，在 `visual` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XXL-JOB 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
+   想要使用 XXL-JOB 分布式任务调度系统的功能，就需要先部署一个 XXL-JOB 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XXL-JOB 模块来部署一个 XXL-JOB 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XXL-JOB 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
 
    ```yaml
    spring:
@@ -709,7 +709,7 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
 
 #### 配置SpringBootAdmin
 
-SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XXL-JOB 一样需要先部署，当然在该模板中的 `visual` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
+SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XXL-JOB 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
 
 ```yaml
 server:
