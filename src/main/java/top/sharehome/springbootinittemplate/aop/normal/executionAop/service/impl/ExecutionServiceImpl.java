@@ -17,14 +17,19 @@ public class ExecutionServiceImpl implements ExecutionService {
     }
 
     @Override
-    public String doMethod2() {
-        System.out.println("DemoServiceImpl.doMethod2()");
+    public void doMethod2(String arg) {
+        System.out.println("DemoServiceImpl.doMethod2,the arg is " + arg);
+    }
+
+    @Override
+    public String doMethod3() {
+        System.out.println("DemoServiceImpl.doMethod3()");
         return "hello world";
     }
 
     @Override
-    public void doMethod3() throws Exception {
-        System.out.println("DemoServiceImpl.doMethod3()");
+    public void doMethod4() throws Exception {
+        System.out.println("DemoServiceImpl.doMethod4()");
         throw new Exception("some exception");
     }
 

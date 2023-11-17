@@ -21,9 +21,10 @@ public class ExecutionAopTest {
     @Test
     public void testExecutionAop() {
         executionService.doMethod1();
-        executionService.doMethod2();
+        executionService.doMethod2("arg1");
+        executionService.doMethod3();
         try {
-            executionService.doMethod3();
+            executionService.doMethod4();
         } catch (Exception e) {
             System.out.println("抓住异常");
         }

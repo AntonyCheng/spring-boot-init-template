@@ -29,7 +29,7 @@ public class ExecutionAspect {
     /**
      * 定义切入点方法
      */
-    @Pointcut("execution(public * top..*.aop..*.ExecutionService.* (..))")
+    @Pointcut("execution(public * *..aop..ExecutionService.* (..))")
     private void pointCutMethod() {
 
     }
