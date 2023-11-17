@@ -9,10 +9,10 @@ public interface ExecutionService {
 
     public void doMethod1();
 
-    public void doMethod2(String arg);
+    public String doMethod2();
 
-    public String doMethod3();
+    public void doMethod3() throws Exception;
 
-    public void doMethod4() throws Exception;
+    public void doMethod4(String demo);
 
 }

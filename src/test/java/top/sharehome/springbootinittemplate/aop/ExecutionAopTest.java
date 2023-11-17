@@ -21,13 +21,13 @@ public class ExecutionAopTest {
     @Test
     public void testExecutionAop() {
         executionService.doMethod1();
-        executionService.doMethod2("arg1");
-        executionService.doMethod3();
+        executionService.doMethod2();
         try {
-            executionService.doMethod4();
+            executionService.doMethod3();
         } catch (Exception e) {
             System.out.println("抓住异常");
         }
+        executionService.doMethod4("demo");
     }
 
 }
