@@ -1,15 +1,15 @@
-package top.sharehome.springbootinittemplate.aop.normal.executionAop.service.impl;
+package top.sharehome.springbootinittemplate.aop.normal.argsAop.service.impl;
 
 import org.springframework.stereotype.Service;
-import top.sharehome.springbootinittemplate.aop.normal.executionAop.service.ExecutionService;
+import top.sharehome.springbootinittemplate.aop.normal.argsAop.service.ArgsService;
 
 /**
- * 针对切点参数为execution型的切面类的服务实现类
+ * 针对切点参数为args型的切面类的服务实现类
  *
  * @author AntonyCheng
  */
 @Service
-public class ExecutionServiceImpl implements ExecutionService {
+public class ArgsServiceImpl implements ArgsService {
 
     public static String demoStatic = "demoStatic";
 

@@ -1,7 +1,7 @@
-package top.sharehome.springbootinittemplate.aop.normal.executionAop.service.impl;
+package top.sharehome.springbootinittemplate.aop.normal.thisAop.service.impl;
 
 import org.springframework.stereotype.Service;
-import top.sharehome.springbootinittemplate.aop.normal.executionAop.service.ExecutionService;
+import top.sharehome.springbootinittemplate.aop.normal.thisAop.service.ThisService;
 
 /**
  * 针对切点参数为execution型的切面类的服务实现类
@@ -9,7 +9,7 @@ import top.sharehome.springbootinittemplate.aop.normal.executionAop.service.Exec
  * @author AntonyCheng
  */
 @Service
-public class ExecutionServiceImpl implements ExecutionService {
+public class ThisServiceImpl implements ThisService {
 
     public static String demoStatic = "demoStatic";
 

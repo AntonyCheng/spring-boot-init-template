@@ -10,7 +10,6 @@ import javax.annotation.Resource;
  * 切点参数为execution型的切面测试类
  *
  * @author AntonyCheng
- * @since 2023/11/16 22:17:32
  */
 @SpringBootTest
 public class ExecutionAopTest {
