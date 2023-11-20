@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.rabbitmq.consumer_example.model;
+package top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

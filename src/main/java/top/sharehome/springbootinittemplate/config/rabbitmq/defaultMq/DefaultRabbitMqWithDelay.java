@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.rabbitmq.default_mq;
+package top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;

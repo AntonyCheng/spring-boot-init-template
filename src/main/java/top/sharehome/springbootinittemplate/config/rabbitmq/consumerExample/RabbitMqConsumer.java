@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.rabbitmq.consumer_example;
+package top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample;
 
 import com.alibaba.fastjson.JSON;
 import com.rabbitmq.client.Channel;
@@ -7,7 +7,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
-import top.sharehome.springbootinittemplate.config.rabbitmq.consumer_example.model.RabbitMqMessage;
+import top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample.model.RabbitMqMessage;
 
 import java.io.IOException;
 
