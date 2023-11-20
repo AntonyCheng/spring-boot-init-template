@@ -1,7 +1,7 @@
 package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.impl;
 
 import org.springframework.stereotype.Service;
-import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.annotationDemo.AnnotationClass;
+import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.AtAnnotationClass;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.AtAnnotationService;
 
 import javax.annotation.Resource;
@@ -15,27 +15,27 @@ import javax.annotation.Resource;
 public class AtAnnotationServiceImpl implements AtAnnotationService {
 
     @Resource
-    private AnnotationClass annotationClass;
+    private AtAnnotationClass atAnnotationClass;
 
     @Override
     public void doMethod1() {
-        System.out.println(annotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod1()"));
+        System.out.println(atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod1()"));
     }
 
     @Override
     public String doMethod2() {
-        return annotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod2()");
+        return atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod2()");
     }
 
     @Override
     public void doMethod3() throws Exception {
-        System.out.println(annotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod3()"));
+        System.out.println(atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod3()"));
         throw new Exception("some exception");
     }
 
     @Override
     public void doMethod4(String demo) {
-        System.out.println(annotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod3()") + " " + demo);
+        System.out.println(atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod3()") + " " + demo);
     }
 
 }
