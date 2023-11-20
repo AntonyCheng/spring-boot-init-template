@@ -2,7 +2,8 @@ package top.sharehome.springbootinittemplate.aop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import top.sharehome.springbootinittemplate.aop.normal.executionAop.service.ExecutionService;
+import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.AtAnnotationService;
+import top.sharehome.springbootinittemplate.aop.studyDemo.normal.beanAop.service.BeanService;
 
 import javax.annotation.Resource;
 
@@ -15,18 +16,18 @@ import javax.annotation.Resource;
 public class ExecutionAopTest {
 
     @Resource
-    private ExecutionService executionService;
+    private AtAnnotationService atAnnotationService;
 
     @Test
     public void testExecutionAop() {
-        executionService.doMethod1();
-        executionService.doMethod2();
+        atAnnotationService.doMethod1();
+        atAnnotationService.doMethod2();
         try {
-            executionService.doMethod3();
+            atAnnotationService.doMethod3();
         } catch (Exception e) {
             System.out.println("抓住异常");
         }
-        executionService.doMethod4("demo");
+        atAnnotationService.doMethod4("Test");
     }
 
 }

@@ -12,9 +12,9 @@ import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDelay;
 import top.sharehome.springbootinittemplate.config.rabbitmq.BaseCustomizeMqWithDlx;
 import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
-import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMq;
-import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDelay;
-import top.sharehome.springbootinittemplate.config.rabbitmq.default_mq.DefaultRabbitMqWithDlx;
+import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMq;
+import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMqWithDelay;
+import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMqWithDlx;
 import top.sharehome.springbootinittemplate.utils.rabbitmq.model.RabbitMqMessage;
 
 import java.lang.reflect.Field;
