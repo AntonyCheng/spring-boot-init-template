@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop;
+package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -6,20 +6,21 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 /**
- * Pointcut注解value参数为@args型的切面类：用于匹配参数类带有指定注解的方法。
- * 特点：通常来说需要搭配execution型或者其他可以定位包的切面表达式一起使用，确定好包之后再去确定@args表达式的内容，用法比较刁钻，这里就不做赘述，详情请查看相关示例代码。
+ * Pointcut注解value参数为@within型的切面类：用于匹配带有指定注解的类及其子类中的方法。
+ * 特点：通常来说需要搭配execution型或者其他可以定位包的切面表达式一起使用，确定好包之后再去确定@args表达式的内容，区别于@annotation型的切面类，@within型的切面类颗粒度大一点，精确到类，区别于@target型的切面类会影响被注解类的子类。详情请查看相关示例代码。
+ * 说明：如果想要使用该型切面涉及到的指定注解的类子类继承的特性，那所指定的注解一定要有@Inherited注解。
  *
  * @author AntonyCheng
  */
 @Component
 @EnableAspectJAutoProxy
 @Aspect
-public class AtArgsAspect {
+public class AtWithinAspect {
 
     /**
      * 定义切入点方法
      */
-    @Pointcut("execution(* *..aop..atArgsAop..* (..)) && @args(top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop.annotation.AtArgsAop)")
+    @Pointcut("execution(* *..aop..atWithinAop..* (..)) && @within(top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop.annotation.AtWithinAop)")
     private void pointCutMethod() {
 
     }

@@ -26,7 +26,7 @@ public class ArgsAspect {
     /**
      * 定义切入点方法
      */
-    @Pointcut("within(*..aop.studyDemo.normal.withinAop..*.*)&&args(String)")
+    @Pointcut("within(*..aop.studyDemo.normal.argsAop..*.*)&&args(String)")
     private void pointCutMethod() {
 
     }

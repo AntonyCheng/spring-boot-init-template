@@ -31,8 +31,8 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println("TargetServiceImpl.doMethod4(), args = " + demo);
+    public void doMethod4(String param) {
+        System.out.println("TargetServiceImpl.doMethod4(), args = " + param);
     }
 
 }

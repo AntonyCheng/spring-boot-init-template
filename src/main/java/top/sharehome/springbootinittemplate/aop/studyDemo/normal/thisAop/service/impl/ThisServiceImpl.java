@@ -31,8 +31,8 @@ public class ThisServiceImpl implements ThisService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println("ThisServiceImpl.doMethod4(), args = " + demo);
+    public void doMethod4(String param) {
+        System.out.println("ThisServiceImpl.doMethod4(), args = " + param);
     }
 
 }

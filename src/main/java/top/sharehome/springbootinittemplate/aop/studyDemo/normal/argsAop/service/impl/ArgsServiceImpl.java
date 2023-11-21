@@ -31,8 +31,8 @@ public class ArgsServiceImpl implements ArgsService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println("ArgsServiceImpl.doMethod4(), args = " + demo);
+    public void doMethod4(String param) {
+        System.out.println("ArgsServiceImpl.doMethod4(), args = " + param);
     }
 
 }

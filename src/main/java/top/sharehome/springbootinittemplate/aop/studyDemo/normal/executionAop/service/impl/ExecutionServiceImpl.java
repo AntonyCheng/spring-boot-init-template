@@ -31,8 +31,8 @@ public class ExecutionServiceImpl implements ExecutionService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println("ExecutionServiceImpl.doMethod4(), args = " + demo);
+    public void doMethod4(String param) {
+        System.out.println("ExecutionServiceImpl.doMethod4(), args = " + param);
     }
 
 }

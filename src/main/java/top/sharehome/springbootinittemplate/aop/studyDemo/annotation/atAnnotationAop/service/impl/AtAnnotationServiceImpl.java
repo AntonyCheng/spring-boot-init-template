@@ -1,7 +1,7 @@
 package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.impl;
 
 import org.springframework.stereotype.Service;
-import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.AtAnnotationClass;
+import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.annotation.AtAnnotationClass;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.AtAnnotationService;
 
 import javax.annotation.Resource;
@@ -34,8 +34,8 @@ public class AtAnnotationServiceImpl implements AtAnnotationService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println(atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod3()") + " " + demo);
+    public void doMethod4(String param) {
+        System.out.println(atAnnotationClass.annotationMethod("AtAnnotationServiceImpl.doMethod4()") + " " + param);
     }
 
 }

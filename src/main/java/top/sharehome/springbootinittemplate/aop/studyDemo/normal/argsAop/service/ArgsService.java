@@ -13,6 +13,6 @@ public interface ArgsService {
 
     public void doMethod3() throws Exception;
 
-    public void doMethod4(String demo);
+    public void doMethod4(String param);
 
 }

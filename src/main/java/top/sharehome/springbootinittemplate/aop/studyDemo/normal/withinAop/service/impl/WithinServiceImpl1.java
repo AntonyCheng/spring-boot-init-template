@@ -29,8 +29,8 @@ public class WithinServiceImpl1 implements WithinService {
     }
 
     @Override
-    public void doMethod4(String demo) {
-        System.out.println("WithinServiceImpl1.doMethod1-4(), args = " + demo);
+    public void doMethod4(String param) {
+        System.out.println("WithinServiceImpl1.doMethod1-4(), args = " + param);
     }
 
 }

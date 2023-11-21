@@ -22,7 +22,7 @@ public class TargetAspect {
     /**
      * 定义切入点方法
      */
-    @Pointcut("this(top.sharehome.springbootinittemplate.aop.studyDemo.normal.thisAop.service.impl.ThisServiceImpl)")
+    @Pointcut("this(top.sharehome.springbootinittemplate.aop.studyDemo.normal.targetAop.service.impl.TargetServiceImpl)")
     private void pointCutMethod() {
 
     }

@@ -1,11 +1,11 @@
-package top.sharehome.springbootinittemplate.aop.studyDemo.normal.withinAop.service;
+package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop.service;
 
 /**
- * 针对切点参数为within型的切面类的服务接口
+ * 针对切点参数为@within型的切面类的服务接口
  *
  * @author AntonyCheng
  */
-public interface WithinService {
+public interface AtWithinService {
 
     public void doMethod1();
 

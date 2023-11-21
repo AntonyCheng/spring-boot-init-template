@@ -4,7 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
-import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.annotationDemo.AnnotationAop;
+import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.annotation.AtAnnotationAop;
 
 /**
  * Pointcut注解value参数为@annotation型的切面类：用于匹配带有指定注解的方法。
@@ -26,7 +26,7 @@ public class AtAnnotationAspect {
     /**
      * 定义切入点方法
      */
-    @Pointcut("@annotation(top.sharehome.springbootinittemplate.aop.studyDemo.annotation.annotationDemo.AnnotationAop)")
+    @Pointcut("@annotation(top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.annotation.AtAnnotationAop)")
     private void pointCutMethod() {
 
     }
@@ -35,15 +35,15 @@ public class AtAnnotationAspect {
      * 环绕通知
      *
      * @param proceedingJoinPoint 程序连接点
-     * @param annotationAop       由 && 与逻辑传入到切面方法中的连接点注解信息
+     * @param atAnnotationAop     由 && 与逻辑传入到切面方法中的连接点注解信息
      * @return 返回程序执行结果
      * @throws Throwable 抛出异常
      */
-    @Around(value = "pointCutMethod()&&@annotation(annotationAop)")
-    public Object doAround(ProceedingJoinPoint proceedingJoinPoint, AnnotationAop annotationAop) throws Throwable {
+    @Around(value = "pointCutMethod()&&@annotation(atAnnotationAop)")
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint, AtAnnotationAop atAnnotationAop) throws Throwable {
         System.out.println();
         System.out.println("环绕通知：进入方法");
-        System.out.println("annotationAop = " + annotationAop);
+        System.out.println("atAnnotationAop = " + atAnnotationAop);
         Object proceed = proceedingJoinPoint.proceed();
         System.out.println("环绕通知：退出方法");
         System.out.println();
