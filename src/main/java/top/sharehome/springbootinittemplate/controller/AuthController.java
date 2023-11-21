@@ -22,14 +22,14 @@ import javax.annotation.Resource;
 import static top.sharehome.springbootinittemplate.common.base.Constants.USER_ROLE_KEY;
 
 /**
- * 用户控制器
+ * 鉴权认证控制器
  *
  * @author AntonyCheng
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 @SaCheckLogin
-public class UserController {
+public class AuthController {
 
     @Resource
     private UserService userService;
