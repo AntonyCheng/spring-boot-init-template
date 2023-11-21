@@ -82,7 +82,7 @@
 - **文件操作**
   - POI 5.2.3 == 操作 Word
   - EasyExcel 3.3.1 == 操作 Excel
-  - itext 7.2.5
+  - itext 7.2.5 == 操作 PDF
 - **外接平台**
   - XXL-JOB 2.4.0 == 分布式定时任务管理平台
   - SpringBootAdmin 2.7.4 == SpringBoot服务监控平台
