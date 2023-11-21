@@ -23,7 +23,7 @@ import java.util.Arrays;
  *
  * @author AntonyCheng
  */
-@Component
+//@Component
 @EnableAspectJAutoProxy
 @Aspect
 public class ExecutionAspect {

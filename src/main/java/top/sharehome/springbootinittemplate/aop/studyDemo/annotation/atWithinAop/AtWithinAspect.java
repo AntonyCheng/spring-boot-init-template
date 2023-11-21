@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  *
  * @author AntonyCheng
  */
-@Component
+//@Component
 @EnableAspectJAutoProxy
 @Aspect
 public class AtWithinAspect {

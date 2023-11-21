@@ -27,9 +27,9 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.USER_RO
  * @author AntonyCheng
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 @SaCheckLogin
-public class UserController {
+public class AuthController {
 
     @Resource
     private UserService userService;
@@ -41,7 +41,6 @@ public class UserController {
      * @return 返回注册结果
      */
     @PostMapping("/register")
-    @SaIgnore
     public R<String> register(@RequestBody @Validated(PostGroup.class) UserRegisterDto userRegisterDto) {
         if (!StringUtils.equals(userRegisterDto.getPassword(), userRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
@@ -57,7 +56,6 @@ public class UserController {
      * @return 返回登陆用户信息
      */
     @PostMapping("/login")
-    @SaIgnore
     public R<UserLoginVo> login(@RequestBody @Validated(PostGroup.class) UserLoginDto userLoginDto) {
         UserLoginVo loginUser = userService.login(userLoginDto);
         if (!StpUtil.isLogin()) {

@@ -18,7 +18,7 @@ import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotatio
  *
  * @author AntonyCheng
  */
-@Component
+//@Component
 @EnableAspectJAutoProxy
 @Aspect
 public class AtAnnotationAspect {

@@ -15,6 +15,8 @@ import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * SaToken认证配置
@@ -33,8 +35,10 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 定义不需要拦截的URI
+        List<String> allowedUri = Arrays.asList("/auth/register","/auth/login");
         // 注册路由拦截器，自定义验证规则
-        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**").excludePathPatterns(allowedUri);
     }
 
     /**
