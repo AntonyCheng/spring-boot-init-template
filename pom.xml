@@ -14,7 +14,46 @@
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <properties>
+        <!-- Java相关 -->
         <java.version>11</java.version>
+        <!-- MySQL相关 -->
+        <mysql.version>8.0.33</mysql.version>
+        <druid.starter.version>1.2.16</druid.starter.version>
+        <mybatis.plus.version>3.5.4</mybatis.plus.version>
+        <shardingsphere.version>5.3.2</shardingsphere.version>
+        <!-- 工具类相关 -->
+        <lombok.version>1.18.30</lombok.version>
+        <hutool.version>5.8.22</hutool.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <ok.http3.version>4.10.0</ok.http3.version>
+        <ok.io.version>2.8.0</ok.io.version>
+        <ip2region.version>2.7.0</ip2region.version>
+        <swagger3.version>3.0.3</swagger3.version>
+        <fastjson2.version>2.0.35</fastjson2.version>
+        <!-- 权限校验相关 -->
+        <sa.token.version>1.37.0</sa.token.version>
+        <kaptcha.version>2.3.3</kaptcha.version>
+        <!-- redisson相关 -->
+        <redisson.version>3.23.5</redisson.version>
+        <!-- ElasticSearch相关 -->
+        <elasticsearch.version>7.14.0</elasticsearch.version>
+        <logstash.logback.version>7.3</logstash.logback.version>
+        <easy.es.version>2.0.0-beta4</easy.es.version>
+        <!-- 对象存储相关 -->
+        <tencent.cos.version>5.6.155</tencent.cos.version>
+        <ali.oss.version>3.15.1</ali.oss.version>
+        <ali.jaxb.version>2.3.1</ali.jaxb.version>
+        <ali.activation.version>1.1.1</ali.activation.version>
+        <minio.version>8.5.6</minio.version>
+        <!-- 文件操作相关 -->
+        <poi.version>5.2.3</poi.version>
+        <easy.excel.version>3.3.1</easy.excel.version>
+        <itext.version>7.2.5</itext.version>
+        <!-- 外部平台相关 -->
+        <xxl.job.version>2.4.0</xxl.job.version>
+        <spring.boot.version>2.7.4</spring.boot.version>
+        <!-- 其他（和业务无关，但是能够确保系统稳定性） -->
+        <snakeyaml.version>1.33</snakeyaml.version>
     </properties>
     <dependencies>
         <!-- SpringBoot 依赖配置 -->
@@ -70,65 +109,65 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.2.16</version>
+            <version>${druid.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.4</version>
+            <version>${mybatis.plus.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
-            <version>5.3.2</version>
+            <version>${shardingsphere.version}</version>
         </dependency>
 
         <!-- Lombok 依赖配置 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>${lombok.version}</version>
         </dependency>
 
         <!-- hutool 依赖配置-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.22</version>
+            <version>${hutool.version}</version>
         </dependency>
 
         <!-- apache common 依赖配置 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>${commons.lang3.version}</version>
         </dependency>
 
         <!-- Sa-Token 依赖配置（该初始化模板提供session+cookie和redis+token两种方式，此处依赖配置是redis+token，所以必须保证redis可用） -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>
-            <version>1.37.0</version>
+            <version>${sa.token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot-starter</artifactId>
-            <version>1.37.0</version>
+            <version>${sa.token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-jwt</artifactId>
-            <version>1.37.0</version>
+            <version>${sa.token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
-            <version>1.37.0</version>
+            <version>${sa.token.version}</version>
         </dependency>
 
         <!-- redis 依赖配置 -->
@@ -143,7 +182,7 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
-            <version>3.23.5</version>
+            <version>${redisson.version}</version>
         </dependency>
 
         <!-- rabbitMQ 依赖配置 -->
@@ -161,76 +200,76 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.2</version>
+            <version>${logstash.logback.version}</version>
         </dependency>
         <!-- ES 依赖配置 -->
         <dependency>
             <groupId>org.dromara.easy-es</groupId>
             <artifactId>easy-es-boot-starter</artifactId>
-            <version>2.0.0-beta4</version>
+            <version>${easy.es.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>7.14.0</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>7.14.0</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>7.14.0</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
 
         <!-- 腾讯云COS -->
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
-            <version>5.6.155</version>
+            <version>${tencent.cos.version}</version>
         </dependency>
 
         <!-- 阿里云OSS -->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.15.1</version>
+            <version>${ali.oss.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
+            <version>${ali.jaxb.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <version>1.1.1</version>
+            <version>${ali.activation.version}</version>
         </dependency>
 
         <!-- MinIO -->
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
-            <version>8.5.6</version>
+            <version>${minio.version}</version>
         </dependency>
 
         <!-- Office IO 依赖配置-->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.3</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.3</version>
+            <version>${poi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>3.3.1</version>
+            <version>${easy.excel.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.poi</groupId>
@@ -243,7 +282,7 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
-            <version>7.2.5</version>
+            <version>${itext.version}</version>
             <type>pom</type>
         </dependency>
 
@@ -251,61 +290,61 @@
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
-            <version>2.4.0</version>
+            <version>${xxl.job.version}</version>
         </dependency>
 
         <!-- SpringBootAdmin监控平台 -->
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
-            <version>2.7.4</version>
+            <version>${spring.boot.version}</version>
         </dependency>
 
         <!-- okHttp 依赖配置 -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.10.0</version>
+            <version>${ok.http3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>2.8.0</version>
+            <version>${ok.io.version}</version>
         </dependency>
 
         <!-- 离线IP地址定位库 ip2region 依赖配置-->
         <dependency>
             <groupId>org.lionsoul</groupId>
             <artifactId>ip2region</artifactId>
-            <version>2.7.0</version>
+            <version>${ip2region.version}</version>
         </dependency>
 
         <!-- Swagger3 依赖配置 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>3.0.3</version>
+            <version>${swagger3.version}</version>
         </dependency>
 
         <!-- kaptcha 验证码 -->
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
-            <version>2.3.3</version>
+            <version>${kaptcha.version}</version>
         </dependency>
 
         <!-- fastjson2 依赖配置 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
-            <version>2.0.35</version>
+            <version>${fastjson2.version}</version>
         </dependency>
 
         <!-- snakeyaml 依赖配置（用于修复漏洞） -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.33</version>
+            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 

@@ -3,36 +3,38 @@
 > 作者：[AntonyCheng](https://github.com/AntonyCheng})
 > 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
 
+> **版本号：v1.x.x**
+
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
 * [模板特点](#模板特点)
-  * [主流框架](#主流框架)
-  * [业务特性](#业务特性)
+    * [主流框架](#主流框架)
+    * [业务特性](#业务特性)
 * [业务功能](#业务功能)
-  * [示例业务](#示例业务)
-  * [单元测试](#单元测试)
+    * [示例业务](#示例业务)
+    * [单元测试](#单元测试)
 * [快速上手](#快速上手)
-  * [必须执行](#必须执行)
-  * [可选执行](#可选执行)
-    * [整合缓存服务](#整合缓存服务)
-      * [整合Redis（系统缓存）](#整合redis系统缓存)
-      * [整合Redisson（业务缓存）](#整合redisson业务缓存)
-    * [整合消息队列](#整合消息队列)
-      * [激活消息队列](#激活消息队列)
-      * [自定义消息队列](#自定义消息队列)
-    * [整合ElasticSearch](#整合elasticsearch)
-    * [整合对象存储服务](#整合对象存储服务)
-      * [整合腾讯云COS](#整合腾讯云cos)
-      * [整合MinIO](#整合minio)
-      * [整合阿里云OSS](#整合阿里云oss)
-    * [配置SaToken](#配置satoken)
-      * [开启鉴权](#开启鉴权)
-      * [开启认证](#开启认证)
-      * [开启JWT](#开启jwt)
-    * [配置XXL-JOB](#配置xxl-job)
-      * [SpringBoot任务调度](#springboot任务调度)
-      * [XXL-JOB任务调度](#xxl-job任务调度)
-    * [配置SpringBootAdmin](#配置springbootadmin)
+    * [必须执行](#必须执行)
+    * [可选执行](#可选执行)
+        * [整合缓存服务](#整合缓存服务)
+            * [整合Redis（系统缓存）](#整合redis系统缓存)
+            * [整合Redisson（业务缓存）](#整合redisson业务缓存)
+        * [整合消息队列](#整合消息队列)
+            * [激活消息队列](#激活消息队列)
+            * [自定义消息队列](#自定义消息队列)
+        * [整合ElasticSearch](#整合elasticsearch)
+        * [整合对象存储服务](#整合对象存储服务)
+            * [整合腾讯云COS](#整合腾讯云cos)
+            * [整合MinIO](#整合minio)
+            * [整合阿里云OSS](#整合阿里云oss)
+        * [配置SaToken](#配置satoken)
+            * [开启鉴权](#开启鉴权)
+            * [开启认证](#开启认证)
+            * [开启JWT](#开启jwt)
+        * [配置XXL-JOB](#配置xxl-job)
+            * [SpringBoot任务调度](#springboot任务调度)
+            * [XXL-JOB任务调度](#xxl-job任务调度)
+        * [配置SpringBootAdmin](#配置springbootadmin)
 * [申明&联系我](#申明联系我)
 
 ## 模板特点
@@ -40,50 +42,50 @@
 ### 主流框架
 
 - **Java 11**
-
 - **SpringBoot 2.7.x**
-  - freemarker == 模板引擎
-  - web == SpringMVC
-  - undertow == Java Web 服务器
-  - aop == 面向切面编程
-  - devtools == 热部署插件
-- **MySQL 8.0.33**
-  - druid 1.2.16 == 连接池
-  - mybatis-plus == MySQL 持久层操作框架
-  - JDBC 8.0.33 == Java 连接 MySQL 依赖
-  - ShardingSphere 5.3.2 == 分布式数据库解决方案
+    - freemarker == 模板引擎
+    - web == SpringMVC
+    - undertow == Java Web 服务器
+    - aop == 面向切面编程
+    - devtools == 热部署插件
+- **MySQL**
+    - druid 1.2.16 == 连接池
+    - mybatis-plus 3.5.4 == MySQL 持久层操作框架
+    - JDBC 8.0.33 == Java 连接 MySQL 依赖
+    - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
-  - Lombok 1.18.30
-  - hutool 5.8.22
-  - commons-lang 3
+    - Lombok 1.18.30
+    - hutool 5.8.22
+    - commons-lang3 3.12.0
 - **权限校验**
-  - SaToken 1.37.0
-    - SaToken Core 1.37.0
-    - SaToken JWT 1.37.0
-    - SaToken Redis 1.37.0
+    - SaToken 1.37.0
+        - SaToken Core 1.37.0
+        - SaToken JWT 1.37.0
+        - SaToken Redis 1.37.0
 - **缓存服务**
-  - spring-boot-starter-data-redis
-  - spring-boot-starter-cache
-  - redisson 3.23.5 == Redis的基础上实现的Java驻内存数据网格
+    - spring-boot-starter-data-redis
+    - spring-boot-starter-cache
+    - redisson 3.23.5 == Redis的基础上实现的Java驻内存数据网格
 - **消息队列**
-  - rabbitMQ
-    - spring-boot-starter-amqp
+    - rabbitMQ
+        - spring-boot-starter-amqp
 - **搜索引擎**
-  - Elastic Stack
-    - elasticsearch 7.14.0
-    - elasticsearch-rest-high-level-client 7.14.0
-    - logstash-logback-encoder 7.3
-  - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎，可以像Mybatis-Plus操作MySQL一样操作的开源框架
+    - Elastic Stack
+        - elasticsearch 7.14.0
+        - elasticsearch-rest-high-level-client 7.14.0
+        - logstash-logback-encoder 7.3
+    - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎，可以像Mybatis-Plus操作MySQL一样操作的开源框架
 - **对象存储（OSS）**
-  - 腾讯云 COS 5.6.155
-  - MinIO 8.5.6
+    - 腾讯云 COS 5.6.155
+    - 阿里云 OSS 3.15.1
+    - MinIO 8.5.6
 - **文件操作**
-  - POI == 操作 Word
-  - EasyExcel == 操作 Excel
-  - itext 7.2.5
+    - POI 5.2.3 == 操作 Word
+    - EasyExcel 3.3.1 == 操作 Excel
+    - itext 7.2.5 == 操作 PDF
 - **外接平台**
-  - XXL-JOB 2.4.0 == 分布式定时任务管理平台
-  - SpringBootAdmin 2.7.4 == SpringBoot服务监控平台
+    - XXL-JOB 2.4.0 == 分布式定时任务管理平台
+    - SpringBootAdmin 2.7.4 == SpringBoot服务监控平台
 
 ### 业务特性
 
@@ -202,9 +204,9 @@
 
 2. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
-   - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
-   - 仅开启一个；
-   - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
+    - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
+    - 仅开启一个；
+    - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
    # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
@@ -312,9 +314,9 @@
 
 1. 关于自定义消息队列，这里给出最简单的方式，首先开发者需要考虑自定义哪种形式的消息队列：
 
-   - 普通消息队列：即最基础的消息队列，能够支持最基本的消息投递和消息消费的能力，简单易懂；
-   - 带有死信队列的消息队列：与普通消息队列相比，带有死信队列的消息队列能够在消息被拒绝消费之后选择将消息列入死信队列中，而并不是直接丢弃或者再次扔进队列中等待消费，这种的应用场景多用于不可丢失消息的处理或者对拒绝消费的消息再处理；
-   - 延迟队列：投递消息之后并不能从队列中马上取出消息进行消费；
+    - 普通消息队列：即最基础的消息队列，能够支持最基本的消息投递和消息消费的能力，简单易懂；
+    - 带有死信队列的消息队列：与普通消息队列相比，带有死信队列的消息队列能够在消息被拒绝消费之后选择将消息列入死信队列中，而并不是直接丢弃或者再次扔进队列中等待消费，这种的应用场景多用于不可丢失消息的处理或者对拒绝消费的消息再处理；
+    - 延迟队列：投递消息之后并不能从队列中马上取出消息进行消费；
 
    这些具体的消息队列特性往往需要开发者掌握一定的前置知识基础；
 
@@ -747,6 +749,3 @@ spring:
 如果你也想成为该项目的共建者，请直接提交 PR ，并**对其进行详细说明**，作者审核之后会并入该模板 Master 分支中（暂时性操作，如果有一天项目真能做大，从该项目中规划分支也不是没有可能）。
 
 如果你在使用模板的过程中有建议或者看法，请尽管发布 ISSUES 。
-
-
-
