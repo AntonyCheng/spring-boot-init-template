@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import static top.sharehome.springbootinittemplate.common.base.Constants.USER_ROLE_KEY;
 
 /**
- * 用户控制器
+ * 鉴权认证控制器
  *
  * @author AntonyCheng
  */
