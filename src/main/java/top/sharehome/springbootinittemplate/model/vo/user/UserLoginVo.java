@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * 用户登陆Vo类
+ * 用户登录Vo类
  *
  * @author AntonyCheng
  */

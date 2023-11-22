@@ -22,15 +22,15 @@ public interface UserService extends IService<User> {
     void register(UserRegisterDto userRegisterDto);
 
     /**
-     * 用户登陆
+     * 用户登录
      *
-     * @param userLoginDto 用户登陆Dto类
-     * @return 返回登陆用户信息
+     * @param userLoginDto 用户登录Dto类
+     * @return 返回登录用户信息
      */
     UserLoginVo login(UserLoginDto userLoginDto);
 
     /**
-     * 获取登陆用户信息
+     * 获取登录用户信息
      *
      * @return 返回用户信息结果
      */

@@ -351,7 +351,7 @@ schedule:
     # 线程池大小（开启则必填）
     threadPool: 10
 
-# Xxl-Job配置（如果是导入了模板sql，那么登陆账号/密码为：admin/123456）
+# Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
 xxl:
   job:
     # todo 是否开启（预先关闭）

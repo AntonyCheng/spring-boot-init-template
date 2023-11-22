@@ -51,10 +51,10 @@ public class AuthController {
     }
 
     /**
-     * 用户登陆
+     * 用户登录
      *
-     * @param userLoginDto 用户登陆Dto类
-     * @return 返回登陆用户信息
+     * @param userLoginDto 用户登录Dto类
+     * @return 返回登录用户信息
      */
     @PostMapping("/login")
     @SaIgnore
@@ -64,18 +64,18 @@ public class AuthController {
             StpUtil.login(loginUser.getId());
             StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
         } else {
-            // 如果重复登陆，就需要验证当前登陆账号和将要登陆账号是否相同，不相同则挤掉原账号
+            // 如果重复登录，就需要验证当前登录账号和将要登录账号是否相同，不相同则挤掉原账号
             if (ObjectUtils.notEqual(Long.parseLong((String) StpUtil.getLoginId()), loginUser.getId())) {
                 StpUtil.logout();
                 StpUtil.login(loginUser.getId());
                 StpUtil.getSession().set(USER_ROLE_KEY, loginUser.getRole());
             }
         }
-        return R.ok(loginUser);
+        return R.ok("登录成功", loginUser);
     }
 
     /**
-     * 获取登陆用户信息
+     * 获取登录用户信息
      *
      * @return 返回用户信息结果
      */
@@ -94,7 +94,7 @@ public class AuthController {
     @DeleteMapping("/logout")
     public R<String> logout() {
         StpUtil.logout();
-        return R.ok("logout");
+        return R.ok("退出成功");
     }
 
 }

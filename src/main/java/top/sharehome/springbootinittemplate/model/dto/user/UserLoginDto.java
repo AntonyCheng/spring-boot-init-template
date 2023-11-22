@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
- * 用户登陆Dto类
+ * 用户登录Dto类
  *
  * @author AntonyCheng
  */
