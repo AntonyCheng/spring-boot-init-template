@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.dto.user;
+package top.sharehome.springbootinittemplate.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserRegisterDto implements Serializable {
+public class AuthRegisterDto implements Serializable {
 
     /**
      * 用户账号

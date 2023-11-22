@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.vo.user;
+package top.sharehome.springbootinittemplate.model.vo.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * 用户登陆Vo类
+ * 用户登录Vo类
  *
  * @author AntonyCheng
  */
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserLoginVo implements Serializable {
+public class AuthLoginVo implements Serializable {
 
     /**
      * 用户ID

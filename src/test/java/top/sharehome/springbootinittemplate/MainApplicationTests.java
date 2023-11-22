@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.service.UserService;
+import top.sharehome.springbootinittemplate.service.AuthService;
 
 import javax.annotation.Resource;
 
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 class MainApplicationTests {
 
     @Resource
-    private UserService userService;
+    private AuthService authService;
 
     /**
      * 初始化管理员账号密码（数据库中默认内置有：admin/123456）
@@ -33,8 +33,8 @@ class MainApplicationTests {
         user.setPassword("123456");
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getRole, "admin");
-        if (ObjectUtils.isEmpty(userService.getOne(userLambdaQueryWrapper))) {
-            userService.save(user);
+        if (ObjectUtils.isEmpty(authService.getOne(userLambdaQueryWrapper))) {
+            authService.save(user);
             System.out.println("\n管理员身份创建成功！");
             // 创建之后切记前往数据库修改这条数据的"user_role"字段为"admin"
         } else {
@@ -49,7 +49,7 @@ class MainApplicationTests {
     void updateAdmin() {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getRole, "admin");
-        User admin = userService.getOne(userLambdaQueryWrapper);
+        User admin = authService.getOne(userLambdaQueryWrapper);
         System.out.println(admin);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.eq(User::getId, admin.getId())
@@ -57,8 +57,8 @@ class MainApplicationTests {
                 .set(User::getAccount, "admin")
                 // 修改管理员密码
                 .set(User::getPassword, "123456");
-        userService.update(userLambdaUpdateWrapper);
-        admin = userService.getOne(userLambdaQueryWrapper);
+        authService.update(userLambdaUpdateWrapper);
+        admin = authService.getOne(userLambdaQueryWrapper);
         System.out.println(admin);
     }
 

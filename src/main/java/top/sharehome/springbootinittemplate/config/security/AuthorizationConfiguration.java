@@ -6,13 +6,13 @@ import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.config.security.condition.AuthorizationCondition;
+import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
-
-import static top.sharehome.springbootinittemplate.common.base.Constants.USER_ROLE_KEY;
 
 /**
  * SaToken鉴权配置
@@ -54,7 +54,7 @@ public class AuthorizationConfiguration implements StpInterface {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于用户角色，所以角色通常只有一个，个别情况除外
         SaSession session = StpUtil.getSessionByLoginId(loginId);
-        String userRole = session.get(USER_ROLE_KEY, "");
+        String userRole = ((AuthLoginVo) session.get(Constants.LOGIN_USER_KEY)).getRole();
         return Collections.singletonList(userRole);
     }
 

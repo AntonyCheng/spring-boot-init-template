@@ -173,7 +173,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码（考虑是否需要密码）
-    password: 123456
+    #password: 123456
     # 连接超时时间
     timeout: 3s
     # redis连接池
@@ -210,7 +210,7 @@ redisson:
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
-    password: 123456
+    #password: 123456
     # 命令等待超时，单位：毫秒
     timeout: 3000
     # 发布和订阅连接池大小
@@ -351,7 +351,7 @@ schedule:
     # 线程池大小（开启则必填）
     threadPool: 10
 
-# Xxl-Job配置（如果是导入了模板sql，那么登陆账号/密码为：admin/123456）
+# Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
 xxl:
   job:
     # todo 是否开启（预先关闭）
@@ -404,9 +404,11 @@ sa-token:
   # token前缀（这个需要从前端修改后传入进来）
   # token-prefix: "Bearer"
   # jwt秘钥
-  jwt-secret-key: abcdefghijklmnopqrstuvwxyz
+  jwt-secret-key: spring-boot-init-template
   # 开启日志
   is-log: on
+  # 非jwt形式的token风格：uuid 带有中划线的uuid（默认）；simple-uuid 不带有中划线的uuid；random-32 随机32位字符串；random-64 随机64位字符串；random-128 随机128位字符串；tik tik风格。
+  token-style: tik
 
 # MyBatisPlus配置
 # https://baomidou.com/config/

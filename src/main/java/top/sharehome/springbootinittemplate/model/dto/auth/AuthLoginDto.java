@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.dto.user;
+package top.sharehome.springbootinittemplate.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
- * 用户登陆Dto类
+ * 用户登录Dto类
  *
  * @author AntonyCheng
  */
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class UserLoginDto implements Serializable {
+public class AuthLoginDto implements Serializable {
 
     /**
      * 用户账号

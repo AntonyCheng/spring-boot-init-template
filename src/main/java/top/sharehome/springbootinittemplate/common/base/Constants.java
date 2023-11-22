@@ -78,9 +78,9 @@ public interface Constants {
     long CAPTCHA_EXPIRATION = 2;
 
     /**
-     * 存放在SaSession中的用户角色的键值
+     * 存放在缓存中的用户键
      */
-    String USER_ROLE_KEY = "userRoleKey";
+    String LOGIN_USER_KEY = "loginUser";
 
     /**
      * 用户角色admin

@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.config.security;
 
 import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.same.SaSameUtil;
@@ -47,15 +48,28 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
     @Bean
     public SaServletFilter getSaServletFilter() {
         return new SaServletFilter()
+                // 指定拦截的路由
                 .addInclude("/**")
-                // 排除前端资源 ---- 这里可以自定义
-                // .addExclude("/front/**")
+                // 排除静态资源 ---- 这里可以自定义
+                .addExclude("/favicon.ico")
+                // 认证函数
                 .setAuth(obj -> {
-                    if (SaManager.getConfig().getCheckSameToken()) {
-                        SaSameUtil.checkCurrentRequestToken();
-                    }
+                    // 如果想在拦截器层面做认证，请将逻辑代码编写到此处
                 })
-                .setError(e -> SaResult.error("认证失败，无法访问系统资源").setCode(HttpStatus.UNAUTHORIZED));
+                // 异常处理函数：每次认证函数发生异常时执行此函数
+                .setError(e -> SaResult.error("认证失败，无法访问系统资源").setCode(HttpStatus.UNAUTHORIZED))
+                .setBeforeAuth(r->{
+                    // ---------- 设置一些安全响应头 ----------
+                    SaHolder.getResponse()
+                            // 服务器名称
+                            .setServer("antony-server")
+                            // 是否可以在iframe显示视图： DENY=不可以 | SAMEORIGIN=同域下可以 | ALLOW-FROM uri=指定域名下可以
+                            .setHeader("X-Frame-Options", "SAMEORIGIN")
+                            // 是否启用浏览器默认XSS防护： 0=禁用 | 1=启用 | 1; mode=block 启用, 并在检查到XSS攻击时，停止渲染页面
+                            .setHeader("X-XSS-Protection", "1; mode=block")
+                            // 禁用浏览器内容嗅探
+                            .setHeader("X-Content-Type-Options", "nosniff");
+                });
     }
 
     /**
