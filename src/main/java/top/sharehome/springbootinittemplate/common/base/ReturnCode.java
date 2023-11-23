@@ -89,6 +89,21 @@ public enum ReturnCode {
     ABNORMAL_USER_EQUIPMENT(11010, "用户设备异常"),
 
     /**
+     * 用户登录验证码为空 11011
+     */
+    CAPTCHA_IS_EMPTY(11011, "验证码为空"),
+
+    /**
+     * 用户登录验证码已过期 11012
+     */
+    CAPTCHA_HAS_EXPIRED(11012, "验证码已过期"),
+
+    /**
+     * 用户登录验证码错误 11013
+     */
+    CAPTCHA_IS_INCORRECT(11013, "验证码错误"),
+
+    /**
      * 手机格式校验失败 12000
      */
     PHONE_FORMAT_VERIFICATION_FAILED(12000, "手机格式校验失败"),

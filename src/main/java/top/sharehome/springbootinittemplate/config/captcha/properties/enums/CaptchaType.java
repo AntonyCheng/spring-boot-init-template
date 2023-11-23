@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.captcha.enums;
+package top.sharehome.springbootinittemplate.config.captcha.properties.enums;
 
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;

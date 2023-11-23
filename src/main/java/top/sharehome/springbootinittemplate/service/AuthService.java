@@ -7,7 +7,7 @@ import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
 /**
- * 用户服务类
+ * 鉴权认证服务接口
  *
  * @author AntonyCheng
  */

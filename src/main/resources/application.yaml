@@ -413,7 +413,7 @@ sa-token:
 # 验证码配置
 captcha:
   # 验证码开关
-  enabled: false
+  enable: false
   # 验证码类型：math 数字类型；char 字符类型。
   type: math
   # 验证码类别：line 线段干扰；circle 圆圈干扰；shear 扭曲干扰。
@@ -422,6 +422,8 @@ captcha:
   number-length: 2
   # 字符验证码长度
   char-length: 6
+  # 验证码存活时间（单位：秒）
+  expired: 180
 
 # MyBatisPlus配置
 # https://baomidou.com/config/

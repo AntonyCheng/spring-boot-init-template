@@ -18,7 +18,7 @@ import top.sharehome.springbootinittemplate.service.AuthService;
 import javax.annotation.Resource;
 
 /**
- * 用户服务实现类
+ * 鉴权认证服务实现类
  *
  * @author AntonyCheng
  */

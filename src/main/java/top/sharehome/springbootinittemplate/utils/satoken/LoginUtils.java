@@ -43,7 +43,7 @@ public class LoginUtils {
                 // 存入一份到缓存中
                 SaHolder.getStorage()
                         .set(Constants.LOGIN_USER_KEY, loginUser);
-                StpUtil.login(loginUser.getId().toString());
+                StpUtil.login(loginUser.getId());
                 StpUtil.getSession().set(Constants.LOGIN_USER_KEY, loginUser);
             }
         }

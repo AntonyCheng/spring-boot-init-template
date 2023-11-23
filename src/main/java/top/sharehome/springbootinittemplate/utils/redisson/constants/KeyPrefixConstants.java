@@ -47,4 +47,9 @@ public interface KeyPrefixConstants {
      */
     String LOCK_PREFIX = "LOCK_";
 
+    /**
+     * 验证码Key前缀
+     */
+    String CAPTCHA_PREFIX = "CAPTCHA_";
+
 }

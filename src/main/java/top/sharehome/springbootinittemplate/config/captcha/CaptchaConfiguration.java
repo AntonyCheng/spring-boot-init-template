@@ -4,9 +4,11 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.ShearCaptcha;
+import cn.hutool.captcha.generator.MathGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import top.sharehome.springbootinittemplate.config.captcha.generator.UnsignedMathGenerator;
 
 import java.awt.*;
 
@@ -17,17 +19,18 @@ import java.awt.*;
  */
 @Configuration
 public class CaptchaConfiguration {
+
     private static final int WIDTH = 160;
     private static final int HEIGHT = 60;
-    private static final Color BACKGROUND = Color.PINK;
+    private static final Color BACKGROUND = Color.WHITE;
     private static final Font FONT = new Font("Arial", Font.BOLD, 48);
 
     /**
-     * 圆圈干扰验证码
+     * 圆圈干扰的字符验证码
      */
     @Lazy
     @Bean
-    public CircleCaptcha circleCaptcha() {
+    public CircleCaptcha circleCharCaptcha() {
         CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(WIDTH, HEIGHT);
         captcha.setBackground(BACKGROUND);
         captcha.setFont(FONT);
@@ -35,11 +38,11 @@ public class CaptchaConfiguration {
     }
 
     /**
-     * 线段干扰的验证码
+     * 线段干扰的字符验证码
      */
     @Lazy
     @Bean
-    public LineCaptcha lineCaptcha() {
+    public LineCaptcha lineCharCaptcha() {
         LineCaptcha captcha = CaptchaUtil.createLineCaptcha(WIDTH, HEIGHT);
         captcha.setBackground(BACKGROUND);
         captcha.setFont(FONT);
@@ -47,14 +50,54 @@ public class CaptchaConfiguration {
     }
 
     /**
-     * 扭曲干扰验证码
+     * 扭曲干扰的字符验证码
      */
     @Lazy
     @Bean
-    public ShearCaptcha shearCaptcha() {
+    public ShearCaptcha shearCharCaptcha() {
         ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(WIDTH, HEIGHT);
         captcha.setBackground(BACKGROUND);
         captcha.setFont(FONT);
         return captcha;
     }
+
+    /**
+     * 圆圈干扰的算术验证码
+     */
+    @Lazy
+    @Bean
+    public CircleCaptcha circleMathCaptcha() {
+        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(WIDTH, HEIGHT);
+        captcha.setGenerator(new UnsignedMathGenerator());
+        captcha.setBackground(BACKGROUND);
+        captcha.setFont(FONT);
+        return captcha;
+    }
+
+    /**
+     * 线条干扰的算术验证码
+     */
+    @Lazy
+    @Bean
+    public LineCaptcha lineMathCaptcha() {
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(WIDTH, HEIGHT);
+        captcha.setGenerator(new UnsignedMathGenerator());
+        captcha.setBackground(BACKGROUND);
+        captcha.setFont(FONT);
+        return captcha;
+    }
+
+    /**
+     * 圆圈干扰的算术验证码
+     */
+    @Lazy
+    @Bean
+    public ShearCaptcha shearMathCaptcha() {
+        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(WIDTH, HEIGHT);
+        captcha.setGenerator(new UnsignedMathGenerator());
+        captcha.setBackground(BACKGROUND);
+        captcha.setFont(FONT);
+        return captcha;
+    }
+
 }

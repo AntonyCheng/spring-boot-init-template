@@ -26,7 +26,7 @@ public class UnsignedMathGenerator implements CodeGenerator {
      * 构造
      */
     public UnsignedMathGenerator() {
-        this(2);
+        this(1);
     }
 
     /**
