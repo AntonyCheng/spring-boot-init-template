@@ -99,9 +99,14 @@ public enum ReturnCode {
     CAPTCHA_HAS_EXPIRED(11012, "验证码已过期"),
 
     /**
-     * 用户登录验证码错误 11013
+     * 用户登录验证码无效 11013
      */
-    CAPTCHA_IS_INCORRECT(11013, "验证码错误"),
+    CAPTCHA_IS_INVALID(11013, "验证码无效"),
+
+    /**
+     * 用户登录验证码无效 11014
+     */
+    CAPTCHA_IS_INCORRECT(11014, "验证码错误"),
 
     /**
      * 手机格式校验失败 12000

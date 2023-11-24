@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
@@ -79,7 +80,7 @@ class MainApplicationTests {
 
     @Test
     public void testCreateCaptcha() {
-        Map<String, Object> captcha = captchaService.createCaptcha();
+        Captcha captcha = captchaService.createCaptcha();
         System.out.println(captcha);
     }
 

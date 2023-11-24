@@ -1,6 +1,6 @@
 package top.sharehome.springbootinittemplate.config.captcha.service;
 
-import java.util.Map;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 /**
  * 验证码服务接口
@@ -12,7 +12,7 @@ public interface CaptchaService {
     /**
      * 生成验证码
      */
-    Map<String, Object> createCaptcha();
+    Captcha createCaptcha();
 
     /**
      * 校验验证码

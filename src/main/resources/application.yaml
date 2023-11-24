@@ -412,7 +412,7 @@ sa-token:
 
 # 验证码配置
 captcha:
-  # 验证码开关
+  # todo 是否使用验证码（开启的前提是redisson配置完成）
   enable: false
   # 验证码类型：math 数字类型；char 字符类型。
   type: math

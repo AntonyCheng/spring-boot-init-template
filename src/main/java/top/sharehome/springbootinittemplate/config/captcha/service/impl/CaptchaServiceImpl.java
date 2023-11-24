@@ -12,6 +12,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.config.captcha.properties.enums.CaptchaType;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
@@ -20,11 +21,12 @@ import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
+/**
+ * 验证码服务实现类
+ *
+ * @author xg
+ */
 @EnableConfigurationProperties(CaptchaProperties.class)
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
@@ -33,12 +35,12 @@ public class CaptchaServiceImpl implements CaptchaService {
     private CaptchaProperties captchaProperties;
 
     @Override
-    public Map<String, Object> createCaptcha() {
-        Map<String, Object> captchaAjax = new HashMap<>();
+    public Captcha createCaptcha() {
+        Captcha captchaResponse = new Captcha();
         boolean enable = captchaProperties.isEnable();
-        captchaAjax.put("enableCode", enable);
+        captchaResponse.setEnableCode(enable);
         if (!enable) {
-            return captchaAjax;
+            return captchaResponse;
         }
         String uuid = IdUtil.simpleUUID();
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
@@ -56,9 +58,9 @@ public class CaptchaServiceImpl implements CaptchaService {
             code = exp.getValue(String.class);
         }
         CacheUtils.putString(codeKeyInRedis, code, captchaProperties.getExpired());
-        captchaAjax.put("uuid", uuid);
-        captchaAjax.put("img", captcha.getImageBase64());
-        return captchaAjax;
+        captchaResponse.setUuid(uuid)
+                .setImgBase64(captcha.getImageBase64());
+        return captchaResponse;
     }
 
     @Override
@@ -67,10 +69,13 @@ public class CaptchaServiceImpl implements CaptchaService {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_EMPTY);
         }
         if (StringUtils.isBlank(uuid)) {
-            throw new CustomizeReturnException(ReturnCode.CAPTCHA_HAS_EXPIRED);
+            throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INVALID);
         }
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
         String codeValue = CacheUtils.getString(codeKeyInRedis);
+        if (StringUtils.isBlank(codeValue)) {
+            throw new CustomizeReturnException(ReturnCode.CAPTCHA_HAS_EXPIRED);
+        }
         CacheUtils.deleteString(codeKeyInRedis);
         if (!StringUtils.equals(code, codeValue)) {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INCORRECT);

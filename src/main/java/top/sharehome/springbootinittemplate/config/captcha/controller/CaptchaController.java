@@ -1,0 +1,32 @@
+package top.sharehome.springbootinittemplate.config.captcha.controller;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import top.sharehome.springbootinittemplate.common.base.R;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
+import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+
+import javax.annotation.Resource;
+
+/**
+ * 验证码控制器
+ *
+ * @author AntonyCheng
+ */
+@RestController
+public class CaptchaController {
+
+    @Resource
+    private CaptchaService captchaService;
+
+    /**
+     * 获取验证码
+     *
+     * @return 返回注册结果
+     */
+    @PostMapping("/captcha")
+    public R<Captcha> captcha() {
+        return R.ok(captchaService.createCaptcha());
+    }
+
+}
