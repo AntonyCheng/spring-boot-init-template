@@ -26,4 +26,5 @@ public enum CaptchaType {
     CHAR(RandomGenerator.class);
 
     private final Class<? extends CodeGenerator> clazz;
+
 }

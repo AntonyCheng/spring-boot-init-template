@@ -76,4 +76,5 @@ public class CaptchaServiceImpl implements CaptchaService {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INCORRECT);
         }
     }
+
 }

@@ -61,43 +61,4 @@ public class CaptchaConfiguration {
         return captcha;
     }
 
-    /**
-     * 圆圈干扰的算术验证码
-     */
-    @Lazy
-    @Bean
-    public CircleCaptcha circleMathCaptcha() {
-        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(WIDTH, HEIGHT);
-        captcha.setGenerator(new UnsignedMathGenerator());
-        captcha.setBackground(BACKGROUND);
-        captcha.setFont(FONT);
-        return captcha;
-    }
-
-    /**
-     * 线条干扰的算术验证码
-     */
-    @Lazy
-    @Bean
-    public LineCaptcha lineMathCaptcha() {
-        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(WIDTH, HEIGHT);
-        captcha.setGenerator(new UnsignedMathGenerator());
-        captcha.setBackground(BACKGROUND);
-        captcha.setFont(FONT);
-        return captcha;
-    }
-
-    /**
-     * 圆圈干扰的算术验证码
-     */
-    @Lazy
-    @Bean
-    public ShearCaptcha shearMathCaptcha() {
-        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(WIDTH, HEIGHT);
-        captcha.setGenerator(new UnsignedMathGenerator());
-        captcha.setBackground(BACKGROUND);
-        captcha.setFont(FONT);
-        return captcha;
-    }
-
 }

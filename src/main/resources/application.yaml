@@ -419,7 +419,7 @@ captcha:
   # 验证码类别：line 线段干扰；circle 圆圈干扰；shear 扭曲干扰。
   category: circle
   # 数字验证码位数
-  number-length: 2
+  number-length: 1
   # 字符验证码长度
   char-length: 6
   # 验证码存活时间（单位：秒）

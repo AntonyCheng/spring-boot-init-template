@@ -14,11 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
 import javax.annotation.Resource;
 import java.awt.*;
+import java.util.Map;
 
 /**
  * 测试类
@@ -73,31 +75,21 @@ class MainApplicationTests {
     }
 
     @Resource
-    private CircleCaptcha circleCharCaptcha;
-
-    @Resource
-    private LineCaptcha lineCharCaptcha;
-
-    @Resource
-    private ShearCaptcha shearCharCaptcha;
-
-    @Resource
-    private CircleCaptcha circleMathCaptcha;
+    private CaptchaService captchaService;
 
     @Test
-    public void testCaptcha(){
-        circleMathCaptcha.write("F:\\IDEAProject\\GitProject\\springbootinit\\spring-boot-init-template\\demo.png");
-        String code = circleMathCaptcha.getCode();
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression exp = parser.parseExpression(StringUtils.remove(code, "="));
-        code = exp.getValue(String.class);
-        boolean verify = circleMathCaptcha.verify(code);
-        System.out.println("verify = " + verify);
+    public void testCreateCaptcha() {
+        Map<String, Object> captcha = captchaService.createCaptcha();
+        System.out.println(captcha);
+    }
+
+    @Test
+    public void testCheckCaptcha() {
+//        captchaService.checkCaptcha();
     }
 
     public static void main(String[] args) {
-        JWT jwt = JWT.of("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpblR5cGUiOiJsb2dpbiIsImxvZ2luSWQiOjE3MDk1NDM5OTAzNDM3NTM3MjksInJuU3RyIjoiSVVHTUJENExkdFVMdXAwYk1TdlV4R1RDNXV5YlBwNHgifQ.axbEzD1ZqlKXy1mvcstKx3fGXQ8hB4EA3Ebcarcl89E");
-        System.out.println(jwt);
+        System.out.println("hello world");
     }
 
 }

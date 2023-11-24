@@ -32,4 +32,5 @@ public enum CaptchaCategory {
     SHEAR(ShearCaptcha.class);
 
     private final Class<? extends AbstractCaptcha> clazz;
+
 }
