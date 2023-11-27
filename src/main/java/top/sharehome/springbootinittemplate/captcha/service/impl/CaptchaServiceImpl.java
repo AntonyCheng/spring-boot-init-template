@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.captcha.service.impl;
+package top.sharehome.springbootinittemplate.captcha.service.impl;
 
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
@@ -6,16 +6,18 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ReflectUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
+import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
+import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
+import top.sharehome.springbootinittemplate.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
-import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
-import top.sharehome.springbootinittemplate.config.captcha.properties.enums.CaptchaType;
-import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.captcha.properties.enums.CaptchaType;
+import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
@@ -35,12 +37,12 @@ public class CaptchaServiceImpl implements CaptchaService {
     private CaptchaProperties captchaProperties;
 
     @Override
-    public Captcha createCaptcha() {
-        Captcha captchaResponse = new Captcha();
+    public CaptchaCreate createCaptcha() {
+        CaptchaCreate captchaCreateResponse = new CaptchaCreate();
         boolean enable = captchaProperties.isEnable();
-        captchaResponse.setEnableCode(enable);
+        captchaCreateResponse.setEnableCode(enable);
         if (!enable) {
-            return captchaResponse;
+            return captchaCreateResponse;
         }
         String uuid = IdUtil.simpleUUID();
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
@@ -58,9 +60,10 @@ public class CaptchaServiceImpl implements CaptchaService {
             code = exp.getValue(String.class);
         }
         CacheUtils.putString(codeKeyInRedis, code, captchaProperties.getExpired());
-        captchaResponse.setUuid(uuid)
+        captchaCreateResponse
+                .setUuid(uuid)
                 .setImgBase64(captcha.getImageBase64());
-        return captchaResponse;
+        return captchaCreateResponse;
     }
 
     @Override

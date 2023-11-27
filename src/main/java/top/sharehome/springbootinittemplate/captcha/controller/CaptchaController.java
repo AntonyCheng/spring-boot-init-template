@@ -1,10 +1,12 @@
-package top.sharehome.springbootinittemplate.config.captcha.controller;
+package top.sharehome.springbootinittemplate.captcha.controller;
 
+import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.common.base.R;
-import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
-import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
+import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
 
 import javax.annotation.Resource;
 
@@ -25,7 +27,7 @@ public class CaptchaController {
      * @return 返回注册结果
      */
     @PostMapping("/captcha")
-    public R<Captcha> captcha() {
+    public R<CaptchaCreate> captcha() {
         return R.ok(captchaService.createCaptcha());
     }
 

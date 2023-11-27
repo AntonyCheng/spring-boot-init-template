@@ -1,10 +1,10 @@
-package top.sharehome.springbootinittemplate.config.captcha.properties.enums;
+package top.sharehome.springbootinittemplate.captcha.properties.enums;
 
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import top.sharehome.springbootinittemplate.config.captcha.generator.UnsignedMathGenerator;
+import top.sharehome.springbootinittemplate.captcha.generator.UnsignedMathGenerator;
 
 /**
  * 验证码类型

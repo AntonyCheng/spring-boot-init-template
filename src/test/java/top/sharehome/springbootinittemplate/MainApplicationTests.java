@@ -1,27 +1,16 @@
 package top.sharehome.springbootinittemplate;
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.CircleCaptcha;
-import cn.hutool.captcha.LineCaptcha;
-import cn.hutool.captcha.ShearCaptcha;
-import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
-import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
+import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
 import javax.annotation.Resource;
-import java.awt.*;
-import java.util.Map;
 
 /**
  * 测试类
@@ -80,8 +69,8 @@ class MainApplicationTests {
 
     @Test
     public void testCreateCaptcha() {
-        Captcha captcha = captchaService.createCaptcha();
-        System.out.println(captcha);
+        CaptchaCreate captchaCreate = captchaService.createCaptcha();
+        System.out.println(captchaCreate);
     }
 
     @Test

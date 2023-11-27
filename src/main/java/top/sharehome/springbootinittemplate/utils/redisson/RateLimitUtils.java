@@ -13,6 +13,10 @@ import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCo
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 限流工具类
  *
@@ -70,6 +74,33 @@ public class RateLimitUtils {
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
+        }
+    }
+
+    /**
+     * 限流并且为限流键值设定过期时间
+     *
+     * @param key 区分不同的限流器，比如不同的用户 id 应该分别统计
+     */
+    public static void doRateLimitAndExpire(String key) {
+        // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_PREFIX + key);
+        rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
+        // 每当一个操作来了后，请求一个令牌
+        boolean canOp = rateLimiter.tryAcquire(permit);
+        if (!canOp) {
+            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
+        }
+        String baseKey = KeyPrefixConstants.RATE_LIMIT_PREFIX + key;
+        List<String> uselessCacheKeys = new ArrayList<String>() {
+            {
+                add(baseKey);
+                add("{" + baseKey + "}:permits");
+                add("{" + baseKey + "}:value");
+            }
+        };
+        for (String uselessCacheKey : uselessCacheKeys) {
+            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rate * 3));
         }
     }
 

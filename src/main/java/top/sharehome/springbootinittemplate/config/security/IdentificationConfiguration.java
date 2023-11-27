@@ -12,14 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
-import top.sharehome.springbootinittemplate.config.captcha.interceptor.CaptchaInterceptor;
-import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
-import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,12 +30,6 @@ import java.util.List;
 @Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
 
-    @Resource
-    private CaptchaProperties captchaProperties;
-
-    @Resource
-    private CaptchaService captchaService;
-
     /**
      * 注册sa-token的拦截器
      *
@@ -46,15 +37,16 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 定义不需要拦截的URI
-        List<String> saTokenAllowedUri = Arrays.asList("/auth/register", "/auth/login");
-        // 定义需要拦截的URI
-        List<String> captchaNotAllowedUri = Arrays.asList("/auth/register", "/auth/login", "/captcha");
+        // 定义SaToken不需要拦截的URI
+        List<String> saTokenNotNeedInterceptUri = new ArrayList<String>() {
+            {
+                add("/auth/register");
+                add("/auth/login");
+                add("/captcha");
+            }
+        };
         // 注册路由拦截器，自定义验证规则
-        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**").excludePathPatterns(saTokenAllowedUri);
-        if (captchaProperties.isEnable()) {
-            registry.addInterceptor(new CaptchaInterceptor(captchaService)).addPathPatterns(captchaNotAllowedUri);
-        }
+        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**").excludePathPatterns(saTokenNotNeedInterceptUri);
     }
 
     /**
@@ -65,8 +57,8 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
         return new SaServletFilter()
                 // 指定拦截的路由
                 .addInclude("/**")
-                // 排除静态资源 ---- 这里可以自定义
-                .addExclude("/favicon.ico")
+                // 排除不需要拦截的资源 ---- 这里可以自定义
+                .addExclude("/favicon.ico", "/actuator/**")
                 // 认证函数
                 .setAuth(obj -> {
                     // 如果想在过滤器器层面做认证，请将逻辑代码编写到此处

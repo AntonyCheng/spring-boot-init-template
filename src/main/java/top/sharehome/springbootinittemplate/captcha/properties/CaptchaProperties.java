@@ -1,10 +1,12 @@
-package top.sharehome.springbootinittemplate.config.captcha.properties;
+package top.sharehome.springbootinittemplate.captcha.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import top.sharehome.springbootinittemplate.config.captcha.properties.enums.CaptchaCategory;
-import top.sharehome.springbootinittemplate.config.captcha.properties.enums.CaptchaType;
+import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
+import top.sharehome.springbootinittemplate.captcha.properties.enums.CaptchaCategory;
+import top.sharehome.springbootinittemplate.captcha.properties.enums.CaptchaType;
 
 /**
  * 验证码配置
@@ -14,6 +16,7 @@ import top.sharehome.springbootinittemplate.config.captcha.properties.enums.Capt
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "captcha")
+@Conditional(CaptchaCondition.class)
 public class CaptchaProperties {
 
     /**

@@ -109,6 +109,11 @@ public enum ReturnCode {
     CAPTCHA_IS_INCORRECT(11014, "验证码错误"),
 
     /**
+     * 用户发出无效请求 11015
+     */
+    USER_SENT_INVALID_REQUEST(11015, "用户发出无效请求"),
+
+    /**
      * 手机格式校验失败 12000
      */
     PHONE_FORMAT_VERIFICATION_FAILED(12000, "手机格式校验失败"),

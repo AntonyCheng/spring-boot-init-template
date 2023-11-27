@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.captcha.properties.enums;
+package top.sharehome.springbootinittemplate.captcha.properties.enums;
 
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.CircleCaptcha;

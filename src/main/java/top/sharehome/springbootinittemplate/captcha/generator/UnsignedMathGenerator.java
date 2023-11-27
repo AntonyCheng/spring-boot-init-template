@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.captcha.generator;
+package top.sharehome.springbootinittemplate.captcha.generator;
 
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.math.Calculator;

@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,16 @@ public class AuthLoginDto implements Serializable {
      */
     @NotBlank(message = "密码不能为空", groups = {GetGroup.class})
     private String password;
+
+    /**
+     * 验证码
+     */
+    private String code;
+
+    /**
+     * 验证码UUID
+     */
+    private String uuid;
 
     private static final long serialVersionUID = -2121896284587465661L;
 

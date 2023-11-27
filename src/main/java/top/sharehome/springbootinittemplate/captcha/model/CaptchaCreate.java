@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.captcha.model;
+package top.sharehome.springbootinittemplate.captcha.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * 验证码实体类
+ * 创建验证码实体类
  *
  * @author AntonyCheng
  */
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class Captcha implements Serializable {
+public class CaptchaCreate implements Serializable {
 
     private static final long serialVersionUID = -2384156304879302998L;
 

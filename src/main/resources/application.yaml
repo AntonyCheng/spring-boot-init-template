@@ -198,7 +198,7 @@ redisson:
   # 限流单位时间，单位：秒
   limitRate: 1
   # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-  limitRateInterval: 2
+  limitRateInterval: 1
   # 每个操作所要消耗的令牌数
   limitPermits: 1
   # redis单机版本

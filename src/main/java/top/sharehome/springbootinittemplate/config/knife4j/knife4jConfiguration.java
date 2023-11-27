@@ -47,7 +47,7 @@ public class knife4jConfiguration {
                 // 指定 Controller 扫描包路径
                 .apis(RequestHandlerSelectors
                         .basePackage("top.sharehome.springbootinittemplate.controller")
-                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.config.captcha.controller")))
+                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.captcha.controller")))
                 .paths(PathSelectors.any())
                 .build();
         log.info(">>>>>>>>>>> knife4j config init.");

@@ -45,6 +45,16 @@ public class AuthRegisterDto implements Serializable {
     @NotBlank(message = "二次密码不能为空", groups = {PostGroup.class})
     private String checkPassword;
 
+    /**
+     * 验证码
+     */
+    private String code;
+
+    /**
+     * 验证码UUID
+     */
+    private String uuid;
+
     private static final long serialVersionUID = -535414393059407250L;
 
 }
