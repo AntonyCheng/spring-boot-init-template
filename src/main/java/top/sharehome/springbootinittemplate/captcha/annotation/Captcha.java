@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  *
  * @author AntonyCheng
  */
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Captcha {

@@ -80,6 +80,9 @@ public class UnsignedMathGenerator implements CodeGenerator {
      * @return 最大值
      */
     private int getLimit() {
+        if (this.numberLength < 1 || this.numberLength > 9) {
+            return 10;
+        }
         return Integer.parseInt("1" + StringUtils.repeat('0', this.numberLength));
     }
 

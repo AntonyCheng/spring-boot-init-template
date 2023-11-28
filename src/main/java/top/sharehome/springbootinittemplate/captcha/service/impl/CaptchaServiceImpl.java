@@ -49,7 +49,8 @@ public class CaptchaServiceImpl implements CaptchaService {
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
         CaptchaType captchaType = captchaProperties.getType();
         boolean isMath = CaptchaType.MATH == captchaType;
-        int length = isMath ? captchaProperties.getNumberLength() : captchaProperties.getCharLength();
+        int length = isMath ? ((captchaProperties.getNumberLength() < 1 || captchaProperties.getNumberLength() > 9) ? 1 : captchaProperties.getNumberLength()) :
+                ((captchaProperties.getCharLength() < 1 || captchaProperties.getCharLength() > 100) ? 4 : captchaProperties.getCharLength());
         CodeGenerator codeGenerator = ReflectUtil.newInstance(captchaType.getClazz(), length);
         AbstractCaptcha captcha = SpringContextHolder.getBean(captchaProperties.getCategory().getClazz());
         captcha.setGenerator(codeGenerator);

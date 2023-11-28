@@ -55,7 +55,7 @@
         <itext.version>7.2.5</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
-        <spring.boot.version>2.7.4</spring.boot.version>
+        <spring.boot.admin.version>2.7.4</spring.boot.admin.version>
         <!-- 其他（和业务无关，但是能够确保系统稳定性） -->
         <snakeyaml.version>1.33</snakeyaml.version>
     </properties>
@@ -326,7 +326,7 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
-            <version>${spring.boot.version}</version>
+            <version>${spring.boot.admin.version}</version>
         </dependency>
 
         <!-- okHttp 依赖配置 -->

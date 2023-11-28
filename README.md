@@ -7,6 +7,37 @@
 
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
+* [模板特点](#模板特点)
+  * [主流框架](#主流框架)
+  * [业务特性](#业务特性)
+* [业务功能](#业务功能)
+  * [示例业务](#示例业务)
+  * [单元测试](#单元测试)
+* [快速上手](#快速上手)
+  * [必须执行](#必须执行)
+  * [可选执行](#可选执行)
+    * [整合缓存服务](#整合缓存服务)
+      * [整合Redis（系统缓存）](#整合redis系统缓存)
+      * [整合Redisson（业务缓存）](#整合redisson业务缓存)
+    * [整合消息队列](#整合消息队列)
+      * [激活消息队列](#激活消息队列)
+      * [自定义消息队列](#自定义消息队列)
+    * [整合ElasticSearch](#整合elasticsearch)
+    * [整合对象存储服务](#整合对象存储服务)
+      * [整合腾讯云COS](#整合腾讯云cos)
+      * [整合MinIO](#整合minio)
+      * [整合阿里云OSS](#整合阿里云oss)
+    * [整合验证码](#整合验证码)
+    * [配置SaToken](#配置satoken)
+      * [开启鉴权](#开启鉴权)
+      * [开启认证](#开启认证)
+      * [开启JWT](#开启jwt)
+    * [配置XXL-JOB](#配置xxl-job)
+      * [SpringBoot任务调度](#springboot任务调度)
+      * [XXL-JOB任务调度](#xxl-job任务调度)
+    * [配置SpringBootAdmin](#配置springbootadmin)
+* [申明&联系我](#申明联系我)
+
 ## 模板特点
 
 ### 主流框架
@@ -27,6 +58,13 @@
   - Lombok 1.18.30
   - hutool 5.8.23
   - commons-lang3 3.14.0
+  - commons-io 2.15.0
+  - commons-codec 1.16.0
+  - commons-pool2 2.12.0
+  - commons-collections4 4.4
+  - commons-math 3.6.1
+  - okhttp 4.12.0
+  - fastjson2 2.0.42
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -35,7 +73,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
-  - redisson 3.24.3 == Redis的基础上实现的Java驻内存数据网格
+  - redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
 - **消息队列**
   - rabbitMQ
     - spring-boot-starter-amqp
@@ -44,7 +82,7 @@
     - elasticsearch 7.14.0
     - elasticsearch-rest-high-level-client 7.14.0
     - logstash-logback-encoder 7.3
-  - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎，可以像Mybatis-Plus操作MySQL一样操作的开源框架
+  - easy-es-boot-starter 2.0.0-bata4 == 简化 ElasticSearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作的开源框架
 - **对象存储（OSS）**
   - 腾讯云 COS 5.6.187
   - 阿里云 OSS 3.17.2
@@ -55,13 +93,13 @@
   - itext 7.2.5 == 操作 PDF
 - **外接平台**
   - XXL-JOB 2.4.0 == 分布式定时任务管理平台
-  - SpringBootAdmin 2.7.4 == SpringBoot服务监控平台
+  - SpringBootAdmin 2.7.4 == SpringBoot 服务监控平台
 
 ### 业务特性
 
 - 使用 Undertow 服务器替换掉 Tomcat 服务器
 - SaToken 分布式可配置登录&认证&鉴权
-- AOP逻辑处理示例
+- AOP 逻辑处理示例
 - 验证码分布式校验
 - 全局请求拦截器&过滤器
 - 全局异常处理器
@@ -72,13 +110,13 @@
 - Spring 上下文处理工具
 - JSON 长整型精度处理
 - 自动字段填充器
-- 网络、对象存储、消息队列、缓存、分布式锁、限流等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流等工具类
 
 ## 业务功能
 
 ### 示例业务
 
-- 提供模板 SQL 示例文件（业务数据库 & XXL-JOB数据库）；
+- 提供模板 SQL 示例文件（业务数据库 & XXL-JOB 数据库）；
 - 用户登录、注册、注销、信息获取；
 - Spring Scheduler 单机版定时任务示例。
 
@@ -390,7 +428,7 @@
 
 #### 整合对象存储服务
 
-**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据，其中腾讯云 COS 和 MinIO 是可以对文件进行网页预览的，而阿里云 OSS 则需要配置自定义域名，所以针对于个人的中小型项目，推荐优先使用腾讯云 COS 和 MinIO 对象存储服务，以免给自己挖坑。
+**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据，其中腾讯云 COS 和 MinIO 是可以对文件进行网页预览的，而阿里云 OSS 则需要配置自定义域名（从 2024 年起腾讯云 COS 也将对新建的桶作此要求，在次之前建立的桶不受影响），所以针对于个人的中小型项目，推荐优先使用腾讯云 COS 和 MinIO 对象存储服务，以免给自己挖坑。
 
 ##### 整合腾讯云COS
 
@@ -484,6 +522,90 @@ oss:
 ```
 
 修改完之后即可使用模板中对象存储工具类 `AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+
+#### 整合验证码
+
+验证对于大多数项目而言已经成为了一种刚需，即使市面上已经出现了很多类似于 Cloudflare 的验证服务，但是中小型项目对接 Cloudflare 验证服务可谓是杀鸡用牛刀，所以这里基于 Hutool-Captcha 模块对验证码进行二次封装，相关代码在 `captcha` 包中；
+
+1. 修改验证码相关配置，开发者可以自行配置验证码的风格以及参数：
+
+   ```yaml
+   # 验证码配置
+   captcha:
+     # todo 是否使用验证码（开启的前提是redisson配置完成，预先关闭）
+     enable: true
+     # 验证码类型：math 数字类型；char 字符类型。
+     type: math
+     # 验证码类别：line 线段干扰；circle 圆圈干扰；shear 扭曲干扰。
+     category: circle
+     # 数字验证码位数（1-9，否则默认为1）
+     number-length: 1
+     # 字符验证码长度（1-99，否则默认为4）
+     char-length: 4
+     # 验证码存活时间（单位：秒）
+     expired: 180
+   ```
+
+2. 配置完成之后只需要以 GET 请求调用 `/api/captcha` 接口即可获取验证码图片的 Base64 编码值以及该验证码的 UUID ，前端拿到 Base64 编码值之后将其转换为图片即可；
+
+3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@Captcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在 `code` 和 `uuid` 两个 String 类型参数字段，下面以登录接口为例：
+
+   ```java
+   /**
+    * 用户登录
+    *
+    * @param authLoginDto 用户登录Dto类
+    * @return 返回登录用户信息
+    */
+   @PostMapping("/login")
+   @Captcha
+   public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
+       AuthLoginVo loginUser = authService.login(authLoginDto);
+       LoginUtils.login(loginUser);
+       return R.ok("登录成功", loginUser);
+   }
+   ```
+
+   ```java
+   /**
+    * 用户登录Dto类
+    *
+    * @author AntonyCheng
+    */
+   @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
+   @Accessors(chain = true)
+   public class AuthLoginDto implements Serializable {
+   
+       /**
+        * 用户账号
+        */
+       @NotBlank(message = "账号不能为空", groups = {GetGroup.class})
+       private String account;
+   
+       /**
+        * 用户密码
+        */
+       @NotBlank(message = "密码不能为空", groups = {GetGroup.class})
+       private String password;
+   
+       /**
+        * 验证码
+        */
+       private String code;
+   
+       /**
+        * 验证码UUID
+        */
+       private String uuid;
+   
+       private static final long serialVersionUID = -2121896284587465661L;
+   
+   }
+   ```
+
+4. 最后在调用接口时将验证码结果 `code` 和验证码 UUID `uuid` 传入即可；
 
 #### 配置SaToken
 

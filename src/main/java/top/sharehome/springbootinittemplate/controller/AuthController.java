@@ -55,7 +55,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Captcha
-    public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto, HttpServletRequest request) {
+    public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
         return R.ok("登录成功", loginUser);
