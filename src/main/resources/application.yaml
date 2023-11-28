@@ -304,13 +304,13 @@ oss:
     # todo 是否开启（预先关闭）
     enable: false
     # 地域
-    region: ap-xxx
+    region: ap-xxxxxxxx
     # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secretId: xxx
+    secretId: xxxxxxxx
     # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secretKey: xxx
+    secretKey: xxxxxxxx
     # 桶名称
-    bucketName: xxx
+    bucketName: xxxxxxxx
   # 阿里云OSS配置
   ali:
     # todo 是否开启（预先关闭）
@@ -318,11 +318,11 @@ oss:
     # 域名 以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com。
     endpoint: https://oss-xx-xxx.aliyuncs.com
     # 用户的 SecretId
-    secretId: xxx
+    secretId: xxxxxxxx
     # 用户的 SecretKey
-    secretKey: xxx
+    secretKey: xxxxxxxx
     # 桶名称
-    bucketName: xxx
+    bucketName: xxxxxxxx
   # MinIO OSS配置
   minio:
     # todo 是否开启（预先关闭）
@@ -332,11 +332,11 @@ oss:
     # 是否开启TLS
     enableTls: false
     # 用户的 SecretId
-    secretId: xxx
+    secretId: xxxxxxxx
     # 用户的 SecretKey
-    secretKey: xxx
+    secretKey: xxxxxxxx
     # 桶名称
-    bucketName: xxx
+    bucketName: xxxxxxxx
 
 #配置SpringBoot任务调度
 schedule:

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.captcha.properties.CaptchaProperties;
+import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
 
 import javax.annotation.PostConstruct;
@@ -31,22 +31,25 @@ import java.util.List;
 public class IdentificationConfiguration implements WebMvcConfigurer {
 
     /**
+     * 定义SaToken不需要拦截的URI
+     */
+    private static final List<String> SA_TOKEN_NOT_NEED_INTERCEPT_URI = new ArrayList<String>() {
+        {
+            add("/auth/register");
+            add("/auth/login");
+            add("/captcha");
+        }
+    };
+
+    /**
      * 注册sa-token的拦截器
      *
      * @param registry 拦截器注册器
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 定义SaToken不需要拦截的URI
-        List<String> saTokenNotNeedInterceptUri = new ArrayList<String>() {
-            {
-                add("/auth/register");
-                add("/auth/login");
-                add("/captcha");
-            }
-        };
         // 注册路由拦截器，自定义验证规则
-        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**").excludePathPatterns(saTokenNotNeedInterceptUri);
+        registry.addInterceptor(new SaInterceptor()).addPathPatterns("/**").excludePathPatterns(SA_TOKEN_NOT_NEED_INTERCEPT_URI);
     }
 
     /**

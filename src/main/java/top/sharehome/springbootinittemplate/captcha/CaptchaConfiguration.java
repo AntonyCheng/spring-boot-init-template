@@ -24,9 +24,24 @@ import java.awt.*;
 @Slf4j
 public class CaptchaConfiguration {
 
+    /**
+     * 验证码图片宽度
+     */
     private static final int WIDTH = 160;
+
+    /**
+     * 验证码图片高度
+     */
     private static final int HEIGHT = 60;
+
+    /**
+     * 验证码图片背景颜色
+     */
     private static final Color BACKGROUND = Color.WHITE;
+
+    /**
+     * 验证码字体
+     */
     private static final Font FONT = new Font("Arial", Font.BOLD, 48);
 
     /**

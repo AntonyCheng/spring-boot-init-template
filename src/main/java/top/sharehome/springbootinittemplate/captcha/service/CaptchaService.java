@@ -5,7 +5,7 @@ import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
 /**
  * 验证码服务接口
  *
- * @author xg
+ * @author AntonyCheng
  */
 public interface CaptchaService {
 

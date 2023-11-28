@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
-import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.common.base.R;
 
 import javax.annotation.Resource;
 
@@ -16,6 +16,7 @@ import javax.annotation.Resource;
  * @author AntonyCheng
  */
 @RestController
+@Conditional(CaptchaCondition.class)
 public class CaptchaController {
 
     @Resource

@@ -1,9 +1,9 @@
 package top.sharehome.springbootinittemplate.config.redisson;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.JsonJacksonCodec;
@@ -46,7 +46,7 @@ public class RedissonConfiguration {
                 .setNettyThreads(redissonProperties.getNettyThreads())
                 .setCodec(new JsonJacksonCodec(objectMapper));
         RedissonProperties.SingleServerConfig singleServerConfig = redissonProperties.getSingleServerConfig();
-        if (ObjectUtil.isNotNull(singleServerConfig)) {
+        if (ObjectUtils.isNotEmpty(singleServerConfig)) {
             // 使用单机模式
             config.useSingleServer()
                     .setAddress(singleServerConfig.getAddress())
@@ -72,7 +72,7 @@ public class RedissonConfiguration {
                 .setNettyThreads(redissonProperties.getNettyThreads())
                 .setCodec(new JsonJacksonCodec(objectMapper));
         RedissonProperties.ClusterServersConfig clusterServersConfig = redissonProperties.getClusterServersConfig();
-        if (ObjectUtil.isNotNull(clusterServersConfig)) {
+        if (ObjectUtils.isNotEmpty(clusterServersConfig)) {
             // 使用集群模式
             config.useClusterServers()
                     .setPassword(clusterServersConfig.getPassword())

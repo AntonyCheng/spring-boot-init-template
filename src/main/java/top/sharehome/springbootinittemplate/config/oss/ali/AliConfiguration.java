@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.config.oss.ali;
 
-import cn.hutool.core.io.FileUtil;
 import com.aliyun.oss.*;
 import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
@@ -8,6 +7,7 @@ import com.aliyun.oss.common.comm.Protocol;
 import com.aliyun.oss.model.PutObjectRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
@@ -69,7 +69,7 @@ public class AliConfiguration {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             String filename = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            if (StringUtils.isBlank(FileUtil.getSuffix(filename))) {
+            if (StringUtils.isBlank(FilenameUtils.getExtension(filename))) {
                 filename = filename + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             }
             String namePrefix = UUID.randomUUID().toString().replaceAll("-", "");

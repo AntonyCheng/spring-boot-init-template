@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.captcha.interceptor.CaptchaInterceptor;
 import top.sharehome.springbootinittemplate.captcha.properties.CaptchaProperties;
-import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -27,20 +26,20 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
     @Resource
     private CaptchaProperties captchaProperties;
 
-    @Resource
-    private CaptchaService captchaService;
+    /**
+     * 定义Captcha需要拦截的URI
+     */
+    private static final List<String> CAPTCHA_NEED_INTERCEPT_URI = new ArrayList<String>() {
+        {
+            add("/captcha");
+        }
+    };
 
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
-        // 定义Captcha需要拦截的URI
-        List<String> captchaNeedInterceptUri = new ArrayList<String>() {
-            {
-                add("/captcha");
-            }
-        };
         // 如果开启了验证码相关配置，则进行拦截
         if (captchaProperties.isEnable()) {
-            registry.addInterceptor(new CaptchaInterceptor(captchaService)).addPathPatterns(captchaNeedInterceptUri);
+            registry.addInterceptor(new CaptchaInterceptor()).addPathPatterns(CAPTCHA_NEED_INTERCEPT_URI);
         }
     }
 

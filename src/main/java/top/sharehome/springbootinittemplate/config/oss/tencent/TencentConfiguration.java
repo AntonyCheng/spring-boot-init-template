@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.config.oss.tencent;
 
-import cn.hutool.core.io.FileUtil;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
@@ -15,6 +14,7 @@ import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -150,7 +150,7 @@ public class TencentConfiguration {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             String filename = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            if (StringUtils.isBlank(FileUtil.getSuffix(filename))) {
+            if (StringUtils.isBlank(FilenameUtils.getExtension(filename))) {
                 filename = filename + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             }
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建

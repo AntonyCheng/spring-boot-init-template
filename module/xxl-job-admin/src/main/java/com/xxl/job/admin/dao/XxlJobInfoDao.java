@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * job info
- * @author xuxueli 2016-1-12 18:03:45
+ * @author xuxueli
  */
 @Mapper
 public interface XxlJobInfoDao {

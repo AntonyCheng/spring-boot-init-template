@@ -7,56 +7,26 @@
 
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
-* [模板特点](#模板特点)
-  * [主流框架](#主流框架)
-  * [业务特性](#业务特性)
-* [业务功能](#业务功能)
-  * [示例业务](#示例业务)
-  * [单元测试](#单元测试)
-* [快速上手](#快速上手)
-  * [必须执行](#必须执行)
-  * [可选执行](#可选执行)
-    * [整合缓存服务](#整合缓存服务)
-      * [整合Redis（系统缓存）](#整合redis系统缓存)
-      * [整合Redisson（业务缓存）](#整合redisson业务缓存)
-    * [整合消息队列](#整合消息队列)
-      * [激活消息队列](#激活消息队列)
-      * [自定义消息队列](#自定义消息队列)
-    * [整合ElasticSearch](#整合elasticsearch)
-    * [整合对象存储服务](#整合对象存储服务)
-      * [整合腾讯云COS](#整合腾讯云cos)
-      * [整合MinIO](#整合minio)
-      * [整合阿里云OSS](#整合阿里云oss)
-    * [配置SaToken](#配置satoken)
-      * [开启鉴权](#开启鉴权)
-      * [开启认证](#开启认证)
-      * [开启JWT](#开启jwt)
-    * [配置XXL-JOB](#配置xxl-job)
-      * [SpringBoot任务调度](#springboot任务调度)
-      * [XXL-JOB任务调度](#xxl-job任务调度)
-    * [配置SpringBootAdmin](#配置springbootadmin)
-* [申明&联系我](#申明联系我)
-
 ## 模板特点
 
 ### 主流框架
 
 - **Java 11**
-- **SpringBoot 2.7.x**
+- **SpringBoot 2.7.18**
   - freemarker == 模板引擎
   - web == SpringMVC
   - undertow == Java Web 服务器
   - aop == 面向切面编程
   - devtools == 热部署插件
 - **MySQL**
-  - druid 1.2.16 == 连接池
-  - mybatis-plus 3.5.4 == MySQL 持久层操作框架
+  - druid 1.2.20 == 连接池
+  - mybatis-plus 3.5.4.1 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - Lombok 1.18.30
-  - hutool 5.8.22
-  - commons-lang3 3.12.0
+  - hutool 5.8.23
+  - commons-lang3 3.14.0
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -65,7 +35,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
-  - redisson 3.23.5 == Redis的基础上实现的Java驻内存数据网格
+  - redisson 3.24.3 == Redis的基础上实现的Java驻内存数据网格
 - **消息队列**
   - rabbitMQ
     - spring-boot-starter-amqp
@@ -76,12 +46,12 @@
     - logstash-logback-encoder 7.3
   - easy-es-boot-starter 2.0.0-bata4 == 简化ElasticSearch搜索引擎，可以像Mybatis-Plus操作MySQL一样操作的开源框架
 - **对象存储（OSS）**
-  - 腾讯云 COS 5.6.155
-  - 阿里云 OSS 3.15.1
-  - MinIO 8.5.6
+  - 腾讯云 COS 5.6.187
+  - 阿里云 OSS 3.17.2
+  - MinIO 8.5.7
 - **文件操作**
-  - POI 5.2.3 == 操作 Word
-  - EasyExcel 3.3.1 == 操作 Excel
+  - POI 5.2.5 == 操作 Word
+  - EasyExcel 3.3.2 == 操作 Excel
   - itext 7.2.5 == 操作 PDF
 - **外接平台**
   - XXL-JOB 2.4.0 == 分布式定时任务管理平台
@@ -92,6 +62,7 @@
 - 使用 Undertow 服务器替换掉 Tomcat 服务器
 - SaToken 分布式可配置登录&认证&鉴权
 - AOP逻辑处理示例
+- 验证码分布式校验
 - 全局请求拦截器&过滤器
 - 全局异常处理器
 - 封装统一响应对象
@@ -101,6 +72,7 @@
 - Spring 上下文处理工具
 - JSON 长整型精度处理
 - 自动字段填充器
+- 网络、对象存储、消息队列、缓存、分布式锁、限流等工具类
 
 ## 业务功能
 

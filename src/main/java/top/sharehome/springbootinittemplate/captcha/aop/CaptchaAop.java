@@ -9,10 +9,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
-import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
-import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Field;
 
 /**
  * 处理需要验证码接口的切面类
@@ -38,22 +37,31 @@ public class CaptchaAop {
 
     /**
      * 对于登录的环绕通知
+     *
+     * @param proceedingJoinPoint 切面连接点
+     * @return 返回结果
+     * @throws Throwable 抛出异常
      */
-    @Around(value = "pointCutMethod()&&args(authLoginDto))")
-    public Object doAroundLogin(ProceedingJoinPoint proceedingJoinPoint, AuthLoginDto authLoginDto) throws Throwable {
-        captchaService.checkCaptcha(authLoginDto.getCode(), authLoginDto.getUuid());
-        Object proceed = proceedingJoinPoint.proceed();
-        return proceed;
-    }
-
-    /**
-     * 对于注册的环绕通知
-     */
-    @Around(value = "pointCutMethod()&&args(authRegisterDto)")
-    public Object doAroundRegister(ProceedingJoinPoint proceedingJoinPoint, AuthRegisterDto authRegisterDto) throws Throwable {
-        captchaService.checkCaptcha(authRegisterDto.getCode(), authRegisterDto.getUuid());
-        Object proceed = proceedingJoinPoint.proceed();
-        return proceed;
+    @Around(value = "pointCutMethod()")
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String uuid = "";
+        String code = "";
+        Object[] args = proceedingJoinPoint.getArgs();
+        for (Object arg : args) {
+            Class<?> argClass = arg.getClass();
+            try {
+                Field uuidField = argClass.getDeclaredField("uuid");
+                uuidField.setAccessible(true);
+                uuid = (String) uuidField.get(arg);
+                Field codeField = argClass.getDeclaredField("code");
+                codeField.setAccessible(true);
+                code = (String) codeField.get(arg);
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        captchaService.checkCaptcha(uuid, code);
+        return proceedingJoinPoint.proceed();
     }
 
 }

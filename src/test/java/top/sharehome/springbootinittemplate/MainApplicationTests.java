@@ -1,16 +1,24 @@
 package top.sharehome.springbootinittemplate;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.pool2.PoolUtils;
+import org.apache.http.util.NetUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.StreamUtils;
 import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * 测试类
@@ -64,22 +72,20 @@ class MainApplicationTests {
         System.out.println(admin);
     }
 
-    @Resource
-    private CaptchaService captchaService;
-
-    @Test
-    public void testCreateCaptcha() {
-        CaptchaCreate captchaCreate = captchaService.createCaptcha();
-        System.out.println(captchaCreate);
-    }
-
-    @Test
-    public void testCheckCaptcha() {
-//        captchaService.checkCaptcha();
-    }
-
     public static void main(String[] args) {
-        System.out.println("hello world");
+//        String uuid1 = IdUtil.simpleUUID();
+        String uuid2 = UUID.randomUUID().toString().replace("-", "");
+        long l = System.currentTimeMillis();
+
+        for (int i = 0; i < 10000000; i++) {
+            uuid2 = UUID.randomUUID().toString().replace("-", "");
+        }
+//        for (int i = 0; i < 10000000; i++) {
+//            uuid1 = IdUtil.simpleUUID();
+//        }
+
+        long l1 = System.currentTimeMillis();
+        System.out.println(l1-l);
     }
 
 }

@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.captcha.properties.enums.CaptchaType
 /**
  * 验证码配置
  *
- * @author xg
+ * @author AntonyCheng
  */
 @Data
 @Configuration

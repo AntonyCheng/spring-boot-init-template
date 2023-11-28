@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.17</version>
+        <version>2.7.18</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.sharehome</groupId>
@@ -18,36 +18,40 @@
         <java.version>11</java.version>
         <!-- MySQL相关 -->
         <mysql.version>8.0.33</mysql.version>
-        <druid.starter.version>1.2.16</druid.starter.version>
-        <mybatis.plus.version>3.5.4</mybatis.plus.version>
+        <druid.starter.version>1.2.20</druid.starter.version>
+        <mybatis.plus.version>3.5.4.1</mybatis.plus.version>
         <shardingsphere.version>5.3.2</shardingsphere.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.30</lombok.version>
-        <hutool.version>5.8.22</hutool.version>
-        <commons.lang3.version>3.12.0</commons.lang3.version>
-        <ok.http3.version>4.10.0</ok.http3.version>
-        <ok.io.version>2.8.0</ok.io.version>
+        <hutool.version>5.8.23</hutool.version>
+        <commons.lang3.version>3.14.0</commons.lang3.version>
+        <commons.io.version>2.15.0</commons.io.version>
+        <commons.codec.version>1.16.0</commons.codec.version>
+        <commons.pool2.version>2.12.0</commons.pool2.version>
+        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons.math.version>3.6.1</commons.math.version>
+        <ok.http3.version>4.12.0</ok.http3.version>
+        <ok.io.version>3.6.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
         <swagger3.version>3.0.3</swagger3.version>
-        <fastjson2.version>2.0.35</fastjson2.version>
+        <fastjson2.version>2.0.42</fastjson2.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.37.0</sa.token.version>
-        <kaptcha.version>2.3.3</kaptcha.version>
         <!-- redisson相关 -->
-        <redisson.version>3.23.5</redisson.version>
+        <redisson.version>3.24.3</redisson.version>
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
         <easy.es.version>2.0.0-beta4</easy.es.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.155</tencent.cos.version>
-        <ali.oss.version>3.15.1</ali.oss.version>
+        <tencent.cos.version>5.6.187</tencent.cos.version>
+        <ali.oss.version>3.17.2</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>
-        <minio.version>8.5.6</minio.version>
+        <minio.version>8.5.7</minio.version>
         <!-- 文件操作相关 -->
-        <poi.version>5.2.3</poi.version>
-        <easy.excel.version>3.3.1</easy.excel.version>
+        <poi.version>5.2.5</poi.version>
+        <easy.excel.version>3.3.2</easy.excel.version>
         <itext.version>7.2.5</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
@@ -146,6 +150,31 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons.lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons.codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons.pool2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons.collections4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons.math.version}</version>
         </dependency>
 
         <!-- Sa-Token 依赖配置（该初始化模板提供session+cookie和redis+token两种方式，此处依赖配置是redis+token，所以必须保证redis可用） -->
@@ -324,13 +353,6 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>${swagger3.version}</version>
-        </dependency>
-
-        <!-- kaptcha 验证码 -->
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>kaptcha</artifactId>
-            <version>${kaptcha.version}</version>
         </dependency>
 
         <!-- fastjson2 依赖配置 -->

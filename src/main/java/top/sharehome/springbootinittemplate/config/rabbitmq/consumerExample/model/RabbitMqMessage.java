@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample.mod
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 消息队列消息基类
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class RabbitMqMessage {
 
     /**

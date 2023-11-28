@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate.aop.studyDemo.normal.thisAop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.stereotype.Component;
 
 /**
  * Pointcut注解value参数为this型的切面类：用于匹配当前AOP代理对象类型的执行方法；注意是AOP代理对象的类型匹配，这样就可能包括引入接口也类型匹配。

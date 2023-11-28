@@ -25,7 +25,7 @@ public class TestOss {
      */
     @Test
     void testTencentUtilsUpload() throws IOException {
-        File file = new File("蓬勃.psd");
+        File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(TencentUtils.upload(multipartFile, "test/init"));
@@ -44,7 +44,7 @@ public class TestOss {
      */
     @Test
     void testAliUtilsUpload() throws IOException {
-        File file = new File("蓬勃.psd");
+        File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(AliUtils.upload(multipartFile, "test/init"));
@@ -63,7 +63,7 @@ public class TestOss {
      */
     @Test
     void testMinioUtilsUpload() throws IOException {
-        File file = new File("蓬勃.psd");
+        File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(MinioUtils.upload(multipartFile, "test/init"));
@@ -74,7 +74,7 @@ public class TestOss {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete("http://8.219.59.31:9000/test/test/init/92a3aab57fcd491b89674273e0b87c11_README.md");
+        MinioUtils.delete("http://192.168.116.100:39000/xxxxxxxx/test/init/9d6ff8990d3a47b5a2856dc1d06e97ac_README.md");
     }
 
 }

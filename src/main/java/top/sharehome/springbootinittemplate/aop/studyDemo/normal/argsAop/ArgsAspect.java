@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate.aop.studyDemo.normal.argsAop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.stereotype.Component;
 
 /**
  * Pointcut注解value参数为args型的切面类：用于匹配参数类型符合指定类型的方法。

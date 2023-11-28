@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate.aop.studyDemo.normal.withinAop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.stereotype.Component;
 
 /**
  * Pointcut注解value参数为within型的切面类：用于匹配特定类型内的方法。

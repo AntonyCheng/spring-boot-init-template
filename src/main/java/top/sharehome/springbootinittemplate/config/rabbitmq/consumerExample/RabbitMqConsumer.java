@@ -1,6 +1,6 @@
 package top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

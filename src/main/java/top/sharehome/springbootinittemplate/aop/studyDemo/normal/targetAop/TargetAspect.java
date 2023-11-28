@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate.aop.studyDemo.normal.targetAop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.stereotype.Component;
 
 /**
  * Pointcut注解value参数为target型的切面类：用于匹配当前目标对象类型的执行方法；注意是目标对象的类型匹配，这样就不包括引入接口也类型匹配。

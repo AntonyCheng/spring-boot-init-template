@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.captcha.service.impl;
 
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ReflectUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,23 +13,25 @@ import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.captcha.properties.CaptchaProperties;
-import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.captcha.properties.enums.CaptchaType;
 import top.sharehome.springbootinittemplate.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * 验证码服务实现类
  *
- * @author xg
+ * @author AntonyCheng
  */
 @EnableConfigurationProperties(CaptchaProperties.class)
 @Service
+@Conditional(CaptchaCondition.class)
 public class CaptchaServiceImpl implements CaptchaService {
 
     @Resource
@@ -44,11 +45,11 @@ public class CaptchaServiceImpl implements CaptchaService {
         if (!enable) {
             return captchaCreateResponse;
         }
-        String uuid = IdUtil.simpleUUID();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
         CaptchaType captchaType = captchaProperties.getType();
         boolean isMath = CaptchaType.MATH == captchaType;
-        Integer length = isMath ? captchaProperties.getNumberLength() : captchaProperties.getCharLength();
+        int length = isMath ? captchaProperties.getNumberLength() : captchaProperties.getCharLength();
         CodeGenerator codeGenerator = ReflectUtil.newInstance(captchaType.getClazz(), length);
         AbstractCaptcha captcha = SpringContextHolder.getBean(captchaProperties.getCategory().getClazz());
         captcha.setGenerator(codeGenerator);
@@ -59,7 +60,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             Expression exp = parser.parseExpression(StringUtils.remove(code, "="));
             code = exp.getValue(String.class);
         }
-        CacheUtils.putString(codeKeyInRedis, code, captchaProperties.getExpired());
+        CacheUtils.put(codeKeyInRedis, code, captchaProperties.getExpired());
         captchaCreateResponse
                 .setUuid(uuid)
                 .setImgBase64(captcha.getImageBase64());
@@ -75,11 +76,11 @@ public class CaptchaServiceImpl implements CaptchaService {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INVALID);
         }
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
-        String codeValue = CacheUtils.getString(codeKeyInRedis);
+        String codeValue = CacheUtils.get(codeKeyInRedis);
         if (StringUtils.isBlank(codeValue)) {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_HAS_EXPIRED);
         }
-        CacheUtils.deleteString(codeKeyInRedis);
+        CacheUtils.delete(codeKeyInRedis);
         if (!StringUtils.equals(code, codeValue)) {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INCORRECT);
         }

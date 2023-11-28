@@ -37,7 +37,7 @@ public class LoginUtils {
             StpUtil.login(loginUser.getId());
             StpUtil.getSession().set(Constants.LOGIN_USER_KEY, loginUser);
         } else {
-            // 如果重复登录，就需要验证当前登录账号和将要登录账号是否相同，不相同则挤掉原账号
+            // 如果重复登录，就需要验证当前登录账号和将要登录账号是否相同，不相同则挤掉原账号，确保一个浏览器会话只存有一个账户信息
             if (ObjectUtils.notEqual(Long.parseLong((String) StpUtil.getLoginId()), loginUser.getId())) {
                 StpUtil.logout();
                 // 存入一份到缓存中
