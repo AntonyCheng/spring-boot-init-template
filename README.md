@@ -1,6 +1,6 @@
 # SpringBoot初始化模板
 
-> 作者：[AntonyCheng](https://github.com/AntonyCheng})
+> 作者：[AntonyCheng](https://github.com/AntonyCheng)
 > 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
 
 > **版本号：v2.x.x**
