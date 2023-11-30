@@ -17,4 +17,9 @@ public class RabbitMqProperties {
      */
     private boolean enable;
 
+    /**
+     * 获取消息最大等待时间（单位：毫秒）
+     */
+    private long maxAwaitTimeout;
+
 }

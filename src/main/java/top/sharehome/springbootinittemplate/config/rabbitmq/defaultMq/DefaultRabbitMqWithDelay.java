@@ -43,17 +43,17 @@ public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
     /**
      * 默认的延迟队列实例死信队列交换机名称
      */
-    public static final String DELAY_DLX_EXCHANGE_NAME = "delay.dlx.exchange.default";
+    public static final String DLX_EXCHANGE_WITH_DELAY_NAME = "dlx.exchange.with.delay.default";
 
     /**
      * 默认的延迟队列实例死信队列名称
      */
-    public static final String DELAY_DLX_QUEUE_NAME = "delay.dlx.queue.default";
+    public static final String DLX_QUEUE_WITH_DELAY_NAME = "dlx.queue.with.delay.default";
 
     /**
      * 默认的延迟队列实例死信队列绑定关系的RoutingKey
      */
-    public static final String DELAY_DLX_BINDING_ROUTING_KEY = "delay.dlx.binding.routing.key.default";
+    public static final String DLX_BINDING_WITH_DELAY_ROUTING_KEY = "dlx.binding.with.delay.routing.key.default";
 
     /**
      * 默认的延迟队列实例延迟时间（默认60000毫秒）
@@ -75,7 +75,7 @@ public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
      */
     @Bean("defaultDelayDxlExchange")
     public Exchange defaultDelayDxlExchange() {
-        return new TopicExchange(DELAY_DLX_EXCHANGE_NAME, true, false, null);
+        return new TopicExchange(DLX_EXCHANGE_WITH_DELAY_NAME, true, false, null);
     }
 
     /**
@@ -88,9 +88,9 @@ public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
     public Queue defaultQueueWithDelay(ConnectionFactory connectionFactory) {
         Map<String, Object> args = new HashMap<>(2);
         // x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
-        args.put("x-dead-letter-exchange", DELAY_DLX_EXCHANGE_NAME);
+        args.put("x-dead-letter-exchange", DLX_EXCHANGE_WITH_DELAY_NAME);
         // x-dead-letter-routing-key 这里声明当前队列的死信路由key
-        args.put("x-dead-letter-routing-key", DELAY_DLX_BINDING_ROUTING_KEY);
+        args.put("x-dead-letter-routing-key", DLX_BINDING_WITH_DELAY_ROUTING_KEY);
         // x-message-ttl             这里声明队列的TTL
         args.put("x-message-ttl", TTL);
         Queue queue = new Queue(QUEUE_WITH_DELAY_NAME, true, false, false, args);
@@ -108,7 +108,7 @@ public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
      */
     @Bean("defaultDelayDxlQueue")
     public Queue defaultDelayDxlQueue(ConnectionFactory connectionFactory) {
-        Queue queue = new Queue(DELAY_DLX_QUEUE_NAME, true, false, false, null);
+        Queue queue = new Queue(DLX_QUEUE_WITH_DELAY_NAME, true, false, false, null);
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
         rabbitAdmin.setAutoStartup(true);
         rabbitAdmin.declareQueue(queue);
@@ -144,7 +144,7 @@ public class DefaultRabbitMqWithDelay extends BaseCustomizeMqWithDelay {
         return BindingBuilder
                 .bind(defaultDxlQueue)
                 .to(defaultDxlExchange)
-                .with(DELAY_DLX_BINDING_ROUTING_KEY)
+                .with(DLX_BINDING_WITH_DELAY_ROUTING_KEY)
                 .noargs();
     }
 

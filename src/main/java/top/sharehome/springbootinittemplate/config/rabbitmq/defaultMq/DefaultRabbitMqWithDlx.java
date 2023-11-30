@@ -43,17 +43,17 @@ public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
     /**
      * 默认的实例死信队列交换机名称
      */
-    public static final String DLX_EXCHANGE_NAME = "dlx.exchange.default";
+    public static final String DLX_EXCHANGE_WITH_DLX_NAME = "dlx.exchange.with.dlx.default";
 
     /**
      * 默认的实例死信队列名称
      */
-    public static final String DLX_QUEUE_NAME = "dlx.queue.default";
+    public static final String DLX_QUEUE_WITH_DLX_NAME = "dlx.queue.with.dlx.default";
 
     /**
      * 默认的实例死信队列绑定关系的RoutingKey
      */
-    public static final String DLX_BINDING_ROUTING_KEY = "dlx.binding.routing.key.default";
+    public static final String DLX_BINDING_WITH_DLX_ROUTING_KEY = "dlx.binding.with.dlx.routing.key.default";
 
     /**
      * 注册默认的实例交换机
@@ -70,7 +70,7 @@ public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
      */
     @Bean("defaultDxlExchange")
     public Exchange defaultDxlExchange() {
-        return new TopicExchange(DLX_EXCHANGE_NAME, true, false, null);
+        return new TopicExchange(DLX_EXCHANGE_WITH_DLX_NAME, true, false, null);
     }
 
     /**
@@ -83,9 +83,9 @@ public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
     public Queue defaultQueueWithDlx(ConnectionFactory connectionFactory) {
         Map<String, Object> args = new HashMap<>(2);
         // x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
-        args.put("x-dead-letter-exchange", DLX_EXCHANGE_NAME);
+        args.put("x-dead-letter-exchange", DLX_EXCHANGE_WITH_DLX_NAME);
         // x-dead-letter-routing-key   这里声明当前队列的死信路由key
-        args.put("x-dead-letter-routing-key", DLX_BINDING_ROUTING_KEY);
+        args.put("x-dead-letter-routing-key", DLX_BINDING_WITH_DLX_ROUTING_KEY);
         Queue queue = new Queue(QUEUE_WITH_DLX_NAME, true, false, false, args);
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
         rabbitAdmin.setAutoStartup(true);
@@ -101,7 +101,7 @@ public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
      */
     @Bean("defaultDxlQueue")
     public Queue defaultDxlQueue(ConnectionFactory connectionFactory) {
-        Queue queue = new Queue(DLX_QUEUE_NAME, true, false, false, null);
+        Queue queue = new Queue(DLX_QUEUE_WITH_DLX_NAME, true, false, false, null);
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
         rabbitAdmin.setAutoStartup(true);
         rabbitAdmin.declareQueue(queue);
@@ -137,7 +137,7 @@ public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
         return BindingBuilder
                 .bind(defaultDxlQueue)
                 .to(defaultDxlExchange)
-                .with(DLX_BINDING_ROUTING_KEY)
+                .with(DLX_BINDING_WITH_DLX_ROUTING_KEY)
                 .noargs();
     }
 

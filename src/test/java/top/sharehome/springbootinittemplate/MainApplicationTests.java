@@ -63,7 +63,13 @@ class MainApplicationTests {
     }
 
     public static void main(String[] args) {
-        System.out.println("hello world");
+        Demo demo = System.out::println;
+        demo.method("2");
     }
 
+}
+
+
+interface Demo {
+    void method(String c);
 }
