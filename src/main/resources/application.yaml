@@ -125,6 +125,8 @@ spring:
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
     enable: false
+    # 获取消息最大等待时间（单位：毫秒）
+    maxAwaitTimeout: 3000
     # 单机 RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
     host: xxx.xxx.xxx.xxx
     # 单机 RabbitMQ 端口
