@@ -21,7 +21,7 @@ import java.io.IOException;
  *
  * @author AntonyCheng
  */
-@Component
+//@Component
 public class RabbitMqConsumer {
 
     /**
