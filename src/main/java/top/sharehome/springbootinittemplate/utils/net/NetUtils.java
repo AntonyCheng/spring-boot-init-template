@@ -8,7 +8,6 @@ import java.net.InetAddress;
  *
  * @author AntonyCheng
  */
-
 public class NetUtils {
 
     /**
