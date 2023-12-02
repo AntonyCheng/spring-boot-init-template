@@ -47,8 +47,8 @@ public class knife4jConfiguration {
                 // 指定 Controller 扫描包路径
                 .apis(RequestHandlerSelectors
                         .basePackage("top.sharehome.springbootinittemplate.controller")
-                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.captcha.controller"))
-                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.i18n.controller")))
+                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.config.captcha.controller"))
+                        .or(RequestHandlerSelectors.basePackage("top.sharehome.springbootinittemplate.config.i18n.controller")))
                 .paths(PathSelectors.any())
                 .build();
         log.info(">>>>>>>>>>> knife4j config init.");
@@ -60,7 +60,7 @@ public class knife4jConfiguration {
      **/
     @Bean
     public WebMvcEndpointHandlerMapping webEndpointServletHandlerMapping(WebEndpointsSupplier webEndpointsSupplier, ServletEndpointsSupplier servletEndpointsSupplier, ControllerEndpointsSupplier controllerEndpointsSupplier, EndpointMediaTypes endpointMediaTypes, CorsEndpointProperties corsProperties, WebEndpointProperties webEndpointProperties, Environment environment) {
-        List<ExposableEndpoint<?>> allEndpoints = new ArrayList();
+        List<ExposableEndpoint<?>> allEndpoints = new ArrayList<>();
         Collection<ExposableWebEndpoint> webEndpoints = webEndpointsSupplier.getEndpoints();
         allEndpoints.addAll(webEndpoints);
         allEndpoints.addAll(servletEndpointsSupplier.getEndpoints());

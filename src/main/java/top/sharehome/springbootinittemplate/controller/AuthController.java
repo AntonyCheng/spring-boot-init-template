@@ -4,7 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import top.sharehome.springbootinittemplate.captcha.annotation.Captcha;
+import top.sharehome.springbootinittemplate.config.captcha.annotation.Captcha;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
@@ -16,7 +16,6 @@ import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 鉴权认证控制器
