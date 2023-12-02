@@ -28,6 +28,7 @@
       * [整合MinIO](#整合minio)
       * [整合阿里云OSS](#整合阿里云oss)
     * [整合验证码](#整合验证码)
+    * [配置国际化](#配置国际化)
     * [配置SaToken](#配置satoken)
       * [开启鉴权](#开启鉴权)
       * [开启认证](#开启认证)
@@ -105,6 +106,7 @@
 - 全局异常处理器
 - 封装统一响应对象
 - 自定义响应码
+- 可配置式国际化
 - Swagger + Knife4j 接口文档
 - 全局跨域处理
 - Spring 上下文处理工具
@@ -606,6 +608,76 @@ oss:
    ```
 
 4. 最后在调用接口时将验证码结果 `code` 和验证码 UUID `uuid` 传入即可；
+
+#### 配置国际化
+
+国际化是一个不起眼但是老生常谈的问题，虽然该模板主要用于于中小项目后端启动，但是难免会涉及到有关于国际化问题，而且国际化问题尽量需要在项目初期就确定下来，以免后期修改代码存在极大的工作量。
+
+建议使用该模板国际化功能之前先把源代码看一遍或者是先了解一下国际化的通常流程，然后再进行自定义化的配置和编码。
+
+1. 修改国际化相关配置，启动国际化功能：
+
+   ```yaml
+   # 公共配置文件
+   spring:
+     # 国际化配置
+     messages:
+       # todo 是否启动国际化功能（预先关闭）
+       enable: true
+       # 解释：i18n是存放多语言文件目录，messages是文件前缀
+       basename: i18n/messages
+   ```
+
+2. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
+
+   ```properties
+   opr_success=操作成功
+   opr_fail=操作失敗
+   msg_welcome=歡迎,{0}!
+   ```
+
+3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `config/i18n/lang_enum/LangEnum.java` 枚举类中：
+
+   ```java
+   @Getter
+   public enum LangEnum {
+   
+       en_US(new Locale("en", "US")),
+   
+       zh_CN(new Locale("zh", "CN")),
+   
+       zh_TW(new Locale("zh", "TW")); //这里是新增的中文简体
+   
+       final private Locale locale;
+   
+       LangEnum(Locale locale) {
+           this.locale = locale;
+       }
+   
+   }
+   ```
+
+4. 然后参考国际化示例控制器 `config/i18n/controller/I18nDemoController.java` 进行国际化的使用：
+
+   ```java
+   /**
+    * 国际化示例控制器
+    *
+    * @author AntonyCheng
+    */
+   @RestController
+   @Conditional(I18nCondition.class)
+   public class I18nDemoController {
+   
+       @GetMapping("/i18n")
+       public R<String> welcome(@RequestParam String name) {
+           return R.ok(I18nUtils.getMessage("msg_welcome", new String[]{name}));
+       }
+   
+   }
+   ```
+
+   核心操作就是在请求 URL 之后添加参数名为 `lang` 的参数，并且将其赋值为 `zh_TW` ，例如 `localhost:38080/i18n?lang=zh_TW`，控制器中返回和国际化词典文件相对应的键值即可。
 
 #### 配置SaToken
 

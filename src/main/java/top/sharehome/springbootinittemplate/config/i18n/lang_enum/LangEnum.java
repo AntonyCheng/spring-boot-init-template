@@ -12,11 +12,11 @@ import java.util.Locale;
 @Getter
 public enum LangEnum {
 
+    en_US(new Locale("en", "US")),
+
     zh_CN(new Locale("zh", "CN")),
 
-    zh_TW(new Locale("zh", "TW")),
-
-    en_US(new Locale("en", "US"));
+    zh_TW(new Locale("zh", "TW"));
 
     final private Locale locale;
 
