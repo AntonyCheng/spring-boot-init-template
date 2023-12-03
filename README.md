@@ -200,13 +200,11 @@
 
 业务缓存服务主要是为了满足开发者在编码过程中的缓存需求，例如接口限流、分布式锁等。
 
-1. 首先完成 **整合 Redis** 步骤，两者整合的 Redis 数据源可以不相同，如果相同，建议使用不同的数据库进行存储两种不同缓存的存储；
+1. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
-2. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
-
-    - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
-    - 仅开启一个；
-    - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
+   - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
+   - 仅开启一个；
+   - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
    # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
@@ -266,7 +264,7 @@
        subscriptionConnectionPoolSize: 50
    ```
 
-3. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
+2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 

@@ -14,9 +14,9 @@ public class RedissonCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String property1 = context.getEnvironment().getProperty("redisson.singleServerConfig.enableSingle");
-        String property2 = context.getEnvironment().getProperty("redisson.clusterServersConfig.enableCluster");
-        return StringUtils.equals("true", property1) || StringUtils.equals("true", property2);
+        String redissonSingleProperty = context.getEnvironment().getProperty("redisson.singleServerConfig.enableSingle");
+        String redissonClusterProperty = context.getEnvironment().getProperty("redisson.clusterServersConfig.enableCluster");
+        return StringUtils.equals("true", redissonSingleProperty) || StringUtils.equals("true", redissonClusterProperty);
     }
 
 }
