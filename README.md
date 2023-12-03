@@ -33,6 +33,8 @@
       * [开启鉴权](#开启鉴权)
       * [开启认证](#开启认证)
       * [开启JWT](#开启jwt)
+        * [整合Redis](#整合redis)
+        * [整合JWT](#整合jwt)
     * [配置XXL-JOB](#配置xxl-job)
       * [SpringBoot任务调度](#springboot任务调度)
       * [XXL-JOB任务调度](#xxl-job任务调度)
@@ -202,9 +204,14 @@
        # redis连接池
        lettuce:
          pool:
+           # 最小空闲连接数
            min-idle: 8
-           max-idle: 16
-           max-active: 32
+           # 最大空闲连接数
+           max-idle: 25
+           # 最大活动连接数
+           max-active: 50
+           # 最大等待时间/ms
+           max-wait: 3000
    ```
 
 3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合 Redisson** 。
@@ -213,9 +220,7 @@
 
 业务缓存服务主要是为了满足开发者在编码过程中的缓存需求，例如接口限流、分布式锁等。
 
-1. 首先完成 **整合 Redis** 步骤，两者整合的 Redis 数据源可以不相同，如果相同，建议使用不同的数据库进行存储两种不同缓存的存储；
-
-2. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
+1. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
    - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
    - 仅开启一个；
@@ -279,7 +284,7 @@
        subscriptionConnectionPoolSize: 50
    ```
 
-3. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
+2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 
@@ -744,6 +749,56 @@ public class AuthorizationConfiguration implements StpInterface {
 认证主要负责校验用户的在线状态，大多数系统的认证逻辑就是用户没有登录就不能使用绝大部分系统功能，该模板默认实现认证功能，但是在长期的开发过程中就会发现各式各样的框架型模板调试过程会因为认证功能而变得麻烦。所以该模板允许开发者决定是否开启认证功能，也就是说开发者能够不需要登录去调试代码，也可以发布不需要登录的 Web 项目。
 
 ##### 开启JWT
+
+###### 整合Redis
+
+由于 JWT 无状态且可解析，避免存在篡改之后对系统进行操作，强烈建议不要单独使用，将其存入 Redis 缓存数据库中交给系统直接管理，此时就需要整合 Redis ，这一步相比于单独整合缓存服务中的整合 Redis 多一些步骤，可以说这一步是其超集，但是也很简单，见如下配置文件修改：
+
+```yaml
+spring:
+  autoconfigure:
+    exclude:
+      # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，redisson相关配置也需要依赖这个类，预先关闭）
+      #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先关闭）
+      #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
+  # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+  redis:
+    # 单机地址（单价模式配置和集群模式配置只能存在一个）
+    host: xxx.xxx.xxx.xxx
+    # 单机端口，默认为6379
+    port: 6379
+    # 集群地址（单价模式配置和集群模式配置只能存在一个）
+    #cluster:
+    #  nodes:
+    #    - xxx.xxx.xxx.xxx:6379
+    #    - xxx.xxx.xxx.xxx:6380
+    #    - xxx.xxx.xxx.xxx:6381
+    #    - xxx.xxx.xxx.xxx:6382
+    #    - xxx.xxx.xxx.xxx:6383
+    #    - xxx.xxx.xxx.xxx:6384
+    # 数据库索引
+    database: 0
+    # 密码（考虑是否需要密码）
+    #password: 123456
+    # 连接超时时间
+    timeout: 3s
+    # redis连接池
+    lettuce:
+      pool:
+        # 最小空闲连接数
+        min-idle: 8
+        # 最大空闲连接数
+        max-idle: 25
+        # 最大活动连接数
+        max-active: 50
+        # 最大等待时间/ms
+        max-wait: 3000
+```
+
+修改完毕之后即自动使用 Redis 缓存登陆凭证信息，注意这里的登录凭证信息包含 JWT 或者 Session + Cookie，如果没有整合 JWT ，那么该系统就是分布式 Session 形式，反之则是分布式 Token 形式。
+
+###### 整合JWT
 
 JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
 
