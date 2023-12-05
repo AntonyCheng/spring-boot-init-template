@@ -25,7 +25,7 @@ public class TencentUtils {
      * 上传文件
      *
      * @param file     上传的文件数据
-     * @param rootPath 文件根目录（注意不需要首尾斜杠，即如果保存文件到"/root/a/"文件家中，只需要传入"root/a"字符串即可）
+     * @param rootPath 文件根目录（注意不需要首尾斜杠，即如果保存文件到"/root/a/"文件夹中，只需要传入"root/a"字符串即可）
      * @return 返回结果
      */
     public static String upload(MultipartFile file, String rootPath) {
