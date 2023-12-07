@@ -85,6 +85,95 @@ public class FieldUtils {
     }
 
     /**
+     * 是否所有字段（属性）全为空值
+     *
+     * @param obj 实体类
+     * @return 如果所有字段（属性）全部为空值，那么就返回true；否则返回false。
+     */
+    public static boolean isAllEmpty(Object obj) {
+        Class<?> aClass = obj.getClass();
+        Field[] fields = aClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            int modifiers = field.getModifiers();
+            // 如果是静态属性或者final属性则不进行判断
+            if (Modifier.isStatic(modifiers)
+                    || Modifier.isFinal(modifiers)) {
+                continue;
+            }
+            Object fieldValue = null;
+            try {
+                fieldValue = field.get(obj);
+            } catch (IllegalAccessException e) {
+                log.error(e.getMessage());
+            }
+            if (fieldValue != null) {
+                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+                    continue;
+                }
+                if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {
+                    continue;
+                }
+                if (fieldValue.getClass().isArray() && Array.getLength(fieldValue) == 0) {
+                    continue;
+                }
+                if (fieldValue instanceof Map<?, ?> && ((Map<?, ?>) fieldValue).isEmpty()) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 是否所有字段（属性）全为空值，可排除不判断的字段（属性）
+     *
+     * @param obj     实体类
+     * @param exclude 需要排除的字段（属性）名称
+     * @return 如果所有字段（属性）全部为空值，那么就返回true；否则返回false。
+     */
+    public static boolean isAllEmpty(Object obj, String... exclude) {
+        Class<?> aClass = obj.getClass();
+        Field[] fields = aClass.getDeclaredFields();
+        List<String> excludeList = Arrays.stream(exclude).collect(Collectors.toList());
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (excludeList.contains(field.getName())) {
+                continue;
+            }
+            int modifiers = field.getModifiers();
+            // 如果是静态属性或者final属性则不进行判断
+            if (Modifier.isStatic(modifiers)
+                    || Modifier.isFinal(modifiers)) {
+                continue;
+            }
+            Object fieldValue = null;
+            try {
+                fieldValue = field.get(obj);
+            } catch (IllegalAccessException e) {
+                log.error(e.getMessage());
+            }
+            if (fieldValue != null) {
+                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+                    continue;
+                }
+                if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {
+                    continue;
+                }
+                if (fieldValue.getClass().isArray() && Array.getLength(fieldValue) == 0) {
+                    continue;
+                }
+                if (fieldValue instanceof Map<?, ?> && ((Map<?, ?>) fieldValue).isEmpty()) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * 是否存在为null的字段（属性）
      *
      * @param obj 实体类
