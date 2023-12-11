@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
@@ -134,6 +135,20 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
         return R.fail(HttpStatus.BAD_REQUEST, String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), e.getValue()));
+    }
+
+    /**
+     * 文件分段参数接收时异常
+     *
+     * @param e       异常
+     * @param request 请求
+     * @return 返回结果
+     */
+    @ExceptionHandler(MultipartException.class)
+    public R<Void> handleMultipartException(MultipartException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
+        return R.fail(HttpStatus.BAD_REQUEST, "文件参数异常");
     }
 
     /**
