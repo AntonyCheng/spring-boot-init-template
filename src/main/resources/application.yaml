@@ -33,6 +33,35 @@ server:
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
 
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  # todo 是否开启生产环境保护（由于拿到模板就需要二次开发，所以默认开发环境，即预先关闭）
+  production: false
+  setting:
+    language: zh-CN
+    enable-footer: true
+    enable-footer-custom: true
+    footer-custom-content: Apache License 2.0 | Copyright &copy; 2024 [AntonyCheng](https://github.com/AntonyCheng)
+  # 默认带有basic验证账号密码
+  basic:
+    enable: true
+    username: antony
+    password: antony123456
+# springdoc-openapi项目配置
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  group-configs:
+    - group: "springbootinittemplate"
+      paths-to-match: "/**"
+      packages-to-scan:
+        - top.sharehome.springbootinittemplate.controller
+        - top.sharehome.springbootinittemplate.config.captcha.controller
+        - top.sharehome.springbootinittemplate.config.i18n.controller
+
 # 日志配置 ---- 可自定义
 logging:
   level:
