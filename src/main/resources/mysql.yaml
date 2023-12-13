@@ -45,21 +45,84 @@ rules:
           user_password:
             cipherColumn: user_password
             encryptorName: md5_encryptor
-# todo 以下都是示例，可以解除注释直接替换，但是由于框架配置复杂，这里建议按照格式重新写，保留样例以便于修改
+  # 读写分离（从库开启后开启）
+  - !READWRITE_SPLITTING
+    dataSources:
+      # 读写库配置名称（主库写，从库读，只允许一写多读）
+      readwrite_ds:
+        # 静态读写分离类型
+        staticStrategy:
+          writeDataSourceName: master
+          readDataSourceNames:
+            - slave
+        # 负载均衡算法名称
+        loadBalancerName: RANDOM
+    # 配置负载均衡算法
+    loadBalancers:
+      # 算法名称——随机负载均衡算法
+      RANDOM:
+        type: RANDOM
+        props:
+          transaction-read-query-strategy: FIXED_PRIMARY
+      # 算法名称——轮询负载均衡算法
+      ROUND_ROBIN:
+        type: ROUND_ROBIN
+        props:
+          transaction-read-query-strategy: FIXED_PRIMARY
+  # todo 数据脱敏
+  - !MASK
+    tables:
+      t_user:
+        columns:
+          user_account:
+            maskAlgorithm: md5_mask
+    maskAlgorithms:
+      md5_mask:
+        type: MD5
+  # SQL解析
+  - !SQL_PARSER
+    # 是否解析SQL注释
+    sqlCommentParseEnabled: true
+    # SQL语句本地缓存配置项
+    sqlStatementCache:
+      # 本地缓存初始容量
+      initialCapacity: 2000
+      # 本地缓存最大容量
+      maximumSize: 65535
+    # 解析树本地缓存配置项
+    parseTreeCache:
+      # 本地缓存初始容量
+      initialCapacity: 128
+      # 本地缓存最大容量
+      maximumSize: 1024
+# todo 以下都是示例，可以解除注释直接替换，但是由于框架配置复杂，这里建议按照格式重新写，保留样例以便于修改，详情见：https://shardingsphere.apache.org/document/5.3.2/cn/user-manual/
 #rules:
 #  # 读写分离（从库开启后开启）
 #  - !READWRITE_SPLITTING
 #    dataSources:
+#      # 读写库配置名称（主库写，从库读，只允许一写多读）
 #      readwrite_ds:
+#        # 静态读写分离类型
 #        staticStrategy:
 #          writeDataSourceName: master
 #          readDataSourceNames:
 #            - slave
-#        loadBalancerName: random
+#        # 负载均衡算法名称
+#        loadBalancerName: RANDOM
+#    # 配置负载均衡算法
 #    loadBalancers:
-#      random:
+#      # 算法名称——随机负载均衡算法
+#      RANDOM:
 #        type: RANDOM
-#  # 数据加密在需要时开启
+#        props:
+#          transaction-read-query-strategy: FIXED_PRIMARY
+#      # 算法名称——轮询负载均衡算法
+#      ROUND_ROBIN:
+#        type: ROUND_ROBIN
+#        props:
+#          transaction-read-query-strategy: FIXED_PRIMARY
+#
+#  # 数据加密（在需要时开启）
 #  - !ENCRYPT
 #    # 首先定义加密算法
 #    encryptors:
@@ -105,3 +168,20 @@ rules:
 #            # 数据库中需要新建一个列名来保存模糊查询算法处理后的明文
 #            likeQueryColumn: save_like_columns
 #            likeQueryEncryptorName: like_encryptor
+#
+#  # SQL解析
+#  - !SQL_PARSER
+#    # 是否解析SQL注释
+#    sqlCommentParseEnabled: true
+#    # SQL语句本地缓存配置项
+#    sqlStatementCache:
+#      # 本地缓存初始容量
+#      initialCapacity: 2000
+#      # 本地缓存最大容量
+#      maximumSize: 65535
+#    # 解析树本地缓存配置项
+#    parseTreeCache:
+#      # 本地缓存初始容量
+#      initialCapacity: 128
+#      # 本地缓存最大容量
+#      maximumSize: 1024

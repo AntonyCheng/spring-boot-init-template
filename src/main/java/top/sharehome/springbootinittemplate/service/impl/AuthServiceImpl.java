@@ -29,7 +29,6 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     private UserMapper userMapper;
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public void register(AuthRegisterDto authRegisterDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, authRegisterDto.getAccount());
@@ -46,7 +45,6 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     }
 
     @Override
-    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
     public AuthLoginVo login(AuthLoginDto authLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount())
