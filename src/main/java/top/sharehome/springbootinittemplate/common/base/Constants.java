@@ -100,6 +100,6 @@ public interface Constants {
     /**
      * 未知文件类型后缀
      */
-    String UNKNOWN_FILE_TYPE_SUFFIX = ".unknown";
+    String UNKNOWN_FILE_TYPE_SUFFIX = "unknown";
 
 }

@@ -68,12 +68,17 @@ public class AliConfiguration {
             if (file == null) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
-            String filename = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            if (StringUtils.isBlank(FilenameUtils.getExtension(filename))) {
-                filename = filename + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+            String suffix = FilenameUtils.getExtension(originalName);
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
             }
-            String namePrefix = UUID.randomUUID().toString().replaceAll("-", "");
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? namePrefix + "_" + filename : rootPath + "/" + namePrefix + "_" + filename;
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             InputStream inputStream = file.getInputStream();
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
             ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).<PutObjectRequest>withProgressListener(new PutObjectProgressListener()));

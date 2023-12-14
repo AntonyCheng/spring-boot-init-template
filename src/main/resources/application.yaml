@@ -43,9 +43,10 @@ knife4j:
     enable-footer: true
     enable-footer-custom: true
     footer-custom-content: Apache License 2.0 | Copyright &copy; 2024 [AntonyCheng](https://github.com/AntonyCheng)
-  # 默认带有basic验证账号密码
+  # basic验证
   basic:
-    enable: true
+    # todo 是否让页面带有basic验证（如果只是查看api推荐打开，但是如果要在里面调试，推荐关闭，因为basic验证之后会占用请求头的Authorization字段，会导致需要登录验证的接口调用失败，预先关闭）
+    enable: false
     username: antony
     password: antony123456
 # springdoc-openapi项目配置

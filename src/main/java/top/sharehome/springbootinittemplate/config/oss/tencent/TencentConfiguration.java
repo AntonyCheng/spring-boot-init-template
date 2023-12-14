@@ -149,17 +149,20 @@ public class TencentConfiguration {
             if (file == null) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
-            String filename = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            if (StringUtils.isBlank(FilenameUtils.getExtension(filename))) {
-                filename = filename + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+            String suffix = FilenameUtils.getExtension(originalName);
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
             }
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
             // 详细代码参见本页：高级接口 -> 创建 TransferManager
             TransferManager transferManager = createTransferManager();
-
-            String namePrefix = UUID.randomUUID().toString().replaceAll("-", "");
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? namePrefix + "_" + filename : rootPath + "/" + namePrefix + "_" + filename;
             // 本地文件路径
             // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
             InputStream inputStream = file.getInputStream();
