@@ -1,5 +1,7 @@
 package top.sharehome.springbootinittemplate.oss;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -29,6 +31,10 @@ public class TestOss {
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(TencentUtils.upload(multipartFile, "test/init"));
+
+        String suffix = FilenameUtils.getExtension(file.getName());
+        FileInputStream fileInputStream1 = new FileInputStream(file);
+        System.out.println(TencentUtils.upload(fileInputStream1, suffix, "test/init"));
     }
 
     /**
@@ -48,6 +54,10 @@ public class TestOss {
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(AliUtils.upload(multipartFile, "test/init"));
+
+        String suffix = FilenameUtils.getExtension(file.getName());
+        FileInputStream fileInputStream1 = new FileInputStream(file);
+        System.out.println(AliUtils.upload(fileInputStream1, suffix, "test/init"));
     }
 
     /**
@@ -55,7 +65,7 @@ public class TestOss {
      */
     @Test
     void testAliUtilsDelete() {
-        AliUtils.delete("https://antonychengtest.oss-cn-beijing.aliyuncs.com/test/init/33ce4679377b48e9a733d95deaf43975_README.md");
+        AliUtils.delete("https://xxxxxx.oss-cn-beijing.aliyuncs.com/test/init/33ce4679377b48e9a733d95deaf43975_README.md");
     }
 
     /**
@@ -67,6 +77,11 @@ public class TestOss {
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(MinioUtils.upload(multipartFile, "test/init"));
+
+        String suffix = FilenameUtils.getExtension(file.getName());
+        FileInputStream fileInputStream1 = new FileInputStream(file);
+        System.out.println(MinioUtils.upload(fileInputStream1, suffix, "test/init"));
+        fileInputStream.close();
     }
 
     /**
@@ -74,7 +89,7 @@ public class TestOss {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete("http://192.168.116.100:39000/xxxxxxxx/test/init/9d6ff8990d3a47b5a2856dc1d06e97ac_README.md");
+        MinioUtils.delete("http://xxx.xxx.xxx.xxx:39000/xxxxxxxx/test/init/9d6ff8990d3a47b5a2856dc1d06e97ac_README.md");
     }
 
 }

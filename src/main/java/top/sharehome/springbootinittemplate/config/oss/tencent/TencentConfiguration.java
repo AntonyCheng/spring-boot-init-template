@@ -15,6 +15,7 @@ import com.qcloud.cos.transfer.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ThreadUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,6 +52,140 @@ public class TencentConfiguration {
     private final TencentProperties tencentProperties;
 
     /**
+     * 上传文件到COS
+     *
+     * @param file     待上传的文件
+     * @param rootPath 上传的路径
+     */
+    public String uploadToCos(MultipartFile file, String rootPath) {
+        String key = null;
+        try {
+            if (file == null) {
+                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+            }
+            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+            String suffix = FilenameUtils.getExtension(originalName);
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
+            }
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
+            // 详细代码参见本页：高级接口 -> 创建 TransferManager
+            TransferManager transferManager = createTransferManager();
+            // 本地文件路径
+            // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
+            InputStream inputStream = file.getInputStream();
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(inputStream.available());
+
+            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
+
+            // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
+            // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
+            putObjectRequest.setStorageClass(StorageClass.Standard_IA);
+
+            try {
+                // 高级接口会返回一个异步结果Upload
+                // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回 UploadResult, 失败抛出异常
+                Upload upload = transferManager.upload(putObjectRequest);
+                if (!showTransferProgress(upload)) {
+                    throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+                }
+                // UploadResult uploadResult = upload.waitForUploadResult();
+            } catch (CosClientException e) {
+                throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+            }
+            // 确定本进程不再使用 transferManager 实例之后，关闭即可
+            // 详细代码参见本页：高级接口 -> 关闭 TransferManager
+            shutdownTransferManager(transferManager);
+        } catch (IOException e) {
+            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        }
+        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
+    }
+
+    /**
+     * 上传文件到COS
+     *
+     * @param inputStream 待上传的文件流
+     * @param suffix      文件后缀
+     * @param rootPath    上传的路径
+     * @return 文件所在路径
+     */
+    public String uploadToCos(InputStream inputStream, String suffix, String rootPath) {
+        String key = null;
+        try {
+            if (ObjectUtils.isEmpty(inputStream)) {
+                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+            }
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
+            }
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
+            // 详细代码参见本页：高级接口 -> 创建 TransferManager
+            TransferManager transferManager = createTransferManager();
+            // 本地文件路径
+            // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(inputStream.available());
+
+            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
+
+            // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
+            // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
+            putObjectRequest.setStorageClass(StorageClass.Standard_IA);
+
+            try {
+                // 高级接口会返回一个异步结果Upload
+                // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回 UploadResult, 失败抛出异常
+                Upload upload = transferManager.upload(putObjectRequest);
+                if (!showTransferProgress(upload)) {
+                    throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+                }
+                // UploadResult uploadResult = upload.waitForUploadResult();
+            } catch (CosClientException e) {
+                throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+            }
+            // 确定本进程不再使用 transferManager 实例之后，关闭即可
+            // 详细代码参见本页：高级接口 -> 关闭 TransferManager
+            shutdownTransferManager(transferManager);
+        } catch (IOException e) {
+            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        }
+        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
+    }
+
+    /**
+     * 从COS中删除文件
+     *
+     * @param url 文件URL
+     */
+    public void deleteInCos(String url) {
+        COSClient cosClient = getCosClient();
+        String[] split = url.split(tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/");
+        if (split.length != 2) {
+            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
+        }
+        String key = split[1];
+        try {
+            cosClient.deleteObject(tencentProperties.getBucketName(), key);
+        } catch (CosClientException e) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
+        }
+    }
+
+    /**
      * 获取COSClient客户端
      *
      * @return 返回COSClient客户端
@@ -67,7 +202,6 @@ public class TencentConfiguration {
         // 生成 cos 客户端并且上传文件
         return new COSClient(cred, clientConfig);
     }
-
 
     /**
      * 创建 TransferManager 实例，这个实例用来后续调用高级接口
@@ -134,84 +268,6 @@ public class TencentConfiguration {
         }
         // 完成了 Completed，或者失败了 Failed
         return Objects.equals(transfer.getState().toString(), "Completed");
-    }
-
-
-    /**
-     * 上传文件到COS
-     *
-     * @param file     待上传的文件
-     * @param rootPath 上传的路径
-     */
-    public String uploadToCos(MultipartFile file, String rootPath) {
-        String key = null;
-        try {
-            if (file == null) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            String suffix = FilenameUtils.getExtension(originalName);
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
-            // 详细代码参见本页：高级接口 -> 创建 TransferManager
-            TransferManager transferManager = createTransferManager();
-            // 本地文件路径
-            // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
-            InputStream inputStream = file.getInputStream();
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(inputStream.available());
-
-            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
-
-            // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
-            // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
-            putObjectRequest.setStorageClass(StorageClass.Standard_IA);
-
-            try {
-                // 高级接口会返回一个异步结果Upload
-                // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回 UploadResult, 失败抛出异常
-                Upload upload = transferManager.upload(putObjectRequest);
-                if (!showTransferProgress(upload)) {
-                    throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-                }
-                // UploadResult uploadResult = upload.waitForUploadResult();
-            } catch (CosClientException e) {
-                throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-            }
-            // 确定本进程不再使用 transferManager 实例之后，关闭即可
-            // 详细代码参见本页：高级接口 -> 关闭 TransferManager
-            shutdownTransferManager(transferManager);
-        } catch (IOException e) {
-            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-        }
-        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
-    }
-
-    /**
-     * 从COS中删除文件
-     *
-     * @param url 文件URL
-     */
-    public void deleteInCos(String url) {
-        COSClient cosClient = getCosClient();
-        String[] split = url.split(tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/");
-        if (split.length != 2) {
-            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
-        }
-        String key = split[1];
-        try {
-            cosClient.deleteObject(tencentProperties.getBucketName(), key);
-        } catch (CosClientException e) {
-            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
-        }
     }
 
     /**
