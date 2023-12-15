@@ -22,6 +22,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileExc
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -114,6 +115,35 @@ public class AliConfiguration {
         return Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
     }
 
+    public String uploadToOss(byte[] bytes, String suffix, String rootPath) {
+        OSS ossClient = getOssClient();
+        String key;
+        try {
+            if (ObjectUtils.isEmpty(bytes)) {
+                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+            }
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
+            }
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
+            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).<PutObjectRequest>withProgressListener(new PutObjectProgressListener()));
+        } catch (OSSException | ClientException e) {
+            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
+        return Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
+    }
+
     /**
      * 从OSS中删除文件
      *
@@ -156,5 +186,4 @@ public class AliConfiguration {
     private void initDi() {
         log.info("############ ali oss config DI.");
     }
-
 }

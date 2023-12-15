@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.oss;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ public class TestOss {
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
         System.out.println(TencentUtils.upload(fileInputStream1, suffix, "test/init"));
+
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        System.out.println(TencentUtils.upload(bytes, suffix, "test/init"));
     }
 
     /**
@@ -58,6 +62,9 @@ public class TestOss {
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
         System.out.println(AliUtils.upload(fileInputStream1, suffix, "test/init"));
+
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        System.out.println(AliUtils.upload(bytes, suffix, "test/init"));
     }
 
     /**
@@ -81,7 +88,9 @@ public class TestOss {
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
         System.out.println(MinioUtils.upload(fileInputStream1, suffix, "test/init"));
-        fileInputStream.close();
+
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        System.out.println(MinioUtils.upload(bytes, suffix, "test/init"));
     }
 
     /**

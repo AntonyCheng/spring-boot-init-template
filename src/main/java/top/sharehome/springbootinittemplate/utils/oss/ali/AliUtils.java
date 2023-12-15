@@ -47,6 +47,18 @@ public class AliUtils {
     }
 
     /**
+     * 上传文件
+     *
+     * @param bytes    待上传的文件字节数据
+     * @param suffix   文件后缀
+     * @param rootPath 上传的路径
+     * @return 文件所在路径
+     */
+    public static String upload(byte[] bytes, String suffix, String rootPath) {
+        return ALI_CONFIGURATION.uploadToOss(bytes, suffix, rootPath);
+    }
+
+    /**
      * 删除文件
      *
      * @param url 文件所在地址

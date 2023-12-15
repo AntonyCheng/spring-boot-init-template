@@ -20,6 +20,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileExc
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -111,6 +112,35 @@ public class MinioConfiguration {
                 + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
     }
 
+    public String uploadToMinio(byte[] bytes, String suffix, String rootPath) {
+        MinioClient minioClient = getMinioClient();
+        String key;
+        try {
+            if (ObjectUtils.isEmpty(bytes)) {
+                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+            }
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = "." + suffix;
+            }
+            // 创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
+            // 对象键(Key)是对象在存储桶中的唯一标识。
+            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(minioProperties.getBucketName())
+                    .object(key)
+                    .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        }
+        return (minioProperties.isEnableTls() ? Constants.HTTPS : Constants.HTTP)
+                + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
+    }
+
     /**
      * 从MinIO中删除文件
      *
@@ -157,5 +187,4 @@ public class MinioConfiguration {
     private void initDi() {
         log.info("############ minio oss config DI.");
     }
-
 }
