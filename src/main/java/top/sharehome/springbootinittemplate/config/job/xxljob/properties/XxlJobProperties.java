@@ -16,17 +16,17 @@ public class XxlJobProperties {
     /**
      * 是否开启
      */
-    private boolean enable;
+    private Boolean enable = false;
 
     /**
      * xxl-job监控面板地址
      */
-    private String adminAddresses;
+    private String adminAddresses = "";
 
     /**
      * xxl-job token
      */
-    private String accessToken;
+    private String accessToken = "xxl-job";
 
     /**
      * 执行器相关属性
@@ -40,32 +40,32 @@ public class XxlJobProperties {
         /**
          * 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
          */
-        private String appname;
+        private String appname = "xxl-job-executor";
 
         /**
          * # 执行器端口号
          */
-        private int port;
+        private Integer port;
 
         /**
          * 执行器注册
          */
-        private String address;
+        private String address = "";
 
         /**
          * 执行器IP
          */
-        private String ip;
+        private String ip = "";
 
         /**
          * 执行器运行日志文件存储磁盘路径
          */
-        private String logpath;
+        private String logpath = "./logs/${spring.application.name}/xxl-job";
 
         /**
          * 执行器日志文件保存天数
          */
-        private int logretentiondays;
+        private Integer logretentiondays = 30;
 
     }
 

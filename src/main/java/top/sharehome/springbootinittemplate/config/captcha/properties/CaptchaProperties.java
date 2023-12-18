@@ -17,31 +17,31 @@ public class CaptchaProperties {
     /**
      * 验证码开关
      */
-    private boolean enable;
+    private Boolean enable = false;
 
     /**
      * 验证码类型
      */
-    private CaptchaType type;
+    private CaptchaType type = CaptchaType.CHAR;
 
     /**
      * 验证码类别
      */
-    private CaptchaCategory category;
+    private CaptchaCategory category = CaptchaCategory.LINE;
 
     /**
      * 数字验证码位数
      */
-    private int numberLength;
+    private Integer numberLength = 1;
 
     /**
      * 字符验证码长度
      */
-    private int charLength;
+    private Integer charLength = 4;
 
     /**
      * 验证码存活时间（单位：秒）
      */
-    private int expired;
+    private Integer expired = 180;
 
 }

@@ -33,8 +33,8 @@ public class CaffeineConfiguration {
     @Bean("localCache")
     public Cache<String, Object> localCache() {
         return Caffeine.newBuilder()
-                .expireAfterWrite(caffeineProperties.getExpireTime(), TimeUnit.SECONDS)
-                .expireAfterAccess(caffeineProperties.getExpireTime(), TimeUnit.SECONDS)
+                .expireAfterWrite(caffeineProperties.getExpired(), TimeUnit.SECONDS)
+                .expireAfterAccess(caffeineProperties.getExpired(), TimeUnit.SECONDS)
                 // 初始的缓存空间大小
                 .initialCapacity(caffeineProperties.getInitCapacity())
                 // 缓存的最大条数

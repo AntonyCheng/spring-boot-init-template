@@ -316,15 +316,15 @@ redisson:
 # Caffeine本地缓存配置
 caffeine:
   # todo 是否启动（预先关闭）
-  enabled: true
+  enable: false
   # 最后一次写入或访问后经过固定时间过期，单位：秒
-  expireTime: 1800
+  expired: 1800
   # 缓存初始容量
-  initCapacity: 256
+  init-capacity: 256
   # 缓存最大容量，超过之后会按照最近最少策略进行缓存剔除
-  maxCapacity: 10000
+  max-capacity: 10000
   # 是否允许空值null作为缓存的value
-  allowNullValue: true
+  allow-null-value: true
 
 # Easy-ES配置，需要使用ES时将enable改为true
 easy-es:
@@ -425,7 +425,7 @@ schedule:
     # todo 是否开启循环任务（预先关闭）
     enable: false
     # 线程池大小（开启则必填）
-    threadPool: 10
+    thread-pool: 10
 
 # Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
 xxl:
@@ -433,9 +433,9 @@ xxl:
     # todo 是否开启（预先关闭）
     enable: false
     # Xxl-Job监控面板地址
-    adminAddresses: http://localhost:38079/xxl-job-admin
+    admin-addresses: http://localhost:38079/xxl-job-admin
     # Xxl-Job token
-    accessToken: xxl-job
+    access-token: xxl-job
     # 执行器配置
     executor:
       # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
@@ -490,10 +490,10 @@ sa-token:
 captcha:
   # todo 是否使用验证码（开启的前提是redisson配置完成，预先关闭）
   enable: false
-  # 验证码类型：math 数字类型；char 字符类型。
-  type: math
+  # 验证码类型：char 字符类型；math 数字类型。
+  type: char
   # 验证码类别：line 线段干扰；circle 圆圈干扰；shear 扭曲干扰。
-  category: circle
+  category: line
   # 数字验证码位数（1-9，否则默认为1）
   number-length: 1
   # 字符验证码长度（1-99，否则默认为4）

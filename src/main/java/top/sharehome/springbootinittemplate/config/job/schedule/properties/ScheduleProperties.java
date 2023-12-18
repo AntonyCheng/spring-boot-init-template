@@ -34,12 +34,12 @@ public class ScheduleProperties {
         /**
          * 是否开启循环任务
          */
-        private boolean enable;
+        private Boolean enable = false;
 
         /**
          * 线程池大小（开启则必填）
          */
-        private int threadPool;
+        private Integer threadPool = 10;
     }
 
     /**
@@ -52,7 +52,7 @@ public class ScheduleProperties {
         /**
          * 是否开启全量任务
          */
-        private boolean enable;
+        private Boolean enable = false;
     }
 
 }

@@ -60,7 +60,7 @@ public class CaptchaAop {
                 continue;
             }
         }
-        captchaService.checkCaptcha(uuid, code);
+        captchaService.checkCaptcha(code, uuid);
         return proceedingJoinPoint.proceed();
     }
 

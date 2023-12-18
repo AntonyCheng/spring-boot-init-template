@@ -40,7 +40,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Override
     public CaptchaCreate createCaptcha() {
         CaptchaCreate captchaCreateResponse = new CaptchaCreate();
-        boolean enable = captchaProperties.isEnable();
+        boolean enable = captchaProperties.getEnable();
         captchaCreateResponse.setEnableCode(enable);
         if (!enable) {
             return captchaCreateResponse;

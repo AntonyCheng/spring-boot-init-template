@@ -15,6 +15,6 @@ public class I18nProperties {
     /**
      * 是否开启国际化
      */
-    private boolean enable;
+    private Boolean enable = false;
 
 }

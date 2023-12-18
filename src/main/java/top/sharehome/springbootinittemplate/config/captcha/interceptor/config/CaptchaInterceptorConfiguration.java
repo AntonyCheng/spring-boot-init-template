@@ -39,7 +39,7 @@ public class CaptchaInterceptorConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
         // 如果开启了验证码相关配置，则进行拦截
-        if (captchaProperties.isEnable()) {
+        if (captchaProperties.getEnable()) {
             registry.addInterceptor(new CaptchaInterceptor()).addPathPatterns(CAPTCHA_NEED_INTERCEPT_URI);
         }
     }
