@@ -125,38 +125,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  # mysql配置
-  datasource:
-    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:mysql.yaml
-    druid:
-      # 初始连接数 ---- 可自定义
-      initialSize: 5
-      # 最小连接池数量
-      minIdle: 10
-      # 最大连接池数量
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置连接超时时间
-      connectTimeout: 30000
-      # 配置网络超时时间
-      socketTimeout: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      # 配置一个连接在池中最大生存的时间，单位是毫秒
-      maxEvictableIdleTimeMillis: 900000
-      # 配置检测连接是否有效
-      validationQuery: SELECT 1 FROM DUAL
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      webStatFilter:
-        enabled: true
+  # 不允许bean的定义被覆盖，保证系统稳定，但是某些情况下可能需要反其道而行之，这个由开发者自己定义，默认关闭
   main:
-    allow-bean-definition-overriding: true
+    allow-bean-definition-overriding: false
   # 修改rabbitmq配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
@@ -187,12 +158,66 @@ spring:
         acknowledge-mode: manual
       simple:
         acknowledge-mode: manual
+  # 框架依赖自动配置选择
   autoconfigure:
     exclude:
+      # todo 是否使用DruidCP连接池（如果要使用Druid连接池，就将DruidDataSourceAutoConfigure注释掉，然后记得查看spring.datasource.druid相关配置和提示，预先不使用）
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
       # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，预先关闭）
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先关闭）
+      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
+  # mysql配置
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:mysql.yaml
+    # HikariCP连接池配置（性能较好，模板首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
+    hikari:
+      # 连接池名称
+      pool-name: HikariCP
+      # 连接池最小连接数量
+      minimum-idle: 10
+      # 连接池最大连接数量
+      maximum-pool-size: 25
+      # 配置连接超时时间
+      connection-timeout: 30000
+      # 控制从池返回的连接的默认自动提交行为，默认值：true
+      auto-commit: true
+      # 空闲连接存活最大时间，默认10分钟
+      idle-timeout: 600000
+      # 池中连接的最长生命周期，值0表示无限生命周期，设置30分钟
+      max-lifetime: 1800000
+      # 配置检测连接是否有效
+      connection-test-query: SELECT 1 FROM DUAL
+    # DruidCP连接池配置（功能性强，模板备选【dataSourceClassName: com.alibaba.druid.pool.DruidDataSource】，如果使用同时记得更改dataSourceClassName等相关属性）
+    druid:
+      # 初始连接数 ---- 可自定义
+      initial-size: 5
+      # 连接池最小连接数量
+      min-idle: 10
+      # 连接池最大连接数量
+      max-active: 25
+      # 配置获取连接等待超时的时间，单位是毫秒
+      max-wait: 60000
+      # 配置连接超时时间
+      connect-timeout: 30000
+      # 此属性控制从池返回的连接的默认自动提交行为，默认值：true
+      default-auto-commit: true
+      # 配置网络超时时间
+      socket-timeout: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒，设置10分钟
+      time-between-eviction-runs-millis: 600000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒，设置10分钟
+      min-evictable-idle-time-millis: 600000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒，设置30分钟
+      max-evictable-idle-time-millis: 1800000
+      # 配置检测连接是否有效
+      validation-query: SELECT 2 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      web-stat-filter:
+        enabled: true
   # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
   redis:
     # 单机地址（单价模式配置和集群模式配置只能存在一个）

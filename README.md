@@ -53,7 +53,6 @@
   - aop == 面向切面编程
   - devtools == 热部署插件
 - **MySQL**
-  - druid 1.2.20 == 连接池
   - mybatis-plus 3.5.4.1 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
@@ -142,7 +141,7 @@
    ```yaml
    dataSources:
      master:
-       dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+       dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
        # 修改url地址
        url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
@@ -971,6 +970,16 @@ spring:
 如果你也想成为该项目的共建者，请直接提交 PR ，并**对其进行详细说明**，作者审核之后会并入该模板 Master 分支中（暂时性操作，如果有一天项目真能做大，从该项目中规划分支也不是没有可能）。
 
 如果你在使用模板的过程中有建议或者看法，请尽管发布 ISSUES 。
+
+## 下一步开发计划
+
+* 集成本地缓存Caffeine
+* 集成WebSocket
+* 添加继承PowerJob分布式任务调度平台
+* 集成邮件功能
+* 继承Prometheus和Grafana监控报警平台
+* 继承Apache SkyWalking链路追踪
+* ......
 
 
 

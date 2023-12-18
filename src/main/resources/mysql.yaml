@@ -1,28 +1,35 @@
+# 不配置默认单机
+mode:
+  # 运行模式类型。可选配置：Standalone、Cluster
+  type: Standalone
+  repository:
+    # 持久化仓库类型
+    type: JDBC
 # todo 修改MySQL配置
 dataSources:
   master:
-    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
     connectionTimeoutMilliseconds: 30000
-    idleTimeoutMilliseconds: 60000
+    idleTimeoutMilliseconds: 600000
     maxLifetimeMilliseconds: 1800000
-    maxPoolSize: 50
-    minPoolSize: 1
+    maxPoolSize: 25
+    minPoolSize: 10
 #  # 从库在需要时开启
 #  slave:
-#    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+#    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
 #    driverClassName: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://xxx.xxx.xxx.xxx:23307/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
 #    username: root
 #    password: 123456
 #    connectionTimeoutMilliseconds: 30000
-#    idleTimeoutMilliseconds: 60000
+#    idleTimeoutMilliseconds: 600000
 #    maxLifetimeMilliseconds: 1800000
-#    maxPoolSize: 50
-#    minPoolSize: 1
+#    maxPoolSize: 25
+#    minPoolSize: 10
 props:
   # 显示SQL
   sql-show: true
