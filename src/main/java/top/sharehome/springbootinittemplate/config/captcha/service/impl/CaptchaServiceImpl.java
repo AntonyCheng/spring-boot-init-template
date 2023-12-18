@@ -18,8 +18,8 @@ import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaServic
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import javax.annotation.Resource;
 import java.util.UUID;

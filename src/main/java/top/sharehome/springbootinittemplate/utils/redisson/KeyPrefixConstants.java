@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redisson.constants;
+package top.sharehome.springbootinittemplate.utils.redisson;
 
 /**
  * 缓存Key前缀常量

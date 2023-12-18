@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redisson;
+package top.sharehome.springbootinittemplate.utils.redisson.rateLimit;
 
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import java.time.Duration;
 import java.util.ArrayList;

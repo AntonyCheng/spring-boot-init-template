@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redisson;
+package top.sharehome.springbootinittemplate.utils.redisson.cache;
 
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import java.time.Duration;
 import java.util.HashMap;

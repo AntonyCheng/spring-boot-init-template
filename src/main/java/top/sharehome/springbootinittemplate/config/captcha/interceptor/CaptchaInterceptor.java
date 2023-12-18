@@ -3,7 +3,7 @@ package top.sharehome.springbootinittemplate.config.captcha.interceptor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.config.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
-import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import javax.annotation.Resource;
 

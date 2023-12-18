@@ -5,11 +5,11 @@ import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.utils.redisson.CacheUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.LockUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.RateLimitUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.function.SuccessFunction;
-import top.sharehome.springbootinittemplate.utils.redisson.function.VoidFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.LockUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
 
 import java.time.Duration;
 import java.util.*;

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redisson.function;
+package top.sharehome.springbootinittemplate.utils.redisson.lock.function;
 
 /**
  * 分布式锁中所用到的函数式接口
@@ -6,7 +6,7 @@ package top.sharehome.springbootinittemplate.utils.redisson.function;
  * @author AntonyCheng
  */
 @FunctionalInterface
-public interface SuccessFunction {
+public interface VoidFunction {
 
     void method();
 

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.redisson;
+package top.sharehome.springbootinittemplate.utils.redisson.lock;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
-import top.sharehome.springbootinittemplate.utils.redisson.constants.KeyPrefixConstants;
-import top.sharehome.springbootinittemplate.utils.redisson.function.SuccessFunction;
-import top.sharehome.springbootinittemplate.utils.redisson.function.VoidFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
