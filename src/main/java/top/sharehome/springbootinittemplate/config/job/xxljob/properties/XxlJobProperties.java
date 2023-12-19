@@ -50,12 +50,12 @@ public class XxlJobProperties {
         /**
          * 执行器注册
          */
-        private String address = "";
+        private String address;
 
         /**
          * 执行器IP
          */
-        private String ip = "";
+        private String ip;
 
         /**
          * 执行器运行日志文件存储磁盘路径

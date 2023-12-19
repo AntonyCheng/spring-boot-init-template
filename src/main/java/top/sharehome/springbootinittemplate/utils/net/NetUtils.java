@@ -1,5 +1,8 @@
 package top.sharehome.springbootinittemplate.utils.net;
 
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
@@ -50,7 +53,7 @@ public class NetUtils {
                 try {
                     inet = InetAddress.getLocalHost();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new CustomizeReturnException(ReturnCode.ABNORMAL_USER_EQUIPMENT);
                 }
                 if (inet != null) {
                     ipAddress = inet.getHostAddress();

@@ -72,7 +72,7 @@ public class MinioConfiguration {
             e.printStackTrace();
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return (minioProperties.isEnableTls() ? Constants.HTTPS : Constants.HTTP)
+        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
                 + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
     }
 
@@ -108,7 +108,7 @@ public class MinioConfiguration {
             e.printStackTrace();
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return (minioProperties.isEnableTls() ? Constants.HTTPS : Constants.HTTP)
+        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
                 + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
     }
 
@@ -137,7 +137,7 @@ public class MinioConfiguration {
             e.printStackTrace();
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return (minioProperties.isEnableTls() ? Constants.HTTPS : Constants.HTTP)
+        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
                 + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
     }
 
@@ -171,7 +171,7 @@ public class MinioConfiguration {
         try {
             String[] ipAndPort = minioProperties.getEndpoint().split(":");
             return MinioClient.builder()
-                    .endpoint(ipAndPort[0], Integer.parseInt(ipAndPort[1]), minioProperties.isEnableTls())
+                    .endpoint(ipAndPort[0], Integer.parseInt(ipAndPort[1]), minioProperties.getEnableTls())
                     .credentials(minioProperties.getSecretId(), minioProperties.getSecretKey())
                     .build();
         } catch (Exception e) {

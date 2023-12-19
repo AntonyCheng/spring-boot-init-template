@@ -15,16 +15,16 @@ public class SaTokenProperties {
     /**
      * 是否开启鉴权
      */
-    private boolean enableAuthorization;
+    private Boolean enableAuthorization = true;
 
     /**
      * 是否开启认证
      */
-    private boolean enableIdentification;
+    private Boolean enableIdentification = true;
 
     /**
      * 是否使用jwt
      */
-    private boolean enableJwt;
+    private Boolean enableJwt = false;
 
 }

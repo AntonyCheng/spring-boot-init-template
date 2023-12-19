@@ -17,8 +17,9 @@
   * [必须执行](#必须执行)
   * [可选执行](#可选执行)
     * [整合缓存服务](#整合缓存服务)
-      * [整合Redis（系统缓存）](#整合redis系统缓存)
-      * [整合Redisson（业务缓存）](#整合redisson业务缓存)
+      * [整合系统缓存（Redis）](#整合系统缓存redis)
+      * [整合业务缓存（Redisson）](#整合业务缓存redisson)
+      * [整合本地缓存（Caffeine）](#整合本地缓存caffeine)
     * [整合消息队列](#整合消息队列)
       * [激活消息队列](#激活消息队列)
       * [自定义消息队列](#自定义消息队列)
@@ -40,6 +41,7 @@
       * [XXL-JOB任务调度](#xxl-job任务调度)
     * [配置SpringBootAdmin](#配置springbootadmin)
 * [申明&联系我](#申明联系我)
+* [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
 
@@ -76,6 +78,9 @@
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
   - redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
+- **本地缓存服务**
+  - caffeine 3.1.8
+
 - **消息队列**
   - rabbitMQ
     - spring-boot-starter-amqp
@@ -143,10 +148,13 @@
      master:
        dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
-       # 修改url地址
        url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
+       connectionTimeoutMilliseconds: 30000
+       idleTimeoutMilliseconds: 600000
+       maxLifetimeMilliseconds: 1800000
+       maxPoolSize: 25
    ```
 
    > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 框架，理解相关配置；
@@ -161,17 +169,18 @@
 
 **说明**：该模板中存在两种 Redis 服务，第一种是系统缓存服务（ **对应整合 Redis** ），第二种是业务缓存服务（ **对应整合 Redisson** ）。前者承担系统框架本身的缓存服务，例如用户分布式登录信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。
 
-##### 整合Redis（系统缓存）
+##### 整合系统缓存（Redis）
 
 系统缓存服务主要为一些依赖 spring-boot-starter-data-redis 原生操作的框架而设计，例如模板中用于校验权限的 SaToken 框架就有借用 Redis 进行分布式登录或校验的需求，系统缓存的过程对开发者能做到透明。
 
-1. 取消排除 `RedisAutoConfiguration`  依赖：
+1. 取消排除 `RedisAutoConfiguration`  类：
 
    ```yaml
    spring:
+     # 框架依赖自动配置选择
      autoconfigure:
        exclude:
-         # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，redisson相关配置也需要依赖这个类，预先关闭）
+         # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，预先关闭）
          #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
    ```
 
@@ -179,7 +188,7 @@
 
    ```yaml
    spring: 
-     # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+       # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
      redis:
        # 单机地址（单价模式配置和集群模式配置只能存在一个）
        host: xxx.xxx.xxx.xxx
@@ -213,9 +222,9 @@
            max-wait: 3000
    ```
 
-3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合 Redisson** 。
+3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
 
-##### 整合Redisson（业务缓存）
+##### 整合业务缓存（Redisson）
 
 业务缓存服务主要是为了满足开发者在编码过程中的缓存需求，例如接口限流、分布式锁等。
 
@@ -232,13 +241,19 @@
      # 线程池数量
      threads: 4
      # Netty线程池数量
-     nettyThreads: 8
+     netty-threads: 8
+     # 限流单位时间，单位：秒
+     limit-rate: 1
+     # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     limit-rate-interval: 1
+     # 每个操作所要消耗的令牌数
+     limit-permits: 1
      # redis单机版本
-     singleServerConfig:
+     single-server-config:
        # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
-       enableSingle: true
+       enable-single: true
        # 单机地址（一定要在redis协议下）
-       address: redis://xxx.xxx.xxx.xxx:6379
+       address: redis://xxx.xxx.xxx.xxx:6378
        # 数据库索引
        database: 1
        # 密码（考虑是否需要密码）
@@ -246,19 +261,19 @@
        # 命令等待超时，单位：毫秒
        timeout: 3000
        # 发布和订阅连接池大小
-       subscriptionConnectionPoolSize: 50
+       subscription-connection-pool-size: 25
        # 最小空闲连接数
-       connectionMinimumIdleSize: 8
+       connection-minimum-idle-size: 8
        # 连接池大小
-       connectionPoolSize: 32
+       connection-pool-size: 32
        # 连接空闲超时，单位：毫秒
-       idleConnectionTimeout: 10000
+       idle-connection-timeout: 10000
      # redis集群版本
-     clusterServersConfig:
+     cluster-servers-config:
        # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
-       enableCluster: false
+       enable-cluster: false
        # redis集群节点（一定要在redis协议下）
-       nodeAddresses:
+       node-addresses:
          - redis://xxx.xxx.xxx.xxx:6379
          - redis://xxx.xxx.xxx.xxx:6380
          - redis://xxx.xxx.xxx.xxx:6381
@@ -268,22 +283,45 @@
        # 密码（考虑是否需要密码）
        #password: 123456
        # master最小空闲连接数
-       masterConnectionMinimumIdleSize: 32
+       master-connection-minimum-idleSize: 16
        # master连接池大小
-       masterConnectionPoolSize: 64
+       master-connection-pool-size: 32
        # slave最小空闲连接数
-       slaveConnectionMinimumIdleSize: 32
+       slave-connection-minimum-idle-size: 16
        # slave连接池大小
-       slaveConnectionPoolSize: 64
+       slave-connection-pool-size: 32
        # 连接空闲超时，单位：毫秒
-       idleConnectionTimeout: 10000
+       idle-connection-timeout: 10000
        # 命令等待超时，单位：毫秒
        timeout: 3000
        # 发布和订阅连接池大小
-       subscriptionConnectionPoolSize: 50
+       subscription-connection-pool-size: 25
    ```
 
 2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
+
+##### 整合本地缓存（Caffeine）
+
+本地缓存服务主要是为了满足开发者在编码过程中的多级缓存的需求，通过牺牲本地机器空间换取网络通讯时间的做法，理论上这种服务器缓存的效率是最高的，但是不推荐用其替代上面系统缓存或者业务缓存，此种缓存方式仅作系统性能提升的辅助方案，例如获取登录信息可以做“本地缓存==>业务缓存==>数据库”三级缓存方案。
+
+1. 修改 Caffeine 配置：
+
+   ```yaml
+   # Caffeine本地缓存配置
+   caffeine:
+     # todo 是否启动（预先关闭）
+     enable: true
+     # 最后一次写入或访问后经过固定时间过期，单位：秒
+     expired: 1800
+     # 缓存初始容量
+     init-capacity: 256
+     # 缓存最大容量，超过之后会按照最近最少策略进行缓存剔除
+     max-capacity: 10000
+     # 是否允许空值null作为缓存的value
+     allow-null-value: true
+   ```
+
+2. Caffeine 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Caffeine 进行进一步封装，在 `utils/caffeine` 包中设计了本地缓存工具类 LocalCacheUtils 供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 
@@ -295,17 +333,19 @@
 
    ```yaml
    spring: 
-     # 修改Rabbitmq配置
+     # 修改rabbitmq配置
      rabbitmq:
-       # todo 是否开启RabbitMQ （预先关闭）
+       # todo 是否开启RabbitMQ（预先关闭）
        enable: true
-       # 单机RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
+       # 获取消息最大等待时间（单位：毫秒）
+       max-await-timeout: 3000
+       # 单机 RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
        host: xxx.xxx.xxx.xxx
-       # 单机RabbitMQ端口
+       # 单机 RabbitMQ 端口
        port: 5672
        # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
        #addresses: xxx.xxx.xxx.xxx:5672,xxx.xxx.xxx.xxx:5673,xxx.xxx.xxx.xxx:5674
-       # 使用到的虚拟主机
+       # 虚拟主机
        virtual-host: /
        # 用户名
        username: admin
@@ -352,7 +392,7 @@
 1. 修改 Easy-ES 相关配置，重点关注 ElasticSearch 的部署地址，由于框架自身原因， ElasticSearch 的相关依赖被固定在 **7.14.0** ，好在 ElasticSearch 在小版本之间兼容性还不错，所以理论上部署 7.x.x 的 EalsticSearch 即可满足要求，当然推荐部署 7.14.0 版本的 ElasticSearch ，然而 ElasticSearch 7.x.x 这个大版本依旧在更新维护，所以可以放心使用：
 
    ```yaml
-   # Easy-ES配置，需要使用ElasticSearch时将enable改为true
+   # Easy-ES配置
    easy-es:
      # todo 是否启动（预先关闭）
      enable: true
@@ -385,7 +425,7 @@
        print-dsl: true
        # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁.
        distributed: false
-       # 重建索引超时时间 单位小时,默认72H可根据ES中存储的数据量调整
+       # 重建索引超时时间 单位小时,默认72H 可根据ES中存储的数据量调整
        reindexTimeOutHours: 72
        # 异步处理索引是否阻塞主线程 默认阻塞 数据量过大时调整为非阻塞异步进行 项目启动更快
        async-process-index-blocking: true
@@ -455,13 +495,13 @@ oss:
     # todo 是否开启（预先关闭）
     enable: true
     # 地域
-    region: ap-chengdu
+    region: ap-xxxxxxxx
     # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secretId: xxx
+    secret-id: xxxxxxxx
     # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secretKey: xxx
+    secret-key: xxxxxxxx
     # 桶名称
-    bucketName: test-xxx
+    bucket-name: xxxxxxxx
 ```
 
 修改完之后即可使用模板中对象存储工具类 `TencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
@@ -484,17 +524,17 @@ oss:
   # MinIO OSS配置
   minio:
     # todo 是否开启（预先关闭）
-    enable: false
+    enable: true
     # 域名（格式：【ip:port】）
-    endpoint: xxx.xxx.xxx.xxx:9000
+    endpoint: xxx.xxx.xxx.xxx:39000
     # 是否开启TLS
-    enableTls: false
+    enable-tls: false
     # 用户的 SecretId
-    secretId: xxx
+    secret-id: xxxxxxxx
     # 用户的 SecretKey
-    secretKey: xxx
+    secret-key: xxxxxxxx
     # 桶名称
-    bucketName: xxx
+    bucket-name: xxxxxxxx
 ```
 
 修改完之后即可使用模板中对象存储工具类 `MinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
@@ -516,15 +556,15 @@ oss:
   # 阿里云OSS配置
   ali:
     # todo 是否开启（预先关闭）
-    enable: false
+    enable: true
     # 域名 以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com。
     endpoint: https://oss-xx-xxx.aliyuncs.com
     # 用户的 SecretId
-    secretId: xxx
+    secret-id: xxxxxxxx
     # 用户的 SecretKey
-    secretKey: xxx
+    secret-key: xxxxxxxx
     # 桶名称
-    bucketName: xxx
+    bucket-name: xxxxxxxx
 ```
 
 修改完之后即可使用模板中对象存储工具类 `AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
@@ -540,10 +580,10 @@ oss:
    captcha:
      # todo 是否使用验证码（开启的前提是redisson配置完成，预先关闭）
      enable: true
-     # 验证码类型：math 数字类型；char 字符类型。
-     type: math
+     # 验证码类型：char 字符类型；math 数字类型。
+     type: char
      # 验证码类别：line 线段干扰；circle 圆圈干扰；shear 扭曲干扰。
-     category: circle
+     category: line
      # 数字验证码位数（1-9，否则默认为1）
      number-length: 1
      # 字符验证码长度（1-99，否则默认为4）
@@ -691,11 +731,11 @@ oss:
 # Sa-Token配置
 sa-token:
   # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
-  enableAuthorization: true
+  enable-authorization: true
   # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
-  enableIdentification: true
-  # todo 是否使用jwt（建议如果没有开启redis就不要开启jwt，预先关闭）
-  enableJwt: false
+  enable-identification: true
+  # todo 是否使用jwt（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  enable-jwt: false
 ```
 
 至于 SaToken 具体的使用说明，请前往其官方网站仔细阅读文档，接下来以文字的方式对三个封装后的特性挨个介绍。
@@ -755,11 +795,12 @@ public class AuthorizationConfiguration implements StpInterface {
 
 ```yaml
 spring:
+  # 框架依赖自动配置选择
   autoconfigure:
     exclude:
-      # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，redisson相关配置也需要依赖这个类，预先关闭）
+      # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，预先关闭）
       #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先关闭）
+      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先不使用）
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
   # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
   redis:
@@ -812,7 +853,7 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
 1. 在编码之前首先修改 `application.yaml` 配置文件：
 
    ```yaml
-   # 配置SpringBoot任务调度
+   #配置SpringBoot任务调度
    schedule:
      # 全量任务配置
      once:
@@ -823,7 +864,7 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
        # todo 是否开启循环任务（预先关闭）
        enable: true
        # 线程池大小（开启则必填）
-       threadPool: 10
+       thread-pool: 10
    ```
 
 2. 全量任务指的是在 SpringBoot 项目程序启动时所执行的任务，举个例子：有一些非常常用的数据存储于 MySQL 当中，为了提高系统性能，我们通常会把这些数据存入 Redis 缓存当中，然后每次 Redis 中访问数据，此时就应该考虑是否开启全量任务进行数据“内存化”的操作，简而言之，全量任务就类似于整个系统的初始化任务；
@@ -907,11 +948,11 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
    xxl:
      job:
        # todo 是否开启（预先关闭）
-       enable: true
+       enable: false
        # Xxl-Job监控面板地址
-       adminAddresses: http://localhost:38079/xxl-job-admin
+       admin-addresses: http://localhost:38079/xxl-job-admin
        # Xxl-Job token
-       accessToken: xxl-job
+       access-token: xxl-job
        # 执行器配置
        executor:
          # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
@@ -959,6 +1000,11 @@ spring:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: true
         url: http://localhost:38078/spring-boot-admin
+        username: admin
+        password: admin123456
+        instance:
+          service-host-type: ip
+          name: ${spring.application.name}
 ```
 
 如果还想将 XXL-JOB 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。
@@ -973,12 +1019,11 @@ spring:
 
 ## 下一步开发计划
 
-* 集成本地缓存Caffeine
-* 集成WebSocket
-* 添加继承PowerJob分布式任务调度平台
 * 集成邮件功能
-* 继承Prometheus和Grafana监控报警平台
-* 继承Apache SkyWalking链路追踪
+* 集成WebSocket
+* 集成PowerJob分布式任务调度平台
+* 集成Prometheus和Grafana监控报警平台
+* 集成Apache SkyWalking链路追踪
 * ......
 
 

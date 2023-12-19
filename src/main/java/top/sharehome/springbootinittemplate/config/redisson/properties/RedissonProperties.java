@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,27 +20,27 @@ public class RedissonProperties {
     /**
      * 线程池数量,默认值 = 当前处理核数量 * 2
      */
-    private int threads;
+    private Integer threads = 4;
 
     /**
      * Netty线程池数量,默认值 = 当前处理核数量 * 2
      */
-    private int nettyThreads;
+    private Integer nettyThreads = 8;
 
     /**
      * 限流单位时间，单位：秒
      */
-    private long limitRate;
+    private Long limitRate = 1L;
 
     /**
      * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
      */
-    private long limitRateInterval;
+    private Long limitRateInterval = 1L;
 
     /**
      * 每个操作所要消耗的令牌数
      */
-    private long limitPermits;
+    private Long limitPermits = 1L;
 
     /**
      * 单机服务配置
@@ -58,18 +59,52 @@ public class RedissonProperties {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SingleServerConfig {
+
         /**
-         * 是否启动单机Redis
+         * 是否启动单机Redis（Redisson）缓存
          */
-        private boolean enableSingle;
+        private Boolean enableSingle = false;
+
+        /**
+         * 单机地址（一定要在redis协议下）
+         */
         private String address;
-        private int database;
+
+        /**
+         * # 数据库索引
+         */
+        private Integer database;
+
+        /**
+         * 密码（考虑是否需要密码）
+         */
         private String password;
-        private int timeout;
-        private int subscriptionConnectionPoolSize;
-        private int connectionMinimumIdleSize;
-        private int connectionPoolSize;
-        private int idleConnectionTimeout;
+
+        /**
+         * 命令等待超时，单位：毫秒
+         */
+        private Integer timeout = 3000;
+
+        /**
+         * 发布和订阅连接池大小
+         */
+        private Integer subscriptionConnectionPoolSize = 25;
+
+        /**
+         * 最小空闲连接数
+         */
+        private Integer connectionMinimumIdleSize = 8;
+
+        /**
+         * 连接池大小
+         */
+        private Integer connectionPoolSize = 32;
+
+        /**
+         * 连接空闲超时，单位：毫秒
+         */
+        private Integer idleConnectionTimeout = 10000;
+
     }
 
     /**
@@ -79,19 +114,57 @@ public class RedissonProperties {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ClusterServersConfig {
+
         /**
-         * 是否启动集群Redis
+         * 是否启动集群redisson（Redisson）缓存
          */
-        private boolean enableCluster;
+        private Boolean enableCluster = false;
+
+        /**
+         * redis集群节点（一定要在redis协议下）
+         */
         private List<String> nodeAddresses;
+
+        /**
+         * 密码（考虑是否需要密码）
+         */
         private String password;
-        private int masterConnectionMinimumIdleSize;
-        private int masterConnectionPoolSize;
-        private int slaveConnectionMinimumIdleSize;
-        private int slaveConnectionPoolSize;
-        private int idleConnectionTimeout;
-        private int timeout;
-        private int subscriptionConnectionPoolSize;
+
+        /**
+         * master最小空闲连接数
+         */
+        private Integer masterConnectionMinimumIdleSize = 16;
+
+        /**
+         * master连接池大小
+         */
+        private Integer masterConnectionPoolSize = 32;
+
+        /**
+         * slave最小空闲连接数
+         */
+        private Integer slaveConnectionMinimumIdleSize = 16;
+
+        /**
+         * slave连接池大小
+         */
+        private Integer slaveConnectionPoolSize = 32;
+
+        /**
+         * 连接空闲超时，单位：毫秒
+         */
+        private Integer idleConnectionTimeout = 10000;
+
+        /**
+         * 命令等待超时，单位：毫秒
+         */
+        private Integer timeout = 3000;
+
+        /**
+         * 发布和订阅连接池大小
+         */
+        private Integer subscriptionConnectionPoolSize = 25;
+
     }
 
 }

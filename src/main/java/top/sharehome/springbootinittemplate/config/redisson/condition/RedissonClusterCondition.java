@@ -14,7 +14,7 @@ public class RedissonClusterCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String property = context.getEnvironment().getProperty("redisson.clusterServersConfig.enableCluster");
+        String property = context.getEnvironment().getProperty("redisson.cluster-servers-config.enable-cluster");
         return StringUtils.equals("true", property);
     }
 

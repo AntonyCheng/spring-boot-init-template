@@ -15,7 +15,7 @@ public class TencentProperties {
     /**
      * 是否开启
      */
-    private boolean enable;
+    private Boolean enable = false;
 
     /**
      * 地域

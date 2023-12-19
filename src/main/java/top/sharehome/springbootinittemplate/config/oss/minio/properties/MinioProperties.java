@@ -15,7 +15,7 @@ public class MinioProperties {
     /**
      * 是否开启
      */
-    private boolean enable;
+    private Boolean enable = false;
 
     /**
      * 域名（一定是协议前缀+ip+port）
@@ -25,7 +25,7 @@ public class MinioProperties {
     /**
      * 是否开启TLS
      */
-    private boolean enableTls;
+    private Boolean enableTls = false;
 
     /**
      * 用户的 SecretId

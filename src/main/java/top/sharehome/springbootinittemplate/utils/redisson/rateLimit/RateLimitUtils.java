@@ -36,7 +36,7 @@ public class RateLimitUtils {
      */
     private static long rate;
 
-    @Value("${redisson.limitRate}")
+    @Value("${redisson.limit-rate}")
     public void setRate(long rate) {
         RateLimitUtils.rate = rate;
     }
@@ -46,7 +46,7 @@ public class RateLimitUtils {
      */
     private static long rateInterval;
 
-    @Value("${redisson.limitRateInterval}")
+    @Value("${redisson.limit-rate-interval}")
     public void setRateInterval(long rateInterval) {
         RateLimitUtils.rateInterval = rateInterval;
     }
@@ -56,7 +56,7 @@ public class RateLimitUtils {
      */
     private static long permit;
 
-    @Value("${redisson.limitPermits}")
+    @Value("${redisson.limit-permits}")
     public void setPermit(long permit) {
         RateLimitUtils.permit = permit;
     }

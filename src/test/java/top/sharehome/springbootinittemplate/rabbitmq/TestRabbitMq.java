@@ -21,28 +21,28 @@ public class TestRabbitMq {
      */
     @Test
     void testRabbitMqUtils() throws InterruptedException {
-//        RabbitMqUtils.defaultSendMsg("1", "1");
-//        RabbitMessage rabbitMessage = RabbitMqUtils.defaultReceiveMsg();
-//        System.out.println("rabbitMessage = " + rabbitMessage);
-//        System.out.println("=====1=====");
+        RabbitMqUtils.defaultSendMsg("1", "1");
+        RabbitMessage rabbitMessage = RabbitMqUtils.defaultReceiveMsg();
+        System.out.println("rabbitMessage = " + rabbitMessage);
+        System.out.println("=====1=====");
 
         RabbitMqUtils.defaultSendMsgWithDlx("2", "22");
-//        RabbitMessage rabbitMessage1 = RabbitMqUtils.defaultReceiveMsgWithDlx();
-//        System.out.println("rabbitMessage1 = " + rabbitMessage1);
-//        System.out.println("=====2=====");
+        RabbitMessage rabbitMessage1 = RabbitMqUtils.defaultReceiveMsgWithDlx();
+        System.out.println("rabbitMessage1 = " + rabbitMessage1);
+        System.out.println("=====2=====");
 
         RabbitMqUtils.defaultSendMsgWithDlx("3", "333");
-//        ThreadUtils.sleep(Duration.ofSeconds(20));
-//        RabbitMessage rabbitMessage2 = RabbitMqUtils.defaultReceiveMsgWithDlx();
-//        System.out.println("rabbitMessage2 = " + rabbitMessage2);
-//        RabbitMessage rabbitMessage3 = RabbitMqUtils.defaultReceiveMsgWithDlxInDlx();
-//        System.out.println("rabbitMessage3 = " + rabbitMessage3);
-//        System.out.println("=====3=====");
+        ThreadUtils.sleep(Duration.ofSeconds(5));
+        RabbitMessage rabbitMessage2 = RabbitMqUtils.defaultReceiveMsgWithDlx();
+        System.out.println("rabbitMessage2 = " + rabbitMessage2);
+        RabbitMessage rabbitMessage3 = RabbitMqUtils.defaultReceiveMsgWithDlxInDlx();
+        System.out.println("rabbitMessage3 = " + rabbitMessage3);
+        System.out.println("=====3=====");
 
-//        RabbitMqUtils.defaultSendMsgWithDelay("4", "4444");
-//        RabbitMessage rabbitMessage4 = RabbitMqUtils.defaultReceiveMsgWithDelay();
-//        System.out.println("rabbitMessage4 = " + rabbitMessage4);
-//        System.out.println("=====4=====");
+        RabbitMqUtils.defaultSendMsgWithDelay("4", "4444");
+        RabbitMessage rabbitMessage4 = RabbitMqUtils.defaultReceiveMsgWithDelay();
+        System.out.println("rabbitMessage4 = " + rabbitMessage4);
+        System.out.println("=====4=====");
     }
 
 }

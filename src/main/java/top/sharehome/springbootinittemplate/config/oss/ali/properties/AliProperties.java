@@ -15,7 +15,7 @@ public class AliProperties {
     /**
      * 是否开启
      */
-    private boolean enable;
+    private Boolean enable = false;
 
     /**
      * 域名
