@@ -102,4 +102,9 @@ public interface Constants {
      */
     String UNKNOWN_FILE_TYPE_SUFFIX = "unknown";
 
+    /**
+     * 未知文件ContentType
+     */
+    String UNKNOWN_FILE_CONTENT_TYPE = "application/octet-stream";
+
 }

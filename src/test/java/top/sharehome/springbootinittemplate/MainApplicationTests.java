@@ -2,9 +2,11 @@ package top.sharehome.springbootinittemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.scheduling.annotation.EnableAsync;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
@@ -16,6 +18,8 @@ import javax.annotation.Resource;
  * @author AntonyCheng
  */
 @SpringBootTest
+@EnableAsync
+@Slf4j
 class MainApplicationTests {
 
     @Resource
@@ -63,7 +67,7 @@ class MainApplicationTests {
     }
 
     public static void main(String[] args) {
-        System.out.println("hello world!");
+        System.out.println("hello world");
     }
 
 }

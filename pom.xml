@@ -261,14 +261,14 @@
             <version>${elasticsearch.version}</version>
         </dependency>
 
-        <!-- 腾讯云COS -->
+        <!-- 腾讯云 COS 依赖配置 -->
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
             <version>${tencent.cos.version}</version>
         </dependency>
 
-        <!-- 阿里云OSS -->
+        <!-- 阿里云 OSS 依赖配置 -->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
@@ -285,14 +285,14 @@
             <version>${ali.activation.version}</version>
         </dependency>
 
-        <!-- MinIO -->
+        <!-- MinIO 依赖配置 -->
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>${minio.version}</version>
         </dependency>
 
-        <!-- Office IO 依赖配置-->
+        <!-- Office IO 依赖配置 -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -315,7 +315,7 @@
             </exclusions>
         </dependency>
 
-        <!-- PDF 操作 -->
+        <!-- PDF 操作依赖配置 -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
@@ -323,14 +323,20 @@
             <type>pom</type>
         </dependency>
 
-        <!-- XXL-JOB分布式定时任务-->
+        <!-- 邮件依赖配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- XXL-JOB分布式定时任务依赖配置 -->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
             <version>${xxl.job.version}</version>
         </dependency>
 
-        <!-- SpringBootAdmin监控平台 -->
+        <!-- SpringBootAdmin监控平台依赖配置 -->
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
@@ -370,7 +376,7 @@
             <version>${fastjson2.version}</version>
         </dependency>
 
-        <!-- snakeyaml 依赖配置（用于修复漏洞） -->
+        <!-- snakeyaml 依赖配置（用于保证系统稳定性） -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>

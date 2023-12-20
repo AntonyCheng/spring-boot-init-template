@@ -189,6 +189,16 @@ public enum ReturnCode {
     USER_FILE_DELETION_IS_ABNORMAL(14008, "用户文件删除异常"),
 
     /**
+     * 系统文件地址异常 14009
+     */
+    SYSTEM_FILE_ADDRESS_IS_ABNORMAL(14007, "系统文件地址异常"),
+
+    /**
+     * 邮件发送异常 15000
+     */
+    EMAIL_WAS_SENT_ABNORMALLY(15000, "邮件发送异常"),
+
+    /**
      * 数据库服务出错 20000
      */
     ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE(20000, "数据库服务出错"),
