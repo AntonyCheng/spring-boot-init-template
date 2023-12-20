@@ -51,7 +51,6 @@
     - aop == 面向切面编程
     - devtools == 热部署插件
 - **MySQL**
-    - druid 1.2.16 == 连接池
     - mybatis-plus 3.5.4 == MySQL 持久层操作框架
     - JDBC 8.0.33 == Java 连接 MySQL 依赖
     - ShardingSphere 5.3.2 == 分布式数据库解决方案
@@ -129,7 +128,7 @@
    ```yaml
    dataSources:
      master:
-       dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+       dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
        # 修改url地址
        url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true

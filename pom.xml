@@ -107,11 +107,6 @@
 
         <!-- MySQL 依赖配置（搭配shardingsphere 5.2.1-5.3.2 一起使用，druid版本控制在1.2.16以下，这种搭配主要是想完成数据库加密、主从库和分库分表的操作，后续会继续更新） -->
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${druid.starter.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis.plus.version}</version>
@@ -125,6 +120,11 @@
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${shardingsphere.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.starter.version}</version>
         </dependency>
 
         <!-- Lombok 依赖配置 -->
