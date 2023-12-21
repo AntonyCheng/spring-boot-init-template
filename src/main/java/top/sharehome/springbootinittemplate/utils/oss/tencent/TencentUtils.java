@@ -1,11 +1,9 @@
 package top.sharehome.springbootinittemplate.utils.oss.tencent;
 
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.oss.tencent.TencentConfiguration;
-import top.sharehome.springbootinittemplate.config.oss.tencent.condition.OssTencentCondition;
 
 import java.io.InputStream;
 
@@ -14,8 +12,7 @@ import java.io.InputStream;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(OssTencentCondition.class)
+@Slf4j
 public class TencentUtils {
 
     /**

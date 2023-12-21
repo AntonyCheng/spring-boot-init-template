@@ -60,7 +60,7 @@ public class RabbitMqConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ rabbitmq config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

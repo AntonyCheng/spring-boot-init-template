@@ -48,7 +48,7 @@ public class XxlJobConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ xxl-job config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

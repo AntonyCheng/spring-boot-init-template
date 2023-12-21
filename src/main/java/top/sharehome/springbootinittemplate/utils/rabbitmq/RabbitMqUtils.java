@@ -30,9 +30,6 @@ import java.util.UUID;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(RabbitMqCondition.class)
-@EnableConfigurationProperties(RabbitMqProperties.class)
 @AllArgsConstructor
 @Slf4j
 public class RabbitMqUtils {

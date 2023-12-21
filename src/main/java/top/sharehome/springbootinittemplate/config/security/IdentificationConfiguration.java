@@ -87,7 +87,7 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ identification config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

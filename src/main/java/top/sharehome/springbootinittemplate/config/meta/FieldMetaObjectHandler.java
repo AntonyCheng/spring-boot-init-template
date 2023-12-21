@@ -75,7 +75,7 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ meta object config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

@@ -40,7 +40,7 @@ public class MailAsyncMethod {
             javaMailSender.send(simpleMailMessage);
             log.info("The message was successfully sent from {} to {}", simpleMailMessage.getFrom(), Arrays.toString(simpleMailMessage.getTo()));
         } catch (Exception e) {
-            log.error("An error occurred in the message sent from {} to {}", simpleMailMessage.getFrom(), Arrays.toString(simpleMailMessage.getTo()));
+            log.error("An error occurred in the message sent from {} to {} ==> {}", simpleMailMessage.getFrom(), Arrays.toString(simpleMailMessage.getTo()), e.getCause().toString());
         }
     }
 
@@ -60,7 +60,7 @@ public class MailAsyncMethod {
             javaMailSender.send(mimeMessage);
             log.info("The message was successfully sent from {} to {}", from, to);
         } catch (Exception e) {
-            log.error("An error occurred in the message sent from {} to {}", from, to);
+            log.error("An error occurred in the message sent from {} to {} ==> {}", from, to, e.getCause().toString());
         }
     }
 

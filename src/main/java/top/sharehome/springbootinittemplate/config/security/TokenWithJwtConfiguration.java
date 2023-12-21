@@ -33,7 +33,7 @@ public class TokenWithJwtConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ jwt config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

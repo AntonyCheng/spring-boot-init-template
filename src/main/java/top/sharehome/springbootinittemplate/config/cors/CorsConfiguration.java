@@ -32,7 +32,6 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("*");
-        log.info(">>>>>>>>>>> cors config init.");
     }
 
     /**
@@ -40,7 +39,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ cors config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

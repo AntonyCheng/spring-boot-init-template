@@ -26,7 +26,6 @@ public class MyBatisPlusConfiguration {
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
         // 分页插件
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
-        log.info(">>>>>>>>>>> mybatis plus plugin config init.");
         return mybatisPlusInterceptor;
     }
 
@@ -35,7 +34,7 @@ public class MyBatisPlusConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ mybatis plus config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

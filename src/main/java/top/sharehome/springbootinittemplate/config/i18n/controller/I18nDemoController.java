@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.i18n.condition.I18nCondition;
-import top.sharehome.springbootinittemplate.utils.i18n.I18nUtils;
+import top.sharehome.springbootinittemplate.config.i18n.I18nManager;
 
 /**
  * 国际化示例控制器
@@ -19,7 +19,7 @@ public class I18nDemoController {
 
     @GetMapping("/i18n")
     public R<String> welcome(@RequestParam String name) {
-        return R.ok(I18nUtils.getMessage("msg_welcome", new String[]{name}));
+        return R.ok(I18nManager.getMessage("msg_welcome", new String[]{name}));
     }
 
 }

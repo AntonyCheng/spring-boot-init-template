@@ -85,7 +85,7 @@ public class CaptchaConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ captcha config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

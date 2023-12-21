@@ -63,7 +63,7 @@ public class AuthorizationConfiguration implements StpInterface {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ authorization config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

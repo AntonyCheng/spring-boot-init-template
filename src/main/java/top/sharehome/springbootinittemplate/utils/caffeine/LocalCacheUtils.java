@@ -1,10 +1,8 @@
 package top.sharehome.springbootinittemplate.utils.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.caffeine.condition.CaffeineCondition;
 
 import java.util.Map;
 
@@ -13,8 +11,7 @@ import java.util.Map;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(CaffeineCondition.class)
+@Slf4j
 public class LocalCacheUtils {
 
     /**

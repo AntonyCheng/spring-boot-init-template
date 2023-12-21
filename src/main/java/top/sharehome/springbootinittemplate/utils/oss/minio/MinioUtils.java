@@ -1,11 +1,9 @@
 package top.sharehome.springbootinittemplate.utils.oss.minio;
 
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.oss.minio.MinioConfiguration;
-import top.sharehome.springbootinittemplate.config.oss.minio.condition.OssMinioCondition;
 
 import java.io.InputStream;
 
@@ -14,8 +12,7 @@ import java.io.InputStream;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(OssMinioCondition.class)
+@Slf4j
 public class MinioUtils {
 
     /**

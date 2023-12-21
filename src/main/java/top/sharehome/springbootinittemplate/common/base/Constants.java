@@ -98,6 +98,11 @@ public interface Constants {
     String REGEX_NUMBER_AND_LETTER = "^[0-9a-zA-Z]+$";
 
     /**
+     * 邮箱的正则表达式
+     */
+    String REGEX_MAIL = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
+
+    /**
      * 未知文件类型后缀
      */
     String UNKNOWN_FILE_TYPE_SUFFIX = "unknown";

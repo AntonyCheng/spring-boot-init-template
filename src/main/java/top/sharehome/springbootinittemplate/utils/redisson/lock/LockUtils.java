@@ -1,11 +1,9 @@
 package top.sharehome.springbootinittemplate.utils.redisson.lock;
 
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
@@ -37,8 +35,7 @@ import java.util.function.Supplier;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(RedissonCondition.class)
+@Slf4j
 public class LockUtils {
 
     /**

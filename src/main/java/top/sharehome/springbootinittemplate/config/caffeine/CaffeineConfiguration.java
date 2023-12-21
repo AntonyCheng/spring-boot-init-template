@@ -47,7 +47,7 @@ public class CaffeineConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ caffeine config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

@@ -29,7 +29,6 @@ public class SpringContextHolder implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringContextHolder.context = applicationContext;
-        log.info(">>>>>>>>>>> spring context holder config init.");
     }
 
     /**
@@ -90,7 +89,7 @@ public class SpringContextHolder implements ApplicationContextAware {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ spring context holder config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

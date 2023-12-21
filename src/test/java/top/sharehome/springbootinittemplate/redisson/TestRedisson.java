@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.LockUtils;
-import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
 
 import java.time.Duration;
 import java.util.*;
@@ -82,23 +82,25 @@ public class TestRedisson {
      */
     @Test
     void testRateLimitUtils() throws InterruptedException {
-        try {
-            for (int i = 0; i < 5; i++) {
+
+        for (int i = 0; i < 5; i++) {
+            try {
                 RateLimitUtils.doRateLimit("test");
                 System.out.println(i);
+            } catch (CustomizeReturnException e) {
+                System.out.println("请求太多，请稍后");
             }
-        } catch (CustomizeReturnException e) {
-            System.out.println("请求太多，请稍后");
         }
         ThreadUtils.sleep(Duration.ofSeconds(2));
-        try {
-            for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
+            try {
                 RateLimitUtils.doRateLimit("test");
                 System.out.println(i);
+            } catch (CustomizeReturnException e) {
+                System.out.println("请求太多，请稍后");
             }
-        } catch (CustomizeReturnException e) {
-            System.out.println("请求太多，请稍后");
         }
+
     }
 
     /**

@@ -45,7 +45,7 @@ public class ScheduleConfiguration implements SchedulingConfigurer {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ schedule thread pool config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

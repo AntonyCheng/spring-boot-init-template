@@ -1,11 +1,9 @@
 package top.sharehome.springbootinittemplate.utils.oss.ali;
 
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.oss.ali.AliConfiguration;
-import top.sharehome.springbootinittemplate.config.oss.ali.condition.OssAliCondition;
 
 import java.io.InputStream;
 
@@ -14,8 +12,7 @@ import java.io.InputStream;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(OssAliCondition.class)
+@Slf4j
 public class AliUtils {
 
     /**

@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.utils.net;
 
+import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
@@ -11,6 +12,7 @@ import java.net.InetAddress;
  *
  * @author AntonyCheng
  */
+@Slf4j
 public class NetUtils {
 
     /**

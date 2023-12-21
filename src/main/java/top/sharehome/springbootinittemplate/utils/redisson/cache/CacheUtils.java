@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.utils.redisson.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.context.annotation.Conditional;
@@ -19,8 +20,7 @@ import java.util.Set;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(RedissonCondition.class)
+@Slf4j
 public class CacheUtils {
 
     /**

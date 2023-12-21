@@ -58,9 +58,7 @@ public class RedissonConfiguration {
                     .setConnectionMinimumIdleSize(singleServerConfig.getConnectionMinimumIdleSize())
                     .setConnectionPoolSize(singleServerConfig.getConnectionPoolSize());
         }
-        RedissonClient redissonClient = Redisson.create(config);
-        log.info(">>>>>>>>>>> redisson config init by redis standalone,address：{}.", singleServerConfig.getAddress());
-        return redissonClient;
+        return Redisson.create(config);
     }
 
     @Bean("RedissonClusterClient")
@@ -87,9 +85,7 @@ public class RedissonConfiguration {
                     .setSubscriptionMode(SubscriptionMode.MASTER)
                     .setNodeAddresses(clusterServersConfig.getNodeAddresses());
         }
-        RedissonClient redissonClient = Redisson.create(config);
-        log.info(">>>>>>>>>>> redisson config init by redis cluster,addresses：{}.", clusterServersConfig.getNodeAddresses());
-        return redissonClient;
+        return Redisson.create(config);
     }
 
     /**
@@ -97,7 +93,7 @@ public class RedissonConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ redisson config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

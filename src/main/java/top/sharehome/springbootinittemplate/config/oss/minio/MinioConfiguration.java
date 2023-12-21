@@ -185,6 +185,7 @@ public class MinioConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ minio oss config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
+
 }

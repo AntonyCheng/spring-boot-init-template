@@ -38,7 +38,7 @@ public class RedisConfiguration extends CachingConfigurerSupport {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ redis config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }

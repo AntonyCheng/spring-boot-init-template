@@ -334,6 +334,7 @@ public class TencentConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ tencent cos config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
+
 }

@@ -31,7 +31,6 @@ public class JsonConfiguration {
         module.addSerializer(Long.class, ToStringSerializer.instance);
         module.addSerializer(Long.TYPE, ToStringSerializer.instance);
         objectMapper.registerModule(module);
-        log.info(">>>>>>>>>>> json config init.");
         return objectMapper;
     }
 
@@ -40,7 +39,7 @@ public class JsonConfiguration {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ json config DI.");
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
     }
 
 }
