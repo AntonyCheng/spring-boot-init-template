@@ -30,21 +30,21 @@ public class RateLimitUtils {
     /**
      * 限流单位时间，单位：秒
      */
-    private static long rate;
-
-    @Value("${redisson.limitRate}")
-    public void setRate(long rate) {
-        RateLimitUtils.rate = rate;
-    }
-
-    /**
-     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     */
     private static long rateInterval;
 
     @Value("${redisson.limitRateInterval}")
     public void setRateInterval(long rateInterval) {
         RateLimitUtils.rateInterval = rateInterval;
+    }
+
+    /**
+     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     */
+    private static long rate;
+
+    @Value("${redisson.limitRate}")
+    public void setRate(long rate) {
+        RateLimitUtils.rate = rate;
     }
 
     /**
@@ -63,10 +63,10 @@ public class RateLimitUtils {
      * @param key 区分不同的限流器，比如不同的用户 id 应该分别统计
      */
     public static void doRateLimit(String key) {
-        // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
+        // 创建一个限流器
         RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
-        // 每当一个操作来了后，请求一个令牌
+        // 每当一个操作来了后，请求令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
