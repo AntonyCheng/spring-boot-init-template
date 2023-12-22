@@ -75,6 +75,16 @@ public class TestRedisson {
         System.out.println(CacheUtils.getMap("test"));
         System.out.println(CacheUtils.existsMap("test"));
         CacheUtils.deleteMap("test");
+
+        // 测试使用通配符模糊操作
+        for (int i = 0; i < 100; i++) {
+            HashMap<String, String> stringStringHashMap = new HashMap<>();
+            stringStringHashMap.put("test" + i, "test" + i);
+            CacheUtils.put("test" + i, stringStringHashMap);
+        }
+        List<String> keysByPattern = CacheUtils.getKeysByPattern("test*");
+        Map<String, Object> keyValuesByPattern = CacheUtils.getKeyValuesByPattern("test*");
+        CacheUtils.deleteByPattern("test*");
     }
 
     /**
@@ -82,7 +92,6 @@ public class TestRedisson {
      */
     @Test
     void testRateLimitUtils() throws InterruptedException {
-
         for (int i = 0; i < 5; i++) {
             try {
                 RateLimitUtils.doRateLimit("test");
@@ -100,7 +109,6 @@ public class TestRedisson {
                 System.out.println("请求太多，请稍后");
             }
         }
-
     }
 
     /**

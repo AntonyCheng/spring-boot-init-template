@@ -3,17 +3,12 @@ package top.sharehome.springbootinittemplate.utils.redisson.cache;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.redisson.client.codec.StringCodec;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 缓存工具类
@@ -133,6 +128,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_KEY_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_KEY_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static <T> Map<String, T> getKeyValuesByPattern(String keyPattern) {
+        return getKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", get(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (T) map.get("value")));
+    }
+
+    /**
      * 判断缓存是否存在
      *
      * @param key 缓存键
@@ -149,6 +178,17 @@ public class CacheUtils {
      */
     public static void delete(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_KEY_PREFIX + keyPattern);
     }
 
     /**
@@ -232,6 +272,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取String类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getStringKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.STRING_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.STRING_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取String类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static Map<String, String> getStringKeyValuesByPattern(String keyPattern) {
+        return getStringKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", getString(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (String) map.get("value")));
+    }
+
+    /**
      * 判断String类型缓存是否存在
      *
      * @param key 缓存键
@@ -248,6 +322,17 @@ public class CacheUtils {
      */
     public static void deleteString(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除String类型缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteStringByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.STRING_PREFIX + keyPattern);
     }
 
     /**
@@ -397,6 +482,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取Number类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getNumberKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.NUMBER_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.NUMBER_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取缓存Number类型键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static Map<String, Number> getNumberKeyValuesByPattern(String keyPattern) {
+        return getNumberKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", getNumber(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Number) map.get("value")));
+    }
+
+    /**
      * 判断Number类型缓存是否存在
      *
      * @param key 缓存键
@@ -413,6 +532,17 @@ public class CacheUtils {
      */
     public static void deleteNumber(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除Number类型缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteNumberByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.NUMBER_PREFIX + keyPattern);
     }
 
     /**
@@ -512,6 +642,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取List类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getListKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.LIST_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.LIST_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取缓List类型存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static Map<String, List> getListKeyValuesByPattern(String keyPattern) {
+        return getListKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", getList(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (List) map.get("value")));
+    }
+
+    /**
      * 判断List类型缓存是否存在
      *
      * @param key 缓存键
@@ -528,6 +692,17 @@ public class CacheUtils {
      */
     public static void deleteList(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.LIST_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除List类型缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteListByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.LIST_PREFIX + keyPattern);
     }
 
     /**
@@ -627,6 +802,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取Set类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getSetKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.SET_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.SET_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取Set类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static Map<String, Set> getSetKeyValuesByPattern(String keyPattern) {
+        return getSetKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", getSet(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Set) map.get("value")));
+    }
+
+    /**
      * 判断Set类型缓存是否存在
      *
      * @param key 缓存键
@@ -643,6 +852,17 @@ public class CacheUtils {
      */
     public static void deleteSet(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.SET_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除Set类型缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteSetByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.SET_PREFIX + keyPattern);
     }
 
     /**
@@ -750,6 +970,40 @@ public class CacheUtils {
     }
 
     /**
+     * 使用通配符模糊获取Map类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static List<String> getMapKeysByPattern(String keyPattern) {
+        RKeys keys = REDISSON_CLIENT.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.MAP_PREFIX + keyPattern);
+        // 这里使用链表存储键，从理论上尽可能多的存储键
+        List<String> res = new LinkedList<String>();
+        keysByPattern.forEach(key -> {
+            res.add(key.replaceFirst(KeyPrefixConstants.MAP_PREFIX, ""));
+        });
+        return res;
+    }
+
+    /**
+     * 使用通配符模糊获取Map类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static Map<String, Map> getMapKeyValuesByPattern(String keyPattern) {
+        return getMapKeysByPattern(keyPattern).stream().map(c -> {
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("key", c);
+            hashMap.put("value", getMap(c));
+            return hashMap;
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map) map.get("value")));
+    }
+
+    /**
      * 判断Map类型缓存是否存在
      *
      * @param key 缓存键
@@ -766,6 +1020,17 @@ public class CacheUtils {
      */
     public static void deleteMap(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.MAP_PREFIX + key).delete();
+    }
+
+    /**
+     * 使用通配符模糊删除Map类型缓存
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     */
+    public static void deleteMapByPattern(String keyPattern) {
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.MAP_PREFIX + keyPattern);
     }
 
 }

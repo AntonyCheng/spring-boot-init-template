@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.utils.redisson.lock;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
@@ -122,7 +123,7 @@ public class LockUtils {
                 success.method();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException();
+            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -151,7 +152,7 @@ public class LockUtils {
                 success.method();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException();
+            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -211,7 +212,7 @@ public class LockUtils {
                 return getNone.get();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException();
+            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -243,7 +244,7 @@ public class LockUtils {
                 return getNone.get();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException();
+            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {

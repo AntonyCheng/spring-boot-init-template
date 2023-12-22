@@ -19,22 +19,22 @@ public class CustomizeMailException extends RuntimeException {
 
     public <T> CustomizeMailException() {
         this.returnCode = ReturnCode.FAIL;
-        this.msg = null;
+        this.msg = ReturnCode.FAIL.getMsg();
     }
 
     public <T> CustomizeMailException(ReturnCode returnCode) {
         this.returnCode = returnCode;
-        this.msg = null;
+        this.msg = returnCode.getMsg();
     }
 
     public <T> CustomizeMailException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
-        this.msg = msg;
+        this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }
 
     @Override
     public String getMessage() {
-        return msg == null ? returnCode.getMsg() : msg;
+        return this.msg;
     }
 
 }

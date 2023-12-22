@@ -11,10 +11,12 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.config.redisson.properties.RedissonProperties;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,43 +41,52 @@ public class RateLimitUtils {
     /**
      * 限流单位时间，单位：秒
      */
-    private static long rate;
-
-    @PostConstruct
-    public void setRate() {
-        rate = redissonProperties.getLimitRate();
-    }
+    private static long rateInterval;
 
     /**
      * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
      */
-    private static long rateInterval;
-
-    @PostConstruct
-    public void setRateInterval() {
-        rateInterval = redissonProperties.getLimitRateInterval();
-    }
+    private static long rate;
 
     /**
      * 每个操作所要消耗的令牌数
      */
     private static long permit;
 
+    /**
+     * 初始化参数以及校验参数
+     */
     @PostConstruct
-    public void setPermit() {
+    private void initParams() {
+        rateInterval = redissonProperties.getLimitRateInterval();
+        rate = redissonProperties.getLimitRate();
         permit = redissonProperties.getLimitPermits();
+        if (permit > rate) {
+            throw new CustomizeLockException(ReturnCode.LOCK_DESIGN_ERROR);
+        }
     }
 
     /**
-     * 限流操作
+     * Bean销毁后删除Redis中的限流键值
+     */
+    @PreDestroy
+    private void destroy() {
+        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:permits");
+        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:value");
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*");
+    }
+
+    /**
+     * 系统限流
+     * 系统：指的是按照在配置文件中配置好的参数进行限流
      *
      * @param key 区分不同的限流器，比如不同的用户 id 应该分别统计
      */
     public static void doRateLimit(String key) {
-        // 创建一个名称为user_limiter的限流器，默认每秒最多访问 2 次
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_PREFIX + key);
+        // 创建一个限流器，默认每秒最多访问 2 次
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
-        // 每当一个操作来了后，请求一个令牌
+        // 每当一个操作来了后，默认请求一个令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
@@ -83,20 +94,68 @@ public class RateLimitUtils {
     }
 
     /**
-     * 限流并且为限流键值设定过期时间
+     * 自定义限流
+     * 自定义：指的是开发者可以输入实参进行限流
+     *
+     * @param key          区分不同的限流器，比如不同的用户 id 应该分别统计
+     * @param rateInterval 限流单位时间，单位：秒
+     * @param rate         限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     * @param permit       每个操作所要消耗的令牌数
+     */
+    public static void doRateLimit(String key, Long rateInterval, Long rate, Long permit) {
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key);
+        rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
+        boolean canOp = rateLimiter.tryAcquire(permit);
+        if (!canOp) {
+            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
+        }
+    }
+
+    /**
+     * 系统限流并且为限流键值设定过期时间
+     * 系统：指的是按照在配置文件中配置好的参数进行限流
      *
      * @param key 区分不同的限流器，比如不同的用户 id 应该分别统计
      */
     public static void doRateLimitAndExpire(String key) {
         // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_PREFIX + key);
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
         // 每当一个操作来了后，请求一个令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
         }
-        String baseKey = KeyPrefixConstants.RATE_LIMIT_PREFIX + key;
+        String baseKey = KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key;
+        List<String> uselessCacheKeys = new ArrayList<String>() {
+            {
+                add(baseKey);
+                add("{" + baseKey + "}:permits");
+                add("{" + baseKey + "}:value");
+            }
+        };
+        for (String uselessCacheKey : uselessCacheKeys) {
+            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rate * 3));
+        }
+    }
+
+    /**
+     * 自定义限流并且为限流键值设定过期时间
+     * 自定义：指的是开发者可以输入实参进行限流
+     *
+     * @param key          区分不同的限流器，比如不同的用户 id 应该分别统计
+     * @param rateInterval 限流单位时间，单位：秒
+     * @param rate         限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     * @param permit       每个操作所要消耗的令牌数
+     */
+    public static void doRateLimitAndExpire(String key, Long rateInterval, Long rate, Long permit) {
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key);
+        rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
+        boolean canOp = rateLimiter.tryAcquire(permit);
+        if (!canOp) {
+            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
+        }
+        String baseKey = KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key;
         List<String> uselessCacheKeys = new ArrayList<String>() {
             {
                 add(baseKey);

@@ -38,9 +38,14 @@ public interface KeyPrefixConstants {
     String MAP_PREFIX = CACHE_KEY_PREFIX + "MAP_";
 
     /**
-     * 限流Key前缀
+     * 系统限流Key前缀
      */
-    String RATE_LIMIT_PREFIX = "RATE_";
+    String SYSTEM_RATE_LIMIT_PREFIX = "SYSTEM_RATE_";
+
+    /**
+     * 自定义限流Key前缀
+     */
+    String CUSTOMIZE_RATE_LIMIT_PREFIX = "CUSTOMIZE_RATE_";
 
     /**
      * 分布式锁Key前缀

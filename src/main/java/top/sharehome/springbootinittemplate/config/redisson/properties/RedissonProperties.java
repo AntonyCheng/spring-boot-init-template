@@ -30,12 +30,12 @@ public class RedissonProperties {
     /**
      * 限流单位时间，单位：秒
      */
-    private Long limitRate = 1L;
+    private Long limitRateInterval = 1L;
 
     /**
      * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
      */
-    private Long limitRateInterval = 2L;
+    private Long limitRate = 2L;
 
     /**
      * 每个操作所要消耗的令牌数
