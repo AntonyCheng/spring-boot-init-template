@@ -166,9 +166,9 @@ spring:
     host: smtp.163.com
     # 发送邮件服务器端口
     port: 25
-    # 开发者的邮箱地址
+    # 发送邮件的邮箱地址
     username: xxxxxxxx@163.com
-    # 开发者的邮箱验证密码或者授权码
+    # 发送邮件的邮箱验证密码或者授权码
     password: xxxxxxxx
     # 邮件默认编码
     default-encoding: UTF-8

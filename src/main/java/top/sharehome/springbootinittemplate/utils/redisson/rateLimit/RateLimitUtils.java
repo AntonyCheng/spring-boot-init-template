@@ -64,13 +64,22 @@ public class RateLimitUtils {
         if (permit > rate) {
             throw new CustomizeLockException(ReturnCode.LOCK_DESIGN_ERROR);
         }
+        // 程序创建时删除Redis中的系统限流键值对
+        deleteSystemRateLimitValues();
     }
 
     /**
-     * Bean销毁后删除Redis中的限流键值
+     * 程序销毁后删除Redis中的系统限流键值对
      */
     @PreDestroy
     private void destroy() {
+        deleteSystemRateLimitValues();
+    }
+
+    /**
+     * 删除删除Redis中的系统限流键值对
+     */
+    private void deleteSystemRateLimitValues(){
         REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:permits");
         REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:value");
         REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*");
