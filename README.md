@@ -595,7 +595,7 @@ oss:
 
 2. 配置完成之后只需要以 GET 请求调用 `/api/captcha` 接口即可获取验证码图片的 Base64 编码值以及该验证码的 UUID ，前端拿到 Base64 编码值之后将其转换为图片即可；
 
-3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@Captcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在 `code` 和 `uuid` 两个 String 类型参数字段，下面以登录接口为例：
+3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@EnableCaptcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在一个名为 `captcha` 的 `Captcha` 类型（位置在 `config/captcha/model/Captcha.java` ）参数字段，下面以登录接口为例：
 
    ```java
    /**
@@ -605,7 +605,7 @@ oss:
     * @return 返回登录用户信息
     */
    @PostMapping("/login")
-   @Captcha
+   @EnableCaptcha
    public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
        AuthLoginVo loginUser = authService.login(authLoginDto);
        LoginUtils.login(loginUser);
@@ -638,21 +638,27 @@ oss:
        private String password;
    
        /**
-        * 验证码
+        * 校验验证码参数实体类
         */
-       private String code;
-   
-       /**
-        * 验证码UUID
-        */
-       private String uuid;
+       private Captcha captcha;
    
        private static final long serialVersionUID = -2121896284587465661L;
    
    }
    ```
 
-4. 最后在调用接口时将验证码结果 `code` 和验证码 UUID `uuid` 传入即可；
+4. 最后在调用接口时将验证码结果 `code` 和验证码 UUID `uuid` 传入即可：
+
+   ```json
+   {
+     "account": "xxxxxxxx",
+     "password": "xxxxxxxx",
+     "captcha": {
+       "code": "xxxx",
+       "uuid": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     }
+   }
+   ```
 
 #### 整合邮件
 

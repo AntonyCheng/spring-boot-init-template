@@ -252,7 +252,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码（考虑是否需要密码）
-    password: 123456
+    #password: 123456
     # 连接超时时间
     timeout: 3s
     # redis连接池

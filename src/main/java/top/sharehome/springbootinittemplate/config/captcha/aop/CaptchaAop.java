@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
 
 import javax.annotation.Resource;
@@ -30,7 +31,7 @@ public class CaptchaAop {
     /**
      * 定义切入点方法
      */
-    @Pointcut("@annotation(top.sharehome.springbootinittemplate.config.captcha.annotation.Captcha)")
+    @Pointcut("@annotation(top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha)")
     private void pointCutMethod() {
 
     }
@@ -50,14 +51,12 @@ public class CaptchaAop {
         for (Object arg : args) {
             Class<?> argClass = arg.getClass();
             try {
-                Field uuidField = argClass.getDeclaredField("uuid");
-                uuidField.setAccessible(true);
-                uuid = (String) uuidField.get(arg);
-                Field codeField = argClass.getDeclaredField("code");
-                codeField.setAccessible(true);
-                code = (String) codeField.get(arg);
-            } catch (Exception e) {
-                continue;
+                Field captchaField = argClass.getDeclaredField("captcha");
+                captchaField.setAccessible(true);
+                Captcha captcha = (Captcha) captchaField.get(arg);
+                uuid = captcha.getUuid();
+                code = captcha.getCode();
+            } catch (Exception ignored) {
             }
         }
         captchaService.checkCaptcha(code, uuid);

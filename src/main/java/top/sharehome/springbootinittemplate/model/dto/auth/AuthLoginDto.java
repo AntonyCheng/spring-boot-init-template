@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.GetGroup;
+import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -33,14 +34,9 @@ public class AuthLoginDto implements Serializable {
     private String password;
 
     /**
-     * 验证码
+     * 验证码参数实体类
      */
-    private String code;
-
-    /**
-     * 验证码UUID
-     */
-    private String uuid;
+    private Captcha captcha;
 
     private static final long serialVersionUID = -2121896284587465661L;
 

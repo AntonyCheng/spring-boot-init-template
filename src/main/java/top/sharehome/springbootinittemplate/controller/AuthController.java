@@ -4,10 +4,10 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import top.sharehome.springbootinittemplate.config.captcha.annotation.Captcha;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
+import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
@@ -37,7 +37,7 @@ public class AuthController {
      * @return 返回注册结果
      */
     @PostMapping("/register")
-    @Captcha
+    @EnableCaptcha
     public R<String> register(@RequestBody @Validated(PostGroup.class) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
@@ -53,7 +53,7 @@ public class AuthController {
      * @return 返回登录用户信息
      */
     @PostMapping("/login")
-    @Captcha
+    @EnableCaptcha
     public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
