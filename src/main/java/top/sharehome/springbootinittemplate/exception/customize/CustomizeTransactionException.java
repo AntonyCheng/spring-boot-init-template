@@ -14,11 +14,28 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 @EqualsAndHashCode(callSuper = true)
 public class CustomizeTransactionException extends RuntimeException {
 
-    private ReturnCode returnCode = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE;
+    private ReturnCode returnCode;
+
+    private String msg;
+
+    public <T> CustomizeTransactionException() {
+        this.returnCode = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE;
+        this.msg = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE.getMsg();
+    }
+
+    public <T> CustomizeTransactionException(ReturnCode returnCode) {
+        this.returnCode = returnCode;
+        this.msg = returnCode.getMsg();
+    }
+
+    public <T> CustomizeTransactionException(ReturnCode returnCode, String msg) {
+        this.returnCode = returnCode;
+        this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
+    }
 
     @Override
     public String getMessage() {
-        return returnCode.getMsg();
+        return this.msg;
     }
 
 }

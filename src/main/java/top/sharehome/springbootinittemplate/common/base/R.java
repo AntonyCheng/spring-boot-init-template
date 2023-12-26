@@ -3,6 +3,8 @@ package top.sharehome.springbootinittemplate.common.base;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 响应信息主体
  *
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class R<T> {
+public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

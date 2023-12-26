@@ -79,7 +79,7 @@ public class RateLimitUtils {
     /**
      * 删除删除Redis中的系统限流键值对
      */
-    private void deleteSystemRateLimitValues(){
+    private void deleteSystemRateLimitValues() {
         REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:permits");
         REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:value");
         REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*");

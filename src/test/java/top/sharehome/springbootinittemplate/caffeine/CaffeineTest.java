@@ -20,7 +20,7 @@ public class CaffeineTest {
     @Test
     public void testCaffeine() {
         LocalCacheUtils.put("1", 1);
-        Map<String, Object> map = new HashMap<String,Object>() {
+        Map<String, Object> map = new HashMap<String, Object>() {
             {
                 put("2", 2);
                 put("3", 3);

@@ -19,7 +19,7 @@ import java.util.Map;
 public class SpringContextHolder implements ApplicationContextAware {
 
     /**
-     * 以静态变量保存ApplicationContext,可在任意代码中取出ApplicaitonContext.
+     * 以静态变量保存ApplicationContext,可在任意代码中取出ApplicationContext.
      */
     private static ApplicationContext context;
 

@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.sharehome.springbootinittemplate.common.base.R;
-import top.sharehome.springbootinittemplate.config.i18n.condition.I18nCondition;
 import top.sharehome.springbootinittemplate.config.i18n.I18nManager;
+import top.sharehome.springbootinittemplate.config.i18n.condition.I18nCondition;
 
 /**
  * 国际化示例控制器

@@ -62,7 +62,7 @@ rules:
       # 本地缓存初始容量
       initialCapacity: 2000
       # 本地缓存最大容量
-      maximumSize: 65535
+      maximumSize: 65536
     # 解析树本地缓存配置项
     parseTreeCache:
       # 本地缓存初始容量

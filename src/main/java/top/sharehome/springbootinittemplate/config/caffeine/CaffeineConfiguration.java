@@ -5,13 +5,11 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.caffeine.condition.CaffeineCondition;
 import top.sharehome.springbootinittemplate.config.caffeine.properties.CaffeineProperties;
-import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;

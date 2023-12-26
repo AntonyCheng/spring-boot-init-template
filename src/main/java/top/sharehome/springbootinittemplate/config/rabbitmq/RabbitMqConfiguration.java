@@ -51,7 +51,6 @@ public class RabbitMqConfiguration {
                     returnedMessage.getExchange(),
                     returnedMessage.getRoutingKey());
         });
-        log.info(">>>>>>>>>>> rabbitmq config init.");
         return rabbitTemplate;
     }
 

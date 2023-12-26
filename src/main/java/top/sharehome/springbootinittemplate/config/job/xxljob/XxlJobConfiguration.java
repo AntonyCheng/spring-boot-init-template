@@ -39,7 +39,6 @@ public class XxlJobConfiguration {
         xxlJobSpringExecutor.setPort(executor.getPort());
         xxlJobSpringExecutor.setLogPath(executor.getLogpath());
         xxlJobSpringExecutor.setLogRetentionDays(executor.getLogretentiondays());
-        log.info(">>>>>>>>>>> xxl-job config init.");
         return xxlJobSpringExecutor;
     }
 
