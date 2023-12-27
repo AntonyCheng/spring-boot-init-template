@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 
 /**
  * XXL-JOB配置文件
- * 需要用到XXL-JOB时，先将visual/xxl-job-admin部署上
+ * 需要用到XXL-JOB时，先将module/xxl-job-admin部署上
  *
  * @author AntonyCheng
  */

@@ -28,13 +28,6 @@ CREATE TABLE `xxl_job_group`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_group
--- ----------------------------
-INSERT INTO `xxl_job_group`
-VALUES (1, 'xxl-job-executor', 'Xxl-Job执行器', 0, NULL, '2023-11-03 13:09:23');
-
 -- ----------------------------
 -- Table structure for xxl_job_info
 -- ----------------------------
@@ -71,15 +64,6 @@ CREATE TABLE `xxl_job_info`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_info
--- ----------------------------
-INSERT INTO `xxl_job_info`
-VALUES (1, 1, '简单任务示例', '2018-11-03 22:21:31', '2023-11-03 13:06:25', 'admin', '', 'CRON', '0 0 0 * * ?',
-        'DO_NOTHING', 'FIRST', 'demoJobHandler', '', 'SERIAL_EXECUTION', 0, 0, 'BEAN', '', 'GLUE代码初始化',
-        '2018-11-03 22:21:31', '', 0, 0, 0);
-
 -- ----------------------------
 -- Table structure for xxl_job_lock
 -- ----------------------------
@@ -98,7 +82,6 @@ CREATE TABLE `xxl_job_lock`
 -- ----------------------------
 INSERT INTO `xxl_job_lock`
 VALUES ('schedule_lock');
-
 -- ----------------------------
 -- Table structure for xxl_job_log
 -- ----------------------------
@@ -128,15 +111,6 @@ CREATE TABLE `xxl_job_log`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_log
--- ----------------------------
-INSERT INTO `xxl_job_log`
-VALUES (1, 1, 1, 'http://192.168.116.1:38081/', 'demoJobHandler', '', NULL, 0, '2023-11-03 13:08:03', 200,
-        '任务触发类型：手动触发<br>调度机器：192.168.116.1<br>执行器-注册方式：自动注册<br>执行器-地址列表：[http://192.168.116.1:38081/]<br>路由策略：第一个<br>阻塞处理策略：单机串行<br>任务超时时间：0<br>失败重试次数：0<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>触发调度：<br>address：http://192.168.116.1:38081/<br>code：200<br>msg：null',
-        '2023-11-03 13:08:03', 200, '', 0);
-
 -- ----------------------------
 -- Table structure for xxl_job_log_report
 -- ----------------------------
@@ -156,17 +130,6 @@ CREATE TABLE `xxl_job_log_report`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_log_report
--- ----------------------------
-INSERT INTO `xxl_job_log_report`
-VALUES (1, '2023-11-03 00:00:00', 0, 1, 0, NULL);
-INSERT INTO `xxl_job_log_report`
-VALUES (2, '2023-11-02 00:00:00', 0, 0, 0, NULL);
-INSERT INTO `xxl_job_log_report`
-VALUES (3, '2023-11-01 00:00:00', 0, 0, 0, NULL);
-
 -- ----------------------------
 -- Table structure for xxl_job_logglue
 -- ----------------------------
@@ -185,11 +148,6 @@ CREATE TABLE `xxl_job_logglue`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_logglue
--- ----------------------------
-
 -- ----------------------------
 -- Table structure for xxl_job_registry
 -- ----------------------------
@@ -208,11 +166,6 @@ CREATE TABLE `xxl_job_registry`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of xxl_job_registry
--- ----------------------------
-
 -- ----------------------------
 -- Table structure for xxl_job_user
 -- ----------------------------
@@ -231,7 +184,6 @@ CREATE TABLE `xxl_job_user`
   CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci
   ROW_FORMAT = Dynamic;
-
 -- ----------------------------
 -- Records of xxl_job_user
 -- ----------------------------

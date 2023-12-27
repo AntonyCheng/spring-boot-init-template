@@ -1,5 +1,5 @@
 server:
-  port: 38078
+  port: 38077
 spring:
   application:
     name: spring-boot-admin

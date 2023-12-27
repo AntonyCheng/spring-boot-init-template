@@ -103,7 +103,7 @@ spring:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
-        url: http://localhost:38078/spring-boot-admin
+        url: http://127.0.0.1:38077/spring-boot-admin
         username: admin
         password: admin123456
         instance:
@@ -443,20 +443,20 @@ schedule:
     # 线程池大小（开启则必填）
     thread-pool: 10
 
-# Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
+# XxlJob配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
 xxl:
   job:
     # todo 是否开启（预先关闭）
     enable: false
     # Xxl-Job监控面板地址
-    admin-addresses: http://localhost:38079/xxl-job-admin
+    admin-addresses: http://127.0.0.1:38079/xxl-job-admin
     # Xxl-Job token
     access-token: xxl-job
     # 执行器配置
     executor:
       # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
       appname: xxl-job-executor
-      # 执行器端口号 执行器从38080开始往后写
+      # 执行器端口号
       port: 38081
       # 执行器注册：默认IP:PORT（appname不为空，该处则可为空）
       address:
@@ -466,6 +466,27 @@ xxl:
       logpath: ./logs/${spring.application.name}/xxl-job
       # 执行器日志文件保存天数：大于3生效
       logretentiondays: 30
+
+# PowerJob配置
+powerjob:
+  worker:
+    # todo 是否开启（预先关闭）
+    enabled: false
+    # 是否允许延迟连接PowerJob服务器（即没有连接上服务器是否终止程序启动）
+    allow-lazy-connect-server: false
+    # 执行器端口
+    port: 38082
+    # 执行器AppName
+    app-name: power-job-executor
+    # PowerJob服务器地址
+    server-address: 127.0.0.1:38078
+    # 网络传输协议
+    protocol: http
+    # 执行器信息存储介质
+    store-strategy: disk
+    # 处理任务返回结果最大长度
+    max-result-length: 4096
+    max-appended-wf-context-length: 4096
 
 # Sa-Token配置
 sa-token:

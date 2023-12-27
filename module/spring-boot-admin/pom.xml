@@ -15,7 +15,8 @@
 	<description>spring-boot-admin</description>
 	<properties>
 		<java.version>11</java.version>
-		<spring-boot-admin.version>2.7.4</spring-boot-admin.version>
+		<spring.boot.admin.version>2.7.4</spring.boot.admin.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,7 +33,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
+			<version>${lombok.version}</version>
 		</dependency>
 
 		<dependency>
@@ -51,7 +52,7 @@
 			<dependency>
 				<groupId>de.codecentric</groupId>
 				<artifactId>spring-boot-admin-dependencies</artifactId>
-				<version>${spring-boot-admin.version}</version>
+				<version>${spring.boot.admin.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

@@ -10,12 +10,11 @@ management:
       base-path: /manage
       exposure:
         include: '*'
-  server:
-    servlet:
-      context-path: /actuator
   health:
     mail:
       enabled: false
+  server:
+    base-path: /actuator
 spring:
   application:
     name: xxl-job-admin
@@ -25,7 +24,7 @@ spring:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
-        url: http://localhost:38078/spring-boot-admin
+        url: http://localhost:38077/spring-boot-admin
         username: admin
         password: admin123456
         instance:
@@ -35,8 +34,6 @@ spring:
     servlet:
       load-on-startup: 0
     static-path-pattern: /static/**
-  resources:
-    static-locations: classpath:/static/
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
@@ -76,6 +73,9 @@ spring:
             required: true
             socketFactory:
               class: javax.net.ssl.SSLSocketFactory
+  web:
+    resources:
+      static-locations: classpath:/static/
 mybatis:
   mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
 xxl:
