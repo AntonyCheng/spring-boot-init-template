@@ -49,6 +49,7 @@ knife4j:
     enable: false
     username: antony
     password: antony123456
+
 # springdoc-openapi项目配置
 springdoc:
   api-docs:
@@ -112,8 +113,15 @@ spring:
   # 项目前置工作 ---- 可自定义
   application:
     name: spring-boot-init-template
+  # 模板工具配置
   freemarker:
     check-template-location: false
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    request-context-attribute: request
+    settings:
+      number_format: 0.##########
   # 文件上传 ---- 可自定义
   servlet:
     multipart:
@@ -197,6 +205,10 @@ spring:
       maximum-pool-size: 25
       # 配置连接超时时间
       connection-timeout: 30000
+      # 多久检查一次连接的活性
+      keepalive-time: 30000
+      # 校验超时时间
+      validation-timeout: 5000
       # 控制从池返回的连接的默认自动提交行为，默认值：true
       auto-commit: true
       # 空闲连接存活最大时间，默认10分钟
@@ -222,7 +234,7 @@ spring:
       # 配置网络超时时间
       socket-timeout: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒，设置10分钟
-      time-between-eviction-runs-millis: 600000
+      time-between-eviction-runs-millis: 30000
       # 配置一个连接在池中最小生存的时间，单位是毫秒，设置10分钟
       min-evictable-idle-time-millis: 600000
       # 配置一个连接在池中最大生存的时间，单位是毫秒，设置30分钟
