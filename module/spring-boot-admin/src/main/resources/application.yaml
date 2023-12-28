@@ -1,5 +1,10 @@
+# 服务概况 ---- 可自定义
 server:
   port: 38077
+  servlet:
+    context-path: /spring-boot-admin
+
+# 公共配置文件
 spring:
   application:
     name: spring-boot-admin

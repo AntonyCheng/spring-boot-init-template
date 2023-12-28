@@ -35,6 +35,7 @@ server:
 
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
+  # 是否打开knife4j的增强配置
   enable: true
   # todo 是否开启生产环境保护（由于拿到模板就需要二次开发，所以默认开发环境，即预先关闭）
   production: false
@@ -205,8 +206,8 @@ spring:
       maximum-pool-size: 25
       # 配置连接超时时间
       connection-timeout: 30000
-      # 多久检查一次连接的活性
-      keepalive-time: 30000
+      # 多久检查一次连接的活性（小于30000即不进行活性检查）
+      keepalive-time: 60000
       # 校验超时时间
       validation-timeout: 5000
       # 控制从池返回的连接的默认自动提交行为，默认值：true
@@ -483,7 +484,7 @@ xxl:
 powerjob:
   worker:
     # todo 是否开启（预先关闭）
-    enabled: false
+    enabled: true
     # 是否允许延迟连接PowerJob服务器（即没有连接上服务器是否终止程序启动）
     allow-lazy-connect-server: false
     # 执行器端口

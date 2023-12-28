@@ -54,7 +54,6 @@
   - web == SpringMVC
   - undertow == Java Web 服务器
   - aop == 面向切面编程
-  - devtools == 热部署插件
 - **MySQL**
   - mybatis-plus 3.5.4.1 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖

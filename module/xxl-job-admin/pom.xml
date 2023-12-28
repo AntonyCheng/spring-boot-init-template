@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
     <properties>
         <java.version>11</java.version>
-        <spring.boot.admin.version>2.7.4</spring.boot.admin.version>
+        <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
     <dependencyManagement>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
-            <version>${spring.boot.admin.version}</version>
+            <version>${spring.boot.admin.client.version}</version>
         </dependency>
 
     </dependencies>

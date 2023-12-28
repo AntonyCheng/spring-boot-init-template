@@ -16,7 +16,7 @@ dataSources:
     connectionTimeoutMilliseconds: 30000
     idleTimeoutMilliseconds: 600000
     maxLifetimeMilliseconds: 1800000
-    maxPoolSize: 25
+    maxPoolSize: 20
     minPoolSize: 10
 #  # 从库在需要时开启
 #  slave:
@@ -28,7 +28,7 @@ dataSources:
 #    connectionTimeoutMilliseconds: 30000
 #    idleTimeoutMilliseconds: 600000
 #    maxLifetimeMilliseconds: 1800000
-#    maxPoolSize: 25
+#    maxPoolSize: 20
 #    minPoolSize: 10
 props:
   # 显示SQL

@@ -1,12 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Target Server Type    : MySQL
- Target Server Version : 80028 (8.0.28)
- File Encoding         : 65001
-
- Date: 30/10/2023 16:25:18
-*/
 CREATE database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_general_ci;
 use
     `init_db`;
