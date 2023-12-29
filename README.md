@@ -37,12 +37,15 @@
       * [开启JWT](#开启jwt)
         * [整合Redis](#整合redis)
         * [整合JWT](#整合jwt)
-    * [配置XXL-JOB](#配置xxl-job)
+    * [配置定时任务](#配置定时任务)
       * [SpringBoot任务调度](#springboot任务调度)
-      * [XXL-JOB任务调度](#xxl-job任务调度)
+      * [XxlJob任务调度](#xxljob任务调度)
+      * [PowerJob任务调度](#powerjob任务调度)
     * [配置SpringBootAdmin](#配置springbootadmin)
 * [申明&联系我](#申明联系我)
 * [下一步开发计划](#下一步开发计划)
+
+<!-- TOC -->
 
 ## 模板特点
 
@@ -54,20 +57,21 @@
   - web == SpringMVC
   - undertow == Java Web 服务器
   - aop == 面向切面编程
+- **Netty 4.1.104.Final**
 - **MySQL**
   - mybatis-plus 3.5.4.1 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - Lombok 1.18.30
-  - hutool 5.8.23
+  - hutool 5.8.24
   - commons-lang3 3.14.0
   - commons-io 2.15.0
   - commons-codec 1.16.0
   - commons-pool2 2.12.0
   - commons-collections4 4.4
   - commons-math 3.6.1
-  - okhttp 4.12.0
+  - okhttp3 4.12.0
   - fastjson2 2.0.42
 - **权限校验**
   - SaToken 1.37.0
@@ -80,7 +84,6 @@
   - redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8
-
 - **消息队列**
   - rabbitMQ
     - spring-boot-starter-amqp
@@ -98,22 +101,25 @@
   - POI 5.2.5 == 操作 Word
   - EasyExcel 3.3.2 == 操作 Excel
   - itext 7.2.5 == 操作 PDF
-- **外接平台**
-  - XXL-JOB 2.4.0 == 分布式定时任务管理平台
-  - SpringBootAdmin 2.7.4 == SpringBoot 服务监控平台
+- **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要因为为了适配模板，外接平台中的代码被作者修改过）**
+  - XxlJob 2.4.0 == 分布式定时任务管理平台
+  - PowerJob 4.3.6 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
+  - SpringBootAdmin 2.7.9 == SpringBoot 服务监控平台
 
 ### 业务特性
 
 - 使用 Undertow 服务器替换掉 Tomcat 服务器
-- SaToken 分布式可配置登录&认证&鉴权
+- SaToken 分布式可配置登录 & 认证 & 鉴权
 - AOP 逻辑处理示例
+- 自定义注解处理示例
 - 验证码分布式校验
-- 全局请求拦截器&过滤器
+- 全局请求拦截器 & 过滤器
 - 全局异常处理器
 - 封装统一响应对象
 - 自定义响应码
 - 可配置式国际化
-- Swagger + Knife4j 接口文档
+- 可实现多级缓存
+- SpringDoc + Knife4j 接口文档
 - 全局跨域处理
 - Spring 上下文处理工具
 - JSON 长整型精度处理
@@ -124,9 +130,15 @@
 
 ### 示例业务
 
-- 提供模板 SQL 示例文件（业务数据库 & XXL-JOB 数据库）；
+- 提供模板 SQL 示例文件（业务数据库 & XxlJob 数据库 & PowerJob 数据库）；
 - 用户登录、注册、注销、信息获取；
-- Spring Scheduler 单机版定时任务示例。
+- Spring Scheduler 单机版定时任务示例；
+- XxlJob & PowerJob 使用逻辑代码示例；
+- RabbitMQ 多类型消息队列逻辑代码示例；
+- AOP 逻辑代码示例；
+- 自定义注解逻辑代码示例；
+- 国际化逻辑代码示例；
+- 验证码逻辑代码示例。
 
 ### 单元测试
 
@@ -139,7 +151,7 @@
 
 ### 必须执行
 
-1. 执行 `sql/init_db.sql` 和 `sql/init_xxl_job.sql` 文件；
+1. 执行 `sql/init_db.sql` 、 `sql/init_xxl_job.sql` 以及 ` sql/init_power_job.sql` 文件；
 
 2. 修改 `src/main/resources/mysql.yaml` 文件：
 
@@ -883,13 +895,13 @@ spring:
 
 JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
 
-#### 配置XXL-JOB
+#### 配置定时任务
 
-XXL-JOB 是一个开箱即用的轻量级分布式任务调度系统，其核心设计目标是开发迅速、学习简单、轻量级、易扩展，在开源社区广泛流行，已在多家公司投入使用。 XXL-JOB 开源协议采用的是 GPL ，因此云厂商无法直接商业化托管该产品，各大中小企业需要自建，增加了学习成本、机器成本、人工运维成本，在真正接入 XXL-JOB 分布式任务调度系统之前，开发者先了解一下在 SpringBoot 项目中最简单的任务调度方式。
+定时任务对于一个后端系统来说非常使用，它从某种意义上实现了系统业务的解耦，让系统不再是一个只会响应请求的“单机废物”，例如可以用它设计轮询推送服务，虽然一般服务器接受不了高频的轮询，不能保证数据的实时情况，但是也赋予了系统这样的功能。接下来从实现和部署方式的角度由易到难介绍一下模板中三种定时任务的调度方案。
 
 ##### SpringBoot任务调度
 
-SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称为“定时任务”，模板中这样的定时任务主要分为两类，第一类是全量任务，第二类是循环任务；
+SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定时任务”，模板中这样的定时任务主要分为两类，第一类是全量任务，第二类是循环任务；
 
 1. 在编码之前首先修改 `application.yaml` 配置文件：
 
@@ -953,17 +965,19 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
    }
    ```
 
-##### XXL-JOB任务调度
+##### XxlJob任务调度
 
-1. 部署 XXL-JOB 分布式调度系统控制面板；
+XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心设计目标是开发迅速、学习简单、轻量级、易扩展，在开源社区广泛流行，已在多家公司投入使用。 XxlJob 开源协议采用的是 GPL ，因此云厂商无法直接商业化托管该产品，各大中小企业需要自建，增加了学习成本、机器成本、人工运维成本。
 
-   想要使用 XXL-JOB 分布式任务调度系统的功能，就需要先部署一个 XXL-JOB 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XXL-JOB 模块来部署一个 XXL-JOB 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XXL-JOB 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
+1. 部署 XxlJob 分布式调度系统控制面板；
+
+   想要使用 XxlJob 分布式任务调度系统的功能，就需要先部署一个 XxlJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XxlJob 模块来部署一个 XxlJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XxlJob 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
 
    ```yaml
    spring:
-     # 配置XXL-JOB的MySQL数据库
+     # 配置XxlJob的MySQL数据库
      datasource:
-       url: jdbc:mysql://xxx.xxx.xxx.xxx:3305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+       url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
        username: root
        password: 123456
        driver-class-name: com.mysql.cj.jdbc.Driver
@@ -974,15 +988,15 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
          auto-commit: true
          idle-timeout: 30000
          pool-name: HikariCP
-         max-lifetime: 900000
+         max-lifetime: 300000
          connection-timeout: 10000
          connection-test-query: SELECT 1
          validation-timeout: 1000
    ```
 
-   部署完成之后即可启动 XXL-JOB 分布式调度系统控制面板，启动成功即表示部署成功，登录可视化界面之后需要在执行器管理中添加执行器，这个执行器相关信息与在下面 `执行器配置` 中相关信息保持一致；
+   部署完成之后即可启动 XxlJob 分布式调度系统控制面板，启动成功即表示部署成功，登录可视化界面之后需要在执行器管理中添加执行器，这个执行器相关信息与在下面 `执行器配置` 中相关信息保持一致；
 
-2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 XXL-JOB 控制面板地址正确的前提下打开 `enable` 配置项：
+2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 XxlJob 控制面板地址正确的前提下打开 `enable` 配置项：
 
    ```yaml
    # Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
@@ -1010,11 +1024,95 @@ SpringBoot 中自带有一些建议的任务调度方案，我们通常将其称
          logretentiondays: 30
    ```
 
-3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/service/SampleService` 类中，至此模板中关于 XXL-JOB 的内容就结束了，如果想要使用 XXL-JOB 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
+3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/xxljob/SampleService` 类中，至此模板中关于 XxlJob 的内容就结束了，如果想要使用 XxlJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
+
+##### PowerJob任务调度
+
+PowerJob是全新一代分布式任务调度与计算框架，其主要功能特性如下：
+
+- 提供前端 Web 界面支持，有完善的定时策略；
+- 执行模式丰富，其中最大的特点是支持 Map/MapReduce 处理器，能够让开发者寥寥数行代码获得集群分布式计算的能力；
+- 支持工作流，以可视化的方式对任务进行编排，同时还支持上下游任务间的数据传递，以及多种节点类型（判断节点 & 嵌套工作流节点）；
+- 调度服务器经过精心设计，一改其他调度框架基于数据库锁的策略，实现了无锁化调度；
+
+总而言之，PowerJob 可以看作是 XxlJob 在分布式上的全方位增强，为模板下一步分布式设计做铺垫，配置方法如下：
+
+1. 部署 PowerJob 分布式调度系统控制面板；
+
+   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `power-job-admin/powerjob-server/powerjob-server-starter` 模块，首先需要修改这个模块的 `application.properties` 和 `application-daily.properties` 配置文件（ PowerJob 支持多环境开发，模板中默认为日常环境），此时在“必须执行”的操作中引入的 `sql/init-power-job.sql` 就起到了作用：
+
+   ```properties
+   ##### application.properties 相关配置 ######
+   # Http server port
+   server.port=38078
+   spring.profiles.active=daily
+   spring.main.banner-mode=console
+   spring.jpa.open-in-view=false
+   spring.data.mongodb.repositories.type=none
+   logging.level.org.mongodb=warn
+   # Configuration for uploading files.
+   spring.servlet.multipart.enabled=true
+   spring.servlet.multipart.file-size-threshold=0
+   spring.servlet.multipart.max-file-size=200MB
+   spring.servlet.multipart.max-request-size=200MB
+   ###### PowerJob transporter configuration  ######
+   oms.transporter.active.protocols=AKKA,HTTP
+   oms.transporter.main.protocol=HTTP
+   oms.akka.port=10086
+   oms.http.port=10010
+   # Prefix for all tables. Default empty string. Config if you have needs, i.e. pj_
+   oms.table-prefix=
+   
+   ##### application-daily.properties 相关配置 ######
+   oms.env=DAILY
+   logging.config=classpath:logback-dev.xml
+   spring.datasource.core.driver-class-name=com.mysql.cj.jdbc.Driver
+   spring.datasource.core.jdbc-url=jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_power_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+   spring.datasource.core.username=root
+   spring.datasource.core.password=123456
+   spring.datasource.core.maximum-pool-size=20
+   spring.datasource.core.minimum-idle=5
+   # Resource cleaning properties
+   oms.instanceinfo.retention=1
+   oms.container.retention.local=1
+   oms.container.retention.remote=-1
+   # Cache properties
+   oms.instance.metadata.cache.size=1024
+   oms.accurate.select.server.percentage = 50
+   ```
+
+   部署完成之后即可启动 PowerJob 分布式调度系统控制面板，启动成功即表示部署成功，打开可视化界面之后需要执行应用注册，这个执行器相关信息与在下面 `执行器配置` 中相关信息保持一致；
+
+2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 PowerJob 控制面板地址正确的前提下打开 `enabled` 配置项：
+
+   ```yaml
+   # PowerJob配置
+   powerjob:
+     worker:
+       # todo 是否开启（预先关闭）
+       enabled: true
+       # 是否允许延迟连接PowerJob服务器（即没有连接上服务器是否终止程序启动）
+       allow-lazy-connect-server: false
+       # 执行器端口
+       port: 38082
+       # 执行器AppName
+       app-name: power-job-executor
+       # PowerJob服务器地址
+       server-address: 127.0.0.1:38078
+       # 网络传输协议
+       protocol: http
+       # 执行器信息存储介质
+       store-strategy: disk
+       # 处理任务返回结果最大长度
+       max-result-length: 4096
+       max-appended-wf-context-length: 4096
+   ```
+
+3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/powerjob` 包中，至此模板中关于 PowerJob 的内容就结束了，如果想要使用 PowerJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
 
 #### 配置SpringBootAdmin
 
-SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XXL-JOB 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
+SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XxlJob 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
 
 ```yaml
 server:
@@ -1048,7 +1146,7 @@ spring:
           name: ${spring.application.name}
 ```
 
-如果还想将 XXL-JOB 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。
+如果还想将 XxlJob 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。
 
 ## 申明&联系我
 
@@ -1061,10 +1159,6 @@ spring:
 ## 下一步开发计划
 
 * 集成WebSocket（必做）
-* 集成PowerJob分布式任务调度平台（必做）
 * 集成Prometheus和Grafana监控报警平台（选做）
 * 集成Apache SkyWalking链路追踪（选做）
 * ......
-
-
-
