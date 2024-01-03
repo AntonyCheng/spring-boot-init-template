@@ -6,7 +6,7 @@ import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.mail.MailManager;
 
 /**
- * 网络工具类
+ * 邮件工具类
  *
  * @author AntonyCheng
  */
@@ -14,7 +14,7 @@ import top.sharehome.springbootinittemplate.config.mail.MailManager;
 public class MailUtils {
 
     /**
-     * 被封装的redisson客户端对象
+     * 被封装的邮件客户端对象
      */
     private static final MailManager MAIL_MANAGER = SpringContextHolder.getBean(MailManager.class);
 
