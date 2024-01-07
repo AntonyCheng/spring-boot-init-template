@@ -484,7 +484,7 @@ xxl:
 powerjob:
   worker:
     # todo 是否开启（预先关闭）
-    enabled: true
+    enabled: false
     # 是否允许延迟连接PowerJob服务器（即没有连接上服务器是否终止程序启动）
     allow-lazy-connect-server: false
     # 执行器端口
