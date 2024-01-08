@@ -60,6 +60,7 @@
         <xxl.job.version>2.4.0</xxl.job.version>
         <power.job.version>4.3.6</power.job.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
+        <canal.version>1.1.7</canal.version>
         <!-- 其他（和业务无关，但是能够确保系统稳定性） -->
         <snakeyaml.version>1.33</snakeyaml.version>
     </properties>
@@ -357,6 +358,23 @@
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
             <version>${spring.boot.admin.client.version}</version>
+        </dependency>
+
+        <!-- Canal客户端依赖配置 -->
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.client</artifactId>
+            <version>${canal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.common</artifactId>
+            <version>${canal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.protocol</artifactId>
+            <version>${canal.version}</version>
         </dependency>
 
         <!-- okHttp 依赖配置 -->

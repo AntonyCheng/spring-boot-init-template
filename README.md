@@ -7,46 +7,6 @@
 
 基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
-* [模板特点](#模板特点)
-  * [主流框架](#主流框架)
-  * [业务特性](#业务特性)
-* [业务功能](#业务功能)
-  * [示例业务](#示例业务)
-  * [单元测试](#单元测试)
-* [快速上手](#快速上手)
-  * [必须执行](#必须执行)
-  * [可选执行](#可选执行)
-    * [整合缓存服务](#整合缓存服务)
-      * [整合系统缓存（Redis）](#整合系统缓存redis)
-      * [整合业务缓存（Redisson）](#整合业务缓存redisson)
-      * [整合本地缓存（Caffeine）](#整合本地缓存caffeine)
-    * [整合消息队列](#整合消息队列)
-      * [激活消息队列](#激活消息队列)
-      * [自定义消息队列](#自定义消息队列)
-    * [整合ElasticSearch](#整合elasticsearch)
-    * [整合对象存储服务](#整合对象存储服务)
-      * [整合腾讯云COS](#整合腾讯云cos)
-      * [整合MinIO](#整合minio)
-      * [整合阿里云OSS](#整合阿里云oss)
-    * [整合验证码](#整合验证码)
-    * [整合邮件](#整合邮件)
-    * [配置国际化](#配置国际化)
-    * [配置SaToken](#配置satoken)
-      * [开启鉴权](#开启鉴权)
-      * [开启认证](#开启认证)
-      * [开启JWT](#开启jwt)
-        * [整合Redis](#整合redis)
-        * [整合JWT](#整合jwt)
-    * [配置定时任务](#配置定时任务)
-      * [SpringBoot任务调度](#springboot任务调度)
-      * [XxlJob任务调度](#xxljob任务调度)
-      * [PowerJob任务调度](#powerjob任务调度)
-    * [配置SpringBootAdmin](#配置springbootadmin)
-* [申明&联系我](#申明联系我)
-* [下一步开发计划](#下一步开发计划)
-
-<!-- TOC -->
-
 ## 模板特点
 
 ### 主流框架
@@ -101,10 +61,11 @@
   - POI 5.2.5 == 操作 Word
   - EasyExcel 3.3.2 == 操作 Excel
   - itext 7.2.5 == 操作 PDF
-- **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要因为为了适配模板，外接平台中的代码被作者修改过）**
+- **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要原因是为了适配模板，外接平台中的代码被作者修改过）**
   - XxlJob 2.4.0 == 分布式定时任务管理平台
   - PowerJob 4.3.6 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
   - SpringBootAdmin 2.7.9 == SpringBoot 服务监控平台
+  - Canal 1.1.7 == Canal-Deployer & Canal-Adapter 数据同步系统
 
 ### 业务特性
 
@@ -1147,6 +1108,35 @@ spring:
 ```
 
 如果还想将 XxlJob 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。
+
+#### 配置Canal
+
+##### Canal简介
+
+Canal 是 Alibaba 开发的基于 MySQL 数据库的增量日志解析工具，主要用于从 MySQL 到其他数据介质的数据流（主要包括 MySQL 、Kafka 、ElasticSearch 、MQ 以及 Log ）同步，类似的业务包括如下：
+
+- 数据库镜像；
+- 数据库实时备份；
+- 索引构建和实时维护（拆分异构索引、倒排索引等）；
+- 业务 cache 刷新；
+- 带业务逻辑的增量数据处理；
+- ......
+
+##### 搭建Deployer&Adapter系统 
+
+Deployer （Canal-Deployer） 是该系统的主体，它的作用是将自己包装成 MySQL 的从库，进而监听 MySQL 的增量日志（binlog），同时能够将其解析并读取。
+
+而 Adapter （Canal-Adapter）相当于官网给开发者封装的一个客户端，能够接收 Deployer 解析的数据，进而将这些数据写入其他数据介质中 。
+
+Deployer 只能监听一个 MySQL 的增量日志。
+
+多个 Adapter 接收同一个 Deployer 的数据会发生数据资源争夺的现象，但是在 Deployer 中可以配置多个目标数据介质，所以通常而言 Adapter 和 Deployer 是一对一关系。
+
+这个体系的搭建在 `module/canal-component` 文件夹中有具体介绍。
+
+##### 搭建Deployer&Client系统
+
+该系统和 Deployer & Adapter 系统的区别就在于该系统需要开发者自己写客户端，模板中已经存在了一个客户端示例代码类： `top.sharehome.springbootinittemplate.config.canal.example.SimpleCanalClientExample` ，同样的，Deployer 的部署在 `module/canal-component` 文件夹中有具体介绍，开发者可以参考示例代码类进行相关功能的开发。
 
 ## 申明&联系我
 

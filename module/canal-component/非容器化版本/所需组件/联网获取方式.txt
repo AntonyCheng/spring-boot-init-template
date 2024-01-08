@@ -1,0 +1,2 @@
+https://github.com/alibaba/canal/releases/tag/canal-1.1.7
+下载canal.adapter-1.1.7.tar.gz和canal.deployer-1.1.7.tar.gz

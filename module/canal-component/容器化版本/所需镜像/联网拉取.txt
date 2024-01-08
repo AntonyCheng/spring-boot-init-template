@@ -1,0 +1,4 @@
+https://hub.docker.com/u/antonycheng2001
+
+docker pull antonycheng2001/canal-server:v1.1.7
+docker pull antonycheng2001/canal-adapter:v1.1.7
