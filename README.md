@@ -19,20 +19,20 @@
   - aop == 面向切面编程
 - **Netty 4.1.104.Final**
 - **MySQL**
-  - mybatis-plus 3.5.4.1 == MySQL 持久层操作框架
+  - mybatis-plus 3.5.5 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - Lombok 1.18.30
   - hutool 5.8.24
   - commons-lang3 3.14.0
-  - commons-io 2.15.0
+  - commons-io 2.15.1
   - commons-codec 1.16.0
   - commons-pool2 2.12.0
   - commons-collections4 4.4
   - commons-math 3.6.1
   - okhttp3 4.12.0
-  - fastjson2 2.0.42
+  - fastjson2 2.0.45
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -54,8 +54,8 @@
     - logstash-logback-encoder 7.3
   - easy-es-boot-starter 2.0.0-bata4 == 简化 ElasticSearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作的开源框架
 - **对象存储（OSS）**
-  - 腾讯云 COS 5.6.187
-  - 阿里云 OSS 3.17.2
+  - 腾讯云 COS 5.6.197
+  - 阿里云 OSS 3.17.4
   - MinIO 8.5.7
 - **文件操作**
   - POI 5.2.5 == 操作 Word
