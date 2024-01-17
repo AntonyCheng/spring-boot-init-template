@@ -29,7 +29,6 @@ import javax.validation.ValidationException;
  *
  * @author AntonyCheng
  */
-@ResponseBody
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
