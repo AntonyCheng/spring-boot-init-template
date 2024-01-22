@@ -1,11 +1,12 @@
 # SpringBoot初始化模板
 
 > 作者：[AntonyCheng](https://github.com/AntonyCheng)
+>
 > 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
 
 > **版本号：v2.x.x**
 
-基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
+基于 Java Web 项目的 SpringBoot 框架初始化模板，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
 ## 模板特点
 
@@ -13,26 +14,26 @@
 
 - **Java 11**
 - **SpringBoot 2.7.18**
-  - freemarker == 模板引擎
-  - web == SpringMVC
-  - undertow == Java Web 服务器
-  - aop == 面向切面编程
+  - FreeMarker == 模板引擎
+  - Spring Boot Web == SpringMVC
+  - Undertow == Java Web 服务器
+  - Spring Boot AOP == 面向切面编程
 - **Netty 4.1.104.Final**
 - **MySQL**
-  - mybatis-plus 3.5.5 == MySQL 持久层操作框架
+  - MyBatis-Plus 3.5.5 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - Lombok 1.18.30
-  - hutool 5.8.24
-  - commons-lang3 3.14.0
-  - commons-io 2.15.1
-  - commons-codec 1.16.0
-  - commons-pool2 2.12.0
-  - commons-collections4 4.4
-  - commons-math 3.6.1
-  - okhttp3 4.12.0
-  - fastjson2 2.0.45
+  - Hutool 5.8.24
+  - Commons-Lang3 3.14.0
+  - Commons-IO 2.15.1
+  - Commons-Codec 1.16.0
+  - Commons-Pool2 2.12.0
+  - Commons-Collections4 4.4
+  - Commons-Math 3.6.1
+  - OkHttp3 4.12.0
+  - FastJSON2 2.0.45
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -41,18 +42,18 @@
 - **缓存服务**
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
-  - redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
+  - Redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
-  - caffeine 3.1.8
+  - Caffeine 3.1.8
 - **消息队列**
-  - rabbitMQ
+  - RabbitMQ
     - spring-boot-starter-amqp
 - **搜索引擎**
   - Elastic Stack
-    - elasticsearch 7.14.0
-    - elasticsearch-rest-high-level-client 7.14.0
+    - Elasticsearch 7.14.0
+    - lasticsearch-rest-high-level-client 7.14.0
     - logstash-logback-encoder 7.3
-  - easy-es-boot-starter 2.0.0-bata4 == 简化 ElasticSearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作的开源框架
+  - easy-es-boot-starter 2.0.0-bata4 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作的开源框架
 - **对象存储（OSS）**
   - 腾讯云 COS 5.6.197
   - 阿里云 OSS 3.17.4
@@ -60,7 +61,7 @@
 - **文件操作**
   - POI 5.2.5 == 操作 Word
   - EasyExcel 3.3.2 == 操作 Excel
-  - itext 7.2.5 == 操作 PDF
+  - iText 7.2.5 == 操作 PDF
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要原因是为了适配模板，外接平台中的代码被作者修改过）**
   - XxlJob 2.4.0 == 分布式定时任务管理平台
   - PowerJob 4.3.6 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
@@ -69,8 +70,8 @@
 
 ### 业务特性
 
-- 使用 Undertow 服务器替换掉 Tomcat 服务器
-- SaToken 分布式可配置登录 & 认证 & 鉴权
+- 使用 Undertow 服务器替换掉 Tomcat 服务器，无阻塞更适合高并发
+- SaToken 可配置分布式登录 & 认证 & 鉴权
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
@@ -91,24 +92,24 @@
 
 ### 示例业务
 
-- 提供模板 SQL 示例文件（业务数据库 & XxlJob 数据库 & PowerJob 数据库）；
-- 用户登录、注册、注销、信息获取；
-- Spring Scheduler 单机版定时任务示例；
-- XxlJob & PowerJob 使用逻辑代码示例；
-- RabbitMQ 多类型消息队列逻辑代码示例；
-- AOP 逻辑代码示例；
-- 自定义注解逻辑代码示例；
-- 国际化逻辑代码示例；
-- 验证码逻辑代码示例。
+- 提供模板 SQL 示例文件（业务数据库 & XxlJob 数据库 & PowerJob 数据库）
+- 用户登录、注册、注销、信息获取
+- Spring Scheduler 单机版定时任务示例
+- XxlJob & PowerJob 使用逻辑代码示例
+- RabbitMQ 多类型消息队列逻辑代码示例
+- AOP 逻辑代码示例
+- 自定义注解逻辑代码示例
+- 国际化逻辑代码示例
+- 验证码逻辑代码示例
 
 ### 单元测试
 
-- JUnit5 单元测试；
-- 示例单元测试类。
+- JUnit5 单元测试
+- 示例单元测试类
 
 ## 快速上手
 
-> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于 application.yaml 文件。
+> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于 application.yaml 文件，即按需修改配置就能引入相关模板功能。
 
 ### 必须执行
 
@@ -121,7 +122,7 @@
      master:
        dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
-       url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+       url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
        connectionTimeoutMilliseconds: 30000
@@ -136,7 +137,7 @@
 
 ### 可选执行
 
-> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 代办进行标识，请务必“**必须执行**”。
+> 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 待办进行标识，请务必“**必须执行**”。
 
 #### 整合缓存服务
 
@@ -195,7 +196,7 @@
            max-wait: 3000
    ```
 
-3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在`config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
+3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在 `config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留做法仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
 
 ##### 整合业务缓存（Redisson）
 
@@ -204,7 +205,7 @@
 1. 修改 Redisson 配置，此时单机版本和集群版本的启动状态可以自定义：
 
    - 都不开启（都为 false ）：模版不会将 Redisson 相关依赖纳入反转控制容器中；
-   - 仅开启一个；
+   - 仅开启一个（一个为 true ，一个为 false ）；
    - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
@@ -275,7 +276,7 @@
 
 ##### 整合本地缓存（Caffeine）
 
-本地缓存服务主要是为了满足开发者在编码过程中的多级缓存的需求，通过牺牲本地机器空间换取网络通讯时间的做法，理论上这种服务器缓存的效率是最高的，但是不推荐用其替代上面系统缓存或者业务缓存，此种缓存方式仅作系统性能提升的辅助方案，例如获取登录信息可以做“本地缓存==>业务缓存==>数据库”三级缓存方案。
+本地缓存服务主要是为了满足开发者在编码过程中的多级缓存的需求，通过牺牲本地机器空间换取网络通讯时间的做法，理论上这种服务器内存缓存的效率是最高的，但是不推荐用其替代上面系统缓存或者业务缓存，此种缓存方式仅作系统性能提升的辅助方案，例如获取登录信息可以做“本地缓存 ==> 业务缓存 ==> 数据库”三级缓存方案。
 
 1. 修改 Caffeine 配置：
 
@@ -302,7 +303,7 @@
 
 ##### 激活消息队列
 
-1. 修改消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除），然后根据自己搭建的 RabbitMQ 进行相关配置：
+1. 修改消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除，说不一定万一哪天有用呢），然后根据自己搭建的 RabbitMQ 进行相关配置：
 
    ```yaml
    spring: 
@@ -338,7 +339,7 @@
            acknowledge-mode: manual
    ```
 
-2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，它们在 `utils/rabbitmq/RabbitMqUtils` 工具类中由“default”开头的方法，当然开发者也可以通过一定规则自定义消息队列，这些消息队列会与 RabbitMqUtils 工具类兼容。
+2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，它们在 `utils/rabbitmq/RabbitMqUtils` 工具类中由“default”开头的方法，当然开发者也可以按照一定的模板规则来自定义消息队列，这些消息队列会与 RabbitMqUtils 工具类兼容。
 
 ##### 自定义消息队列
 
@@ -350,19 +351,19 @@
 
    这些具体的消息队列特性往往需要开发者掌握一定的前置知识基础；
 
-2. 然后粘贴 `config/default_mq/DefaultRabbitMq` 类，复制到 `config/customize_mq` 包中，并且重命名（在 DefaultRabbitMq 的文档注释中有具体说明），注意不要和 DefaultRabbitMq 类重复，不然会造成反转控制冲突，这里假设命名成 TestRabbitMq ；
+2. 然后粘贴 `config/defaultMq/DefaultRabbitMq` 类，复制到 `config/customizeMq` 包中，并且重命名（在 DefaultRabbitMq 的文档注释中有具体说明），注意不要和 DefaultRabbitMq 类重复，不然会造成 Bean 注入冲突，这里假设命名成 TestRabbitMq ；
 
 3. 在 TestRabbitMq 中进行文本替换，将所有 “default” 替换成 “test” 即可，如果想要使用自定义的消息队列配置，直接使用 RabbitMqUtils 工具类中形参带有 “Class” 类型的方法即可（详情见 RabbitMqUtils 文档注释）。
 
 注意：这里只给出了最简单的自定义方式，开发者在理解这种“替换”变换和阅读相关源码的基础上可以对模板进行更加自定义的改造。
 
-#### 整合ElasticSearch
+#### 整合Elasticsearch
 
-与其说是整合 ElasticSearch 搜索引擎，不如说是整合 Easy-ES 框架，正因为 Easy-ES 框架过于强大， ElasticSearch 那种繁琐的操作才能得以简化，但是不要依赖这个工具而不去深入了解学习 ElasticSearch 这个伟大的搜索引擎，Easy-ES 的开发者就已经说得很明白了：这套框架的是站在 elasticsearch-rest-high-level-client 和 Mybatis-Plus 的肩膀上创作的，而前者的底层操作逻辑正是 ElasticSearch 的操作逻辑。
+与其说是整合 Elasticsearch 搜索引擎，不如说是整合 Easy-ES 框架，正因为 Easy-ES 框架过于强大， Elasticsearch 中繁琐的操作才能得以简化，但是不要依赖这个工具而不去深入了解学习 Elasticsearch 这个伟大的搜索引擎，Easy-ES 的开发者就已经说得很明白了：这套框架的是站在 elasticsearch-rest-high-level-client 和 MyBatis-Plus 的肩膀上创作的，而前者的底层操作逻辑正是 Elasticsearch 的操作逻辑。
 
-在使用该模板中的 ElasticSearch 相关功能之前一定要前往 Easy-ES 官网将快速入门部分通读一遍，要有一个大概的了解才能容易上手。
+在使用该模板中的 Elasticsearch 相关功能之前一定要前往 Easy-ES 官网将快速入门部分通读一遍，要有一个大概的了解才能容易上手。
 
-1. 修改 Easy-ES 相关配置，重点关注 ElasticSearch 的部署地址，由于框架自身原因， ElasticSearch 的相关依赖被固定在 **7.14.0** ，好在 ElasticSearch 在小版本之间兼容性还不错，所以理论上部署 7.x.x 的 EalsticSearch 即可满足要求，当然推荐部署 7.14.0 版本的 ElasticSearch ，然而 ElasticSearch 7.x.x 这个大版本依旧在更新维护，所以可以放心使用：
+1. 修改 Easy-ES 相关配置，重点关注 Elasticsearch 的部署地址，由于框架自身原因， Elasticsearch 的相关依赖被固定在 **7.14.0** ，好在 Elasticsearch 在小版本之间兼容性还不错，所以理论上部署 7.x.x 的 Elasticsearch 即可满足要求，当然推荐部署 7.14.0 版本的 Elasticsearch ，然而 Elasticsearch 7.x.x 这个大版本依旧在更新维护，所以可以放心使用：
 
    ```yaml
    # Easy-ES配置
@@ -392,11 +393,11 @@
      # 最大连接路由数 单位:个
      max-conn-per-route: 100
      global-config:
-       # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,,默认开启此模式
+       # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,默认开启此模式
        process-index-mode: manual
        # 开启控制台打印通过本框架生成的DSL语句,默认为开启,测试稳定后的生产环境建议关闭,以提升少量性能
        print-dsl: true
-       # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁.
+       # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁
        distributed: false
        # 重建索引超时时间 单位小时,默认72H 可根据ES中存储的数据量调整
        reindexTimeOutHours: 72
@@ -704,7 +705,7 @@ spring:
    
        zh_CN(new Locale("zh", "CN")),
    
-       zh_TW(new Locale("zh", "TW")); //这里是新增的中文简体
+       zh_TW(new Locale("zh", "TW")); //这里是新增的中文繁体
    
        final private Locale locale;
    
@@ -973,7 +974,7 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
        executor:
          # 执行器AppName：执行器心跳注册分组依据；为空则关闭自动注册
          appname: xxl-job-executor
-         # 执行器端口号 执行器从38080开始往后写
+         # 执行器端口号
          port: 38081
          # 执行器注册：默认IP:PORT（appname不为空，该处则可为空）
          address:
@@ -1113,7 +1114,7 @@ spring:
 
 ##### Canal简介
 
-Canal 是 Alibaba 开发的基于 MySQL 数据库的增量日志解析工具，主要用于从 MySQL 到其他数据介质的数据流（主要包括 MySQL 、Kafka 、ElasticSearch 、MQ 以及 Log ）同步，类似的业务包括如下：
+Canal 是 Alibaba 开发的基于 MySQL 数据库的增量日志解析工具，主要用于从 MySQL 到其他数据介质的数据流（主要包括 MySQL 、Kafka 、Elasticsearch 、MQ 以及 Log ）同步，类似的业务包括如下：
 
 - 数据库镜像；
 - 数据库实时备份；
