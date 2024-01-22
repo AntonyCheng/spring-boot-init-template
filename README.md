@@ -5,6 +5,8 @@
 > 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
 
 > **版本号：v2.x.x**
+> 
+> 灵感来源： [编程导航](https://t.zsxq.com/16MQ8Oz3F) & [偌依框架](https://ruoyi.vip/)
 
 基于 Java Web 项目的 SpringBoot 框架初始化模板，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
