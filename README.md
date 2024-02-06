@@ -1121,11 +1121,17 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XxlJob 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
 
 ```yaml
+# 服务概况 ---- 可自定义
 server:
-  port: 38078
+  port: 38077
+# 公共配置文件
 spring:
   application:
     name: spring-boot-admin
+  security:
+    user:
+      name: admin
+      password: admin123456
   boot:
     admin:
       context-path: /spring-boot-admin
@@ -1133,7 +1139,7 @@ spring:
     check-template-location: false
 ```
 
-即 `http://localhost:38078/spring-boot-admin` ，接下来就去整合其他模块，修改模板模块中的 `application.yaml` 文件，更改 enable 配置项：
+即 `http://localhost:38077/spring-boot-admin` ，接下来就去整合其他模块，修改模板模块中的 `application.yaml` 文件，更改 enable 配置项：
 
 ```yaml
 # 公共配置文件
@@ -1144,7 +1150,7 @@ spring:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: true
-        url: http://localhost:38078/spring-boot-admin
+        url: http://localhost:38077/spring-boot-admin
         username: admin
         password: admin123456
         instance:

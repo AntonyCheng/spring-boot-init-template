@@ -17,7 +17,7 @@
         <!-- Java相关 -->
         <java.version>11</java.version>
         <!-- Netty相关 -->
-        <netty.version>4.1.104.Final</netty.version>
+        <netty.version>4.1.106.Final</netty.version>
         <!-- MySQL相关 -->
         <mysql.version>8.0.33</mysql.version>
         <druid.starter.version>1.2.21</druid.starter.version>
@@ -25,7 +25,7 @@
         <shardingsphere.version>5.3.2</shardingsphere.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.30</lombok.version>
-        <hutool.version>5.8.24</hutool.version>
+        <hutool.version>5.8.25</hutool.version>
         <commons.lang3.version>3.14.0</commons.lang3.version>
         <commons.io.version>2.15.1</commons.io.version>
         <commons.codec.version>1.16.0</commons.codec.version>
@@ -35,19 +35,19 @@
         <ok.http3.version>4.12.0</ok.http3.version>
         <ok.io.version>3.7.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
-        <knife4j.version>4.1.0</knife4j.version>
-        <fastjson2.version>2.0.45</fastjson2.version>
+        <knife4j.starter.version>4.4.0</knife4j.starter.version>
+        <fastjson2.version>2.0.46</fastjson2.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.37.0</sa.token.version>
         <!-- 缓存相关 -->
-        <redisson.version>3.24.3</redisson.version>
+        <redisson.version>3.26.0</redisson.version>
         <caffeine.version>3.1.8</caffeine.version>
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
-        <easy.es.version>2.0.0-beta4</easy.es.version>
+        <easy.es.starter.version>2.0.0-beta5</easy.es.starter.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.197</tencent.cos.version>
+        <tencent.cos.version>5.6.205</tencent.cos.version>
         <ali.oss.version>3.17.4</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>
@@ -248,7 +248,7 @@
         <dependency>
             <groupId>org.dromara.easy-es</groupId>
             <artifactId>easy-es-boot-starter</artifactId>
-            <version>${easy.es.version}</version>
+            <version>${easy.es.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
@@ -400,7 +400,7 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
+            <version>${knife4j.starter.version}</version>
         </dependency>
 
         <!-- fastjson2 依赖配置 -->

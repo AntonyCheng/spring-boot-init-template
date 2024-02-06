@@ -3,7 +3,6 @@ server:
   port: 38077
   servlet:
     context-path: /spring-boot-admin
-
 # 公共配置文件
 spring:
   application:
@@ -14,6 +13,6 @@ spring:
       password: admin123456
   boot:
     admin:
-      context-path: /spring-boot-admin
+      context-path: /
   thymeleaf:
     check-template-location: false

@@ -145,7 +145,7 @@ public class TestRedisson {
                 System.out.println("主线程第" + finalI + "次释放锁");
             });
         }
-        while (true) {
+        for (; ; ) {
         }
     }
 
@@ -180,7 +180,7 @@ public class TestRedisson {
                 System.out.println("主线程第" + finalI + "次没拿到锁");
             }
         }
-        while (true) {
+        for (; ; ) {
         }
     }
 

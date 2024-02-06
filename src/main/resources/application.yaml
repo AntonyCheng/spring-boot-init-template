@@ -1,8 +1,11 @@
 # 服务概况 ---- 可自定义
 server:
+  # 项目端口
   port: 38080
   servlet:
+    # 项目基础URI
     context-path: /api
+  # 开启Http2，使其能够进行多路复用
   http2:
     enabled: true
   # 选择undertow服务器配置
@@ -48,9 +51,8 @@ knife4j:
   basic:
     # todo 是否让页面带有basic验证（如果只是查看api推荐打开，但是如果要在里面调试，推荐关闭，因为basic验证之后会占用请求头的Authorization字段，会导致需要登录验证的接口调用失败，预先关闭）
     enable: false
-    username: antony
-    password: antony123456
-
+    username: admin
+    password: admin123456
 # springdoc-openapi项目配置
 springdoc:
   api-docs:
@@ -93,27 +95,35 @@ management:
 
 # 公共配置文件
 spring:
+  # 项目前置工作 ---- 可自定义
+  application:
+    name: spring-boot-init-template
+  # 配置SpringBootAdmin
+  boot:
+    admin:
+      client:
+        # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+        enabled: false
+        # SpringBootAdmin地址
+        url: http://127.0.0.1:38077/spring-boot-admin/
+        # SpringBootAdmin账号
+        username: admin
+        # SpringBootAdmin密码
+        password: admin123456
+        # 实例配置
+        instance:
+          # 指定服务实例在注册到Admin服务器时提供给服务器的是IP地址而不是其他类型的主机名（如DNS名称）
+          service-host-type: ip
+          # 指定Admin界面显示的实例名称
+          name: ${spring.application.name}
+          # 指定客户端应用的服务基础URL，当Admin Server需要调用客户端应用的actuator端点或其他API时，会使用这个URL作为前缀
+          service-base-url: http://127.0.0.1:38080
   # 国际化配置
   messages:
     # todo 是否启动国际化功能（预先关闭）
     enable: false
     # 解释：i18n是存放多语言文件目录，messages是文件前缀
     basename: i18n/messages
-  # 配置SpringBootAdmin项目所在地址
-  boot:
-    admin:
-      client:
-        # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
-        enabled: false
-        url: http://127.0.0.1:38077/spring-boot-admin
-        username: admin
-        password: admin123456
-        instance:
-          service-host-type: ip
-          name: ${spring.application.name}
-  # 项目前置工作 ---- 可自定义
-  application:
-    name: spring-boot-init-template
   # 模板工具配置
   freemarker:
     check-template-location: false
@@ -130,13 +140,29 @@ spring:
       max-file-size: 10MB
       # 设置总上传的文件大小
       max-request-size: 20MB
-  # 支持 swagger3
+  # 设置Spring MVC路径匹配策略，ant_path_matcher格式：/api/**/subApi/{param}
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   # 不允许bean的定义被覆盖，保证系统稳定，但是某些情况下可能需要反其道而行之，这个由开发者自己定义，默认关闭
   main:
     allow-bean-definition-overriding: false
+  # 邮件配置
+  mail:
+    # todo 是否开启邮件功能（这里的邮件功能指的是模板内增强的邮件工具，预先关闭）
+    enable: false
+    # 发送邮件服务器主机
+    host: smtp.163.com
+    # 发送邮件服务器端口
+    port: 25
+    # 发送邮件的邮箱地址
+    username: xxxxxxxx@163.com
+    # 发送邮件的邮箱验证密码或者授权码
+    password: xxxxxxxx
+    # 邮件默认编码
+    default-encoding: UTF-8
+    # 邮箱通讯协议
+    protocol: smtp
   # rabbitmq配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
@@ -167,22 +193,6 @@ spring:
         acknowledge-mode: manual
       simple:
         acknowledge-mode: manual
-  # 邮件配置
-  mail:
-    # todo 是否开启邮件功能（这里的邮件功能指的是模板内增强的邮件工具，预先关闭）
-    enable: false
-    # 发送邮件服务器主机
-    host: smtp.163.com
-    # 发送邮件服务器端口
-    port: 25
-    # 发送邮件的邮箱地址
-    username: xxxxxxxx@163.com
-    # 发送邮件的邮箱验证密码或者授权码
-    password: xxxxxxxx
-    # 邮件默认编码
-    default-encoding: UTF-8
-    # 邮箱通讯协议
-    protocol: smtp
   # 框架依赖自动配置选择
   autoconfigure:
     exclude:
@@ -421,7 +431,7 @@ oss:
     # todo 是否开启（预先关闭）
     enable: false
     # 域名（格式：【ip:port】）
-    endpoint: xxx.xxx.xxx.xxx:9000
+    endpoint: xxx.xxx.xxx.xxx:39000
     # 是否开启TLS
     enable-tls: false
     # 用户的 SecretId

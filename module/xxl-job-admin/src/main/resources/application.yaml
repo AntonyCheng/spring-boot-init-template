@@ -31,12 +31,13 @@ spring:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
-        url: http://127.0.0.1:38077/spring-boot-admin
+        url: http://127.0.0.1:38077/spring-boot-admin/
         username: admin
         password: admin123456
         instance:
           service-host-type: ip
           name: ${spring.application.name}
+          service-base-url: http://127.0.0.1:38079
   # 模板工具配置
   freemarker:
     check-template-location: false
