@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form onsubmit="return false">
+    <textarea name="message" style="height: 300px;width: 300px"></textarea>
+    <input type="button" value="发送消息" onclick="send(this.form.message.value)">
+    <textarea id="responseText" style="height: 300px;width: 300px"></textarea>
+    <input type="button" value="清空内容" onclick="document.getElementById('responseText').value=''">
+</form>
+</body>
+
+<script>
+    let websocket;
+    websocket = new WebSocket("ws://localhost:39999/websocket");
+    // 服务端可读就绪，event相当于收到服务端回送的消息
+    websocket.onmessage = function (event) {
+        let rt = document.getElementById("responseText");
+        rt.value = rt.value + "\n" + event.data;
+    }
+    // 服务端连接就绪
+    websocket.onopen = function (event) {
+        let rt = document.getElementById("responseText");
+        rt.value = "已连接服务器..."
+    }
+    // 服务端断开连接就绪
+    websocket.onclose = function (event) {
+        let rt = document.getElementById("responseText");
+        if (rt.value===""){
+            rt.value = "连接已断开..."
+        }else {
+            rt.value = rt.value + "\n" + "连接已断开..."
+        }
+    }
+
+    /**
+     * 发送消息
+     */
+    function send(message) {
+        // 判断WebSocket是不是开启状态
+        if (websocket.readyState === WebSocket.OPEN) {
+            if(message===''){
+                return
+            }
+            // 通过websocket发消息
+            websocket.send(message)
+        } else {
+            alert("连接没有开启")
+        }
+    }
+</script>
+
+</html>

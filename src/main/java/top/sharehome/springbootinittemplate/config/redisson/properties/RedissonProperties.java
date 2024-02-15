@@ -53,7 +53,7 @@ public class RedissonProperties {
     private ClusterServersConfig clusterServersConfig;
 
     /**
-     * 单例服务配置
+     * 单机服务配置
      */
     @Data
     @NoArgsConstructor

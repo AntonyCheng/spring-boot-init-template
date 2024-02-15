@@ -365,6 +365,13 @@ caffeine:
   # 是否允许空值null作为缓存的value
   allow-null-value: true
 
+# WebSocket配置
+websocket:
+  # todo 是否开启（预先关闭）
+  enable: true
+  # websocket服务端口
+  port: 39999
+
 # Easy-ES配置
 easy-es:
   # todo 是否启动（预先关闭）
