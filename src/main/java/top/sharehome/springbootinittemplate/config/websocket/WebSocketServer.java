@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 
 /**
  * Websocket服务器
+ * todo 设计Bean创建之后和销毁之后要做的事儿，销毁需要关闭线程组之类的
  *
  * @author AntonyCheng
  */
@@ -85,7 +86,7 @@ public class WebSocketServer {
                             浏览器请求时是以 ws://IP:PORT/xxx 的格式表示 URL，而这里添加 WebSocketServerProtocolHandler 对象主要是将 Http 协议升级为 WS 协议，保持长连接，
                             那么如何升级的呢？是因为服务器和 Web 客户端之前会提前隐式沟通，通过 101 状态码表示可切换传输协议。
                             参数说明：
-                            String websocketPath 即 WebSocket 访问的基础路径，此时如果访问 ws://127.0.0.1:9999 是没办法进行 WebSocket 数据传输的，需要 ws://127.0.0.1:9999/websocket 才行，
+                            String websocketPath 即 WebSocket 访问的基础路径，此时如果访问 ws://127.0.0.1:39999 是没办法进行 WebSocket 数据传输的，需要 ws://127.0.0.1:39999/websocket 才行，
                                                  如果没有按照要求访问，101 状态码就不会存在。
                              */
                         pipeline.addLast(new WebSocketServerProtocolHandler("/websocket"));
@@ -94,7 +95,6 @@ public class WebSocketServer {
                     }
                 });
         // 异步监听服务器启动事件
-        // 异步监听启动事件是为了让服务端在后台启动，加快速度，但是也可以同步启动
         ChannelFuture bindFuture = serverBootstrap.bind(webSocketProperties.getPort());
         // 监听bindFuture绑定事件结果
         bindFuture.addListener(new ChannelFutureListener() {
