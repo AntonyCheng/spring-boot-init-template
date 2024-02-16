@@ -13,13 +13,12 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.websocket.condition.WebSocketCondition;
 import top.sharehome.springbootinittemplate.config.websocket.handler.TextWebSocketFrameHandler;
 import top.sharehome.springbootinittemplate.config.websocket.properties.WebSocketProperties;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Websocket服务器
@@ -33,26 +32,20 @@ import javax.annotation.PostConstruct;
 @Conditional(WebSocketCondition.class)
 public class WebSocketServer {
 
-    private static WebSocketProperties webSocketProperties;
+    private EventLoopGroup bossGroup = null;
+
+    private EventLoopGroup workerGroup = null;
 
     public WebSocketServer(WebSocketProperties webSocketProperties) {
-        // 判断端口号是否不合法
+        // 判断端口号是否合法
         if (webSocketProperties.getPort() > 65535 || webSocketProperties.getPort() < 0) {
+            log.info("An invalid WebSocket port[{}] was configured, now 39999.", webSocketProperties.getPort());
             webSocketProperties.setPort(39999);
         }
-        WebSocketServer.webSocketProperties = webSocketProperties;
-    }
-
-    @PostConstruct
-    private static void startServer0() {
-        // 创建两个线程组
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-        // 创建启动器
+        bossGroup = new NioEventLoopGroup(webSocketProperties.getBossThread());
+        workerGroup = new NioEventLoopGroup(webSocketProperties.getWorkerThread());
         ServerBootstrap serverBootstrap = new ServerBootstrap();
-        // 编写启动器配置
-        serverBootstrap.group(bossGroup, workerGroup)
+        serverBootstrap.group(bossGroup,workerGroup)
                 // 设置服务端通道类型
                 .channel(NioServerSocketChannel.class)
                 // 配置服务器可连接队列的大小
@@ -101,7 +94,7 @@ public class WebSocketServer {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (channelFuture.isSuccess()) {
-                    System.out.println("服务器启动成功...");
+                    log.info("WebSocket Server is RUNNING, Port is {}.", webSocketProperties.getPort());
                 } else {
                     System.err.println(channelFuture.cause().getMessage());
                 }
@@ -113,10 +106,22 @@ public class WebSocketServer {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (channelFuture.isSuccess()) {
-                    System.out.println("服务器关闭成功...");
+                    log.info("WebSocket Server is SHUTTING.");
+                } else {
+                    System.err.println(channelFuture.cause().getMessage());
                 }
             }
         });
+    }
+
+    @Bean(destroyMethod = "destroy")
+    protected WebSocketServer startServer0() {
+        return this;
+    }
+
+    public void destroy(){
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 
 }

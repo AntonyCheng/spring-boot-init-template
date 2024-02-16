@@ -368,9 +368,13 @@ caffeine:
 # WebSocket配置
 websocket:
   # todo 是否开启（预先关闭）
-  enable: true
+  enable: false
   # websocket服务端口
   port: 39999
+  # BOSS线程组线程数
+  boss-thread: 4
+  # WORKER线程组线程数
+  worker-thread: 16
 
 # Easy-ES配置
 easy-es:

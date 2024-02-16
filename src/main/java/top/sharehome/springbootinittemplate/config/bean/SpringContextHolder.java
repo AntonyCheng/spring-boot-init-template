@@ -89,7 +89,7 @@ public class SpringContextHolder implements ApplicationContextAware {
      */
     @PostConstruct
     private void initDi() {
-        log.info("############ {} Configuration DI.", this.getClass().getSimpleName());
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
     }
 
 }

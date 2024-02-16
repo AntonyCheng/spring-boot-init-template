@@ -22,4 +22,14 @@ public class WebSocketProperties {
      */
     private Integer port = 39999;
 
+    /**
+     * BOSS线程组线程数
+     */
+    private Integer bossThread = 4;
+
+    /**
+     * WORKER线程组线程数
+     */
+    private Integer workerThread = 16;
+
 }
