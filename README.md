@@ -44,6 +44,7 @@
       * [SpringBoot任务调度](#springboot任务调度)
       * [XxlJob任务调度](#xxljob任务调度)
       * [PowerJob任务调度](#powerjob任务调度)
+    * [配置WebSocket](#配置websocket)
     * [配置SpringBootAdmin](#配置springbootadmin)
     * [配置Canal](#配置canal)
       * [Canal简介](#canal简介)
@@ -62,14 +63,14 @@
   - Spring Boot Web == SpringMVC
   - Undertow == Java Web 服务器
   - Spring Boot AOP == 面向切面编程
-- **Netty 4.1.104.Final**
+- **Netty 4.1.106.Final**
 - **MySQL**
   - MyBatis-Plus 3.5.5 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
   - ShardingSphere 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - Lombok 1.18.30
-  - Hutool 5.8.24
+  - Hutool 5.8.26
   - Commons-Lang3 3.14.0
   - Commons-IO 2.15.1
   - Commons-Codec 1.16.0
@@ -77,7 +78,7 @@
   - Commons-Collections4 4.4
   - Commons-Math 3.6.1
   - OkHttp3 4.12.0
-  - FastJSON2 2.0.45
+  - FastJSON2 2.0.46
 - **权限校验**
   - SaToken 1.37.0
     - SaToken Core 1.37.0
@@ -86,7 +87,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
-  - Redisson 3.24.3 == Redis 的基础上实现的 Java 驻内存数据网格
+  - Redisson 3.26.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - Caffeine 3.1.8
 - **消息队列**
@@ -97,14 +98,14 @@
     - Elasticsearch 7.14.0
     - lasticsearch-rest-high-level-client 7.14.0
     - logstash-logback-encoder 7.3
-  - easy-es-boot-starter 2.0.0-bata4 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+  - easy-es-boot-starter 2.0.0-bata5 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
 - **对象存储（OSS）**
-  - 腾讯云 COS 5.6.197
+  - 腾讯云 COS 5.6.205
   - 阿里云 OSS 3.17.4
   - MinIO 8.5.7
 - **文件操作**
   - POI 5.2.5 == 操作 Word
-  - EasyExcel 3.3.2 == 操作 Excel
+  - EasyExcel 3.3.3 == 操作 Excel
   - iText 7.2.5 == 操作 PDF
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要原因是为了适配模板，外接平台中的代码被作者修改过）**
   - XxlJob 2.4.0 == 分布式定时任务管理平台
@@ -130,6 +131,7 @@
 - Spring 上下文处理工具
 - JSON 长整型精度处理
 - 自动字段填充器
+- 基于 Netty 的 WebSocket 全双工通信设计示例
 - 对象存储、消息队列、缓存、分布式锁、限流、国际化等工具类
 
 ## 业务功能
@@ -1116,6 +1118,27 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
 3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/powerjob` 包中，至此模板中关于 PowerJob 的内容就结束了，如果想要使用 PowerJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
 
+#### 配置WebSocket
+
+如果想拥有正真意义上的服务器推送功能，目前有两种解决方案，第一种是 Server-Send Event（SSE） 单工通信机制，第二种是 WebSocket 全双工通信机制，该模板中给出了基于 Netty 框架搭建的 WebSocket 相关配置，具体编码方法请见：[Netty 学习示例](https://github.com/AntonyCheng/netty-study-demo)。
+
+在该模板中配置 WebSocket 很简单，首先修改 `application.yaml` 文件：
+
+```yaml
+# WebSocket配置
+websocket:
+  # todo 是否开启（预先关闭）
+  enable: true
+  # websocket服务端口
+  port: 39999
+  # BOSS线程组线程数
+  boss-thread: 4
+  # WORKER线程组线程数
+  worker-thread: 16
+```
+
+然后根据具体业务修改模板中已有代码即可，相关代码在 `top.sharehome.springbootinittemplate.config.websocket` 包下。
+
 #### 配置SpringBootAdmin
 
 SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XxlJob 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
@@ -1199,7 +1222,6 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ## 下一步开发计划
 
-* 集成WebSocket（必做）
 * 集成Prometheus和Grafana监控报警平台（选做）
 * 集成Apache SkyWalking链路追踪（选做）
 * ......
