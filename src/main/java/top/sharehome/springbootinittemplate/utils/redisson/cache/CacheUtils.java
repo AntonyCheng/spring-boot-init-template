@@ -128,6 +128,20 @@ public class CacheUtils {
     }
 
     /**
+     * 根据类型获取缓存
+     *
+     * @param key  缓存键
+     * @param type 返回类型
+     * @param <T>  泛型T
+     * @param <R>  泛型S
+     * @return 返回结果
+     */
+    public static <T, R> R get(String key, Class<R> type) {
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key);
+        return (R) bucket.get();
+    }
+
+    /**
      * 使用通配符模糊获取缓存键
      * * 表示匹配零个或多个字符。
      * ? 表示匹配一个字符。

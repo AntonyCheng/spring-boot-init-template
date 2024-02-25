@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.EnableAsync;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
+import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 
 /**
  * 测试类
@@ -64,6 +68,21 @@ class MainApplicationTests {
         authService.update(userLambdaUpdateWrapper);
         admin = authService.getOne(userLambdaQueryWrapper);
         System.out.println(admin);
+    }
+
+    @Resource
+    private RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
+
+    /**
+     * todo 暂存
+     */
+    @Test
+    public void testRedis(){
+        ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
+        User user = new User().setAccount("abc").setPassword("abc").setCreateTime(LocalDateTime.now());
+        stringObjectValueOperations.set("user",user);
+        User user1 = (User) stringObjectValueOperations.get("user");
+        System.out.println(user1);
     }
 
     public static void main(String[] args) {
