@@ -122,17 +122,42 @@ spring:
   messages:
     # todo 是否启动国际化功能（预先关闭）
     enable: false
+    # 默认语言
+    default-locale: zh_cn
     # 解释：i18n是存放多语言文件目录，messages是文件前缀
     basename: i18n/messages
+    # 指定国际化文件编码格式
+    encoding: UTF-8
+    # 设置国际化消息缓存有效时间，单位是秒
+    cache-duration: 3600
+    # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置
+    fallback-to-system-locale: true
+    # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
+    use-code-as-default-message: false
   # 模板工具配置
   freemarker:
+    # todo 是否启动FreeMarker模板引擎
+    enabled: false
+    # 设置是否检查模板文件路径是否存在
     check-template-location: false
+    # 指定查找FreeMarker模板文件的路径
     template-loader-path: classpath:/templates/
+    # 定义模板文件的后缀名，ftl是FreeMarker模板的标准扩展名
     suffix: .ftl
+    # 设置模板文件的字符集编码
     charset: UTF-8
+    # 在模型（Model）中设置一个属性名称，以便在模板中可以访问到HttpServletRequest对象。这里设置为request，意味着在模板中可以通过${request}来访问请求上下文信息
     request-context-attribute: request
+    # 自定义设置
     settings:
+      # 浮点数格式
       number_format: 0.##########
+      # 日期和时间格式
+      datetime_format: yyyy-MM-dd HH:mm:ss
+      # 日期格式
+      date_format: yyyy-MM-dd
+      # 时间格式
+      time_format: HH:mm:ss
   # 文件上传 ---- 可自定义
   servlet:
     multipart:
@@ -205,7 +230,7 @@ spring:
   # mysql配置
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:mysql.yaml
+    url: jdbc:shardingsphere:classpath:mysql/mysql.yaml
     # HikariCP连接池配置（性能较好，模板首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
     hikari:
       # 连接池名称
@@ -571,6 +596,13 @@ captcha:
   char-length: 4
   # 验证码存活时间（单位：秒）
   expired: 180
+
+# 离线IP库配置
+ip2region:
+  # todo 是否启用离线IP
+  enable: false
+  # 数据加载方式
+  load-type: memory
 
 # MyBatisPlus配置
 # https://baomidou.com/config/

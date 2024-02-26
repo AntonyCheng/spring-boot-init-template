@@ -1,7 +1,9 @@
 package top.sharehome.springbootinittemplate.utils.net;
 
 import lombok.extern.slf4j.Slf4j;
+import org.lionsoul.ip2region.xdb.Searcher;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,11 @@ import java.net.InetAddress;
  */
 @Slf4j
 public class NetUtils {
+
+    /**
+     * 引入离线IP库
+     */
+    private static final Searcher SEARCHER = SpringContextHolder.getBean(Searcher.class);
 
     /**
      * 通过请求获取客户端可能存在的IP地址
@@ -71,7 +78,31 @@ public class NetUtils {
         if (ipAddress == null) {
             return "127.0.0.1";
         }
-        return ipAddress;
+        return "0:0:0:0:0:0:0:1".equals(ipAddress) ? "127.0.0.1" : ipAddress;
+    }
+
+    /**
+     * 根据客户端IP地址获取客户端地区
+     *
+     * @param ip IP地址
+     * @return 返回地区
+     */
+    public static String getRegionByIpAddress(String ip) {
+        try {
+            return SEARCHER.search(ip);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 根据客户端请求获取客户端地区
+     *
+     * @param request 客户端请求
+     * @return 返回地区
+     */
+    public static String getRegionByRequest(HttpServletRequest request) {
+        return getRegionByIpAddress(getIpAddressByRequest(request));
     }
 
 }

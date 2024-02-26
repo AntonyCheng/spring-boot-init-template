@@ -38,7 +38,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     @EnableCaptcha
-    public R<String> register(@RequestBody @Validated(PostGroup.class) AuthRegisterDto authRegisterDto) {
+    public R<String> register(@RequestBody @Validated({PostGroup.class}) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
         }
@@ -54,7 +54,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @EnableCaptcha
-    public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
+    public R<AuthLoginVo> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
         return R.ok("登录成功", loginUser);

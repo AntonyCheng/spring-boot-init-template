@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.core.annotation.Order;
 import top.sharehome.springbootinittemplate.common.validate.GetGroup;
+import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -24,13 +27,13 @@ public class AuthLoginDto implements Serializable {
     /**
      * 用户账号
      */
-    @NotBlank(message = "账号不能为空", groups = {GetGroup.class})
+    @NotBlank(message = "账号不能为空", groups = {PostGroup.class})
     private String account;
 
     /**
      * 用户密码
      */
-    @NotBlank(message = "密码不能为空", groups = {GetGroup.class})
+    @NotBlank(message = "密码不能为空", groups = {PostGroup.class})
     private String password;
 
     /**

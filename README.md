@@ -33,6 +33,7 @@
       * [整合阿里云OSS](#整合阿里云oss)
     * [整合验证码](#整合验证码)
     * [整合邮件](#整合邮件)
+    * [整合离线IP库](#整合离线ip库)
     * [配置国际化](#配置国际化)
     * [配置SaToken](#配置satoken)
       * [开启鉴权](#开启鉴权)
@@ -63,7 +64,7 @@
   - Spring Boot Web == SpringMVC
   - Undertow == Java Web 服务器
   - Spring Boot AOP == 面向切面编程
-- **Netty 4.1.106.Final**
+- **Netty 4.1.107.Final**
 - **MySQL**
   - MyBatis-Plus 3.5.5 == MySQL 持久层操作框架
   - JDBC 8.0.33 == Java 连接 MySQL 依赖
@@ -87,7 +88,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis
   - spring-boot-starter-cache
-  - Redisson 3.26.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - Redisson 3.27.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - Caffeine 3.1.8
 - **消息队列**
@@ -102,11 +103,11 @@
 - **对象存储（OSS）**
   - 腾讯云 COS 5.6.205
   - 阿里云 OSS 3.17.4
-  - MinIO 8.5.7
+  - MinIO 8.5.8
 - **文件操作**
   - POI 5.2.5 == 操作 Word
   - EasyExcel 3.3.3 == 操作 Excel
-  - iText 7.2.5 == 操作 PDF
+  - iText 8.0.3 == 操作 PDF
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要原因是为了适配模板，外接平台中的代码被作者修改过）**
   - XxlJob 2.4.0 == 分布式定时任务管理平台
   - PowerJob 4.3.6 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
@@ -125,14 +126,16 @@
 - 封装统一响应对象
 - 自定义响应码
 - 可配置式国际化
+- 可配置式多类型对象存储
 - 可实现多级缓存
+- 毫秒级离线 IP 查询
 - SpringDoc + Knife4j 接口文档
 - 全局跨域处理
 - Spring 上下文处理工具
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络等工具类
 
 ## 业务功能
 
@@ -714,6 +717,25 @@ spring:
 
 修改完之后即可使用模板中邮件工具类 `MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
 
+#### 整合离线IP库
+
+系统的安全问题并不能只靠系统自身被动防御，还需要对外界请求做出主动监控和日志检测，其中就离不开对用户的操作进行留痕操作，网络世界上最有力的留痕操作就是记录用户每一步都干了什么，至少得知道用户发出请求的客户端的信息是什么，所以离线 IP 就应运而生，模板中整合的离线 IP 库为 **ip2region** ，它是一个离线IP地址定位库和IP定位数据管理框架，10微秒级别的查询效率，提供了众多主流编程语言的 `xdb` 数据生成和查询客户端实现。
+
+1. 修改离线 IP 库的配置，启用离线 IP 库：
+
+   ```yaml
+   # 离线IP库配置
+   ip2region:
+     # todo 是否启用离线IP
+     enable: true
+     # 数据加载方式
+     load-type: memory
+   ```
+
+   说明：数据加载方式一共有三种，内存加载、索引加载、文件加载，它们占用内存和查询效率均依次降低。
+
+2. 接下来直接使用 `utils/net` 包下 ` NetUtils` 工具类即可。
+
 #### 配置国际化
 
 国际化是一个不起眼但是老生常谈的问题，虽然该模板主要用于于中小项目后端启动，但是难免会涉及到有关于国际化问题，而且国际化问题尽量需要在项目初期就确定下来，以免后期修改代码存在极大的工作量。
@@ -729,8 +751,18 @@ spring:
      messages:
        # todo 是否启动国际化功能（预先关闭）
        enable: true
+       # 默认语言
+       default-locale: ZH_CN
        # 解释：i18n是存放多语言文件目录，messages是文件前缀
        basename: i18n/messages
+       # 指定国际化文件编码格式
+       encoding: UTF-8
+       # 设置国际化消息缓存有效时间，单位是秒
+       cache-duration: 3600
+       # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置
+       fallback-to-system-locale: true
+       # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
+       use-code-as-default-message: false
    ```
 
 2. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
@@ -741,21 +773,24 @@ spring:
    msg_welcome=歡迎,{0}!
    ```
 
-3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `config/i18n/lang_enum/LangEnum.java` 枚举类中：
+3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `config/i18n/properties/enums/LocaleType.java` 枚举类中：
 
    ```java
    @Getter
-   public enum LangEnum {
+   public enum LocaleType {
    
-       en_US(new Locale("en", "US")),
+       // 注意格式：
+       // 1、Locale类中构造参数：language全小写，country全大写
+       // 2、枚举中枚举名称均大写并以"_"隔开
+       EN_US(new Locale("en", "US")),
    
-       zh_CN(new Locale("zh", "CN")),
+       ZH_CN(new Locale("zh", "CN")),
    
-       zh_TW(new Locale("zh", "TW")); //这里是新增的中文繁体
+       ZH_TW(new Locale("zh", "TW")); //这里是新增的中文繁体
    
        final private Locale locale;
    
-       LangEnum(Locale locale) {
+       LocaleType(Locale locale) {
            this.locale = locale;
        }
    
@@ -782,7 +817,7 @@ spring:
    }
    ```
 
-   核心操作就是在请求 URL 之后添加参数名为 `lang` 的参数，并且将其赋值为 `zh_TW` ，例如 `localhost:38080/i18n?lang=zh_TW`，控制器中返回和国际化词典文件相对应的键值即可。
+   核心操作就是在请求 URL 之后添加参数名为 `lang` 的参数，并且将其赋值为 `zh_tw`（这里传入大写小写无所谓，但是要用"_"将语言和地区隔开） ，例如 `localhost:38080/i18n?lang=zh_tw`，控制器中返回和国际化词典文件相对应的键值即可。
 
 #### 配置SaToken
 
@@ -1222,6 +1257,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ## 下一步开发计划
 
+* 设计方便简单的操作 Office 以及 PDF 的工具类
 * 集成Prometheus和Grafana监控报警平台（选做）
 * 集成Apache SkyWalking链路追踪（选做）
 * ......

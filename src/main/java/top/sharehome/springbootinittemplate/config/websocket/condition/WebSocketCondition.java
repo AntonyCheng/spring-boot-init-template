@@ -15,7 +15,7 @@ public class WebSocketCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String webSocketProperty = context.getEnvironment().getProperty("websocket.enable");
-        return StringUtils.equals("true", webSocketProperty);
+        return StringUtils.equals(Boolean.TRUE.toString(), webSocketProperty);
     }
 
 }

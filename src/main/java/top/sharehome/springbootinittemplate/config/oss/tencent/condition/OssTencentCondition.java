@@ -15,7 +15,7 @@ public class OssTencentCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String property = context.getEnvironment().getProperty("oss.tencent.enable");
-        return StringUtils.equals("true", property);
+        return StringUtils.equals(Boolean.TRUE.toString(), property);
     }
 
 }

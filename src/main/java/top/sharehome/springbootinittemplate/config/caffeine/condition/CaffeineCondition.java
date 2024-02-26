@@ -15,7 +15,7 @@ public class CaffeineCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String property = context.getEnvironment().getProperty("caffeine.enable");
-        return StringUtils.equals("true", property);
+        return StringUtils.equals(Boolean.TRUE.toString(), property);
     }
 
 }

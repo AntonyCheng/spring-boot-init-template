@@ -15,7 +15,7 @@ public class AuthorizationCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String property = context.getEnvironment().getProperty("sa-token.enable-authorization");
-        return StringUtils.equals("true", property);
+        return StringUtils.equals(Boolean.TRUE.toString(), property);
     }
 
 }

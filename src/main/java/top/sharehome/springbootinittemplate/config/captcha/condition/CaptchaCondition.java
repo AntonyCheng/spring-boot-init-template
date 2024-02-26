@@ -16,9 +16,10 @@ public class CaptchaCondition implements Condition {
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String redissonSingleProperty = context.getEnvironment().getProperty("redisson.single-server-config.enable-single");
         String redissonClusterProperty = context.getEnvironment().getProperty("redisson.cluster-servers-config.enable-cluster");
-        boolean redissonResult = StringUtils.equals("true", redissonSingleProperty) || StringUtils.equals("true", redissonClusterProperty);
+        boolean redissonResult = StringUtils.equals(Boolean.TRUE.toString(), redissonSingleProperty)
+                || StringUtils.equals(Boolean.TRUE.toString(), redissonClusterProperty);
         String captchaProperty = context.getEnvironment().getProperty("captcha.enable");
-        return StringUtils.equals("true", captchaProperty) && redissonResult;
+        return StringUtils.equals(Boolean.TRUE.toString(), captchaProperty) && redissonResult;
     }
 
 }
