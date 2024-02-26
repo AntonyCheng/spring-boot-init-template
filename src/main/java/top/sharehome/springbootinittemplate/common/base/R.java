@@ -14,8 +14,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class R<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * 成功状态码
      */
@@ -45,6 +43,11 @@ public class R<T> implements Serializable {
      * 警告响应值
      */
     public static final String WARN_MSG = ReturnCode.WARN.getMsg();
+
+    /**
+     * 序列化UID
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * 消息状态码

@@ -45,7 +45,7 @@ public class WebSocketServer {
         bossGroup = new NioEventLoopGroup(webSocketProperties.getBossThread());
         workerGroup = new NioEventLoopGroup(webSocketProperties.getWorkerThread());
         ServerBootstrap serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(bossGroup,workerGroup)
+        serverBootstrap.group(bossGroup, workerGroup)
                 // 设置服务端通道类型
                 .channel(NioServerSocketChannel.class)
                 // 配置服务器可连接队列的大小
@@ -119,7 +119,7 @@ public class WebSocketServer {
         return this;
     }
 
-    public void destroy(){
+    public void destroy() {
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }

@@ -13,6 +13,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -191,7 +192,7 @@ public class SampleService {
             // data
             if (isPostMethod && data != null && data.trim().length() > 0) {
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-                dataOutputStream.write(data.getBytes("UTF-8"));
+                dataOutputStream.write(data.getBytes(StandardCharsets.UTF_8));
                 dataOutputStream.flush();
                 dataOutputStream.close();
             }
@@ -203,7 +204,7 @@ public class SampleService {
             }
 
             // result
-            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder result = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -213,12 +214,10 @@ public class SampleService {
 
             XxlJobHelper.log(responseMsg);
 
-            return;
         } catch (Exception e) {
             XxlJobHelper.log(e);
 
             XxlJobHelper.handleFail();
-            return;
         } finally {
             try {
                 if (bufferedReader != null) {

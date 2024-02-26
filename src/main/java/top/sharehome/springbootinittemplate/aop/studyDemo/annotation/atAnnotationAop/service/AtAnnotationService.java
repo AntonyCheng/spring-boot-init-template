@@ -7,12 +7,12 @@ package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotati
  */
 public interface AtAnnotationService {
 
-    public void doMethod1();
+    void doMethod1();
 
-    public String doMethod2();
+    String doMethod2();
 
-    public void doMethod3() throws Exception;
+    void doMethod3() throws Exception;
 
-    public void doMethod4(String demo);
+    void doMethod4(String demo);
 
 }

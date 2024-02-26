@@ -21,7 +21,7 @@ public class OnceJob implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Running Application Init:{}", new Date().toString());
+        log.info("Running Application Init:{}", new Date());
     }
 
 }

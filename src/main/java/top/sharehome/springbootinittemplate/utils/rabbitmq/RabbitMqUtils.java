@@ -37,6 +37,9 @@ public class RabbitMqUtils {
 
     private final RabbitMqProperties rabbitMqProperties;
 
+    /**
+     * 最大等待时间
+     */
     private static long maxAwaitTimeout;
 
     @PostConstruct

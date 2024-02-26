@@ -14,10 +14,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface AtTargetAop {
 
-    public String title() default "";
+    String title() default "";
 
-    public String description() default "";
+    String description() default "";
 
-    public boolean isTrue() default false;
+    boolean isTrue() default false;
 
 }

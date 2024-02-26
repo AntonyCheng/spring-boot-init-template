@@ -24,7 +24,7 @@ public class CycleJob {
      */
     @Scheduled(fixedDelay = 60 * 1000)
     public void fixedTimeJob() {
-        log.info("Fixed time execution:{}", new Date().toString());
+        log.info("Fixed time execution:{}", new Date());
     }
 
     /**
@@ -33,7 +33,7 @@ public class CycleJob {
      */
     @Scheduled(cron = "0 * * * * *")
     public void scheduledTimeJob() {
-        log.info("Scheduled time execution:{}", new Date().toString());
+        log.info("Scheduled time execution:{}", new Date());
     }
 
 }

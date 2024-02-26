@@ -7,9 +7,9 @@
 <body>
 <form onsubmit="return false">
     <textarea name="message" style="height: 300px;width: 300px"></textarea>
-    <input type="button" value="发送消息" onclick="send(this.form.message.value)">
+    <input onclick="send(this.form.message.value)" type="button" value="发送消息">
     <textarea id="responseText" style="height: 300px;width: 300px"></textarea>
-    <input type="button" value="清空内容" onclick="document.getElementById('responseText').value=''">
+    <input onclick="document.getElementById('responseText').value=''" type="button" value="清空内容">
 </form>
 </body>
 
@@ -29,9 +29,9 @@
     // 服务端断开连接就绪
     websocket.onclose = function (event) {
         let rt = document.getElementById("responseText");
-        if (rt.value===""){
+        if (rt.value === "") {
             rt.value = "连接已断开..."
-        }else {
+        } else {
             rt.value = rt.value + "\n" + "连接已断开..."
         }
     }
@@ -42,7 +42,7 @@
     function send(message) {
         // 判断WebSocket是不是开启状态
         if (websocket.readyState === WebSocket.OPEN) {
-            if(message===''){
+            if (message === '') {
                 return
             }
             // 通过websocket发消息

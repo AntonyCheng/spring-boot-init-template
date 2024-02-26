@@ -10,7 +10,7 @@ dataSources:
   master:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://127.0.0.1:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
     connectionTimeoutMilliseconds: 30000
@@ -22,7 +22,7 @@ dataSources:
 #  slave:
 #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
 #    driverClassName: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://xxx.xxx.xxx.xxx:23307/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+#    url: jdbc:mysql://127.0.0.1:3307/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
 #    username: root
 #    password: 123456
 #    connectionTimeoutMilliseconds: 30000

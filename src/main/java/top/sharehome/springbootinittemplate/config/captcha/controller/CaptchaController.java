@@ -3,10 +3,10 @@ package top.sharehome.springbootinittemplate.config.captcha.controller;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.config.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
-import top.sharehome.springbootinittemplate.common.base.R;
 
 import javax.annotation.Resource;
 

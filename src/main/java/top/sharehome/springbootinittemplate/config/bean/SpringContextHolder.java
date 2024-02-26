@@ -24,23 +24,6 @@ public class SpringContextHolder implements ApplicationContextAware {
     private static ApplicationContext context;
 
     /**
-     * 实现ApplicationContextAware接口的context注入函数, 将其存入静态变量.
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContextHolder.context = applicationContext;
-    }
-
-    /**
-     * 获取applicationContext
-     *
-     * @return 返回结果
-     */
-    public ApplicationContext getApplicationContext() {
-        return context;
-    }
-
-    /**
      * 通过name获取 Bean.
      *
      * @param name Bean名称
@@ -82,6 +65,23 @@ public class SpringContextHolder implements ApplicationContextAware {
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return context.getBean(name, clazz);
+    }
+
+    /**
+     * 获取applicationContext
+     *
+     * @return 返回结果
+     */
+    public ApplicationContext getApplicationContext() {
+        return context;
+    }
+
+    /**
+     * 实现ApplicationContextAware接口的context注入函数, 将其存入静态变量.
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SpringContextHolder.context = applicationContext;
     }
 
     /**

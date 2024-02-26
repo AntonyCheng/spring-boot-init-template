@@ -7,7 +7,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.rabbitmq.consumerExample.model.RabbitMessage;
 import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMq;
 import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMqWithDelay;

@@ -68,7 +68,7 @@ public class AliConfiguration {
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             InputStream inputStream = file.getInputStream();
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).<PutObjectRequest>withProgressListener(new PutObjectProgressListener()));
+            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
         } catch (OSSException | ClientException | IOException oe) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         } finally {
@@ -104,7 +104,7 @@ public class AliConfiguration {
             // 对象键(Key)是对象在存储桶中的唯一标识。
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).<PutObjectRequest>withProgressListener(new PutObjectProgressListener()));
+            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
         } catch (OSSException | ClientException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         } finally {
@@ -133,7 +133,7 @@ public class AliConfiguration {
             // 对象键(Key)是对象在存储桶中的唯一标识。
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).<PutObjectRequest>withProgressListener(new PutObjectProgressListener()));
+            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
         } catch (OSSException | ClientException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         } finally {

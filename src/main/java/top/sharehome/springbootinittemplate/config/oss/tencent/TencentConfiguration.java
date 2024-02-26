@@ -72,7 +72,7 @@ public class TencentConfiguration {
                 suffix = "." + suffix;
             }
             // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
@@ -130,7 +130,7 @@ public class TencentConfiguration {
                 suffix = "." + suffix;
             }
             // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
@@ -188,7 +188,7 @@ public class TencentConfiguration {
                 suffix = "." + suffix;
             }
             // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis()  + suffix;
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
@@ -286,7 +286,7 @@ public class TencentConfiguration {
         // 分块上传阈值和分块大小分别为 3MB 和 1MB
         TransferManagerConfiguration transferManagerConfiguration = new TransferManagerConfiguration();
         transferManagerConfiguration.setMultipartUploadThreshold(3 * 1024 * 1024);
-        transferManagerConfiguration.setMinimumUploadPartSize(1 * 1024 * 1024);
+        transferManagerConfiguration.setMinimumUploadPartSize(1024 * 1024);
         transferManager.setConfiguration(transferManagerConfiguration);
 
         return transferManager;

@@ -15,10 +15,10 @@ import java.util.List;
  * @author AntonyCheng
  */
 public class SimpleCanalClientExample {
-    public static void main(String args[]) {
+    
+    public static void main(String[] args) {
         // 创建链接
-        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress(AddressUtils.getHostIp(),
-                11111), "example", "", "");
+        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress(AddressUtils.getHostIp(), 11111), "example", "", "");
         int batchSize = 1000;
         int emptyCount = 0;
         try {
@@ -27,7 +27,8 @@ public class SimpleCanalClientExample {
             connector.rollback();
             int totalEmptyCount = 120;
             while (emptyCount < totalEmptyCount) {
-                Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
+                // 获取指定数量的数据
+                Message message = connector.getWithoutAck(batchSize);
                 long batchId = message.getId();
                 int size = message.getEntries().size();
                 if (batchId == -1 || size == 0) {
@@ -35,15 +36,15 @@ public class SimpleCanalClientExample {
                     System.out.println("empty count : " + emptyCount);
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                     }
                 } else {
                     emptyCount = 0;
                     // System.out.printf("message[batchId=%s,size=%s] \n", batchId, size);
                     printEntry(message.getEntries());
                 }
-
-                connector.ack(batchId); // 提交确认
+                // 提交确认
+                connector.ack(batchId);
                 // connector.rollback(batchId); // 处理失败, 回滚数据
             }
 
@@ -63,15 +64,11 @@ public class SimpleCanalClientExample {
             try {
                 rowChage = RowChange.parseFrom(entry.getStoreValue());
             } catch (Exception e) {
-                throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(),
-                        e);
+                throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry, e);
             }
 
             EventType eventType = rowChage.getEventType();
-            System.out.println(String.format("================&gt; binlog[%s:%s] , name[%s,%s] , eventType : %s",
-                    entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(),
-                    entry.getHeader().getSchemaName(), entry.getHeader().getTableName(),
-                    eventType));
+            System.out.printf("================&gt; binlog[%s:%s] , name[%s,%s] , eventType : %s%n", entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(), entry.getHeader().getSchemaName(), entry.getHeader().getTableName(), eventType);
 
             for (RowData rowData : rowChage.getRowDatasList()) {
                 if (eventType == EventType.DELETE) {

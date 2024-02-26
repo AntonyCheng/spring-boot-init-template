@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.mail.condition.MailCondition;
 
 import javax.annotation.Resource;
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
