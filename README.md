@@ -49,6 +49,7 @@
       * [Canal简介](#canal简介)
       * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
       * [搭建Deployer&Client系统](#搭建deployerclient系统)
+* [兼容Java8](#兼容java8)
 * [申明&联系我](#申明联系我)
 * [下一步开发计划](#下一步开发计划)
 
@@ -1244,6 +1245,12 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ##### 搭建Deployer&Client系统
 
 该系统和 Deployer & Adapter 系统的区别就在于该系统需要开发者自己写客户端，模板中已经存在了一个客户端示例代码类： `top.sharehome.springbootinittemplate.config.canal.example.SimpleCanalClientExample` ，同样的，Deployer 的部署在 `module/canal-component` 文件夹中有具体介绍，开发者可以参考示例代码类进行相关功能的开发。
+
+## 兼容Java8
+
+模板 **2.x.x** 版本默认适配 Java11 版本，为了更好的兼容 Java8 版本，可以对依赖进行如下修改：
+
+- **caffeine**：3.1.8 ==> 2.9.3
 
 ## 申明&联系我
 

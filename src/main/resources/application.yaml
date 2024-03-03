@@ -97,7 +97,14 @@ management:
 spring:
   # 项目前置工作 ---- 可自定义
   application:
+    # 定义项目名称
     name: spring-boot-init-template
+  # 项目启动 banner 设置
+  banner:
+    # banner 编码
+    charset: UTF-8
+    # banner 路径
+    location: classpath:banner.txt
   # 配置SpringBootAdmin
   boot:
     admin:
@@ -241,15 +248,15 @@ spring:
       maximum-pool-size: 25
       # 配置连接超时时间
       connection-timeout: 30000
-      # 多久检查一次连接的活性（小于30000即不进行活性检查）
-      keepalive-time: 60000
-      # 校验超时时间
+      # 多久检查一次连接的活性（单位：毫秒，小于30000即不进行活性检查，默认不检查连接活性）
+      keepalive-time: 0
+      # 校验超时时间（单位毫秒）
       validation-timeout: 5000
       # 控制从池返回的连接的默认自动提交行为，默认值：true
       auto-commit: true
       # 空闲连接存活最大时间，默认10分钟
       idle-timeout: 600000
-      # 池中连接的最长生命周期，值0表示无限生命周期，设置30分钟
+      # 池中连接的最长生命周期，值0表示无限生命周期，默认设置30分钟
       max-lifetime: 1800000
       # 配置检测连接是否有效
       connection-test-query: SELECT 1 FROM DUAL
