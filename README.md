@@ -1260,9 +1260,11 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 如果你在使用模板的过程中有建议或者看法，请尽管发布 ISSUES 。
 
+**作者在线时间一般分布在工作日的晚上，其他时间若是查看到消息，在有电脑的情况下也会进行回复或说明。**
+
 ## 下一步开发计划
 
 * 设计方便简单的操作 Office 以及 PDF 的工具类
-* 集成Prometheus和Grafana监控报警平台（选做）
-* 集成Apache SkyWalking链路追踪（选做）
+* 集成 Prometheus 和 Grafana 监控报警平台（选做）
+* 集成 Apache SkyWalking 链路追踪（选做）
 * ......
