@@ -21,27 +21,23 @@ public class SpringContextHolder implements ApplicationContextAware {
     /**
      * 以静态变量保存ApplicationContext,可在任意代码中取出ApplicationContext.
      */
-    private static ApplicationContext context;
+    private static ApplicationContext applicationContext;
 
     /**
-     * 通过name获取 Bean.
-     *
-     * @param name Bean名称
-     * @return 返回结果
+     * 实现ApplicationContextAware接口的context注入函数, 将其存入静态变量.
      */
-    public static Object getBean(String name) {
-        return context.getBean(name);
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SpringContextHolder.applicationContext = applicationContext;
     }
 
     /**
-     * 通过class获取Bean.
+     * 获取applicationContext
      *
-     * @param clazz Bean类
-     * @param <T>   泛型T
      * @return 返回结果
      */
-    public static <T> Map<String, T> getBeans(Class<T> clazz) {
-        return context.getBeansOfType(clazz);
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
     /**
@@ -52,7 +48,7 @@ public class SpringContextHolder implements ApplicationContextAware {
      * @return 返回结果
      */
     public static <T> T getBean(Class<T> clazz) {
-        return context.getBean(clazz);
+        return applicationContext.getBean(clazz);
     }
 
     /**
@@ -64,24 +60,38 @@ public class SpringContextHolder implements ApplicationContextAware {
      * @return 返回结果
      */
     public static <T> T getBean(String name, Class<T> clazz) {
-        return context.getBean(name, clazz);
+        return applicationContext.getBean(name, clazz);
     }
 
     /**
-     * 获取applicationContext
+     * 通过class获取Bean.
+     *
+     * @param clazz Bean类
+     * @param <T>   泛型T
+     * @return 返回结果
+     */
+    public static <T> Map<String, T> getBeans(Class<T> clazz) {
+        return applicationContext.getBeansOfType(clazz);
+    }
+
+    /**
+     * 获取所有的Bean名称
      *
      * @return 返回结果
      */
-    public ApplicationContext getApplicationContext() {
-        return context;
+    public static String[] getBeanDefinitionNames() {
+        return applicationContext.getBeanDefinitionNames();
     }
 
     /**
-     * 实现ApplicationContextAware接口的context注入函数, 将其存入静态变量.
+     * 根据类型获取Bean名称
+     *
+     * @param clazz 类型
+     * @param <T>   泛型T
+     * @return 返回结果
      */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContextHolder.context = applicationContext;
+    public static <T> String[] getBeanNamesForType(Class<T> clazz) {
+        return applicationContext.getBeanNamesForType(clazz);
     }
 
     /**
