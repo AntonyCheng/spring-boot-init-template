@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.common.excel;
+package top.sharehome.springbootinittemplate.config.excel;
 
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;

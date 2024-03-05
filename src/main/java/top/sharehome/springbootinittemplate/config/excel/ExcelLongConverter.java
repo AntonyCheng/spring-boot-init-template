@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.common.excel;
+package top.sharehome.springbootinittemplate.config.excel;
 
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
@@ -8,14 +8,14 @@ import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 
 /**
- * EasyExcel Integer转换类
+ * EasyExcel Long转换类
  *
  * @author AntonyCheng
  */
-public class ExcelIntegerConverter implements Converter<Integer> {
+public class ExcelLongConverter implements Converter<Long> {
 
     @Override
-    public Class<Integer> supportJavaTypeKey() {
+    public Class<Long> supportJavaTypeKey() {
         return null;
     }
 
@@ -25,12 +25,12 @@ public class ExcelIntegerConverter implements Converter<Integer> {
     }
 
     @Override
-    public Integer convertToJavaData(ReadCellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
-        return Integer.parseInt(cellData.getStringValue());
+    public Long convertToJavaData(ReadCellData readCellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+        return Long.parseLong(readCellData.getStringValue());
     }
 
     @Override
-    public WriteCellData<String> convertToExcelData(Integer value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+    public WriteCellData<String> convertToExcelData(Long value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         return new WriteCellData<>(String.valueOf(value));
     }
 
