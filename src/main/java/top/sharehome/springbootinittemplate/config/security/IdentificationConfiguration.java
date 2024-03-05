@@ -5,14 +5,12 @@ import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.util.SaResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
-import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +23,6 @@ import java.util.List;
  * @author AntonyCheng
  */
 @Configuration
-@EnableConfigurationProperties(CaptchaProperties.class)
 @Conditional(IdentificationCondition.class)
 @Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
