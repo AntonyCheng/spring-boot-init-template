@@ -232,7 +232,7 @@
    - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
-   # 修改redisson配置（这里的redisson配置主要用来系统业务逻辑的缓存服务）
+   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # 线程池数量
@@ -240,17 +240,17 @@
      # Netty线程池数量
      netty-threads: 8
      # 限流单位时间，单位：秒
-     limit-rate: 1
-     # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
      limit-rate-interval: 1
-     # 每个操作所要消耗的令牌数
+     # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     limit-rate: 2
+     # 每个操作所要消耗的令牌数，系统分发的令牌数一定要大于等于操作消耗的令牌树，不然会报错
      limit-permits: 1
-     # redis单机版本
+     # Redis单机版本
      single-server-config:
        # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
        enable-single: true
        # 单机地址（一定要在redis协议下）
-       address: redis://xxx.xxx.xxx.xxx:6378
+       address: redis://127.0.0.1:6379
        # 数据库索引
        database: 1
        # 密码（考虑是否需要密码）
@@ -265,18 +265,18 @@
        connection-pool-size: 32
        # 连接空闲超时，单位：毫秒
        idle-connection-timeout: 10000
-     # redis集群版本
+     # Redis集群版本
      cluster-servers-config:
        # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
        enable-cluster: false
-       # redis集群节点（一定要在redis协议下）
+       # Redis集群节点（一定要在Redis协议下）
        node-addresses:
-         - redis://xxx.xxx.xxx.xxx:6379
-         - redis://xxx.xxx.xxx.xxx:6380
-         - redis://xxx.xxx.xxx.xxx:6381
-         - redis://xxx.xxx.xxx.xxx:6382
-         - redis://xxx.xxx.xxx.xxx:6383
-         - redis://xxx.xxx.xxx.xxx:6384
+         - redis://127.0.0.1:6379
+         - redis://127.0.0.1:6380
+         - redis://127.0.0.1:6381
+         - redis://127.0.0.1:6382
+         - redis://127.0.0.1:6383
+         - redis://127.0.0.1:6384
        # 密码（考虑是否需要密码）
        #password: 123456
        # master最小空闲连接数
@@ -295,7 +295,7 @@
        subscription-connection-pool-size: 25
    ```
 
-2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `utils/redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
+2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `top.sharehome.springbootinittemplate.utils.redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
 
 ##### 整合本地缓存（Caffeine）
 
@@ -318,7 +318,7 @@
      allow-null-value: true
    ```
 
-2. Caffeine 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Caffeine 进行进一步封装，在 `utils/caffeine` 包中设计了本地缓存工具类 LocalCacheUtils 供开发者使用，使用参考示例单元测试类。
+2. Caffeine 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Caffeine 进行进一步封装，在 `top.sharehome.springbootinittemplate.utils.caffeine` 包中设计了本地缓存工具类 LocalCacheUtils 供开发者使用，使用参考示例单元测试类。
 
 #### 整合消息队列
 
@@ -329,25 +329,24 @@
 1. 修改消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除，说不一定万一哪天有用呢），然后根据自己搭建的 RabbitMQ 进行相关配置：
 
    ```yaml
-   spring: 
-     # 修改rabbitmq配置
+     # RabbitMQ配置
      rabbitmq:
        # todo 是否开启RabbitMQ（预先关闭）
        enable: true
        # 获取消息最大等待时间（单位：毫秒）
        max-await-timeout: 3000
        # 单机 RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
-       host: xxx.xxx.xxx.xxx
+       host: 127.0.0.1
        # 单机 RabbitMQ 端口
        port: 5672
        # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
-       #addresses: xxx.xxx.xxx.xxx:5672,xxx.xxx.xxx.xxx:5673,xxx.xxx.xxx.xxx:5674
+       #addresses: 127.0.0.1:5672,127.0.0.1:5673,127.0.0.1:5674
        # 虚拟主机
        virtual-host: /
        # 用户名
-       username: admin
+       username: guest
        # 密码
-       password: admin123456
+       password: guest
        # 消息确认（ACK）
        publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)
        publisher-returns: true #确认消息已发送到队列(Queue)
@@ -361,8 +360,8 @@
          simple:
            acknowledge-mode: manual
    ```
-
-2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `config/rabbitmq/default_mq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，它们在 `utils/rabbitmq/RabbitMqUtils` 工具类中由“default”开头的方法，当然开发者也可以按照一定的模板规则来自定义消息队列，这些消息队列会与 RabbitMqUtils 工具类兼容。
+   
+2. 配置好之后即可启动项目，在模板中存在默认的三个消息队列配置，它们在 `top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq` 包下，分别是 `DefaultRabbitMq` （默认的普通队列）、`DefaultRabbitMqWithDlx` （默认的带有死信队列的消息队列）、`DefaultRabbitMqWithDelay` （默认的延迟队列），这三个队列可以直接使用，它们在 `top.sharehome.springbootinittemplate.utils.rabbitmq.RabbitMqUtils` 工具类中由“default”开头的方法，当然开发者也可以按照一定的模板规则来自定义消息队列，这些消息队列会与 RabbitMqUtils 工具类兼容。
 
 ##### 自定义消息队列
 
@@ -374,7 +373,7 @@
 
    这些具体的消息队列特性往往需要开发者掌握一定的前置知识基础；
 
-2. 然后粘贴 `config/defaultMq/DefaultRabbitMq` 类，复制到 `config/customizeMq` 包中，并且重命名（在 DefaultRabbitMq 的文档注释中有具体说明），注意不要和 DefaultRabbitMq 类重复，不然会造成 Bean 注入冲突，这里假设命名成 TestRabbitMq ；
+2. 然后粘贴 `top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRabbitMq` 类，复制到 `top.sharehome.springbootinittemplate.config.rabbitmq.customizeMq` 包中，并且重命名（在 DefaultRabbitMq 的文档注释中有具体说明），注意不要和 DefaultRabbitMq 类重复，不然会造成 Bean 注入冲突，这里假设命名成 TestRabbitMq ；
 
 3. 在 TestRabbitMq 中进行文本替换，将所有 “default” 替换成 “test” 即可，如果想要使用自定义的消息队列配置，直接使用 RabbitMqUtils 工具类中形参带有 “Class” 类型的方法即可（详情见 RabbitMqUtils 文档注释）。
 
@@ -394,7 +393,7 @@
      # todo 是否启动（预先关闭）
      enable: true
      # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
-     address: xxx.xxx.xxx.xxx:9200
+     address: 127.0.0.1:9200
      # 如果无账号密码则可不配置此行
      #username:
      # 如果无账号密码则可不配置此行
@@ -416,11 +415,11 @@
      # 最大连接路由数 单位:个
      max-conn-per-route: 100
      global-config:
-       # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,默认开启此模式
+       # 索引处理模式,smoothly:平滑模式, not_smoothly:非平滑模式, manual:手动模式,,默认开启此模式
        process-index-mode: manual
        # 开启控制台打印通过本框架生成的DSL语句,默认为开启,测试稳定后的生产环境建议关闭,以提升少量性能
        print-dsl: true
-       # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁
+       # 当前项目是否分布式项目,默认为true,在非手动托管索引模式下,若为分布式项目则会获取分布式锁,非分布式项目只需synchronized锁.
        distributed: false
        # 重建索引超时时间 单位小时,默认72H 可根据ES中存储的数据量调整
        reindexTimeOutHours: 72
@@ -467,15 +466,38 @@
    }
    ```
 
-5. 该模板中也提供了使用的一个范例，在 `elasticsearch` 包中，同时在测试用例中也存在相关框架操作，如果还想了解更多，请在 Easy-ES 官网自行学习。
+5. 该模板中也提供了使用的一个范例，在 `top.sharehome.springbootinittemplate.elasticsearch` 包中，同时在测试用例中也存在相关框架操作，如果还想了解更多，请在 Easy-ES 官网自行学习。
 
 #### 整合MongoDB
 
+MongoDB 作为最受欢迎的非关系型数据库之一，主要目的是解决“三高”需求，即高并发、高访问以及高可用。具体的一些应用场景如下：
 
+1. 社交场景，使用 MongoDB 存储存储用户信息，以及用户发表的朋友圈信息，通过地理位置索引实现附近的人、地点等功能。
+2. 游戏场景，使用 MongoDB 存储游戏用户信息，用户的装备、积分等直接以内嵌文档的形式存储，方便查询、高效率存储和访问。
+3. 物流场景，使用 MongoDB 存储订单信息，订单状态在运送过程中会不断更新，以 MongoDB 内嵌数组的形式来存储，一次查询就能将订单所有的变更读取出来。
+4. 物联网场景，使用 MongoDB 存储所有接入的智能设备信息，以及设备汇报的日志信息，并对这些信息进行多维度的分析。
+5. 视频直播，使用 MongoDB 存储用户信息、点赞互动信息等。
+
+该模板整合 MongoDB 的方式与整合 Redis 的方式相同，主要基于 spring-boot-starter-data-mongodb 依赖，想要接入 MongoDB 功能，只需要取消排除 `MongoAutoConfiguration` 类：
+
+```yaml
+spring:
+  # 框架依赖自动配置选择
+  autoconfigure:
+    exclude:
+      # todo 是否开启MongoDB依赖类（如果要启用MongoDB，就将MongoAutoConfiguration注释掉，该配置类一旦被注释，就需要设置MongoDB相关配置，预先关闭）
+      #- org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+```
+
+此时启动模板，就能够在控制台中查看到有关于 MongoDB 的日志。
+
+模板中定义了两个注解：`MgRepository` 和 `MgService`，这两个注解分别是 `Repository` 和 `Service` 的 MongoDB 版本，会随着是否接入 MongoDB 功能而变化，控制不必要的依赖注入。
+
+该模板中也提供了使用的一个范例，在 `top.sharehome.springbootinittemplate.mongo` 包中，如果想了解更多，可以自行前往 MongoDB 官方网站学习或者前往模板作者的 [MongoDB 笔记仓库](https://github.com/AntonyCheng/mongodb-notes)入门。
 
 #### 整合对象存储服务
 
-**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据，其中腾讯云 COS 和 MinIO 是可以对文件进行网页预览的，而阿里云 OSS 则需要配置自定义域名（从 2024 年起腾讯云 COS 也将对新建的桶作此要求，在次之前建立的桶不受影响），所以针对于个人的中小型项目，推荐优先使用腾讯云 COS 和 MinIO 对象存储服务，以免给自己挖坑。
+**说明**：对象存储是一种计算机数据存储架构，旨在处理大量非结构化数据，说直白点主要就是存储文件这一类数据，其中腾讯云 COS 和 MinIO 对象存储是可以对文件进行网页预览的，而阿里云 OSS 则需要配置自定义域名（从 2024 年起腾讯云 COS 也将对新建的桶作此要求，在次之前建立的桶不受影响），所以针对于个人的中小型项目，推荐优先使用腾讯云 COS 和 MinIO 对象存储服务，以免给自己挖坑。
 
 ##### 整合腾讯云COS
 
@@ -505,7 +527,7 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `TencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合MinIO
 
@@ -538,7 +560,7 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `MinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合阿里云OSS
 
@@ -568,11 +590,11 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 #### 整合验证码
 
-验证对于大多数项目而言已经成为了一种刚需，即使市面上已经出现了很多类似于 Cloudflare 的验证服务，但是中小型项目对接 Cloudflare 验证服务可谓是杀鸡用牛刀，所以这里基于 Hutool-Captcha 模块对验证码进行二次封装，相关代码在 `captcha` 包中；
+验证对于大多数项目而言已经成为了一种刚需，即使市面上已经出现了很多类似于 Cloudflare 的验证服务，但是中小型项目对接 Cloudflare 验证服务可谓是杀鸡用牛刀，所以这里基于 Hutool-Captcha 模块对验证码进行二次封装，相关代码在 `top.sharehome.springbootinittemplate.config.captcha` 包中；
 
 1. 修改验证码相关配置，开发者可以自行配置验证码的风格以及参数：
 
@@ -595,7 +617,7 @@ oss:
 
 2. 配置完成之后只需要以 GET 请求调用 `/api/captcha` 接口即可获取验证码图片的 Base64 编码值以及该验证码的 UUID ，前端拿到 Base64 编码值之后将其转换为图片即可；
 
-3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@EnableCaptcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在一个名为 `captcha` 的 `Captcha` 类型（位置在 `config/captcha/model/Captcha.java` ）参数字段，下面以登录接口为例：
+3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@EnableCaptcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在一个名为 `captcha` 的 `Captcha` 类型（位置在 `top.sharehome.springbootinittemplate.config.captcha.model.Captcha` ）参数字段，下面以登录接口为例：
 
    ```java
    /**
@@ -693,7 +715,7 @@ spring:
     protocol: smtp
 ```
 
-修改完之后即可使用模板中邮件工具类 `MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
+修改完之后即可使用模板中邮件工具类 `top.sharehome.springbootinittemplate.utils.mail.MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
 
 #### 整合离线IP库
 
@@ -712,7 +734,7 @@ spring:
 
    说明：数据加载方式一共有三种，内存加载、索引加载、文件加载，它们占用内存和查询效率均依次降低。
 
-2. 接下来直接使用 `utils/net` 包下 ` NetUtils` 工具类即可。
+2. 接下来直接使用 `top.sharehome.springbootinittemplate.utils.net` 包下 ` NetUtils` 工具类即可。
 
 #### 配置国际化
 
@@ -730,8 +752,8 @@ spring:
        # todo 是否启动国际化功能（预先关闭）
        enable: true
        # 默认语言
-       default-locale: ZH_CN
-       # 解释：i18n是存放多语言文件目录，messages是文件前缀
+       default-locale: zh_cn
+       # 解释：I18n是存放多语言文件目录，messages是文件前缀
        basename: i18n/messages
        # 指定国际化文件编码格式
        encoding: UTF-8
@@ -751,7 +773,7 @@ spring:
    msg_welcome=歡迎,{0}!
    ```
 
-3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `config/i18n/properties/enums/LocaleType.java` 枚举类中：
+3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
 
    ```java
    @Getter
@@ -775,7 +797,7 @@ spring:
    }
    ```
 
-4. 然后参考国际化示例控制器 `config/i18n/controller/I18nDemoController.java` 进行国际化的使用：
+4. 然后参考国际化示例控制器 `top.sharehome.springbootinittemplate.config.i18n.controller.I18nDemoController` 进行国际化的使用：
 
    ```java
    /**
@@ -816,7 +838,7 @@ sa-token:
 
 ##### 开启鉴权
 
-鉴权其实就是查看某个用户对于某个接口、某个功能或者某个服务是否具有操作的权限，在该模板自带的数据库中有一个 `t_user` 表，表里有一个 `role` 角色字段，框架自带的业务逻辑就是用户登录后会保存一个登录信息，每次操作之前都去登录信息中获取角色信息， SaToken 框架会自动去对比角色信息，从而做到鉴权，当然开发者们可以按照自己的需求去设计鉴权内容，并不使用 `role` 角色字段，所以要求开发者自行编写符合自己需求的代码，而需要更改的文件就是 `config/security/AuthorizationConfiguration` 类：
+鉴权其实就是查看某个用户对于某个接口、某个功能或者某个服务是否具有操作的权限，在该模板自带的数据库中有一个 `t_user` 表，表里有一个 `role` 角色字段，框架自带的业务逻辑就是用户登录后会保存一个登录信息，每次操作之前都去登录信息中获取角色信息， SaToken 框架会自动去对比角色信息，从而做到鉴权，当然开发者们可以按照自己的需求去设计鉴权内容，并不使用 `role` 角色字段，所以要求开发者自行编写符合自己需求的代码，而需要更改的文件就是 `top.sharehome.springbootinittemplate.config.security.AuthorizationConfiguration` 类：
 
 ```java
 @Component
