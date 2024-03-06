@@ -8,110 +8,82 @@
 
 基于 Java Web 项目的 SpringBoot 框架初始化模板，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
 
-* [模板特点](#模板特点)
-  * [主流框架](#主流框架)
-  * [业务特性](#业务特性)
-* [业务功能](#业务功能)
-  * [示例业务](#示例业务)
-  * [单元测试](#单元测试)
-* [快速上手](#快速上手)
-  * [必须执行](#必须执行)
-  * [可选执行](#可选执行)
-    * [整合缓存服务](#整合缓存服务)
-      * [整合系统缓存（Redis）](#整合系统缓存redis)
-      * [整合业务缓存（Redisson）](#整合业务缓存redisson)
-      * [整合本地缓存（Caffeine）](#整合本地缓存caffeine)
-    * [整合消息队列](#整合消息队列)
-      * [激活消息队列](#激活消息队列)
-      * [自定义消息队列](#自定义消息队列)
-    * [整合Elasticsearch](#整合elasticsearch)
-    * [整合对象存储服务](#整合对象存储服务)
-      * [整合腾讯云COS](#整合腾讯云cos)
-      * [整合MinIO](#整合minio)
-      * [整合阿里云OSS](#整合阿里云oss)
-    * [整合验证码](#整合验证码)
-    * [整合邮件](#整合邮件)
-    * [整合离线IP库](#整合离线ip库)
-    * [配置国际化](#配置国际化)
-    * [配置SaToken](#配置satoken)
-      * [开启鉴权](#开启鉴权)
-      * [开启认证](#开启认证)
-      * [开启JWT](#开启jwt)
-        * [整合Redis](#整合redis)
-        * [整合JWT](#整合jwt)
-    * [配置定时任务](#配置定时任务)
-      * [SpringBoot任务调度](#springboot任务调度)
-      * [XxlJob任务调度](#xxljob任务调度)
-      * [PowerJob任务调度](#powerjob任务调度)
-    * [配置WebSocket](#配置websocket)
-    * [配置SpringBootAdmin](#配置springbootadmin)
-    * [配置Canal](#配置canal)
-      * [Canal简介](#canal简介)
-      * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
-      * [搭建Deployer&Client系统](#搭建deployerclient系统)
-* [兼容Java8](#兼容java8)
-* [申明&联系我](#申明联系我)
-* [下一步开发计划](#下一步开发计划)
+
+
+
 
 ## 模板特点
 
 ### 主流框架
 
 - **Java 11**
+  - 兼容性，详情见[兼容Java8](#兼容Java8)
+
 - **SpringBoot 2.7.18**
-  - FreeMarker == 模板引擎
-  - Spring Boot Web == SpringMVC
-  - Undertow == Java Web 服务器
-  - Spring Boot AOP == 面向切面编程
-- **Netty 4.1.107.Final**
+  - spring-boot-starter-web == 基于 Spring MVC 的 Web 应用依赖
+  - spring-boot-starter-undertow == 轻量级、高性能 Servlet 容器
+  - spring-boot-starter-aop == 提供面向切面编程功能
+  - spring-boot-starter-validation == 参数校验依赖
+  - spring-boot-starter-data-mongodb == Spring Data MongoDB 依赖
+  - spring-boot-starter-email == Spring Data Email 依赖
+  - spring-boot-starter-freemaker == 模板引擎依赖
+  - spring-boot-starter-test == Spring Boot Test 依赖
+  - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
+- **Netty**
+  - netty-all  4.1.107.Final == Netty 框架
+
 - **MySQL**
-  - MyBatis-Plus 3.5.5 == MySQL 持久层操作框架
-  - JDBC 8.0.33 == Java 连接 MySQL 依赖
-  - ShardingSphere 5.3.2 == 分布式数据库解决方案
+  - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
+  - mybatis-plus-boot-starter 3.5.5 == MySQL 操作框架
+  - shardingsphere-jdbc-core 5.3.2 == 分布式数据库解决方案
+  - druid-spring-boot-starter 1.2.21 == Druid 连接池
 - **工具类**
-  - Lombok 1.18.30
-  - Hutool 5.8.26
-  - Commons-Lang3 3.14.0
-  - Commons-IO 2.15.1
-  - Commons-Codec 1.16.0
-  - Commons-Pool2 2.12.0
-  - Commons-Collections4 4.4
-  - Commons-Math 3.6.1
-  - OkHttp3 4.12.0
-  - FastJSON2 2.0.46
+  - lombok 1.18.30 == POJO 简化工具
+  - hutool-all 5.8.26 == Hutool 工具类
+  - commons-lang3 3.14.0 == Apache Commons Lang 工具类
+  - commons-io 2.15.1 == Apache Commons IO 工具类
+  - commons-codec 1.16.0 == Apache Commons Codec 工具类
+  - commons-pool2 2.12.0 == Apache Commons Pool 工具类
+  - commons-collections4 4.4 == Apache Commons Collections 工具类
+  - commons-math3 3.6.1 == Apache Commons Math 工具类
+  - ok-http 4.12.0 == Ok Http 工具类
+  - fastjson2 2.0.47 == Fast JSON 工具类
+  - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - SaToken 1.37.0
-    - SaToken Core 1.37.0
-    - SaToken JWT 1.37.0
-    - SaToken Redis 1.37.0
+  - sa-token-spring-boot-starter == SaToken 认证鉴权框架
+  - sa-token-core 1.37.0 == SaToken 认证鉴权框架核心依赖
+  - sa-token-jwt 1.37.0 == SaToken 认证鉴权框架 JWT 依赖
+  - sa-token-redis-jackson 1.37.0 == SaToken 认证鉴权框架 Redis 依赖
 - **缓存服务**
-  - spring-boot-starter-data-redis
-  - spring-boot-starter-cache
-  - Redisson 3.27.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - spring-boot-starter-data-redis == Spring Data Redis 依赖
+  - spring-boot-starter-cache == Spring Cache 依赖
+  - redisson 3.27.1 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
-  - Caffeine 3.1.8
+  - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
-  - RabbitMQ
-    - spring-boot-starter-amqp
+  - spring-boot-starter-amqp == 支持 AMQP （高级消息队列协议）消息代理
+  - spring-rabbit-test == Spring 支持对 RabbitMQ 消息队列的单元测试
 - **搜索引擎**
-  - Elastic Stack
-    - Elasticsearch 7.14.0
-    - lasticsearch-rest-high-level-client 7.14.0
-    - logstash-logback-encoder 7.3
   - easy-es-boot-starter 2.0.0-bata5 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+  - elasticsearch 7.14.0 == Elasticsearch 依赖
+  - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
+  - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - 腾讯云 COS 5.6.205
-  - 阿里云 OSS 3.17.4
-  - MinIO 8.5.8
+  - cos_api 5.6.205 == 腾讯云 COS
+  - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
+  - minio 8.5.8 == Minio 对象存储
 - **文件操作**
-  - POI 5.2.5 == 操作 Word
-  - EasyExcel 3.3.3 == 操作 Excel
-  - iText 8.0.3 == 操作 PDF
-- **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码进行编译部署，主要原因是为了适配模板，外接平台中的代码被作者修改过）**
-  - XxlJob 2.4.0 == 分布式定时任务管理平台
-  - PowerJob 4.3.6 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
-  - SpringBootAdmin 2.7.9 == SpringBoot 服务监控平台
-  - Canal 1.1.7 == Canal-Deployer & Canal-Adapter 数据同步系统
+  - poi 5.2.5 == 操作 Word
+  - easyexcel 3.3.3 == 操作 Excel
+  - itext-core 8.0.3 == 操作 PDF
+- **接口文档 & API调试**
+  - knife4j-openapi3-spring-boot-starter 4.4.0 == Knife4j 依赖
+
+- **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
+  - xxl-job-core 2.4.0 == 分布式定时任务管理平台
+  - powerjob-worker-spring-boot-starter 4.3.9 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
+  - spring-boot-admin-client 2.7.9 == SpringBoot 服务监控平台
+  - canal.client 1.1.7 == Canal-Deployer & Canal-Adapter 数据同步系统
 
 ### 业务特性
 
@@ -149,6 +121,8 @@
 - 自定义注解逻辑代码示例
 - 国际化逻辑代码示例
 - 验证码逻辑代码示例
+- 操作 Elasticsearch 代码示例
+- 操作 MongoDB 代码示例
 
 ### 单元测试
 
@@ -163,25 +137,26 @@
 
 1. 执行 `sql/init_db.sql` 、 `sql/init_xxl_job.sql` 以及 ` sql/init_power_job.sql` 文件；
 
-2. 修改 `src/main/resources/mysql.yaml` 文件：
+2. 修改 `src/main/resources/mysql/mysql.yaml` 文件：
 
    ```yaml
    dataSources:
      master:
        dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
-       url: jdbc:mysql://xxx.xxx.xxx.xxx:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+       url: jdbc:mysql://127.0.0.1:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
        connectionTimeoutMilliseconds: 30000
        idleTimeoutMilliseconds: 600000
        maxLifetimeMilliseconds: 1800000
-       maxPoolSize: 25
+       maxPoolSize: 20
+       minPoolSize: 10
    ```
 
    > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 框架，理解相关配置；
 
-3. 直到这一步之后，模板就已经可以直接启动了，访问 `http://localhost:38080/api/doc.html#/home` 即可打开接口文档。
+3. 直到这一步之后，模板就已经可以直接启动了，访问 `http://localhost:38080/api/doc.html` 即可打开接口文档。
 
 ### 可选执行
 
@@ -202,7 +177,7 @@
      # 框架依赖自动配置选择
      autoconfigure:
        exclude:
-         # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，预先关闭）
+         # todo 是否开启Redis依赖类（如果要启动Redis，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置Redis相关配置，预先关闭）
          #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
    ```
 
@@ -210,21 +185,21 @@
 
    ```yaml
    spring: 
-       # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
      redis:
        # 单机地址（单价模式配置和集群模式配置只能存在一个）
-       host: xxx.xxx.xxx.xxx
+       host: 127.0.0.1
        # 单机端口，默认为6379
        port: 6379
        # 集群地址（单价模式配置和集群模式配置只能存在一个）
        #cluster:
        #  nodes:
-       #    - xxx.xxx.xxx.xxx:6379
-       #    - xxx.xxx.xxx.xxx:6380
-       #    - xxx.xxx.xxx.xxx:6381
-       #    - xxx.xxx.xxx.xxx:6382
-       #    - xxx.xxx.xxx.xxx:6383
-       #    - xxx.xxx.xxx.xxx:6384
+       #    - 127.0.0.1:6379
+       #    - 127.0.0.1:6380
+       #    - 127.0.0.1:6381
+       #    - 127.0.0.1:6382
+       #    - 127.0.0.1:6383
+       #    - 127.0.0.1:6384
        # 数据库索引
        database: 0
        # 密码（考虑是否需要密码）
@@ -244,7 +219,7 @@
            max-wait: 3000
    ```
 
-3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在 `config/redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留做法仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
+3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在 `top.sharehome.springbootinittemplate.config.redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留做法仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
 
 ##### 整合业务缓存（Redisson）
 
@@ -493,6 +468,10 @@
    ```
 
 5. 该模板中也提供了使用的一个范例，在 `elasticsearch` 包中，同时在测试用例中也存在相关框架操作，如果还想了解更多，请在 Easy-ES 官网自行学习。
+
+#### 整合MongoDB
+
+
 
 #### 整合对象存储服务
 

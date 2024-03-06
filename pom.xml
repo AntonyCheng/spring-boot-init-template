@@ -96,7 +96,7 @@
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
-        <power.job.version>4.3.6</power.job.version>
+        <power.job.version>4.3.9</power.job.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <canal.version>1.1.7</canal.version>
         <!-- 其他（和业务无关，但是能够确保系统稳定性） -->
@@ -113,10 +113,6 @@
         <!-- SpringBoot 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
                 <!-- 若要使用Undertow作为服务器，那就需要排除Tomcat的相关依赖，该模板默认使用Undertow -->
@@ -126,7 +122,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- web 容器使用 undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉） -->
+        <!-- Web 容器使用 Undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
@@ -152,6 +148,14 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -170,14 +174,14 @@
 
         <!-- MySQL 依赖配置（搭配shardingsphere 5.2.1-5.3.2 一起使用，druid版本控制在1.2.16以下，这种搭配主要是想完成数据库加密、主从库和分库分表的操作，后续会继续更新） -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis.plus.starter.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
@@ -197,14 +201,14 @@
             <version>${lombok.version}</version>
         </dependency>
 
-        <!-- hutool 依赖配置-->
+        <!-- Hutool 依赖配置-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
 
-        <!-- apache common 依赖配置 -->
+        <!-- Apache Commons 依赖配置 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -236,15 +240,41 @@
             <version>${commons.math3.version}</version>
         </dependency>
 
+        <!-- Ok Http 依赖配置 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${ok.http3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>${ok.io.version}</version>
+        </dependency>
+
+        <!-- Fast JSON 依赖配置 -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson2.version}</version>
+        </dependency>
+
+        <!-- 离线 IP 地址定位库 ip2region 依赖配置-->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
+        </dependency>
+
         <!-- Sa-Token 依赖配置（该初始化模板提供session+cookie和redis+token两种方式，此处依赖配置是redis+token，所以必须保证redis可用） -->
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-core</artifactId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>${sa.token.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <artifactId>sa-token-core</artifactId>
             <version>${sa.token.version}</version>
         </dependency>
         <dependency>
@@ -258,29 +288,31 @@
             <version>${sa.token.version}</version>
         </dependency>
 
-        <!-- redis 依赖配置 -->
+        <!-- Redis 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-        <!-- 缓存依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+
+        <!-- Redisson 依赖配置 -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
         </dependency>
+
+        <!-- Caffeine 依赖配置 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>${caffeine.version}</version>
         </dependency>
 
-        <!-- rabbitMQ 依赖配置 -->
+        <!-- RabbitMQ 依赖配置 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
@@ -291,13 +323,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- logstash 依赖配置 -->
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash.logback.version}</version>
-        </dependency>
-        <!-- ES 依赖配置 -->
+        <!-- Elastic Search 依赖配置 -->
         <dependency>
             <groupId>org.dromara.easy-es</groupId>
             <artifactId>easy-es-boot-starter</artifactId>
@@ -310,13 +336,14 @@
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client</artifactId>
-            <version>${elasticsearch.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.version}</version>
+        </dependency>
+        <!-- Logstash 依赖配置 -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash.logback.version}</version>
         </dependency>
 
         <!-- 腾讯云 COS 依赖配置 -->
@@ -381,20 +408,14 @@
             <type>pom</type>
         </dependency>
 
-        <!-- 邮件依赖配置 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <!-- XXL-JOB分布式定时任务依赖配置 -->
+        <!-- XXL-JOB 分布式定时任务依赖配置 -->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
             <version>${xxl.job.version}</version>
         </dependency>
 
-        <!-- PowerJob分布式任务调度依赖配置 -->
+        <!-- PowerJob 分布式任务调度依赖配置 -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-worker-spring-boot-starter</artifactId>
@@ -406,14 +427,14 @@
             <version>${power.job.version}</version>
         </dependency>
 
-        <!-- SpringBootAdmin监控平台依赖配置 -->
+        <!-- Spring Boot Admin 监控平台依赖配置 -->
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-client</artifactId>
             <version>${spring.boot.admin.client.version}</version>
         </dependency>
 
-        <!-- Canal客户端依赖配置 -->
+        <!-- Canal 客户端依赖配置 -->
         <dependency>
             <groupId>com.alibaba.otter</groupId>
             <artifactId>canal.client</artifactId>
@@ -430,40 +451,14 @@
             <version>${canal.version}</version>
         </dependency>
 
-        <!-- okHttp 依赖配置 -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${ok.http3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>${ok.io.version}</version>
-        </dependency>
-
-        <!-- 离线IP地址定位库 ip2region 依赖配置-->
-        <dependency>
-            <groupId>org.lionsoul</groupId>
-            <artifactId>ip2region</artifactId>
-            <version>${ip2region.version}</version>
-        </dependency>
-
-        <!-- knife4j 依赖配置 -->
+        <!-- Knife4j 依赖配置 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
             <version>${knife4j.openapi3.starter.version}</version>
         </dependency>
 
-        <!-- fastjson2 依赖配置 -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>${fastjson2.version}</version>
-        </dependency>
-
-        <!-- snakeyaml 依赖配置（用于保证系统稳定性） -->
+        <!-- Snakeyaml 依赖配置（用于保证系统稳定性） -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>

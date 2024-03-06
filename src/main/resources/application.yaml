@@ -246,10 +246,10 @@ spring:
       port: 27017
       # 默认数据库
       database: init_db
-      # MongoDB用户名（没有则不填写）
-      username:
-      # MongoDB密码（没有则不填写）
-      password:
+      # MongoDB用户名（考虑是否需要用户名）
+      #username:
+      # MongoDB密码（考虑是否需要密码）
+      #password:
   # MySQL配置
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
@@ -545,7 +545,7 @@ xxl:
       # 执行器IP：默认自动获取IP（appname不为空，该处则可为空）
       ip:
       # 执行器运行日志文件存储磁盘路径
-      logpath: ./logs/${spring.application.name}/xxl-job
+      logpath: ./logs/xxl-logs/xxl-job
       # 执行器日志文件保存天数：大于3生效
       logretentiondays: 30
 
