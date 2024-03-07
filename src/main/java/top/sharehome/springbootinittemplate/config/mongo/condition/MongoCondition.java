@@ -1,12 +1,12 @@
 package top.sharehome.springbootinittemplate.config.mongo.condition;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * MongoDB自定义配置条件
- * todo: 借鉴Redis设计自定义配置条件，以便替换MgRepository和MgService中@Condition的参数
  *
  * @author AntonyCheng
  */
@@ -14,6 +14,17 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class MongoCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        return false;
+        boolean mark = true;
+        int index = 0;
+        while (mark) {
+            String property = context.getEnvironment().getProperty(String.format("spring.autoconfigure.exclude[%d]", index++));
+            if ("org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration".equals(property)) {
+                return false;
+            }
+            if (StringUtils.isEmpty(property)) {
+                mark = false;
+            }
+        }
+        return true;
     }
 }

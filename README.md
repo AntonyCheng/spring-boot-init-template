@@ -841,7 +841,16 @@ sa-token:
 鉴权其实就是查看某个用户对于某个接口、某个功能或者某个服务是否具有操作的权限，在该模板自带的数据库中有一个 `t_user` 表，表里有一个 `role` 角色字段，框架自带的业务逻辑就是用户登录后会保存一个登录信息，每次操作之前都去登录信息中获取角色信息， SaToken 框架会自动去对比角色信息，从而做到鉴权，当然开发者们可以按照自己的需求去设计鉴权内容，并不使用 `role` 角色字段，所以要求开发者自行编写符合自己需求的代码，而需要更改的文件就是 `top.sharehome.springbootinittemplate.config.security.AuthorizationConfiguration` 类：
 
 ```java
+/**
+ * SaToken鉴权配置
+ * 这里应该会依靠loginId对数据库进行相关查询，得到的结果放入结果集中，
+ * 该模板不会单独规划处一个权限或者角色数据库表样式，而是将角色内嵌于模板SQL中t_user表内，因为该模板主要针对于不同的中小系统而设计的，不同系统都有不同的权限和角色分配，
+ * 用与不用SaToken鉴权完全取决于系统本身业务，所以此处@Component注解打开与否完全取决于开发者；
+ *
+ * @author AntonyCheng
+ */
 @Component
+@Conditional(AuthorizationCondition.class)
 @Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 
@@ -872,7 +881,7 @@ public class AuthorizationConfiguration implements StpInterface {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于用户角色，所以角色通常只有一个，个别情况除外
         SaSession session = StpUtil.getSessionByLoginId(loginId);
-        String userRole = session.get(USER_ROLE_KEY, "");
+        String userRole = ((AuthLoginVo) session.get(Constants.LOGIN_USER_KEY)).getRole();
         return Collections.singletonList(userRole);
     }
 
@@ -894,25 +903,25 @@ spring:
   # 框架依赖自动配置选择
   autoconfigure:
     exclude:
-      # todo 是否开启Redis依赖类（如果要打开Redis配置，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置redis相关配置，预先关闭）
+      # todo 是否开启Redis依赖类（如果要启动Redis，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置Redis相关配置，预先关闭）
       #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先不使用）
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  # 修改系统缓存redis配置（这里的redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
   redis:
     # 单机地址（单价模式配置和集群模式配置只能存在一个）
-    host: xxx.xxx.xxx.xxx
+    host: 127.0.0.1
     # 单机端口，默认为6379
     port: 6379
     # 集群地址（单价模式配置和集群模式配置只能存在一个）
     #cluster:
     #  nodes:
-    #    - xxx.xxx.xxx.xxx:6379
-    #    - xxx.xxx.xxx.xxx:6380
-    #    - xxx.xxx.xxx.xxx:6381
-    #    - xxx.xxx.xxx.xxx:6382
-    #    - xxx.xxx.xxx.xxx:6383
-    #    - xxx.xxx.xxx.xxx:6384
+    #    - 127.0.0.1:6379
+    #    - 127.0.0.1:6380
+    #    - 127.0.0.1:6381
+    #    - 127.0.0.1:6382
+    #    - 127.0.0.1:6383
+    #    - 127.0.0.1:6384
     # 数据库索引
     database: 0
     # 密码（考虑是否需要密码）
@@ -936,11 +945,22 @@ spring:
 
 ###### 整合JWT
 
-JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
+JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，想知道具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
+
+```yaml
+# Sa-Token配置
+sa-token:
+  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
+  enable-authorization: true
+  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
+  enable-identification: true
+  # todo 是否使用jwt（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  enable-jwt: true
+```
 
 #### 配置定时任务
 
-定时任务对于一个后端系统来说非常使用，它从某种意义上实现了系统业务的解耦，让系统不再是一个只会响应请求的“单机废物”，例如可以用它设计轮询推送服务，虽然一般服务器接受不了高频的轮询，不能保证数据的实时情况，但是也赋予了系统这样的功能。接下来从实现和部署方式的角度由易到难介绍一下模板中三种定时任务的调度方案。
+定时任务对于一个后端系统来说非常使用，它从某种意义上实现了系统业务的解耦，让系统不再是一个只会响应请求的“单机废物”，例如可以用它设计轮询推送服务，虽然一般服务器接受不了高频的阻塞轮询，不能保证数据的实时情况，但是也赋予了系统这样的功能。接下来从实现和部署方式的角度由易到难介绍一下模板中三种定时任务的调度方案。
 
 ##### SpringBoot任务调度
 
@@ -965,15 +985,23 @@ SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定
 
 2. 全量任务指的是在 SpringBoot 项目程序启动时所执行的任务，举个例子：有一些非常常用的数据存储于 MySQL 当中，为了提高系统性能，我们通常会把这些数据存入 Redis 缓存当中，然后每次 Redis 中访问数据，此时就应该考虑是否开启全量任务进行数据“内存化”的操作，简而言之，全量任务就类似于整个系统的初始化任务；
 
-   全量任务需要实现 CommandLineRunner 接口，重写接口中的 run 方法即可，模板中示例代码被放在 `job/standalone/once` 包中：
+   全量任务需要实现 CommandLineRunner 接口，重写接口中的 run 方法即可，模板中示例代码被放在 `top.sharehome.springbootinittemplate.job.standalone.once` 包中：
 
    ```java
+   /**
+    * 全量任务
+    * 实现CommandLineRunner接口，可实现系统初始化操作
+    *
+    * @author AntonyCheng
+    */
    @Component
+   @Slf4j
+   @Conditional(ScheduleOnceCondition.class)
    public class OnceJob implements CommandLineRunner {
    
        @Override
        public void run(String... args) throws Exception {
-           ......
+           log.info("Running Application Init:{}", new Date());
        }
    
    }
@@ -981,10 +1009,17 @@ SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定
 
 3. 循环任务指的是现实意义上的定时任务，举个例子：当我们每天凌晨 3 点需要更新系统的 Redis 缓存，不现实的做法就是写一个对外接口，维护人员在每天凌晨 3 点去手动调用，或者非常麻烦的做法就是额外写一个功能脚本，对它进行维护和运行，面对这样的问题需求， SpringBoot 框架已经给出了相对应的解决方案，即循环任务；
 
-   循环任务需要在需要循环的任务上使用 @Scheduled 注解，该注解中有两个比较重要的字段：fixedDelay 和 cron ，前者就是以 SpringBoot 项目启动时间为基准往后间隔固定时长运行任务，后者就是以 Crontab 表达式为基准运行任务，模板中示例代码放在 `job/standalone/once` 包中：
+   循环任务需要在需要循环的任务上使用 @Scheduled 注解，该注解中有两个比较重要的字段：fixedDelay 和 cron ，前者就是以 SpringBoot 项目启动时间为基准往后间隔固定时长运行任务，后者就是以 Crontab 表达式为基准运行任务，模板中示例代码放在 `top.sharehome.springbootinittemplate.job.standalone.cycle` 包中：
 
    ```java
+   /**
+    * 循环任务
+    *
+    * @author AntonyCheng
+    */
    @Component
+   @Slf4j
+   @Conditional(ScheduleCycleCondition.class)
    public class CycleJob {
    
        /**
@@ -993,7 +1028,7 @@ SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定
         */
        @Scheduled(fixedDelay = 60 * 1000)
        public void fixedTimeJob() {
-           ......
+           log.info("Fixed time execution:{}", new Date());
        }
    
        /**
@@ -1002,7 +1037,7 @@ SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定
         */
        @Scheduled(cron = "0 * * * * *")
        public void scheduledTimeJob() {
-           ......
+           log.info("Scheduled time execution:{}", new Date());
        }
    
    }
@@ -1014,13 +1049,13 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
 
 1. 部署 XxlJob 分布式调度系统控制面板；
 
-   想要使用 XxlJob 分布式任务调度系统的功能，就需要先部署一个 XxlJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XxlJob 模块来部署一个 XxlJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XxlJob 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init-xxl-job.sql` 就起到了作用：
+   想要使用 XxlJob 分布式任务调度系统的功能，就需要先部署一个 XxlJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XxlJob 模块来部署一个 XxlJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XxlJob 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init_xxl_job.sql` 就起到了作用：
 
    ```yaml
    spring:
      # 配置XxlJob的MySQL数据库
      datasource:
-       url: jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+       url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
        username: root
        password: 123456
        driver-class-name: com.mysql.cj.jdbc.Driver
@@ -1042,13 +1077,13 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
 2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 XxlJob 控制面板地址正确的前提下打开 `enable` 配置项：
 
    ```yaml
-   # Xxl-Job配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
+   # XxlJob配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
    xxl:
      job:
        # todo 是否开启（预先关闭）
-       enable: false
+       enable: true
        # Xxl-Job监控面板地址
-       admin-addresses: http://localhost:38079/xxl-job-admin
+       admin-addresses: http://127.0.0.1:38079/xxl-job-admin
        # Xxl-Job token
        access-token: xxl-job
        # 执行器配置
@@ -1062,12 +1097,12 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
          # 执行器IP：默认自动获取IP（appname不为空，该处则可为空）
          ip:
          # 执行器运行日志文件存储磁盘路径
-         logpath: ./logs/${spring.application.name}/xxl-job
+         logpath: ./logs/xxl-logs/xxl-job
          # 执行器日志文件保存天数：大于3生效
          logretentiondays: 30
    ```
 
-3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/xxljob/SampleService` 类中，至此模板中关于 XxlJob 的内容就结束了，如果想要使用 XxlJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
+3. 该模板提供了各种调度任务的示例代码，这些代码放在 `top.sharehome.springbootinittemplate.job.distributed.xxljob.SampleService` 类中，至此模板中关于 XxlJob 的内容就结束了，如果想要使用 XxlJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
 
 ##### PowerJob任务调度
 
@@ -1082,7 +1117,7 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
 1. 部署 PowerJob 分布式调度系统控制面板；
 
-   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `power-job-admin/powerjob-server/powerjob-server-starter` 模块，首先需要修改这个模块的 `application.properties` 和 `application-daily.properties` 配置文件（ PowerJob 支持多环境开发，模板中默认为日常环境），此时在“必须执行”的操作中引入的 `sql/init-power-job.sql` 就起到了作用：
+   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `module/power-job-admin/powerjob-server/powerjob-server-starter` 模块，首先需要修改这个模块的 `application.properties` 和 `application-daily.properties` 配置文件（ PowerJob 支持多环境开发，模板中默认为日常环境），此时在“必须执行”的操作中引入的 `sql/init_power_job.sql` 就起到了作用：
 
    ```properties
    ##### application.properties 相关配置 ######
@@ -1110,7 +1145,7 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
    oms.env=DAILY
    logging.config=classpath:logback-dev.xml
    spring.datasource.core.driver-class-name=com.mysql.cj.jdbc.Driver
-   spring.datasource.core.jdbc-url=jdbc:mysql://xxx.xxx.xxx.xxx:23305/init_power_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+   spring.datasource.core.jdbc-url=jdbc:mysql://127.0.0.1:3306/init_power_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
    spring.datasource.core.username=root
    spring.datasource.core.password=123456
    spring.datasource.core.maximum-pool-size=20
@@ -1151,11 +1186,11 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
        max-appended-wf-context-length: 4096
    ```
 
-3. 该模板提供了各种调度任务的示例代码，这些代码放在 `job/distributed/powerjob` 包中，至此模板中关于 PowerJob 的内容就结束了，如果想要使用 PowerJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
+3. 该模板提供了各种调度任务的示例代码，这些代码放在 `top.sharehome.springbootinittemplate.job.distributed.powerjob` 包中，至此模板中关于 PowerJob 的内容就结束了，如果想要使用 PowerJob 分布式调度系统，请前往其官方网站仔细阅读文档并且按要求编码。
 
 #### 配置WebSocket
 
-如果想拥有正真意义上的服务器推送功能，目前有两种解决方案，第一种是 Server-Send Event（SSE） 单工通信机制，第二种是 WebSocket 全双工通信机制，该模板中给出了基于 Netty 框架搭建的 WebSocket 相关配置，具体编码方法请见：[Netty 学习示例](https://github.com/AntonyCheng/netty-study-demo)。
+如果想拥有正真意义上的服务器推送功能，目前有两种解决方案，第一种是 Server-Send Event（SSE） 单工通信机制，第二种是 WebSocket 全双工通信机制，该模板中给出了基于 Netty 框架搭建的 WebSocket 相关配置，具体编码方法请见：[Netty 学习示例仓库](https://github.com/AntonyCheng/netty-study-demo)。
 
 在该模板中配置 WebSocket 很简单，首先修改 `application.yaml` 文件：
 
@@ -1182,6 +1217,8 @@ SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也�
 # 服务概况 ---- 可自定义
 server:
   port: 38077
+  servlet:
+    context-path: /spring-boot-admin
 # 公共配置文件
 spring:
   application:
@@ -1192,7 +1229,7 @@ spring:
       password: admin123456
   boot:
     admin:
-      context-path: /spring-boot-admin
+      context-path: /
   thymeleaf:
     check-template-location: false
 ```
@@ -1202,18 +1239,26 @@ spring:
 ```yaml
 # 公共配置文件
 spring:
-  # 配置SpringBootAdmin项目所在地址
+  # 配置SpringBootAdmin
   boot:
     admin:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: true
-        url: http://localhost:38077/spring-boot-admin
+        # SpringBootAdmin地址
+        url: http://127.0.0.1:38077/spring-boot-admin/
+        # SpringBootAdmin账号
         username: admin
+        # SpringBootAdmin密码
         password: admin123456
+        # 实例配置
         instance:
+          # 指定服务实例在注册到Admin服务器时提供给服务器的是IP地址而不是其他类型的主机名（如DNS名称）
           service-host-type: ip
+          # 指定Admin界面显示的实例名称
           name: ${spring.application.name}
+          # 指定客户端应用的服务基础URL，当Admin Server需要调用客户端应用的actuator端点或其他API时，会使用这个URL作为前缀
+          service-base-url: http://127.0.0.1:38080
 ```
 
 如果还想将 XxlJob 分布式任务调度系统整合进入 SpringBoot Admin 中，那就进行和上面相同的操作即可。

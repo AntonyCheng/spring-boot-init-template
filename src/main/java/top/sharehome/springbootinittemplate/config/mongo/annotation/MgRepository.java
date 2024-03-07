@@ -1,7 +1,9 @@
 package top.sharehome.springbootinittemplate.config.mongo.annotation;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Repository;
+import top.sharehome.springbootinittemplate.config.mongo.condition.MongoCondition;
 
 import java.lang.annotation.*;
 
@@ -14,6 +16,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Repository
-@ConditionalOnBean(name = {"mongoTemplate"})
+@Conditional(MongoCondition.class)
 public @interface MgRepository {
 }
