@@ -1,58 +1,65 @@
-# SpringBoot初始化模板
+<p style="text-align: center">
+  <a href="https://github.com/AntonyCheng">
+    <img alt="spring-boot-init-template logo" src="logo/logo.png" title="logo"/>
+  </a>
+</p>
 
-> 作者：[AntonyCheng](https://github.com/AntonyCheng)
->
-> 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
+> **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
 > **版本号：v2.x.x**
+>
+> **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 
-基于 Java Web 项目的 SpringBoot 框架初始化模板，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
+# SpringBoot初始化模板
 
-* [模板特点](#模板特点)
-  * [主流框架](#主流框架)
-  * [业务特性](#业务特性)
-* [业务功能](#业务功能)
-  * [示例业务](#示例业务)
-  * [单元测试](#单元测试)
-* [快速上手](#快速上手)
-  * [必须执行](#必须执行)
-  * [可选执行](#可选执行)
-    * [整合缓存服务](#整合缓存服务)
-      * [整合系统缓存（Redis）](#整合系统缓存redis)
-      * [整合业务缓存（Redisson）](#整合业务缓存redisson)
-      * [整合本地缓存（Caffeine）](#整合本地缓存caffeine)
-    * [整合消息队列](#整合消息队列)
-      * [激活消息队列](#激活消息队列)
-      * [自定义消息队列](#自定义消息队列)
-    * [整合Elasticsearch](#整合elasticsearch)
-    * [整合MongoDB](#整合mongodb)
-    * [整合对象存储服务](#整合对象存储服务)
-      * [整合腾讯云COS](#整合腾讯云cos)
-      * [整合MinIO](#整合minio)
-      * [整合阿里云OSS](#整合阿里云oss)
-    * [整合验证码](#整合验证码)
-    * [整合邮件](#整合邮件)
-    * [整合离线IP库](#整合离线ip库)
-    * [配置国际化](#配置国际化)
-    * [配置SaToken](#配置satoken)
-      * [开启鉴权](#开启鉴权)
-      * [开启认证](#开启认证)
-      * [开启JWT](#开启jwt)
-        * [整合Redis](#整合redis)
-        * [整合JWT](#整合jwt)
-    * [配置定时任务](#配置定时任务)
-      * [SpringBoot任务调度](#springboot任务调度)
-      * [XxlJob任务调度](#xxljob任务调度)
-      * [PowerJob任务调度](#powerjob任务调度)
-    * [配置WebSocket](#配置websocket)
-    * [配置SpringBootAdmin](#配置springbootadmin)
-    * [配置Canal](#配置canal)
-      * [Canal简介](#canal简介)
-      * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
-      * [搭建Deployer&Client系统](#搭建deployerclient系统)
-* [兼容Java8](#兼容java8)
-* [申明&联系我](#申明联系我)
-* [下一步开发计划](#下一步开发计划)
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
+
+* [SpringBoot初始化模板](#springboot初始化模板)
+  * [模板特点](#模板特点)
+    * [主流框架](#主流框架)
+    * [业务特性](#业务特性)
+  * [业务功能](#业务功能)
+    * [示例业务](#示例业务)
+    * [单元测试](#单元测试)
+  * [快速上手](#快速上手)
+    * [必须执行](#必须执行)
+    * [可选执行](#可选执行)
+      * [整合缓存服务](#整合缓存服务)
+        * [整合系统缓存（Redis）](#整合系统缓存redis)
+        * [整合业务缓存（Redisson）](#整合业务缓存redisson)
+        * [整合本地缓存（Caffeine）](#整合本地缓存caffeine)
+      * [整合消息队列](#整合消息队列)
+        * [激活消息队列](#激活消息队列)
+        * [自定义消息队列](#自定义消息队列)
+      * [整合Elasticsearch](#整合elasticsearch)
+      * [整合MongoDB](#整合mongodb)
+      * [整合对象存储服务](#整合对象存储服务)
+        * [整合腾讯云COS](#整合腾讯云cos)
+        * [整合MinIO](#整合minio)
+        * [整合阿里云OSS](#整合阿里云oss)
+      * [整合验证码](#整合验证码)
+      * [整合邮件](#整合邮件)
+      * [整合离线IP库](#整合离线ip库)
+      * [配置国际化](#配置国际化)
+      * [配置SaToken](#配置satoken)
+        * [开启鉴权](#开启鉴权)
+        * [开启认证](#开启认证)
+        * [开启JWT](#开启jwt)
+          * [整合Redis](#整合redis)
+          * [整合JWT](#整合jwt)
+      * [配置定时任务](#配置定时任务)
+        * [SpringBoot任务调度](#springboot任务调度)
+        * [XxlJob任务调度](#xxljob任务调度)
+        * [PowerJob任务调度](#powerjob任务调度)
+      * [配置WebSocket](#配置websocket)
+      * [配置SpringBootAdmin](#配置springbootadmin)
+      * [配置Canal](#配置canal)
+        * [Canal简介](#canal简介)
+        * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
+        * [搭建Deployer&Client系统](#搭建deployerclient系统)
+  * [兼容Java8](#兼容java8)
+  * [申明&联系我](#申明联系我)
+  * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
 
