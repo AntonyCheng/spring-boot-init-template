@@ -85,12 +85,12 @@ public interface Constants {
     /**
      * 用户角色admin
      */
-    String USER_ROLE_ADMIN = "admin";
+    String ROLE_ADMIN = "admin";
 
     /**
      * 用户角色user
      */
-    String USER_ROLE_USER = "user";
+    String ROLE_USER = "user";
 
     /**
      * 只包含数字和英文的正则表达式

@@ -97,7 +97,14 @@ public class LoginUtils {
      * 登录用户账户角色是否为管理员
      */
     public static boolean isAdmin() {
-        return Constants.USER_ROLE_ADMIN.equals(getLoginUser().getRole());
+        return Constants.ROLE_ADMIN.equals(getLoginUser().getRole());
+    }
+
+    /**
+     * 根据用户LoginId指定用户退出
+     */
+    public static void logout(Object loginId){
+        StpUtil.logout(loginId);
     }
 
     /**
