@@ -1,4 +1,4 @@
-<p style="text-align: center">
+<p align="center">
   <a href="https://github.com/AntonyCheng">
     <img alt="spring-boot-init-template logo" src="logo/logo.png" title="logo"/>
   </a>
