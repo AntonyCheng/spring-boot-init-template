@@ -9,6 +9,8 @@
 > **版本号：v2.x.x**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
+>
+> **灵感源自：编程导航**
 
 # SpringBoot初始化模板
 

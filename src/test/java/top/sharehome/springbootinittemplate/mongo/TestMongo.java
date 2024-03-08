@@ -151,7 +151,7 @@ public class TestMongo {
         System.out.println("共" + pageMultipleLike.getTotalPages() + "页，共" + pageMultipleLike.getTotalElements() + "条");
 
         // 删除特定数据
-        userMgRepository.delete(userMgRepository.findOne(Example.of(new UserMg().setUserId(5L))).orElseThrow());
+        userMgRepository.delete(userMgRepository.findOne(Example.of(new UserMg().setUserId(5L))).orElseThrow(null));
         System.out.println("\n删除userId为5的数据之后剩下的数据：");
         userMgRepository.findAll().forEach(System.out::println);
 
