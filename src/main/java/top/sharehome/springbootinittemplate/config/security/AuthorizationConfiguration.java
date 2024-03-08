@@ -5,9 +5,9 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.common.base.Constants;
-import top.sharehome.springbootinittemplate.config.security.condition.AuthorizationCondition;
+import top.sharehome.springbootinittemplate.config.security.condition.SaCondition;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
 import javax.annotation.PostConstruct;
@@ -22,8 +22,8 @@ import java.util.List;
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(AuthorizationCondition.class)
+@Configuration
+@Conditional(SaCondition.class)
 @Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 
@@ -38,7 +38,8 @@ public class AuthorizationConfiguration implements StpInterface {
     public List<String> getPermissionList(Object loginId, String loginType) {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于接口权限，所以权限通常有多个，上帝权限和个别极端情况除外
-        // 需要使用"."将每一级权限给分离开来，支持权限通配符操作，"*"表示上帝权限
+        // 举例：User实体中有一个add方法()，则推荐将该方法权限写为"user.add"，支持通配符操作，如果想要得到User实体类中所有方法的调用权限，则写为"user.*"
+        // "*"表示上帝权限
         return Collections.singletonList("*");
     }
 
@@ -53,6 +54,7 @@ public class AuthorizationConfiguration implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于用户角色，所以角色通常只有一个，个别情况除外
+        // "*"表示上帝角色
         SaSession session = StpUtil.getSessionByLoginId(loginId);
         String userRole = ((AuthLoginVo) session.get(Constants.LOGIN_USER_KEY)).getRole();
         return Collections.singletonList(userRole);

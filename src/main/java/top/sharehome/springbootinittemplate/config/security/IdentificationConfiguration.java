@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
-import top.sharehome.springbootinittemplate.config.security.condition.IdentificationCondition;
+import top.sharehome.springbootinittemplate.config.security.condition.SaCondition;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
  * @author AntonyCheng
  */
 @Configuration
-@Conditional(IdentificationCondition.class)
+@Conditional(SaCondition.class)
 @Slf4j
 public class IdentificationConfiguration implements WebMvcConfigurer {
 

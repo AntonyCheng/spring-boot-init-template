@@ -258,6 +258,8 @@ public class TencentConfiguration {
         // 这里建议设置使用 https 协议
         // 从 5.6.54 版本开始，默认使用了 https
         clientConfig.setHttpProtocol(HttpProtocol.https);
+        // 禁止打印关闭时的堆栈信息，绝大多数场景下是无效信息
+        clientConfig.setPrintShutdownStackTrace(false);
         // 生成 cos 客户端并且上传文件
         return new COSClient(cred, clientConfig);
     }

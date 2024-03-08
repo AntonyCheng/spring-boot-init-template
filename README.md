@@ -42,8 +42,9 @@
       * [整合离线IP库](#整合离线ip库)
       * [配置国际化](#配置国际化)
       * [配置SaToken](#配置satoken)
-        * [开启鉴权](#开启鉴权)
-        * [开启认证](#开启认证)
+        * [开启鉴权认证功能](#开启鉴权认证功能)
+          * [鉴权功能](#鉴权功能)
+          * [认证功能](#认证功能)
         * [开启JWT](#开启jwt)
           * [整合Redis](#整合redis)
           * [整合JWT](#整合jwt)
@@ -870,22 +871,22 @@ spring:
 
 #### 配置SaToken
 
-**说明**：与其说配置 SaToken ，不如说是介绍该模板中封装的三个 SaToken 特性：
+**说明**：与其说配置 SaToken ，不如说是介绍该模板中封装的两个 SaToken 特性：
 
 ```yaml
 # Sa-Token配置
 sa-token:
-  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
-  enable-authorization: true
-  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
-  enable-identification: true
-  # todo 是否使用jwt（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  # todo 是否启用SaToken认证鉴权功能（此处为false并不是禁用SaToken，而是让SaToken相关注解失效，预先开启）
+  enable-sa: true
+  # todo 是否使用JWT（建议如果没有开启redis配置就不要开启jwt，预先关闭）
   enable-jwt: false
 ```
 
-至于 SaToken 具体的使用说明，请前往其官方网站仔细阅读文档，接下来以文字的方式对三个封装后的特性挨个介绍。
+至于 SaToken 具体的使用说明，请前往其官方网站仔细阅读文档，接下来以文字的方式对两个封装后的特性挨个介绍。
 
-##### 开启鉴权
+##### 开启鉴权认证功能
+
+###### 鉴权功能
 
 鉴权其实就是查看某个用户对于某个接口、某个功能或者某个服务是否具有操作的权限，在该模板自带的数据库中有一个 `t_user` 表，表里有一个 `role` 角色字段，框架自带的业务逻辑就是用户登录后会保存一个登录信息，每次操作之前都去登录信息中获取角色信息， SaToken 框架会自动去对比角色信息，从而做到鉴权，当然开发者们可以按照自己的需求去设计鉴权内容，并不使用 `role` 角色字段，所以要求开发者自行编写符合自己需求的代码，而需要更改的文件就是 `top.sharehome.springbootinittemplate.config.security.AuthorizationConfiguration` 类：
 
@@ -898,8 +899,8 @@ sa-token:
  *
  * @author AntonyCheng
  */
-@Component
-@Conditional(AuthorizationCondition.class)
+@Configuration
+@Conditional(SaCondition.class)
 @Slf4j
 public class AuthorizationConfiguration implements StpInterface {
 
@@ -914,7 +915,8 @@ public class AuthorizationConfiguration implements StpInterface {
     public List<String> getPermissionList(Object loginId, String loginType) {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于接口权限，所以权限通常有多个，上帝权限和个别极端情况除外
-        // 需要使用"."将每一级权限给分离开来，支持权限通配符操作，"*"表示上帝权限
+        // 举例：User实体中有一个add方法()，则推荐将该方法权限写为"user.add"，支持通配符操作，如果想要得到User实体类中所有方法的调用权限，则写为"user.*"
+        // "*"表示上帝权限
         return Collections.singletonList("*");
     }
 
@@ -929,17 +931,26 @@ public class AuthorizationConfiguration implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         // 根据SaToken权限配置文档：https://sa-token.cc/doc.html#/use/jur-auth
         // 由于此处设计主要针对于用户角色，所以角色通常只有一个，个别情况除外
+        // "*"表示上帝角色
         SaSession session = StpUtil.getSessionByLoginId(loginId);
         String userRole = ((AuthLoginVo) session.get(Constants.LOGIN_USER_KEY)).getRole();
         return Collections.singletonList(userRole);
     }
 
+    /**
+     * 依赖注入日志输出
+     */
+    @PostConstruct
+    private void initDi() {
+        log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
+    }
+
 }
 ```
 
-##### 开启认证
+###### 认证功能
 
-认证主要负责校验用户的在线状态，大多数系统的认证逻辑就是用户没有登录就不能使用绝大部分系统功能，该模板默认实现认证功能，但是在长期的开发过程中就会发现各式各样的框架型模板调试过程会因为认证功能而变得麻烦。所以该模板允许开发者决定是否开启认证功能，也就是说开发者能够不需要登录去调试代码，也可以发布不需要登录的 Web 项目。
+认证主要负责校验用户的在线状态，大多数系统的认证逻辑就是用户没有登录就不能使用绝大部分系统功能，该模板默认实现认证功能，但是在长期的开发过程中就会发现各式各样的框架型模板调试过程会因为认证功能而变得麻烦。所以该模板允许开发者决定是否开启认证功能，也就是说开发者能够在非登录状态下去调试代码，也可以发布不需要登录的 Web 项目，但是此处需要**注意：`enable-sa` 配置项仅仅只决定了 SaToken 相关的认证鉴权注解是否可用，而 `StpUtil.login()` 方法依旧可以使用，大白话就是程序仍然允许用户进行登录，但是如果在没登陆的情况下调用登录状态下才能调用的方法（例如 `StpUtil.getLoginUserId()`）就会抛出“未登陆”的异常**。
 
 ##### 开启JWT
 
@@ -999,11 +1010,9 @@ JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 
 ```yaml
 # Sa-Token配置
 sa-token:
-  # todo 是否开启鉴权（不开启鉴权就意味SaCheckRole和SaCheckPermission失效，预先开启）
-  enable-authorization: true
-  # todo 是否开启认证（不开启认证就意味着所有接口无论是否使用Sa-Token注解，均开放，预先开启）
-  enable-identification: true
-  # todo 是否使用jwt（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  # todo 是否启用SaToken认证鉴权功能（此处为false并不是禁用SaToken，而是让SaToken相关注解失效，预先开启）
+  enable-sa: true
+  # todo 是否使用JWT（建议如果没有开启redis配置就不要开启jwt，预先关闭）
   enable-jwt: true
 ```
 

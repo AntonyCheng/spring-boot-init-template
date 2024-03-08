@@ -6,15 +6,15 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * SaToken认证自定义配置条件
+ * SaToken是否使用Jwt自定义配置条件
  *
  * @author AntonyCheng
  */
-public class IdentificationCondition implements Condition {
+public class JwtCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String property = context.getEnvironment().getProperty("sa-token.enable-identification");
+        String property = context.getEnvironment().getProperty("sa-token.enable-jwt");
         return StringUtils.equals(Boolean.TRUE.toString(), property);
     }
 

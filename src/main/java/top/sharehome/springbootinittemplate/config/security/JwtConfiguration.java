@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import top.sharehome.springbootinittemplate.config.security.condition.TokenWithJwtCondition;
+import top.sharehome.springbootinittemplate.config.security.condition.JwtCondition;
 
 import javax.annotation.PostConstruct;
 
@@ -16,9 +16,9 @@ import javax.annotation.PostConstruct;
  * @author AntonyCheng
  */
 @Configuration
-@Conditional(TokenWithJwtCondition.class)
+@Conditional(JwtCondition.class)
 @Slf4j
-public class TokenWithJwtConfiguration {
+public class JwtConfiguration {
 
     /**
      * Sa-Token 整合 jwt (该模板使用 Simple 简单模式，一共有三种模式，详情见：https://sa-token.cc/doc.html#/plugin/jwt-extend)

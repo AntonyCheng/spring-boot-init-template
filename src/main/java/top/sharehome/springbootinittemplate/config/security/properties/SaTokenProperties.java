@@ -13,17 +13,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SaTokenProperties {
 
     /**
-     * 是否开启鉴权
+     * 是否启用SaToken认证鉴权功能
      */
-    private Boolean enableAuthorization = true;
+    private Boolean enableSa = true;
 
     /**
-     * 是否开启认证
-     */
-    private Boolean enableIdentification = true;
-
-    /**
-     * 是否使用jwt
+     * 是否使用JWT
      */
     private Boolean enableJwt = false;
 
