@@ -245,7 +245,7 @@ public class GlobalExceptionHandler {
     public R<Void> handleBindException(BindException e) {
         log.error(e.getMessage(), e);
         String message = e.getAllErrors().get(0).getDefaultMessage();
-        return R.fail(HttpStatus.WARN, message);
+        return R.fail(HttpStatus.BAD_REQUEST, message);
     }
 
     // todo 第一个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
