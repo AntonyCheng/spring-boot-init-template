@@ -9,8 +9,6 @@
 > **版本号：v2.x.x**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
->
-> **灵感源自：编程导航**
 
 # SpringBoot初始化模板
 
@@ -1356,7 +1354,17 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 模板 **2.x.x** 版本默认适配 Java11 版本，为了更好的兼容 Java8 版本，可以对依赖进行如下修改：
 
+- **java**：11 ==> 1.8
+
+  ```xml
+  <java.version>1.8</java.version>
+  ```
+
 - **caffeine**：3.1.8 ==> 2.9.3
+
+  ```xml
+  <caffeine.version>2.9.3</caffeine.version>
+  ```
 
 ## 申明&联系我
 
