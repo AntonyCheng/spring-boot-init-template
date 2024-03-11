@@ -99,7 +99,8 @@
         <power.job.version>4.3.9</power.job.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <canal.version>1.1.7</canal.version>
-        <!-- 其他（和业务无关，但是能够确保系统稳定性） -->
+        <!-- 其他（确保系统稳定性，主要是因为ShardingSphere框架中ElasticJob使用了旧版本SnakeYAML的API，目前无法对其进行升级） -->
+        <!-- 据说ShardingSphere5.5.0会对其进行修复，这也是为什么该模板不选择升级ShardingSphere5.4.x，而一直沿用ShardingSphere5.3.2的原因之一 -->
         <snakeyaml.version>1.33</snakeyaml.version>
         <!-- 插件版本 -->
         <maven.compiler.plugin.verison>3.11.0</maven.compiler.plugin.verison>
