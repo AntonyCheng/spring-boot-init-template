@@ -5,8 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.dromara.easyes.annotation.HighLight;
+import org.dromara.easyes.annotation.IndexField;
 import org.dromara.easyes.annotation.IndexId;
 import org.dromara.easyes.annotation.IndexName;
+import org.dromara.easyes.annotation.rely.FieldType;
 import org.dromara.easyes.annotation.rely.IdType;
 
 import java.io.Serializable;
@@ -21,22 +23,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@IndexName("t_user")
+@IndexName("i_user")
 public class UserEs implements Serializable {
 
     /**
      * 建议在粘贴复制后将ES中的索引值静态化
      */
-    public static final String INDEX = "t_user";
+    public static final String INDEX = "i_user";
+
+    /**
+     * 主键标识，该属性的值会自动对应ES的主键字段"_id"，这是由ES自动生成索引的唯一ID
+     */
+    private String id;
 
     /**
      * 用户ID
-     * 由于在Easy-ES框架有许多方法依赖实体类id，所以这个id值一定是一个必填项
      *
-     * @implNote @IndexId注解表示这个是Es实体类的ID，type值为IdType.CUSTOMIZE表示ID需要自定义且不能为null，这里的自定义可以直接查询MySQL数据库中的ID进行插入
+     * @implNote IndexField表示索引中的字段名，fieldType指的是该字段在索引中的类型
      */
-    @IndexId(type = IdType.CUSTOMIZE)
-    private Long id;
+    @IndexField(fieldType = FieldType.KEYWORD)
+    private Long userId;
 
     /**
      * 用户账号
@@ -44,6 +50,7 @@ public class UserEs implements Serializable {
      * @implNote @Highlight注解表示需要高亮的字段
      */
     @HighLight(mappingField = "accountHighLight")
+    @IndexField(value = "account")
     private String account;
 
     /**
@@ -54,56 +61,45 @@ public class UserEs implements Serializable {
     /**
      * 用户密码
      */
+    @IndexField(value = "password")
     private String password;
 
     /**
      * 用户昵称
      */
+    @IndexField(value = "name")
     private String name;
 
     /**
      * 用户头像
      */
+    @IndexField(value = "avatar")
     private String avatar;
 
     /**
      * 用户角色（admin/user）
      */
+    @IndexField(value = "role")
     private String role;
 
     /**
      * 创建时间
      */
+    @IndexField(value = "createTime")
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
+    @IndexField(value = "updateTime")
     private LocalDateTime updateTime;
 
     /**
      * 逻辑删除（0表示未删除，1表示已删除）
      */
+    @IndexField(value = "isDeleted", fieldType = FieldType.INTEGER)
     private Integer isDeleted;
 
     private static final long serialVersionUID = -2426597246755636855L;
-
-    public static final String COL_USER_ID = "user_id";
-
-    public static final String COL_USER_ACCOUNT = "user_account";
-
-    public static final String COL_USER_PASSWORD = "user_password";
-
-    public static final String COL_USER_NAME = "user_name";
-
-    public static final String COL_USER_AVATAR = "user_avatar";
-
-    public static final String COL_USER_ROLE = "user_role";
-
-    public static final String COL_CREATE_TIME = "create_time";
-
-    public static final String COL_UPDATE_TIME = "update_time";
-
-    public static final String COL_IS_DELETED = "is_deleted";
 
 }

@@ -476,6 +476,18 @@ easy-es:
   #username:
   # 如果无账号密码则可不配置此行
   #password:
+  # 多数据源
+  #dynamic:
+    #datasource:
+      #ds1:
+        #address: 127.0.0.1:9201
+        # 如果无账号密码则可不配置此行
+        #username:
+        # 如果无账号密码则可不配置此行
+        #password:
+        #...（以下配置和单数据源类似）
+      #ds2:
+        #...（以下配置和ds1相似）
   # 默认为http 可缺省
   schema: http
   # 默认为true 打印banner 若您不期望打印banner,可配置为false
@@ -508,8 +520,11 @@ easy-es:
       map-underscore-to-camel-case: false
       # 索引前缀,可用于区分环境  默认为空 用法和MP的tablePrefix一样的作用和用法
       index-prefix: template_
-      # id生成策略 customize为自定义,id值由用户生成,比如取MySQL中的数据id,如缺省此项配置,则id默认策略为es自动生成
-      id-type: customize
+      # id生成策略
+      # 1、customize为自定义，_id值由用户生成，比如取MySQL中的数据id，如缺省此项配置，则_id默认策略为ES自动生成
+      # 2、none为默认策略，由ES自动生成id
+      # 3、uuid为全局唯一策略
+      id-type: none
       # 数据刷新策略,默认为不刷新,若对数据时效性要求比较高,可以调整为immediate,但性能损耗高,也可以调整为折中的wait_until
       refresh-policy: immediate
 

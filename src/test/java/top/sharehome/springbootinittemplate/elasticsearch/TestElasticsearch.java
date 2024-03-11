@@ -57,7 +57,7 @@ public class TestElasticsearch {
     void testEasyEsCrud() {
         // 插入数据
         UserEs userEs = new UserEs()
-                .setId(1L)
+                .setUserId(1L)
                 .setName("antony")
                 .setAccount("admin")
                 .setPassword("123456")
@@ -65,7 +65,7 @@ public class TestElasticsearch {
                 .setIsDeleted(0)
                 .setCreateTime(LocalDateTime.now())
                 .setUpdateTime(LocalDateTime.now());
-        Integer insertCount = userEsMapper.insert(userEs);
+        Integer insertCount = userEsMapper.insert(userEs, UserEs.INDEX);
         System.out.println("insertCount = " + insertCount);
 
         // 根据字段查询数据
@@ -74,7 +74,7 @@ public class TestElasticsearch {
         UserEs query1 = userEsMapper.selectOne(userEsLambdaEsQueryWrapper);
         System.out.println("query1 = " + query1);
 
-        // 根据ID查询数据
+        // 根据用户ID查询数据
         UserEs query2 = userEsMapper.selectById(userEs.getId());
         System.out.println("query2 = " + query2);
 
@@ -112,7 +112,7 @@ public class TestElasticsearch {
     public void testEasyEsHighLight() {
         // 插入数据
         UserEs userEs = new UserEs()
-                .setId(1L)
+                .setUserId(1L)
                 .setName("antony")
                 .setAccount("admin")
                 .setPassword("123456")
@@ -120,7 +120,7 @@ public class TestElasticsearch {
                 .setIsDeleted(0)
                 .setCreateTime(LocalDateTime.now())
                 .setUpdateTime(LocalDateTime.now());
-        Integer insertCount = userEsMapper.insert(userEs);
+        Integer insertCount = userEsMapper.insert(userEs, UserEs.INDEX);
         System.out.println("insertCount = " + insertCount);
         LambdaEsQueryWrapper<UserEs> userEsLambdaEsQueryWrapper = new LambdaEsQueryWrapper<>();
         // 高亮查询使用Match方法

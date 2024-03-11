@@ -21,13 +21,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@Document(collection = "t_user")
+@Document(collection = "d_user")
 public class UserMg implements Serializable {
 
     /**
      * 建议在粘贴复制后将MongoDB中的文档值静态化
      */
-    public static final String DOCUMENT = "t_user";
+    public static final String DOCUMENT = "d_user";
 
     /**
      * 主键标识，该属性的值会自动对应mongodb的主键字段"_id"，如果该属性名就叫“id”,则该注解可以省略，否则必须写
