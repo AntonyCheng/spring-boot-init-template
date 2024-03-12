@@ -92,7 +92,7 @@
         <minio.version>8.5.9</minio.version>
         <!-- 文件操作相关 -->
         <poi.version>5.2.5</poi.version>
-        <easy.excel.version>3.3.3</easy.excel.version>
+        <easy.excel.version>3.3.4</easy.excel.version>
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>

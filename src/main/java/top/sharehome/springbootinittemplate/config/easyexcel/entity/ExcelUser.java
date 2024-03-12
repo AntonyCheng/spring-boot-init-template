@@ -66,14 +66,14 @@ public class ExcelUser implements Serializable {
     /**
      * 创建时间
      */
-    @ExcelProperty(value = "创建时间", converter = ExcelDateConverter.class)
-    private Date createTime;
+    @ExcelProperty(value = "创建时间", converter = ExcelLocalDateTimeConverter.class)
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @ExcelProperty(value = "更新时间", converter = ExcelDateConverter.class)
-    private Date updateTime;
+    @ExcelProperty(value = "更新时间", converter = ExcelLocalDateTimeConverter.class)
+    private LocalDateTime updateTime;
 
     /**
      * 逻辑删除（0表示未删除，1表示已删除）

@@ -68,7 +68,6 @@
 
 - **Java 11**
   - 兼容性，详情见[兼容Java8](#兼容Java8)
-
 - **SpringBoot 2.7.18**
   - spring-boot-starter-web == 基于 Spring MVC 的 Web 应用依赖
   - spring-boot-starter-undertow == 轻量级、高性能 Servlet 容器
@@ -81,7 +80,6 @@
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
 - **Netty**
   - netty-all  4.1.107.Final == Netty 框架
-
 - **MySQL**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
   - mybatis-plus-boot-starter 3.5.5 == MySQL 操作框架
@@ -124,7 +122,7 @@
   - minio 8.5.8 == Minio 对象存储
 - **文件操作**
   - poi 5.2.5 == 操作 Word
-  - easyexcel 3.3.3 == 操作 Excel
+  - easyexcel 3.3.4 == 操作 Excel
   - itext-core 8.0.3 == 操作 PDF
 - **接口文档 & API调试**
   - knife4j-openapi3-spring-boot-starter 4.4.0 == Knife4j 依赖
