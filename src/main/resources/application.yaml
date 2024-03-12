@@ -72,6 +72,8 @@ logging:
   level:
     top.sharehome: debug
     org.springframework: warn
+    org.apache.poi: info
+    com.alibaba.excel: info
     # 防止MongoDB无效警告
     org.springframework.data.convert: error
 

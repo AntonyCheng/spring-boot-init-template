@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  * @author AntonyCheng
  */
-@SpringBootApplication(scanBasePackages = "top.sharehome.springbootinittemplate.**")
-@MapperScan("top.sharehome.springbootinittemplate.mapper")
-@EsMapperScan("top.sharehome.springbootinittemplate.elasticsearch.mapper")
+@SpringBootApplication(scanBasePackages = {"top.sharehome.springbootinittemplate.**"})
+@MapperScan(basePackages = {"top.sharehome.springbootinittemplate.mapper"})
+@EsMapperScan(value = "top.sharehome.springbootinittemplate.elasticsearch.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan("top.sharehome.springbootinittemplate.config.**")
+@ConfigurationPropertiesScan(basePackages = {"top.sharehome.springbootinittemplate.config.**"})
 @EnableTransactionManagement
 public class MainApplication {
 
