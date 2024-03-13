@@ -65,9 +65,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        if (!excelResult.getReceipt().isEmpty()) {
-            log.info(excelResult.getReceipt());
-        }
+        log.info("所有数据解析完毕！");
     }
 
     /**
@@ -75,7 +73,6 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
      */
     @Override
     public void onException(Exception exception, AnalysisContext context) {
-        log.error(excelResult.getReceipt());
         String errorMsg = null;
         // 抓到ExcelDataConvertException进行相关日志记录
         if (exception instanceof ExcelDataConvertException) {

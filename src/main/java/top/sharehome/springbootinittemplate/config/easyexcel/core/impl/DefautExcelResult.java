@@ -42,7 +42,6 @@ public class DefautExcelResult<T> implements ExcelResult<T> {
 
     /**
      * 获取导入回执
-     * todo 修改默认返回对象
      *
      * @return 导入回执
      */
