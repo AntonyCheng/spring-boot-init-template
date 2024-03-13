@@ -1,30 +1,25 @@
-package top.sharehome.springbootinittemplate.config.easyexcel.entity;
+package top.sharehome.springbootinittemplate.document.excel.entity;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelLocalDateTimeConverter;
-import top.sharehome.springbootinittemplate.config.easyexcel.convert.floatNum.ExcelDoubleConverter;
-import top.sharehome.springbootinittemplate.config.easyexcel.convert.floatNum.ExcelFloatConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.intNum.ExcelLongConverter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 用户Excel类
+ * 注意：作为Excel导入导出的类，不能编写为链式调用Get/Set，即不允许添加@Accessors(chain = true)注解
  *
  * @author AntonyCheng
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Accessors(chain = true)
 public class ExcelUser implements Serializable {
 
     /**

@@ -251,18 +251,6 @@ public class GlobalExceptionHandler {
     // todo 第一个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
 
     /**
-     * 自定义数据库事务异常
-     *
-     * @param e 异常
-     * @return 返回结果
-     */
-    @ExceptionHandler(CustomizeTransactionException.class)
-    public R<String> handleCustomizeTransactionException(CustomizeTransactionException e) {
-        log.error(e.getMessage(), e);
-        return R.fail(e.getReturnCode());
-    }
-
-    /**
      * 自定义返回异常
      *
      * @param e 异常
@@ -298,8 +286,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomizeLockException.class)
     public R<String> handleCustomizeLockException(CustomizeLockException e) {
-        log.error(e.getMessage(), e);
-        return R.fail(e.getReturnCode());
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
     }
 
     /**
@@ -310,6 +300,34 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomizeMailException.class)
     public R<String> handleCustomizeMailException(CustomizeMailException e) {
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
+    }
+
+    /**
+     * 自定义Excel异常
+     *
+     * @param e 异常
+     * @return 返回结果
+     */
+    @ExceptionHandler(CustomizeExcelException.class)
+    public R<String> handleCustomizeExcelException(CustomizeExcelException e) {
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
+    }
+
+    /**
+     * 自定义数据库事务异常
+     *
+     * @param e 异常
+     * @return 返回结果
+     */
+    @ExceptionHandler(CustomizeTransactionException.class)
+    public R<String> handleCustomizeTransactionException(CustomizeTransactionException e) {
         log.error(e.getMessage(), e);
         return R.fail(e.getReturnCode());
     }
