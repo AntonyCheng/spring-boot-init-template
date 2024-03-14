@@ -21,8 +21,8 @@ public interface ExcelResult<T> {
     List<String> getErrorList();
 
     /**
-     * 导入回执
+     * 导入响应
      */
-    String getReceipt();
+    String getResponse();
 
 }

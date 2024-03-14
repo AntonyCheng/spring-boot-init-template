@@ -46,7 +46,7 @@ public class DefautExcelResult<T> implements ExcelResult<T> {
      * @return 导入回执
      */
     @Override
-    public String getReceipt() {
+    public String getResponse() {
         int successCount = list.size();
         int errorCount = errorList.size();
         if (successCount == 0 || errorCount != 0) {

@@ -1,13 +1,12 @@
 package top.sharehome.springbootinittemplate.document.excel;
 
 import lombok.SneakyThrows;
-import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
 import top.sharehome.springbootinittemplate.document.excel.entity.ExcelUser;
 import top.sharehome.springbootinittemplate.utils.excel.ExcelUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Excel测试类
@@ -20,18 +19,25 @@ public class Main {
 
         String projectRootPath = System.getProperty("user.dir");
 
-        File file = new File(projectRootPath + "/src/main/java/top/sharehome/springbootinittemplate/document/excel/file/test.xlsx");
-//        ArrayList<ExcelUser> excelUsers = new ArrayList<>() {
-//            {
-//                for (int i = 0; i < 10; i++) {
-//                    add(new ExcelUser(1767110638703833090L, "admin" + i, "admin", "test1", "https://www.baidu.com", "admin", LocalDateTime.now(), LocalDateTime.now(), 0));
-//                }
-//            }
-//        };
+        File file = new File(projectRootPath + "/src/main/java/top/sharehome/springbootinittemplate/document/excel/file/temp.xlsx");
+        String path = file.getPath();
+
+        ArrayList<ExcelUser> excelUsers = new ArrayList<>() {
+            {
+                for (int i = 0; i < 20; i++) {
+                    add(new ExcelUser(1767110638703833090L, "admin" + i, "admin", "test1", "https://www.baidu.com", "admin", LocalDateTime.now(), LocalDateTime.now(), 0));
+                }
+            }
+        };
+        String s = ExcelUtils.exportLocalFile(excelUsers, "用户表", ExcelUser.class, file.getPath());
+        System.out.println();
 //        EasyExcel.write(file, ExcelUser.class).sheet("用户表").doWrite(excelUsers);
+//        FileInputStream fileInputStream = new FileInputStream(file);
+//
+//        List<ExcelUser> excelUsers = ExcelUtils.importStreamSync(fileInputStream, ExcelUser.class);
+//
+//        excelUsers.forEach(System.out::println);
+//        System.out.println(JavaVersion.majorVersion());
 
-        ExcelResult<ExcelUser> excelResult = ExcelUtils.importFileSyncWithListener(file, ExcelUser.class);
-
-        excelResult.getList().forEach(System.out::println);
     }
 }
