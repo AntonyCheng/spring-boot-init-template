@@ -4,7 +4,9 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ResourceUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelLocalDateTimeConverter;
@@ -584,19 +586,23 @@ public class ExcelUtils {
                 throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "未找到该Excel文件所在路径");
             }
             String extension = FilenameUtils.getExtension(pathName);
+            File file = new File(pathName);
             if (extension.isEmpty()) {
-                File file = new File(pathName);
                 if (!file.exists()) {
                     Files.createDirectory(file.toPath());
                 }
+                // todo 处理一下如果sheetName为空的情况
                 pathName = pathName + "/" + sheetName + ".xlsx";
             } else {
-                File file = new File(pathName);
-                String name = file.getName();
+                String fullName = file.getName();
                 String parent = file.getParent();
-                pathName = parent + "/" + name.substring(0, name.lastIndexOf("abc") - 1) + ".xlsx";
+                String name = fullName.substring(0, fullName.lastIndexOf("."));
+                if (name.isEmpty()) {
+                    name = sheetName;
+                }
+                pathName = parent + "/" + name + ".xlsx";
             }
-            File file = new File(pathName);
+            file = new File(pathName);
             EasyExcel
                     .write(file, clazz)
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
@@ -710,6 +716,36 @@ public class ExcelUtils {
                 .registerConverter(new ExcelLocalDateTimeConverter())
                 .sheet(sheetName)
                 .doWrite(list);
+    }
+
+    /**
+     * 导入Excel模板，但是不关闭
+     * 模板文件夹必须是src/main/resources/templates/excel目录
+     * 如果有多个模板，模板名称不能相同，如果传入模板名为空，那么会自动命名为template.xlsx
+     *
+     * @param inputStream  模板数据流
+     * @param templateName 模板名（不带后缀）
+     * @param <T>          泛型T
+     */
+    public static <T> void importTemplateStream(InputStream inputStream, String templateName) {
+        try {
+            String templatePath = ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel";
+            if (!ResourceUtils.getFile(templatePath).isDirectory()) {
+                throw new FileNotFoundException();
+            }
+            if (ObjectUtils.isEmpty(inputStream)) {
+                throw new IOException();
+            }
+            // todo
+            if (StringUtils.isEmpty(templateName)) {
+
+            }
+            new File(templatePath + "/" + templateName);
+        } catch (FileNotFoundException e) {
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "没有找到模板文件夹");
+        } catch (IOException e) {
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "读取文件异常");
+        }
     }
 
     /**

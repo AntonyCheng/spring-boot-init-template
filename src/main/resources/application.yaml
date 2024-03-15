@@ -152,7 +152,7 @@ spring:
     # 设置是否检查模板文件路径是否存在
     check-template-location: false
     # 指定查找FreeMarker模板文件的路径
-    template-loader-path: classpath:/templates/
+    template-loader-path: classpath:/templates/freemarker/
     # 定义模板文件的后缀名，ftl是FreeMarker模板的标准扩展名
     suffix: .ftl
     # 设置模板文件的字符集编码

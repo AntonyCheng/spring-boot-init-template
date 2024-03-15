@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 用户Excel类
+ * 用户Excel导入导出类
  * 注意：作为Excel导入导出的类，不能编写为链式调用Get/Set，即不允许添加@Accessors(chain = true)注解
  *
  * @author AntonyCheng
@@ -25,7 +25,7 @@ public class ExcelUser implements Serializable {
     /**
      * 用户ID
      */
-    @ExcelProperty(value = "用户ID", converter = ExcelLongConverter.class)
+    @ExcelProperty(value = "用户ID")
     private Long id;
 
     /**
@@ -61,13 +61,13 @@ public class ExcelUser implements Serializable {
     /**
      * 创建时间
      */
-    @ExcelProperty(value = "创建时间", converter = ExcelLocalDateTimeConverter.class)
+    @ExcelProperty(value = "创建时间")
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    @ExcelProperty(value = "更新时间", converter = ExcelLocalDateTimeConverter.class)
+    @ExcelProperty(value = "更新时间")
     private LocalDateTime updateTime;
 
     /**
