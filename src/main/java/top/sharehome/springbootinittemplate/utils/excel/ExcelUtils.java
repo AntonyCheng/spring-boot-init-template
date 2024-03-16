@@ -2,11 +2,12 @@ package top.sharehome.springbootinittemplate.utils.excel;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ResourceUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelLocalDateTimeConverter;
@@ -25,6 +26,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -32,7 +34,6 @@ import java.util.UUID;
 
 /**
  * Excel工具类
- * todo: 做做测试，关于Response的
  * 注意：
  * 1、下面的“同步”方法适用于“小型”Excel，因为文件过大耗时，就会很长。
  * 2、非“同步”思想只适用于带有监听器的方法，因为是异步的，就需要一个回调机制响应结果。
@@ -576,7 +577,7 @@ public class ExcelUtils {
      *                  1、filePath如果不带有后缀，那就表示该File是一个目录，系统会自动将Excel命名为sheetName.xlsx存储在该File目录下。
      *                  2、filePath如果带有后缀，那就表示该File是一个文件，后缀不是“xlsx”，就会将后缀转换成“xlsx”。
      *                  3、filePath如果带有后缀，那就表示该File是一个文件，后缀是“xlsx”，那么就存放于该File文件中。
-     *                  注意：上述情况目录名都不允许带有“.”！如果有这样的需求，请自行使用
+     *                  注意：上述情况目录名都不允许带有“.”！如果有这样的需求，请自行使用exportFileOutputStream或者exportFileOutputStreamAndClose进行导出
      * @param <T>       泛型T
      * @return 返回本地文件绝对路径
      */
@@ -591,14 +592,13 @@ public class ExcelUtils {
                 if (!file.exists()) {
                     Files.createDirectory(file.toPath());
                 }
-                // todo 处理一下如果sheetName为空的情况
-                pathName = pathName + "/" + sheetName + ".xlsx";
+                pathName = pathName + "/" + (StringUtils.isEmpty(sheetName) ? "defaultName" : sheetName) + ".xlsx";
             } else {
                 String fullName = file.getName();
                 String parent = file.getParent();
                 String name = fullName.substring(0, fullName.lastIndexOf("."));
                 if (name.isEmpty()) {
-                    name = sheetName;
+                    name = (StringUtils.isEmpty(sheetName) ? "defaultName" : sheetName);
                 }
                 pathName = parent + "/" + name + ".xlsx";
             }
@@ -719,28 +719,41 @@ public class ExcelUtils {
     }
 
     /**
-     * 导入Excel模板，但是不关闭
-     * 模板文件夹必须是src/main/resources/templates/excel目录
-     * 如果有多个模板，模板名称不能相同，如果传入模板名为空，那么会自动命名为template.xlsx
+     * todo 需要重新捋捋逻辑，这里应该是让用户自定义一个模板路径或者写在配置文件中让用户在启动模板之前配置完成
+     * 导入自定义名称Excel模板
+     * 如果有多个模板，模板名称不能相同，如果传入模板名为空，那么会自动命名为defaultTemplate.xlsx
      *
      * @param inputStream  模板数据流
      * @param templateName 模板名（不带后缀）
      * @param <T>          泛型T
      */
-    public static <T> void importTemplateStream(InputStream inputStream, String templateName) {
+    public static <T> void importCustomTemplateStream(InputStream inputStream, String templateName, String templatePath) {
         try {
-            String templatePath = ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel";
-            if (!ResourceUtils.getFile(templatePath).isDirectory()) {
+            File templateFile = new File(templatePath);
+            if (!templateFile.isDirectory()) {
                 throw new FileNotFoundException();
             }
             if (ObjectUtils.isEmpty(inputStream)) {
                 throw new IOException();
             }
-            // todo
             if (StringUtils.isEmpty(templateName)) {
-
+                templateName = "defaultTemplate";
             }
-            new File(templatePath + "/" + templateName);
+            String path = templateFile.getPath();
+            File file = new File(path + "/" + templateName + ".xlsx");
+            if (file.isFile() && file.exists()) {
+                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "该模板文件[" + templateName + ".xlsx]已存在");
+            }
+            if (file.createNewFile()) {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                FileChannel channel = fileOutputStream.getChannel();
+                ByteBuf buf = Unpooled.wrappedBuffer(inputStream.readAllBytes());
+                buf.readBytes(channel, 0, buf.capacity());
+                fileOutputStream.close();
+                inputStream.close();
+            } else {
+                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "创建模板文件失败");
+            }
         } catch (FileNotFoundException e) {
             throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "没有找到模板文件夹");
         } catch (IOException e) {
