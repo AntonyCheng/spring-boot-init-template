@@ -6,8 +6,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ResourceUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelLocalDateTimeConverter;
@@ -29,11 +29,15 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Excel工具类
+ * todo 测试所有代码
  * 注意：
  * 1、下面的“同步”方法适用于“小型”Excel，因为文件过大耗时，就会很长。
  * 2、非“同步”思想只适用于带有监听器的方法，因为是异步的，就需要一个回调机制响应结果。
@@ -668,6 +672,81 @@ public class ExcelUtils {
     }
 
     /**
+     * 根据类型导出Excel模板输出流，但不关闭输出流
+     *
+     * @param templateName 工作表名
+     * @param clazz        Excel转换实体类
+     * @param outputStream 输出流
+     * @param <T>          泛型T
+     */
+    public static <T> void exportTemplateOutputStream(String templateName, Class<T> clazz, OutputStream outputStream) {
+        exportOutputStream(new ArrayList<T>(), templateName, clazz, outputStream);
+    }
+
+    /**
+     * 根据类型导出Excel模板输出流，同时关闭输出流
+     *
+     * @param templateName 工作表名
+     * @param clazz        Excel转换实体类
+     * @param outputStream 输出流
+     * @param <T>          泛型T
+     */
+    public static <T> void exportTemplateOutputStreamAndClose(String templateName, Class<T> clazz, OutputStream outputStream) {
+        exportOutputStreamAndClose(new ArrayList<T>(), templateName, clazz, outputStream);
+    }
+
+
+    /**
+     * 根据类型导出Excel模板请求响应流，但不关闭请求响应流
+     *
+     * @param templateName 工作表名
+     * @param clazz        Excel转换实体类
+     * @param response     请求响应流
+     * @param <T>          泛型T
+     */
+    public static <T> void exportTemplateHttpServletResponse(String templateName, Class<T> clazz, HttpServletResponse response) {
+        try {
+            handleResponse(templateName, response);
+            ServletOutputStream outputStream = response.getOutputStream();
+            exportOutputStream(new ArrayList<T>(), templateName, clazz, outputStream);
+        } catch (IOException e) {
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
+        }
+    }
+
+    /**
+     * 导出Excel模板目录下的模板文件，模板目录一定是resources文件夹下templates/excel目录
+     *
+     * @param resourceTemplateName resource模板名称（不带后缀）
+     * @param response             请求响应流
+     * @param <T>                  泛型T
+     */
+    public static <T> void exportTemplateHttpServletResponse(String resourceTemplateName, HttpServletResponse response) {
+        try {
+            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + resourceTemplateName + ".xlsx");
+            if (!file.isFile()) {
+                throw new FileNotFoundException();
+            }
+            handleResponse(resourceTemplateName, response);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            int len = 0;
+            byte[] buffer = new byte[1024];
+            ServletOutputStream outputStream = response.getOutputStream();
+            while ((len = fileInputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+            }
+            fileInputStream.close();
+            outputStream.flush();
+            outputStream.close();
+        } catch (FileNotFoundException e) {
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + resourceTemplateName + ".xlsx]未找到");
+        } catch (IOException e) {
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
+        }
+
+    }
+
+    /**
      * 导出Excel输出流，但不关闭输出流
      *
      * @param list         输出Excel数据集合
@@ -716,49 +795,6 @@ public class ExcelUtils {
                 .registerConverter(new ExcelLocalDateTimeConverter())
                 .sheet(sheetName)
                 .doWrite(list);
-    }
-
-    /**
-     * todo 需要重新捋捋逻辑，这里应该是让用户自定义一个模板路径或者写在配置文件中让用户在启动模板之前配置完成
-     * 导入自定义名称Excel模板
-     * 如果有多个模板，模板名称不能相同，如果传入模板名为空，那么会自动命名为defaultTemplate.xlsx
-     *
-     * @param inputStream  模板数据流
-     * @param templateName 模板名（不带后缀）
-     * @param <T>          泛型T
-     */
-    public static <T> void importCustomTemplateStream(InputStream inputStream, String templateName, String templatePath) {
-        try {
-            File templateFile = new File(templatePath);
-            if (!templateFile.isDirectory()) {
-                throw new FileNotFoundException();
-            }
-            if (ObjectUtils.isEmpty(inputStream)) {
-                throw new IOException();
-            }
-            if (StringUtils.isEmpty(templateName)) {
-                templateName = "defaultTemplate";
-            }
-            String path = templateFile.getPath();
-            File file = new File(path + "/" + templateName + ".xlsx");
-            if (file.isFile() && file.exists()) {
-                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "该模板文件[" + templateName + ".xlsx]已存在");
-            }
-            if (file.createNewFile()) {
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                FileChannel channel = fileOutputStream.getChannel();
-                ByteBuf buf = Unpooled.wrappedBuffer(inputStream.readAllBytes());
-                buf.readBytes(channel, 0, buf.capacity());
-                fileOutputStream.close();
-                inputStream.close();
-            } else {
-                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "创建模板文件失败");
-            }
-        } catch (FileNotFoundException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "没有找到模板文件夹");
-        } catch (IOException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "读取文件异常");
-        }
     }
 
     /**
