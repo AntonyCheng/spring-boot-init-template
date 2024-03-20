@@ -2,8 +2,6 @@ package top.sharehome.springbootinittemplate.utils.excel;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,18 +24,14 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Excel工具类
- * todo 测试所有代码
  * 注意：
  * 1、下面的“同步”方法适用于“小型”Excel，因为文件过大耗时，就会很长。
  * 2、非“同步”思想只适用于带有监听器的方法，因为是异步的，就需要一个回调机制响应结果。
@@ -653,7 +647,8 @@ public class ExcelUtils {
     }
 
     /**
-     * 导出Excel请求响应流，但不关闭请求响应流
+     * 导出Excel请求响应流，同时关闭请求响应流并提交响应
+     * 在Controller中建议直接返回void，如果想要统一返回响应类型R<T>，可以使用R.empty()方法。
      *
      * @param list      输出Excel数据集合
      * @param sheetName 工作表名
@@ -665,7 +660,7 @@ public class ExcelUtils {
         try {
             handleResponse(sheetName, response);
             ServletOutputStream outputStream = response.getOutputStream();
-            exportOutputStream(list, sheetName, clazz, outputStream);
+            exportOutputStreamAndClose(list, sheetName, clazz, outputStream);
         } catch (IOException e) {
             throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
         }
@@ -697,7 +692,8 @@ public class ExcelUtils {
 
 
     /**
-     * 根据类型导出Excel模板请求响应流，但不关闭请求响应流
+     * 根据类型导出Excel模板请求响应流，同时关闭请求响应流并提交响应
+     * 在Controller中建议直接返回void，如果想要统一返回响应类型R<T>，可以使用R.empty()方法。
      *
      * @param templateName 工作表名
      * @param clazz        Excel转换实体类
@@ -708,26 +704,27 @@ public class ExcelUtils {
         try {
             handleResponse(templateName, response);
             ServletOutputStream outputStream = response.getOutputStream();
-            exportOutputStream(new ArrayList<T>(), templateName, clazz, outputStream);
+            exportOutputStreamAndClose(new ArrayList<T>(), templateName, clazz, outputStream);
         } catch (IOException e) {
             throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
         }
     }
 
     /**
-     * 导出Excel模板目录下的模板文件，模板目录一定是resources文件夹下templates/excel目录
+     * 导出Excel模板目录下的模板文件，同时关闭请求响应流并提交响应，模板目录一定是resources文件夹下templates/excel目录
+     * 在Controller中建议直接返回void，如果想要统一返回响应类型R<T>，可以使用R.empty()方法。
      *
-     * @param resourceTemplateName resource模板名称（不带后缀）
-     * @param response             请求响应流
-     * @param <T>                  泛型T
+     * @param templateName resource模板名称（不带后缀）
+     * @param response     请求响应流
+     * @param <T>          泛型T
      */
-    public static <T> void exportTemplateHttpServletResponse(String resourceTemplateName, HttpServletResponse response) {
+    public static <T> void exportTemplateHttpServletResponse(String templateName, HttpServletResponse response) {
         try {
-            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + resourceTemplateName + ".xlsx");
+            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + templateName + ".xlsx");
             if (!file.isFile()) {
                 throw new FileNotFoundException();
             }
-            handleResponse(resourceTemplateName, response);
+            handleResponse(templateName, response);
             FileInputStream fileInputStream = new FileInputStream(file);
             int len = 0;
             byte[] buffer = new byte[1024];
@@ -739,7 +736,7 @@ public class ExcelUtils {
             outputStream.flush();
             outputStream.close();
         } catch (FileNotFoundException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + resourceTemplateName + ".xlsx]未找到");
+            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
         } catch (IOException e) {
             throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
         }
@@ -808,8 +805,7 @@ public class ExcelUtils {
         String encodeName = URLEncoder
                 .encode(realName, StandardCharsets.UTF_8.toString())
                 .replaceAll("\\+", "%20");
-        String contentDispositionValue = "attachment; filename=" + encodeName + "; filename*=utf-8''" + encodeName;
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
         response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
         response.setHeader("Content-disposition", contentDispositionValue);
         response.setHeader("download-filename", encodeName);

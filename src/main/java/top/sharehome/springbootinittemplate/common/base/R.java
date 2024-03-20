@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.common.base;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 /**
@@ -143,6 +144,11 @@ public class R<T> implements Serializable {
 
     public static <T> R<T> warn(String msg, T data) {
         return restResult(data, WARN, msg);
+    }
+
+    // todo 空响应方法
+    public static <T> R<T> empty() {
+        return null;
     }
 
 }

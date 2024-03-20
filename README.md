@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.1**
+> **版本号：v2.1.2**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 
@@ -154,7 +154,7 @@
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel等工具类
 
 ## 业务功能
 
