@@ -876,7 +876,7 @@ spring:
 sa-token:
   # todo 是否启用SaToken认证鉴权功能（此处为false并不是禁用SaToken，而是让SaToken相关注解失效，预先开启）
   enable-sa: true
-  # todo 是否使用JWT（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  # todo 是否使用JWT格式的Token（建议如果没有开启redis配置就不要开启JWT格式的Token，预先关闭）
   enable-jwt: false
 ```
 
@@ -999,11 +999,9 @@ spring:
         max-wait: 3000
 ```
 
-修改完毕之后即自动使用 Redis 缓存登陆凭证信息，注意这里的登录凭证信息包含 JWT 或者 Session + Cookie，如果没有整合 JWT ，那么该系统就是分布式 Session 形式，反之则是分布式 Token 形式。
-
 ###### 整合JWT
 
-JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，想知道具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
+JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 的校验凭证，Web 应用凭证校验的方式一般分为两种：一种是 Session + Cookie，另一种就是 Cache + JWT，前者主要特点就是单机式、服务端管理凭证，后者主要特点就是分布式、客户端管理凭证，两种方式各有千秋，想知道具体优劣请移步于百度，但要注意 JWT 是一种可解析的凭证，也就是说一旦客户端拿到这个凭证就能拿到其中的明文信息，所以通常让 JWT 和 Redis 搭配使用，不交给用户直接管理，所以该模板中默认不使用 JWT 的凭证模式，开发者需要自行开启。
 
 ```yaml
 # Sa-Token配置
@@ -1013,6 +1011,31 @@ sa-token:
   # todo 是否使用JWT（建议如果没有开启redis配置就不要开启jwt，预先关闭）
   enable-jwt: true
 ```
+
+###### 确认鉴权模式
+
+```yaml
+# Sa-Token配置
+sa-token:
+  ......
+  # todo 鉴权模式说明：
+  # 1.is-read-cookie=true; is-read-header==>false; token-prefix=null;   ==> 标准的 Session + Cookie 模式（推荐，模板默认模式）
+  # 2.is-read-cookie=false; is-read-header==>true; token-prefix=exist;
+  #   is-read-cookie=false; is-read-header==>true; token-prefix=null;   ==> 标准的 Redis + JWT 模式（推荐）
+  # 3.is-read-cookie=false; is-read-header==>false; token-prefix=null;
+  #   is-read-cookie=false; is-read-header==>false; token-prefix=exist; ==> 无法通过鉴权模式
+  # 4.is-read-cookie=true; is-read-header==>true; token-prefix=null;    ==> Session + Cookie 模式和 Redis + JWT 模式共存，两者均能实现鉴权
+  # 5.is-read-cookie=true; is-read-header==>true; token-prefix=exist;   ==> 仅有 Redis + JWT 模式起作用，作用等同于标准的 Redis + JWT 模式
+  # 鉴权模式一：Session + Cookie（Token 由 Cookie 自动传递），如果为 false ，那么前端 Cookie 不会自动填充 Token
+  is-read-cookie: false
+  # 鉴权模式二：Redis + JWT（Token 由 Header 手动传递），如果为 true ，正常的实现逻辑应该是将 Token 从登录接口返回给前端，前端存储之后每次发起请求都将 Token 放入 Header 中
+  is-read-header: true
+  # 在鉴权模式二下，Token 的前缀（这个需要手动添加并从 Header 中传入进来）
+  #token-prefix: "Bearer"
+  ......
+```
+
+以上所描述的鉴权模式仅仅只是一些常用的可选方案，所以即使要使用 Session + JWT 的方式也不是不行，根据具体的业务需求选择鉴权模式即可，但此处还是强烈建议使用 Session + Cookie 和 Cache + JWT 这两种模式。
 
 #### 配置定时任务
 
