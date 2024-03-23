@@ -1,10 +1,13 @@
 package top.sharehome.springbootinittemplate.common.base;
 
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 响应信息主体
@@ -92,16 +95,44 @@ public class R<T> implements Serializable {
         return restResult(null, SUCCESS, SUCCESS_MSG);
     }
 
+    public static R<Map<String, Object>> okWithToken() {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("token", StpUtil.getTokenValue());
+        res.put("res", null);
+        return restResult(res, SUCCESS, SUCCESS_MSG);
+    }
+
     public static <T> R<T> ok(T data) {
         return restResult(data, SUCCESS, SUCCESS_MSG);
+    }
+
+    public static <T> R<Map<String, Object>> okWithToken(T data) {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("token", StpUtil.getTokenValue());
+        res.put("res", data);
+        return restResult(res, SUCCESS, SUCCESS_MSG);
     }
 
     public static <T> R<T> ok(String msg) {
         return restResult(null, SUCCESS, msg);
     }
 
+    public static <T> R<Map<String, Object>> okWithToken(String msg) {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("token", StpUtil.getTokenValue());
+        res.put("res", null);
+        return restResult(res, SUCCESS, msg);
+    }
+
     public static <T> R<T> ok(String msg, T data) {
         return restResult(data, SUCCESS, msg);
+    }
+
+    public static <T> R<Map<String, Object>> okWithToken(String msg, T data) {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("token", StpUtil.getTokenValue());
+        res.put("res", data);
+        return restResult(res, SUCCESS, msg);
     }
 
     // todo 失败响应方法
