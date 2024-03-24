@@ -15,7 +15,7 @@ import java.io.Serializable;
 import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
 
 /**
- * 用户注册Dto类
+ * 注册Dto类
  *
  * @author AntonyCheng
  */
@@ -26,7 +26,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 public class AuthRegisterDto implements Serializable {
 
     /**
-     * 用户账号
+     * 账号
      */
     @Size(min = 2, max = 16, message = "账号长度介于2-16位之间", groups = {PostGroup.class})
     @NotBlank(message = "账号不能为空", groups = {PostGroup.class})
@@ -34,7 +34,7 @@ public class AuthRegisterDto implements Serializable {
     private String account;
 
     /**
-     * 用户密码
+     * 密码
      */
     @Size(min = 5, max = 16, message = "密码长度介于5-16位之间", groups = {PostGroup.class})
     @NotBlank(message = "密码不能为空", groups = {PostGroup.class})

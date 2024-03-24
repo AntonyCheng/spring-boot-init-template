@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 用户登录Dto类
+ * 登录Dto类
  *
  * @author AntonyCheng
  */
@@ -25,13 +25,13 @@ import java.io.Serializable;
 public class AuthLoginDto implements Serializable {
 
     /**
-     * 用户账号
+     * 账号
      */
     @NotBlank(message = "账号不能为空", groups = {PostGroup.class})
     private String account;
 
     /**
-     * 用户密码
+     * 密码
      */
     @NotBlank(message = "密码不能为空", groups = {PostGroup.class})
     private String password;

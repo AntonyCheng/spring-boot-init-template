@@ -147,6 +147,9 @@ public class MinioConfiguration {
      * @param url 文件URL
      */
     public void deleteInMinio(String url) {
+        if (StringUtils.isEmpty(url)) {
+            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
+        }
         MinioClient minioClient = getMinioClient();
         String[] split = url.split(minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/");
         if (split.length != 2) {

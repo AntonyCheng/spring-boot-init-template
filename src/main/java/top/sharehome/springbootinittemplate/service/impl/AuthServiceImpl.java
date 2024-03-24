@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -48,7 +49,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount())
                 .eq(User::getPassword, authLoginDto.getPassword());
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
-        if (userInDatabase == null) {
+        if (ObjectUtils.isEmpty(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.WRONG_USER_ACCOUNT_OR_PASSWORD);
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();

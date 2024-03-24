@@ -31,7 +31,7 @@ public class AuthController {
     private AuthService authService;
 
     /**
-     * 用户注册
+     * 注册
      *
      * @param authRegisterDto 用户注册Dto类
      * @return 返回注册结果
@@ -47,7 +47,7 @@ public class AuthController {
     }
 
     /**
-     * 用户登录
+     * 登录
      *
      * @param authLoginDto 用户登录Dto类
      * @return 返回登录用户信息
@@ -61,7 +61,7 @@ public class AuthController {
     }
 
     /**
-     * 获取登录用户信息
+     * 获取登录信息
      *
      * @return 返回登录用户信息结果
      */
@@ -72,7 +72,7 @@ public class AuthController {
     }
 
     /**
-     * 用户退出
+     * 退出
      *
      * @return 返回退出结果
      */

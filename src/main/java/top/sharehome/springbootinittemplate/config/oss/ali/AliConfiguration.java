@@ -150,6 +150,9 @@ public class AliConfiguration {
      * @param url 文件URL
      */
     public void deleteInOss(String url) {
+        if (StringUtils.isEmpty(url)) {
+            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
+        }
         OSS ossClient = getOssClient();
         String[] split = url.split(aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/");
         if (split.length != 2) {

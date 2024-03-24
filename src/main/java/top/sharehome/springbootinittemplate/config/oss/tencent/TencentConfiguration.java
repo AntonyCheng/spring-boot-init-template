@@ -231,6 +231,9 @@ public class TencentConfiguration {
      * @param url 文件URL
      */
     public void deleteInCos(String url) {
+        if (StringUtils.isEmpty(url)) {
+            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
+        }
         COSClient cosClient = getCosClient();
         String[] split = url.split(tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/");
         if (split.length != 2) {
