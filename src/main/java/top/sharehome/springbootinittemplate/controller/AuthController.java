@@ -16,6 +16,7 @@ import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * 鉴权认证控制器
@@ -54,10 +55,10 @@ public class AuthController {
      */
     @PostMapping("/login")
     @EnableCaptcha
-    public R<AuthLoginVo> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
+    public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
-        return R.ok("登录成功", loginUser);
+        return R.okWithToken("登录成功", loginUser);
     }
 
     /**

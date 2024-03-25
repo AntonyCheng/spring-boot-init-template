@@ -135,6 +135,11 @@ public class R<T> implements Serializable {
         return restResult(res, SUCCESS, msg);
     }
 
+    // todo 成功仅响应Token方法
+    public static R<String> token() {
+        return restResult(StpUtil.getTokenValue(), SUCCESS, SUCCESS_MSG);
+    }
+
     // todo 失败响应方法
     public static <T> R<T> fail() {
         return restResult(null, FAIL, FAIL_MSG);
