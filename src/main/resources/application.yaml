@@ -492,7 +492,7 @@ easy-es:
         #...（以下配置和ds1相似）
   # 默认为http 可缺省
   schema: http
-  # 默认为true 打印banner 若您不期望打印banner,可配置为false
+  # 打印banner 若您不期望打印banner,可配置为false（预先关闭）
   banner: false
   # 心跳策略时间 单位:ms
   keep-alive-millis: 30000

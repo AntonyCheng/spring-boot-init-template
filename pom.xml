@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <!-- Netty相关 -->
-        <netty.version>4.1.107.Final</netty.version>
+        <netty.version>4.1.108.Final</netty.version>
         <!-- MySQL相关 -->
         <mysql.version>8.0.33</mysql.version>
         <druid.starter.version>1.2.22</druid.starter.version>
@@ -74,7 +74,7 @@
         <ok.io.version>3.7.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
         <knife4j.openapi3.starter.version>4.5.0</knife4j.openapi3.starter.version>
-        <fastjson2.version>2.0.47</fastjson2.version>
+        <fastjson2.version>2.0.48</fastjson2.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.37.0</sa.token.version>
         <!-- 缓存相关 -->
