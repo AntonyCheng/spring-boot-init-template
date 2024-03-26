@@ -5,8 +5,11 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
+    id: '',
+    account: '',
     name: '',
-    avatar: ''
+    avatar: '',
+    role: ''
   }
 }
 
@@ -19,11 +22,20 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
+  SET_ID: (state, id) => {
+    state.id = id
+  },
+  SET_ACCOUNT: (state, account) => {
+    state.account = account
+  },
   SET_NAME: (state, name) => {
     state.name = name
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ROLE: (state, role) => {
+    state.role = role
   }
 }
 
@@ -50,13 +62,16 @@ const actions = {
         const { data } = response
 
         if (!data) {
-          return reject('Verification failed, please Login again.')
+          return reject('验证失败，请重新登录')
         }
 
-        const { name, avatar } = data
+        const { id, account, name, avatar, role } = data
 
+        commit('SET_ID', id)
+        commit('SET_ACCOUNT', account)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_ROLE', role)
         resolve(data)
       }).catch(error => {
         reject(error)

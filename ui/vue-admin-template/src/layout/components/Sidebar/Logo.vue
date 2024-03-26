@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Admin Template',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: 'SpringBoot初始化模板',
+      logo: 'favicon.ico'
     }
   }
 }
@@ -56,7 +56,7 @@ export default {
 
     & .sidebar-logo {
       width: 32px;
-      height: 32px;
+      height: 40px;
       vertical-align: middle;
       margin-right: 12px;
     }
@@ -75,7 +75,7 @@ export default {
 
   &.collapse {
     .sidebar-logo {
-      margin-right: 0px;
+      margin-right: 0;
     }
   }
 }

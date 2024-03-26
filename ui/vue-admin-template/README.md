@@ -23,7 +23,7 @@ npm install --registry=https://registry.npm.taobao.org
 npm run dev
 ```
 
-浏览器访问 [http://localhost:9528](http://localhost:9528)
+浏览器访问 [http://localhost:3000](http://localhost:3000)（对接好后端的情况下可以实现模板自带的全部功能）
 
 ## 发布
 
