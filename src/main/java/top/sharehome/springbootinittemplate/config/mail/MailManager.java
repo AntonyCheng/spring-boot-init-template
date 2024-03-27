@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,8 +152,8 @@ public class MailManager {
         }
         // 判断cid是否和files数量匹配
         int cidsRealLength = Arrays.stream(cids).filter(StringUtils::isNotBlank).toArray().length;
-        int filesRealLength = Arrays.stream(files).filter(ObjectUtils::isNotEmpty).toArray().length;
-        if (ObjectUtils.notEqual(cids.length, files.length) || ObjectUtils.notEqual(cidsRealLength, filesRealLength)) {
+        int filesRealLength = Arrays.stream(files).filter(Objects::nonNull).toArray().length;
+        if (!Objects.equals(cids.length, files.length) || !Objects.equals(cidsRealLength, filesRealLength)) {
             throw new CustomizeMailException(ReturnCode.PARAMETER_FORMAT_MISMATCH);
         }
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -177,7 +178,7 @@ public class MailManager {
                 String suffix = FilenameUtils.getExtension(originalName);
                 Long needSize = MAIL_PICTURE_SUFFIX.get(suffix);
                 // 校验文后缀名称被包含在要求之内
-                if (StringUtils.isBlank(suffix) || ObjectUtils.isEmpty(needSize)) {
+                if (StringUtils.isBlank(suffix) || Objects.isNull(needSize)) {
                     throw new CustomizeMailException(ReturnCode.USER_UPLOADED_FILE_TYPE_MISMATCH);
                 }
                 // 校验图片大小
@@ -225,7 +226,7 @@ public class MailManager {
         // 判断cid是否和files数量匹配
         int cidsRealLength = Arrays.stream(cids).filter(StringUtils::isNotBlank).toArray().length;
         int filesRealLength = Arrays.stream(filePaths).filter(StringUtils::isNotBlank).toArray().length;
-        if (ObjectUtils.notEqual(cids.length, filePaths.length) || ObjectUtils.notEqual(cidsRealLength, filesRealLength)) {
+        if (!Objects.equals(cids.length, filePaths.length) || !Objects.equals(cidsRealLength, filesRealLength)) {
             throw new CustomizeMailException(ReturnCode.PARAMETER_FORMAT_MISMATCH);
         }
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -253,7 +254,7 @@ public class MailManager {
                 String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
                 Long needSize = MAIL_PICTURE_SUFFIX.get(suffix);
                 // 校验文后缀名称被包含在要求之内
-                if (StringUtils.isBlank(suffix) || ObjectUtils.isEmpty(needSize)) {
+                if (StringUtils.isBlank(suffix) || Objects.isNull(needSize)) {
                     throw new CustomizeMailException(ReturnCode.USER_UPLOADED_FILE_TYPE_MISMATCH);
                 }
                 // 校验图片大小
@@ -287,7 +288,7 @@ public class MailManager {
      */
     public void sendWithAttachmentByClient(String to, String subject, String text, MultipartFile[] files, Boolean isHtml) {
         // 判断参数是否为空
-        if (StringUtils.isAnyBlank(to, subject, text) || ObjectUtils.anyNull(files, isHtml) || files.length == 0) {
+        if (StringUtils.isAnyBlank(to, subject, text) || ObjectUtils.isEmpty(files) || Objects.isNull(isHtml) || files.length == 0) {
             throw new CustomizeMailException(ReturnCode.REQUEST_REQUIRED_PARAMETER_IS_EMPTY);
         }
         // 校验邮箱格式
@@ -295,7 +296,7 @@ public class MailManager {
             throw new CustomizeMailException(ReturnCode.EMAIL_FORMAT_VERIFICATION_FAILED);
         }
         // 参数内部不能为空值
-        if (Arrays.stream(files).filter(ObjectUtils::isNotEmpty).toArray().length == 0) {
+        if (Arrays.stream(files).filter(Objects::nonNull).toArray().length == 0) {
             throw new CustomizeMailException(ReturnCode.PARAMETER_FORMAT_MISMATCH);
         }
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -352,7 +353,7 @@ public class MailManager {
      */
     public void sendWithAttachmentByServer(String to, String subject, String text, String[] filePaths, Boolean isHtml) {
         // 判断参数是否为空
-        if (StringUtils.isAnyBlank(to, subject, text) || ObjectUtils.anyNull(filePaths, isHtml) || filePaths.length == 0) {
+        if (StringUtils.isAnyBlank(to, subject, text) || ObjectUtils.isEmpty(filePaths) || Objects.isNull(isHtml) || filePaths.length == 0) {
             throw new CustomizeMailException(ReturnCode.REQUEST_REQUIRED_PARAMETER_IS_EMPTY);
         }
         // 校验邮箱格式

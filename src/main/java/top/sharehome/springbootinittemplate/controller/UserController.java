@@ -46,6 +46,7 @@ public class UserController {
         {
             add("png");
             add("jpg");
+            add("jpeg");
         }
     };
 

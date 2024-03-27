@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -37,7 +36,7 @@ class MainApplicationTests {
         user.setPassword("123456");
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getRole, "admin");
-        if (ObjectUtils.isEmpty(authService.getOne(userLambdaQueryWrapper))) {
+        if (!authService.exists(userLambdaQueryWrapper)) {
             authService.save(user);
             System.out.println("\n管理员身份创建成功！");
             // 创建之后切记前往数据库修改这条数据的"user_role"字段为"admin"

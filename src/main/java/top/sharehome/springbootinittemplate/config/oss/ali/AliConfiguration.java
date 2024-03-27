@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -91,7 +92,7 @@ public class AliConfiguration {
         OSS ossClient = getOssClient();
         String key;
         try {
-            if (ObjectUtils.isEmpty(inputStream)) {
+            if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             if (StringUtils.isEmpty(suffix)) {

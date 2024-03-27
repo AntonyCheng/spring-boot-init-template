@@ -121,7 +121,7 @@ public class TencentConfiguration {
     public String uploadToCos(InputStream inputStream, String suffix, String rootPath) {
         String key = null;
         try {
-            if (ObjectUtils.isEmpty(inputStream)) {
+            if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             if (StringUtils.isEmpty(suffix)) {

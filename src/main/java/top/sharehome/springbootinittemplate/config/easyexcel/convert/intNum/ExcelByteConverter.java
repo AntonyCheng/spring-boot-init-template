@@ -6,8 +6,9 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * EasyExcel Byte转换类
@@ -43,7 +44,7 @@ public class ExcelByteConverter implements Converter<Byte> {
      */
     @Override
     public WriteCellData<Object> convertToExcelData(Byte value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtils.isNotEmpty(value)) {
+        if (Objects.nonNull(value)) {
             String stringValue = String.valueOf(value);
             return new WriteCellData<Object>(CellDataTypeEnum.NUMBER, stringValue);
         }

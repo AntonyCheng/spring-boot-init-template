@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -15,6 +14,7 @@ import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * 鉴权认证服务实现类
@@ -49,7 +49,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount())
                 .eq(User::getPassword, authLoginDto.getPassword());
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
-        if (ObjectUtils.isEmpty(userInDatabase)) {
+        if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.WRONG_USER_ACCOUNT_OR_PASSWORD);
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();

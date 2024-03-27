@@ -22,6 +22,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -49,7 +50,7 @@ public class MinioConfiguration {
         MinioClient minioClient = getMinioClient();
         String key;
         try {
-            if (file == null) {
+            if (Objects.isNull(file)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
@@ -69,7 +70,7 @@ public class MinioConfiguration {
                     .object(key)
                     .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
@@ -88,7 +89,7 @@ public class MinioConfiguration {
         MinioClient minioClient = getMinioClient();
         String key;
         try {
-            if (ObjectUtils.isEmpty(inputStream)) {
+            if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
             if (StringUtils.isEmpty(suffix)) {
@@ -105,7 +106,7 @@ public class MinioConfiguration {
                     .object(key)
                     .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
@@ -134,7 +135,7 @@ public class MinioConfiguration {
                     .object(key)
                     .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)

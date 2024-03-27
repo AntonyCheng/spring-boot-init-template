@@ -4,7 +4,6 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -13,6 +12,8 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
+
+import java.util.Objects;
 
 /**
  * 登录鉴权工具类
@@ -38,7 +39,7 @@ public class LoginUtils {
             StpUtil.getSession().set(Constants.LOGIN_USER_KEY, loginUser);
         } else {
             // 如果重复登录，就需要验证当前登录账号和将要登录账号是否相同，不相同则挤掉原账号，确保一个浏览器会话只存有一个账户信息
-            if (ObjectUtils.notEqual(Long.parseLong((String) StpUtil.getLoginId()), loginUser.getId())) {
+            if (!Objects.equals(Long.parseLong((String) StpUtil.getLoginId()), loginUser.getId())) {
                 StpUtil.logout();
                 // 存入一份到缓存中
                 SaHolder.getStorage()
@@ -55,7 +56,7 @@ public class LoginUtils {
     public static void syncLoginUser() {
         Long loginUserId = Long.valueOf((String) StpUtil.getLoginId());
         User userInDatabase = authService.getById(loginUserId);
-        if (ObjectUtils.isEmpty(userInDatabase)) {
+        if (Objects.isNull(userInDatabase)) {
             StpUtil.logout(loginUserId);
             throw new CustomizeReturnException(ReturnCode.ACCESS_UNAUTHORIZED);
         }
@@ -71,7 +72,7 @@ public class LoginUtils {
      */
     public static AuthLoginVo getLoginUser() {
         AuthLoginVo loginUser = (AuthLoginVo) SaHolder.getStorage().get(Constants.LOGIN_USER_KEY);
-        if (ObjectUtils.isNotEmpty(loginUser)) {
+        if (Objects.nonNull(loginUser)) {
             return loginUser;
         }
         loginUser = (AuthLoginVo) StpUtil.getSession().get(Constants.LOGIN_USER_KEY);
@@ -103,7 +104,7 @@ public class LoginUtils {
     /**
      * 根据用户LoginId指定用户退出
      */
-    public static void logout(Object loginId){
+    public static void logout(Object loginId) {
         StpUtil.logout(loginId);
     }
 

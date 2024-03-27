@@ -6,10 +6,10 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * EasyExcel Long转换类
@@ -45,7 +45,7 @@ public class ExcelLongConverter implements Converter<Long> {
      */
     @Override
     public WriteCellData<Object> convertToExcelData(Long value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtils.isNotEmpty(value)) {
+        if (Objects.nonNull(value)) {
             String stringValue = String.valueOf(value);
             // 当数字长度大于15（在Excel中15位之后开始丢失精度）时使用字符串存储
             if (stringValue.length() > 15) {
@@ -56,7 +56,7 @@ public class ExcelLongConverter implements Converter<Long> {
                 return cellData;
             }
         }
-        return new WriteCellData<Object>(CellDataTypeEnum.STRING,"");
+        return new WriteCellData<Object>(CellDataTypeEnum.STRING, "");
     }
 
 }

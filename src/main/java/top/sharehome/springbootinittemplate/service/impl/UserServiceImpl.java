@@ -4,7 +4,6 @@ import cn.dev33.satoken.context.SaHolder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -23,6 +22,7 @@ import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * 用户服务实现类
@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userLambdaQueryWrapper.eq(User::getId, userId);
         userLambdaQueryWrapper.eq(User::getPassword, oldPassword);
         User userInResult = userMapper.selectOne(userLambdaQueryWrapper);
-        if (ObjectUtils.isEmpty(userInResult)) {
+        if (Objects.isNull(userInResult)) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_VERIFICATION_FAILED);
         }
         userInResult.setPassword(newPassword);

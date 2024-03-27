@@ -22,6 +22,7 @@ import top.sharehome.springbootinittemplate.exception.customize.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.Objects;
 
 /**
  * Security全局异常处理器
@@ -43,8 +44,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotPermissionException.class)
     public R<Void> handleNotPermissionException(NotPermissionException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',权限码校验失败'{}'", requestURI, e.getMessage());
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',权限码校验失败'{}'", requestUri, e.getMessage());
         return R.fail(HttpStatus.FORBIDDEN, "没有访问权限，请联系管理员授权");
     }
 
@@ -57,8 +58,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotRoleException.class)
     public R<Void> handleNotRoleException(NotRoleException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',角色权限校验失败'{}'", requestURI, e.getMessage());
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',角色权限校验失败'{}'", requestUri, e.getMessage());
         return R.fail(HttpStatus.FORBIDDEN, "没有访问权限，请联系管理员授权");
     }
 
@@ -71,8 +72,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotLoginException.class)
     public R<Void> handleNotLoginException(NotLoginException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',认证失败'{}',无法访问系统资源", requestURI, e.getMessage());
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',认证失败'{}',无法访问系统资源", requestUri, e.getMessage());
         return R.fail(HttpStatus.UNAUTHORIZED, "认证失败，无法访问系统资源");
     }
 
@@ -85,8 +86,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SameTokenInvalidException.class)
     public R<Void> handleSameTokenInvalidException(SameTokenInvalidException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',内网认证失败'{}',无法访问系统资源", requestURI, e.getMessage());
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',内网认证失败'{}',无法访问系统资源", requestUri, e.getMessage());
         return R.fail(HttpStatus.UNAUTHORIZED, "认证失败，无法访问系统资源");
     }
 
@@ -99,8 +100,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public R<Void> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',不支持'{}'请求", requestUri, e.getMethod());
         return R.fail(HttpStatus.BAD_METHOD, e.getMessage());
     }
 
@@ -113,8 +114,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MissingPathVariableException.class)
     public R<Void> handleMissingPathVariableException(MissingPathVariableException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求路径中缺少必需的路径变量'{}',发生系统异常.", requestURI, e);
+        String requestUri = request.getRequestURI();
+        log.error("请求路径中缺少必需的路径变量'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.BAD_REQUEST, String.format("请求路径中缺少必需的路径变量[%s]", e.getVariableName()));
     }
 
@@ -127,9 +128,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public R<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
-        return R.fail(HttpStatus.BAD_REQUEST, String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), e.getValue()));
+        String requestUri = request.getRequestURI();
+        log.error("请求参数类型不匹配'{}',发生系统异常.", requestUri, e);
+        return R.fail(HttpStatus.BAD_REQUEST, String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), Objects.isNull(e.getRequiredType()) ? "None" : e.getRequiredType().getName(), e.getValue()));
     }
 
     /**
@@ -141,8 +142,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MultipartException.class)
     public R<Void> handleMultipartException(MultipartException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
+        String requestUri = request.getRequestURI();
+        log.error("请求参数类型不匹配'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.BAD_REQUEST, "文件参数异常");
     }
 
@@ -155,8 +156,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RuntimeException.class)
     public R<Void> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',发生未知异常.", requestURI, e);
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',发生未知异常.", requestUri, e);
         return R.fail(HttpStatus.ERROR, e.getMessage());
     }
 
@@ -169,8 +170,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public R<Void> handleException(Exception e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',发生系统异常.", requestURI, e);
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.ERROR, e.getMessage());
     }
 
@@ -231,7 +232,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
+        String message = Objects.isNull(e.getBindingResult().getFieldError()) ? "No Message" : e.getBindingResult().getFieldError().getDefaultMessage();
         return R.fail(HttpStatus.BAD_REQUEST, message);
     }
 

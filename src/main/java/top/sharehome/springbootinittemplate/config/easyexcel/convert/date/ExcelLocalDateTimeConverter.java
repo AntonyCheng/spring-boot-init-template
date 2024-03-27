@@ -6,11 +6,11 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * EasyExcel LocalDateTime转换类
@@ -46,7 +46,7 @@ public class ExcelLocalDateTimeConverter implements Converter<LocalDateTime> {
      */
     @Override
     public WriteCellData<Object> convertToExcelData(LocalDateTime value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtils.isNotEmpty(value)) {
+        if (Objects.nonNull(value)) {
             return new WriteCellData<Object>(CellDataTypeEnum.STRING, value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
         return new WriteCellData<Object>(CellDataTypeEnum.STRING, "");

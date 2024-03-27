@@ -3,7 +3,6 @@ package top.sharehome.springbootinittemplate.utils.rabbitmq;
 import com.alibaba.fastjson2.JSON;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
@@ -83,7 +82,7 @@ public class RabbitMqUtils {
      */
     public static RabbitMessage defaultReceiveMsg() {
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMq.QUEUE_NAME, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);
@@ -125,7 +124,7 @@ public class RabbitMqUtils {
      */
     public static RabbitMessage defaultReceiveMsgWithDlx() {
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.QUEUE_WITH_DLX_NAME, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);
@@ -138,7 +137,7 @@ public class RabbitMqUtils {
      */
     public static RabbitMessage defaultReceiveMsgWithDlxInDlx() {
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDlx.DLX_QUEUE_WITH_DLX_NAME, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(Objects.requireNonNull(res).toString(), RabbitMessage.class);
@@ -180,7 +179,7 @@ public class RabbitMqUtils {
      */
     public static RabbitMessage defaultReceiveMsgWithDelay() {
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(DefaultRabbitMqWithDelay.DLX_QUEUE_WITH_DELAY_NAME, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);
@@ -271,7 +270,7 @@ public class RabbitMqUtils {
             return null;
         }
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueName, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);
@@ -362,7 +361,7 @@ public class RabbitMqUtils {
             return null;
         }
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(queueWithDlxName, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);
@@ -390,7 +389,7 @@ public class RabbitMqUtils {
             return null;
         }
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(dlxQueueName, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(Objects.requireNonNull(res).toString(), RabbitMessage.class);
@@ -481,7 +480,7 @@ public class RabbitMqUtils {
             return null;
         }
         Object res = RABBITMQ_TEMPLATE.receiveAndConvert(delayDlxQueueName, maxAwaitTimeout);
-        if (ObjectUtils.isEmpty(res)) {
+        if (Objects.isNull(res)) {
             return null;
         }
         return JSON.parseObject(res.toString(), RabbitMessage.class);

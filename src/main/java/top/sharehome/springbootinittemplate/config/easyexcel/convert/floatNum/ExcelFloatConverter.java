@@ -6,10 +6,10 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * EasyExcel Float转换类
@@ -45,11 +45,11 @@ public class ExcelFloatConverter implements Converter<Float> {
      */
     @Override
     public WriteCellData<Object> convertToExcelData(Float value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (ObjectUtils.isNotEmpty(value)) {
+        if (Objects.nonNull(value)) {
             String stringValue = String.valueOf(value);
             // 当数字长度大于15时（在Excel中15位之后开始丢失精度）使用字符串存储
             if (stringValue.length() > 15) {
-                return new WriteCellData<Object>(CellDataTypeEnum.STRING,stringValue);
+                return new WriteCellData<Object>(CellDataTypeEnum.STRING, stringValue);
             } else {
                 WriteCellData<Object> cellData = new WriteCellData<Object>(new BigDecimal(stringValue));
                 cellData.setType(CellDataTypeEnum.NUMBER);
