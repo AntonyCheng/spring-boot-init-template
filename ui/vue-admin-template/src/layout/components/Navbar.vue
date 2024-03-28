@@ -7,8 +7,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <el-avatar v-if="avatar" :src="avatar" />
-          <el-avatar v-else shape="square" style="font-size: x-large">{{ name.at(0) }}</el-avatar>
+          <el-avatar v-if="avatar" shape="square" :src="avatar" class="avatar-class" />
+          <el-avatar v-else shape="square" style="font-size: x-large" class="avatar-class">{{ name.at(0) }}</el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -55,13 +55,20 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.avatar-class {
+  img {
+    width: 100%;
+    background-size: cover;
+  }
+}
+
 .navbar {
   height: 50px;
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -69,7 +76,7 @@ export default {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
