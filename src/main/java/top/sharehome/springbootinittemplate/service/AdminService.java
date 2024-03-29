@@ -51,6 +51,9 @@ public interface AdminService extends IService<User> {
 
     /**
      * 管理员导出用户表格
+     * 此时导出的是逻辑未删除的数据，如果想要逻辑删除的数据：
+     * 1、重新创建和User类mapper，service，controller相似的一个类，比如AUser，AUser的isDeleted字段打上TableLogic(value="false")，然后查询。（非常不推荐）
+     * 2、在UserMapper当中使用@Select注解编写SQL查询。
      *
      * @return 用户列表结果
      */
