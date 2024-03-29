@@ -8,6 +8,7 @@ import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -44,11 +45,9 @@ public class ExcelByteConverter implements Converter<Byte> {
      */
     @Override
     public WriteCellData<Object> convertToExcelData(Byte value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) {
-        if (Objects.nonNull(value)) {
-            String stringValue = String.valueOf(value);
-            return new WriteCellData<Object>(CellDataTypeEnum.NUMBER, stringValue);
-        }
-        return new WriteCellData<Object>(CellDataTypeEnum.STRING, "");
+        WriteCellData<Object> cellData = new WriteCellData<>(new BigDecimal(value));
+        cellData.setType(CellDataTypeEnum.NUMBER);
+        return cellData;
     }
 
 }

@@ -33,6 +33,7 @@ public class AuthController {
 
     /**
      * 注册
+     * todo 模板默认不使用该接口，但保留该接口，因为该模板中真实增加用户的接口应该是管理员增加用户
      *
      * @param authRegisterDto 用户注册Dto类
      * @return 返回注册结果

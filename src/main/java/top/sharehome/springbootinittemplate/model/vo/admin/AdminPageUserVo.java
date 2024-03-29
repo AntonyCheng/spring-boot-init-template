@@ -1,14 +1,15 @@
-package top.sharehome.springbootinittemplate.model.vo.auth;
+package top.sharehome.springbootinittemplate.model.vo.admin;
 
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
- * 登录Vo类
+ * 管理员分页查询用户信息Vo类
  *
  * @author AntonyCheng
  */
@@ -16,33 +17,36 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthLoginVo implements Serializable {
+public class AdminPageUserVo {
 
     /**
-     * ID
+     * 用户ID
      */
     private Long id;
 
     /**
-     * 账号
+     * 用户账号
      */
     private String account;
 
     /**
-     * 昵称
+     * 用户昵称
      */
     private String name;
 
     /**
-     * 头像
+     * 用户头像
      */
     private String avatar;
 
     /**
-     * 角色（admin/user）
+     * 用户角色（admin/user）
      */
     private String role;
 
-    private static final long serialVersionUID = 3559885844441381994L;
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 
 }

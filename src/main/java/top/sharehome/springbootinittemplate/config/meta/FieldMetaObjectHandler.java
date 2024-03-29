@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
         }
 
         if (metaObject.hasSetter(ROLE)) {
-            metaObject.setValue(ROLE, "user");
+            metaObject.setValue(ROLE, Constants.ROLE_USER);
         }
     }
 

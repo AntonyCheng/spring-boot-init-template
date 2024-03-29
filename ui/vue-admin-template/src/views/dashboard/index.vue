@@ -195,7 +195,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import {updateAccount, updateAvatar, updateName, updatePassword} from '@/api/user'
+import { updateAccount, updateAvatar, updateName, updatePassword } from '@/api/user'
 import { Message } from 'element-ui'
 
 export default {

@@ -256,20 +256,9 @@ public class GlobalExceptionHandler {
      * todo Beta测试版本，为合理适配前端框架上传文件时找不到上传文件Bean时报错，一般是因为开发者没有开启OSS功能，这个不影响业务功能，一旦有合理方案就会做出修改
      */
     @ExceptionHandler(NestedServletException.class)
-    public R<Void> handleNestedServletException(NestedServletException e){
-        // 找到第一个报错原因
-        Throwable cause1 = e.getCause();
-        if (Objects.nonNull(cause1)){
-            // 找到第二个报错原因
-            Throwable cause2 = cause1.getCause();
-            if (Objects.nonNull(cause2)){
-                // 第二个报错原因如果是Bean未找到，那就是配置文件中没有开启相关功能
-                if (cause2.getClass().equals(NoSuchBeanDefinitionException.class)){
-                    return R.fail(HttpStatus.ERROR, "功能服务未开启");
-                }
-            }
-        }
-        throw new RuntimeException();
+    public R<Void> handleNestedServletException(NestedServletException e) {
+        log.error(e.getMessage(), e);
+        return R.fail(HttpStatus.ERROR, "功能服务未开启");
     }
 
     // todo 第一个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中

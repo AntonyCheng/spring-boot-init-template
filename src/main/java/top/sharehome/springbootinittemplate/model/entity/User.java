@@ -22,37 +22,37 @@ import java.time.LocalDateTime;
 public class User implements Serializable {
 
     /**
-     * 用户ID
+     * ID
      */
     @TableId(value = "user_id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 用户账号
+     * 账号
      */
     @TableField(value = "user_account")
     private String account;
 
     /**
-     * 用户密码
+     * 密码
      */
     @TableField(value = "user_password")
     private String password;
 
     /**
-     * 用户昵称
+     * 名称
      */
     @TableField(value = "user_name")
     private String name;
 
     /**
-     * 用户头像
+     * 头像
      */
     @TableField(value = "user_avatar")
     private String avatar;
 
     /**
-     * 用户角色（admin/user）
+     * 角色（admin/user）
      */
     @TableField(value = "user_role", fill = FieldFill.INSERT)
     private String role;
