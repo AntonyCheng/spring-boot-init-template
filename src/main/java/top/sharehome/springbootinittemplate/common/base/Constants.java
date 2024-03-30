@@ -43,14 +43,14 @@ public interface Constants {
     Integer FAIL = HttpStatus.ERROR;
 
     /**
-     * 登录成功状态
+     * 用户启用状态
      */
-    String LOGIN_SUCCESS_STATUS = "0";
+    Integer USER_ENABLE_STATE = 0;
 
     /**
-     * 登录失败状态
+     * 用户禁用状态
      */
-    String LOGIN_FAIL_STATUS = "1";
+    Integer USER_DISABLE_STATE = 1;
 
     /**
      * 登录成功

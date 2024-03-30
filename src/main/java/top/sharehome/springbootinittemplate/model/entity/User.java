@@ -58,6 +58,12 @@ public class User implements Serializable {
     private String role;
 
     /**
+     * 状态（0表示启用，1表示禁用）
+     */
+    @TableField(value = "user_state",fill = FieldFill.INSERT)
+    private Integer state;
+
+    /**
      * 创建时间
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)

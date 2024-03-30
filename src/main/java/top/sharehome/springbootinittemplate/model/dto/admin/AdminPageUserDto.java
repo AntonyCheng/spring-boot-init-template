@@ -35,6 +35,11 @@ public class AdminPageUserDto implements Serializable {
      */
     private String role;
 
+    /**
+     * 用户状态（eq）
+     */
+    private Integer state;
+
     private static final long serialVersionUID = -6011180811019851334L;
 
 }

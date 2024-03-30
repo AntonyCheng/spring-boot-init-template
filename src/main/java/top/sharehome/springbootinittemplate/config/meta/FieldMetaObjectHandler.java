@@ -19,6 +19,11 @@ import java.time.LocalDateTime;
 public class FieldMetaObjectHandler implements MetaObjectHandler {
 
     /**
+     * 需要处理的字段名——state
+     */
+    public static final String STATE = "state";
+
+    /**
      * 需要处理的字段名——updateTime
      */
     public static final String UPDATE_TIME = "updateTime";
@@ -44,6 +49,10 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
+        if (metaObject.hasSetter(STATE)) {
+            metaObject.setValue(STATE, 0);
+        }
+
         if (metaObject.hasSetter(UPDATE_TIME)) {
             metaObject.setValue(UPDATE_TIME, LocalDateTime.now());
         }

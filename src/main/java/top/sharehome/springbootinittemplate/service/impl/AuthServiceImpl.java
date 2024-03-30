@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
@@ -51,6 +52,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.WRONG_USER_ACCOUNT_OR_PASSWORD);
+        }
+        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
+            throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, authLoginVo);

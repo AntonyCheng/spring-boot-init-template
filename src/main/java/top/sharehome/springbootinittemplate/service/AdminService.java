@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.sharehome.springbootinittemplate.model.dto.admin.AdminAddUserDto;
 import top.sharehome.springbootinittemplate.model.dto.admin.AdminPageUserDto;
 import top.sharehome.springbootinittemplate.model.dto.admin.AdminResetPasswordDto;
+import top.sharehome.springbootinittemplate.model.dto.admin.AdminUpdateInfoDto;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.admin.AdminExportVo;
@@ -41,6 +42,20 @@ public interface AdminService extends IService<User> {
      * @param id 被删除用户的ID
      */
     void deleteUser(Long id);
+
+    /**
+     * 管理员修改用户信息
+     *
+     * @param adminUpdateInfoDto 被修改后的用户信息
+     */
+    void updateInfo(AdminUpdateInfoDto adminUpdateInfoDto);
+
+    /**
+     * 管理员修改用户状态
+     *
+     * @param id 被修改用户的ID
+     */
+    void updateState(Long id);
 
     /**
      * 管理员重置用户密码

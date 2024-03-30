@@ -45,6 +45,11 @@ public class AdminPageUserVo {
     private String role;
 
     /**
+     * 用户状态（0表示启用，1表示禁用）
+     */
+    private Integer state;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

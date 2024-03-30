@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.model.vo.admin;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,6 +47,12 @@ public class AdminExportVo implements Serializable {
      */
     @ExcelProperty(value = "用户角色")
     private String role;
+
+    /**
+     * 状态（admin/user）
+     */
+    @ExcelProperty(value = "用户状态")
+    private String state;
 
     /**
      * 创建时间

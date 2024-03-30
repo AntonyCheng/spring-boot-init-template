@@ -60,6 +60,9 @@ public class LoginUtils {
             StpUtil.logout(loginUserId);
             throw new CustomizeReturnException(ReturnCode.ACCESS_UNAUTHORIZED);
         }
+        if (Objects.equals(userInDatabase.getState(),Constants.USER_DISABLE_STATE)){
+            throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
+        }
         AuthLoginVo loginUser = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, loginUser);
         SaHolder.getStorage()
