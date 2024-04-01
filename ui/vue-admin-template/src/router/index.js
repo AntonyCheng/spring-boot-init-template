@@ -35,14 +35,14 @@ export const constantRoutes = [
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true,
-    meta: { role: ['admin', 'user'] }
+    role: ['admin', 'user']
   },
 
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true,
-    meta: { role: ['admin', 'user'] }
+    role: ['admin', 'user']
   },
 
   {
@@ -54,9 +54,10 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: '首页', icon: 'dashboard', role: ['admin', 'user'] }
+        meta: { title: '首页', icon: 'dashboard' }
       }
-    ]
+    ],
+    role: ['admin', 'user']
   },
   {
     path: '/user',
@@ -66,9 +67,10 @@ export const constantRoutes = [
         path: 'manage',
         name: 'UserManage',
         component: () => import('@/views/userManage/index'),
-        meta: { title: '用户管理', icon: 'table', role: ['admin'] }
+        meta: { title: '用户管理', icon: 'table' }
       }
-    ]
+    ],
+    role: ['admin']
   },
   {
     path: 'external-link',
@@ -76,9 +78,10 @@ export const constantRoutes = [
     children: [
       {
         path: 'https://github.com/AntonyCheng/spring-boot-init-template/',
-        meta: { title: '项目地址', icon: 'link', role: ['admin', 'user'] }
+        meta: { title: '项目地址', icon: 'link' }
       }
-    ]
+    ],
+    role: ['admin', 'user']
   },
 
   // 404 page must be placed at the end !!!
@@ -86,7 +89,7 @@ export const constantRoutes = [
     path: '*',
     redirect: '/404',
     hidden: true,
-    meta: { role: ['admin', 'user'] }
+    role: ['admin', 'user']
   }
 ]
 

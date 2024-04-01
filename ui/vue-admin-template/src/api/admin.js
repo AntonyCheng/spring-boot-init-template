@@ -4,7 +4,7 @@ export function pageUser(data) {
   return request({
     url: '/admin/page',
     method: 'get',
-    params: { data }
+    params: data
   })
 }
 
@@ -46,7 +46,7 @@ export function resetPassword(data) {
   })
 }
 
-export function exportExcel(){
+export function exportExcel() {
   return request({
     url: '/admin/export',
     method: 'get'

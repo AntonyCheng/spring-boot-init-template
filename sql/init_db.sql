@@ -27,7 +27,6 @@ CREATE TABLE `t_user`  (
 -- Records of t_user
 -- ----------------------------
 INSERT INTO `t_user` VALUES (1900, 'admin', '207acd61a3c1bd506d7e9a4535359f8a', 'AntonyCheng', NULL, 'admin', 0, '2024-03-27 22:01:16', '2024-03-30 11:32:49', 0);
-INSERT INTO `t_user` VALUES (1901, 'user', '207acd61a3c1bd506d7e9a4535359f8a', 'TestUser', NULL, 'user', 0, '2024-03-27 22:01:17', '2024-03-30 11:32:49', 0);
-INSERT INTO `t_user` VALUES (1773914469278146561, 'temp', 'c9d21e89dc04f9f2b446b4fbdafdf4b8', '临时', NULL, 'user', 0, '2024-03-30 11:25:42', '2024-03-30 11:31:33', 1);
+INSERT INTO `t_user` VALUES (1901, 'user', '207acd61a3c1bd506d7e9a4535359f8a', 'AntonyCoding', NULL, 'user', 0, '2024-03-27 22:01:17', '2024-04-01 22:02:17', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
