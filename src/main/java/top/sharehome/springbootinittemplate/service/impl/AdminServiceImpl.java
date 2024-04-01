@@ -50,6 +50,7 @@ public class AdminServiceImpl extends ServiceImpl<UserMapper, User> implements A
         // 构造查询条件
         userLambdaQueryWrapper
                 .eq(StringUtils.isNotBlank(adminPageUserDto.getRole()), User::getRole, adminPageUserDto.getRole())
+                .eq(Objects.nonNull(adminPageUserDto.getState()), User::getState,adminPageUserDto.getState())
                 .like(StringUtils.isNotBlank(adminPageUserDto.getAccount()), User::getAccount, adminPageUserDto.getAccount())
                 .like(StringUtils.isNotBlank(adminPageUserDto.getName()), User::getName, adminPageUserDto.getName());
         // 构造查询排序（默认按照创建时间升序排序）

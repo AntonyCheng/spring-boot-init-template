@@ -9,7 +9,7 @@
           <el-card style="max-width: 100%;">
             <template #default>
               <el-row>
-                <el-col :span="20">
+                <el-col :span="18">
                   <el-form
                     :inline="true"
                     :model="queryForm"
@@ -45,9 +45,12 @@
                     </el-form-item>
                   </el-form>
                 </el-col>
-                <el-col :span="4" style="text-align: center">
+                <el-col :span="6" style="text-align: center">
                   <template>
-                    <el-button type="primary" size="small" style="width: 100px" @click="handleQuery">查询</el-button>
+                    <el-button type="primary" size="small" style="width: 60px" @click="handleQuery">查询</el-button>
+                  </template>
+                  <template>
+                    <el-button size="small" style="width: 60px" @click="handleReset">重置</el-button>
                   </template>
                 </el-col>
               </el-row>
@@ -96,13 +99,14 @@
     <template>
       <el-divider />
     </template>
-    <template style="text-align: right">
+    <template>
       <el-pagination
-        :current-page="currentPage4"
+        :current-page="Number.parseInt(queryResult.current)"
         :page-sizes="[10, 30, 50, 100, 150, 300, 500]"
-        :page-size="15"
+        :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
         :total="Number.parseInt(queryResult.total)"
+        style="text-align: right"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -157,7 +161,6 @@ export default {
   },
   created() {
     pageUser(this.queryForm).then(response => {
-      console.log(response.data)
       this.queryResult = response.data
     })
   },
@@ -167,8 +170,29 @@ export default {
         this.queryResult = response.data
       })
     },
-    async getUserInfo() {
-      await this.$store.dispatch('auth/getInfo')
+    handleReset() {
+      this.resetQueryForm()
+      pageUser(this.queryForm).then(response => {
+        this.queryResult = response.data
+      })
+    },
+    handleSizeChange(val) {
+      this.queryForm.size = val
+      pageUser(this.queryForm).then(response => {
+        this.queryResult = response.data
+      })
+    },
+    handleCurrentChange(val) {
+      this.queryForm.page = val
+      pageUser(this.queryForm).then(response => {
+        this.queryResult = response.data
+      })
+    },
+    async resetQueryForm() {
+      this.queryForm.account = undefined
+      this.queryForm.name = undefined
+      this.queryForm.role = undefined
+      this.queryForm.state = undefined
     }
   }
 }
