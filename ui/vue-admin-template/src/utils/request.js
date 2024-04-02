@@ -30,6 +30,10 @@ service.interceptors.request.use(
   }
 )
 
+const RESPONSE_URI_WHITE_LIST = [
+  '/admin/export'
+]
+
 // response interceptor
 service.interceptors.response.use(
   /**
@@ -44,7 +48,10 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
+    // if the uri in whitelist, it is judged as a success.
+    if (RESPONSE_URI_WHITE_LIST.includes(response.request.responseURL.split(service.defaults.baseURL)[1])) {
+      return response
+    }
     // if the custom code is not 200, it is judged as an error.
     if (res.code !== 200) {
       Message({
@@ -66,7 +73,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return res
     }

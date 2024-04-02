@@ -16,6 +16,7 @@ import top.sharehome.springbootinittemplate.config.security.condition.SaConditio
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * SaToken认证配置
@@ -61,7 +62,7 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
                 .addExclude("/favicon.ico", "/actuator/**")
                 // 认证函数
                 .setAuth(obj -> {
-                    // 如果想在过滤器器层面做认证，请将逻辑代码编写到此处
+                    // 如果想在过滤器器层面做认证，请将逻辑代码编写到此处，比如全局限流
                 })
                 // 异常处理函数：每次认证函数发生异常时执行此函数
                 .setError(e -> SaResult.error("认证失败，无法访问系统资源").setCode(HttpStatus.UNAUTHORIZED))

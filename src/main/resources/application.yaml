@@ -47,6 +47,8 @@ knife4j:
     enable-footer: true
     enable-footer-custom: true
     footer-custom-content: Apache License 2.0 | Copyright &copy; 2024 [AntonyCheng](https://github.com/AntonyCheng)
+    enable-home-custom: true
+    home-custom-path: classpath:knife4j/README.md
   # Basic验证
   basic:
     # todo 是否让页面带有Basic验证（如果只是查看api推荐打开，但是如果要在里面调试，推荐关闭，因为basic验证之后会占用请求头的Authorization字段，会导致需要登录验证的接口调用失败，预先关闭）
@@ -57,10 +59,11 @@ knife4j:
 springdoc:
   api-docs:
     path: /v3/api-docs
+    version: openapi_3_1
   swagger-ui:
     path: /swagger-ui.html
   group-configs:
-    - group: "springbootinittemplate"
+    - group: "spring-boot-init-template"
       paths-to-match: "/**"
       packages-to-scan:
         - top.sharehome.springbootinittemplate.controller

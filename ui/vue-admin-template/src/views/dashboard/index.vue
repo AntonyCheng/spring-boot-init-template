@@ -19,7 +19,7 @@
               :http-request="handleSubmit"
               :on-success="handleSuccess"
             >
-              <el-avatar v-if="avatar" shape="square" :size="100" :src="avatar" class="avatar-class" />
+              <el-avatar v-if="avatar" :size="100" :src="avatar" class="avatar-class" />
               <el-avatar v-else :size="100" style="font-size: xxx-large">{{ name.at(0) }}</el-avatar>
               <div slot="tip" class="el-upload__tip">点击上传（仅支持jpg/png文件，且不超过1MB）</div>
             </el-upload>
@@ -186,8 +186,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel()">取 消</el-button>
-        <el-button type="primary" @click="handleUpdate()">修 改</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" @click="handleUpdate">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -204,17 +204,17 @@ export default {
     return {
       fileList: [],
       dialogVisible: false,
-      dialogType: '',
+      dialogType: undefined,
       updateAccountForm: {
-        newAccount: ''
+        newAccount: undefined
       },
       updatePasswordForm: {
-        oldPassword: '',
-        newPassword: '',
-        checkNewPassword: ''
+        oldPassword: undefined,
+        newPassword: undefined,
+        checkNewPassword: undefined
       },
       updateNameForm: {
-        newName: ''
+        newName: undefined
       },
       oldPasswordType: 'password',
       newPasswordType: 'password',
@@ -249,7 +249,6 @@ export default {
       formData.append('file', file)
       return updateAvatar(formData).then(response => {
         this.fileList = []
-        console.log(response)
         Message.success(response.msg)
         this.getUserInfo()
       }).catch(error => {
@@ -321,8 +320,8 @@ export default {
       }
     },
     handleCancel() {
-      this.dialogVisible = false
       this.resetUpdateForm()
+      this.dialogVisible = false
     },
     showPwd(passwordType) {
       switch (passwordType) {

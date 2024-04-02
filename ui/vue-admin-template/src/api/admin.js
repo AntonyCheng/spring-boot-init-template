@@ -49,6 +49,8 @@ export function resetPassword(data) {
 export function exportExcel() {
   return request({
     url: '/admin/export',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
