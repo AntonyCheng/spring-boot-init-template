@@ -1,6 +1,6 @@
 package top.sharehome.springbootinittemplate.elasticsearch.mapper;
 
-import org.dromara.easyes.core.core.BaseEsMapper;
+import org.dromara.easyes.core.kernel.BaseEsMapper;
 import top.sharehome.springbootinittemplate.elasticsearch.entity.UserEs;
 
 /**

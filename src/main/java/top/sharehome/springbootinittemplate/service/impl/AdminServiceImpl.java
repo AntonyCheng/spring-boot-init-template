@@ -25,6 +25,7 @@ import top.sharehome.springbootinittemplate.service.AdminService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -62,7 +63,13 @@ public class AdminServiceImpl extends ServiceImpl<UserMapper, User> implements A
         // 返回值处理（Entity ==> Vo）
         List<AdminPageUserVo> newRecords = page.getRecords().stream().map(user -> {
             AdminPageUserVo adminPageUserVo = new AdminPageUserVo();
-            BeanUtils.copyProperties(user, adminPageUserVo);
+            adminPageUserVo.setId(user.getId());
+            adminPageUserVo.setAccount(user.getAccount());
+            adminPageUserVo.setName(user.getName());
+            adminPageUserVo.setAvatar(user.getAvatar());
+            adminPageUserVo.setRole(user.getRole());
+            adminPageUserVo.setState(user.getState());
+            adminPageUserVo.setCreateTime(user.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             return adminPageUserVo;
         }).collect(Collectors.toList());
         BeanUtils.copyProperties(page, res, "records");

@@ -47,10 +47,10 @@
                 </el-col>
                 <el-col :span="6" style="text-align: center">
                   <template>
-                    <el-button type="primary" size="small" style="width: 60px" @click="handleQuery">查询</el-button>
+                    <el-button :loading="queryLoading" type="primary" size="small" style="width: 80px" @click="handleQuery">查询</el-button>
                   </template>
                   <template>
-                    <el-button size="small" style="width: 60px" @click="handleReset">重置</el-button>
+                    <el-button :loading="queryLoading" size="small" style="width: 80px" @click="handleReset">重置</el-button>
                   </template>
                 </el-col>
               </el-row>
@@ -75,6 +75,7 @@
     </template>
     <template>
       <el-table
+        v-loading="pageLoading"
         :data="queryResult.records"
         stripe
         style="width: 100%"
@@ -103,11 +104,24 @@
         <el-table-column
           prop="role"
           label="角色"
-        />
+        >
+          <template v-slot="scope">
+            {{ scope.row.role === 'admin' ? '管理员' : '用户' }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="state"
           label="状态"
-        />
+        >
+          <template v-slot="scope">
+            <el-switch
+              :value="scope.row.state === 0"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="handleState(scope.row.id)"
+            />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="createTime"
           label="创建时间"
@@ -146,7 +160,7 @@
       />
     </template>
     <template>
-      <el-dialog title="添加用户" :visible.sync="addDialogVisible">
+      <el-dialog :show-close="false" title="添加用户" :visible.sync="addDialogVisible" @close="handleCancelAdd">
         <el-form ref="addForm" :model="addForm" label-width="80px">
           <el-form-item
             label="用户账号"
@@ -186,7 +200,7 @@
       </el-dialog>
     </template>
     <template>
-      <el-dialog :title="updateType === 'info'?'修改信息':'修改密码'" :visible.sync="updateDialogVisible">
+      <el-dialog :show-close="false" :title="updateType === 'info'?'修改信息':'修改密码'" :visible.sync="updateDialogVisible" @close="handleCancelUpdate">
         <el-form v-if="updateType==='info'" ref="updateForm" :model="updateForm" label-width="80px">
           <el-form-item
             label="用户ID"
@@ -235,7 +249,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCancelUpdate">取 消</el-button>
-          <el-button type="primary" @click="handleUpdate">修 改</el-button>
+          <el-button type="primary" :loading="updateLoading" @click="handleUpdate">修 改</el-button>
         </div>
       </el-dialog>
     </template>
@@ -244,13 +258,16 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { addUser, deleteUser, exportExcel, pageUser, resetPassword, updateInfo } from '@/api/admin'
+import { addUser, deleteUser, exportExcel, pageUser, resetPassword, updateInfo, updateState } from '@/api/admin'
 import { Loading, Message } from 'element-ui'
 
 export default {
   name: 'UserManage',
   data() {
     return {
+      queryLoading: false,
+      updateLoading: false,
+      pageLoading: false,
       queryResult: [],
       queryForm: {
         account: undefined,
@@ -290,6 +307,7 @@ export default {
       updateDialogVisible: false,
       updateType: undefined,
       updateForm: {
+        id: undefined,
         account: undefined,
         name: undefined,
         newPassword: undefined
@@ -302,37 +320,45 @@ export default {
     ])
   },
   created() {
+    this.pageLoading = true
     pageUser(this.queryForm).then(response => {
       this.queryResult = response.data
+      this.pageLoading = false
     })
   },
   methods: {
     handleQuery() {
       if (
         this.queryForm.account === undefined &&
-        this.queryForm.password === undefined &&
+        this.queryForm.state === undefined &&
         this.queryForm.name === undefined &&
         this.queryForm.role === undefined
       ) {
         return
       }
       this.queryForm.page = 1
+      this.pageLoading = true
+      this.queryLoading = true
       pageUser(this.queryForm).then(response => {
         this.queryResult = response.data
+        this.pageLoading = false
+        this.queryLoading = false
       })
     },
     handleReset() {
       if (
         this.queryForm.account === undefined &&
-        this.queryForm.password === undefined &&
+        this.queryForm.state === undefined &&
         this.queryForm.name === undefined &&
         this.queryForm.role === undefined
       ) {
         return
       }
       this.resetQueryForm()
+      this.pageLoading = true
       pageUser(this.queryForm).then(response => {
         this.queryResult = response.data
+        this.pageLoading = false
       })
     },
     handleExport() {
@@ -343,7 +369,6 @@ export default {
       })
       exportExcel().then(async data => {
         if (data) {
-          console.log(data.data)
           const blob = new Blob([data.data])
           const url = URL.createObjectURL(blob)
           const link = document.createElement('a')
@@ -377,8 +402,10 @@ export default {
             if (this.queryResult.total % this.queryResult.size === 0) {
               this.queryForm.page++
             }
+            this.pageLoading = true
             pageUser(this.queryForm).then(response => {
               this.queryResult = response.data
+              this.pageLoading = false
             })
             this.resetAddForm()
             this.addDialogVisible = false
@@ -393,10 +420,13 @@ export default {
     },
     openUpdateDialog(data1, data2) {
       this.updateType = data1
-      this.updateForm = data2
+      this.updateForm.id = data2.id
+      this.updateForm.account = data2.account
+      this.updateForm.name = data2.name
       this.updateDialogVisible = true
     },
     handleUpdate() {
+      this.updateLoading = true
       this.$refs['updateForm'].validate(valid => {
         if (valid) {
           if (this.updateType === 'info') {
@@ -406,12 +436,15 @@ export default {
               name: this.updateForm.name
             }
             updateInfo(data).then(response => {
+              this.pageLoading = true
               pageUser(this.queryForm).then(response => {
                 this.queryResult = response.data
+                this.pageLoading = false
               })
               this.resetUpdateForm()
               this.updateDialogVisible = false
               Message.success(response.msg)
+              this.updateLoading = false
             })
           } else {
             const data = {
@@ -419,20 +452,34 @@ export default {
               newPassword: this.updateForm.newPassword
             }
             resetPassword(data).then(response => {
+              this.pageLoading = true
               pageUser(this.queryForm).then(response => {
                 this.queryResult = response.data
+                this.pageLoading = false
               })
               this.resetUpdateForm()
               this.updateDialogVisible = false
               Message.success(response.msg)
+              this.updateLoading = false
             })
           }
         }
       })
     },
     handleCancelUpdate() {
+      this.$refs['updateForm'].resetFields()
       this.updateDialogVisible = false
       this.resetUpdateForm()
+    },
+    handleState(data) {
+      updateState(data).then(response => {
+        this.pageLoading = true
+        pageUser(this.queryForm).then(response => {
+          this.queryResult = response.data
+          this.pageLoading = false
+        })
+        Message.success(response.msg)
+      })
     },
     handleDelete(data) {
       this.$confirm('此操作将删除该用户, 是否继续?', '确认删除', {
@@ -444,8 +491,10 @@ export default {
           if (this.queryResult.total % this.queryResult.size === 1) {
             this.queryForm.page--
           }
+          this.pageLoading = true
           pageUser(this.queryForm).then(response => {
             this.queryResult = response.data
+            this.pageLoading = false
           })
           Message.success(response.msg)
         })
@@ -453,14 +502,18 @@ export default {
     },
     handleSizeChange(val) {
       this.queryForm.size = val
+      this.pageLoading = true
       pageUser(this.queryForm).then(response => {
         this.queryResult = response.data
+        this.pageLoading = false
       })
     },
     handleCurrentChange(val) {
       this.queryForm.page = val
+      this.pageLoading = true
       pageUser(this.queryForm).then(response => {
         this.queryResult = response.data
+        this.pageLoading = false
       })
     },
     async resetQueryForm() {
@@ -476,6 +529,9 @@ export default {
       this.addForm.name = undefined
     },
     async resetUpdateForm() {
+      this.updateForm.id = undefined
+      this.updateForm.account = undefined
+      this.updateForm.name = undefined
       this.updateForm.newPassword = undefined
     }
   }

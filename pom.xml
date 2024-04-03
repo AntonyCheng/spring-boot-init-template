@@ -12,7 +12,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>2.1.2</version>
+    <version>2.1.3</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <url>https://github.com/AntonyCheng/spring-boot-init-template</url>
@@ -62,16 +62,16 @@
         <mybatis.plus.starter.version>3.5.5</mybatis.plus.starter.version>
         <shardingsphere.version>5.3.2</shardingsphere.version>
         <!-- 工具类相关 -->
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <hutool.version>5.8.27</hutool.version>
         <commons.lang3.version>3.14.0</commons.lang3.version>
-        <commons.io.version>2.15.1</commons.io.version>
-        <commons.codec.version>1.16.0</commons.codec.version>
+        <commons.io.version>2.16.0</commons.io.version>
+        <commons.codec.version>1.16.1</commons.codec.version>
         <commons.pool2.version>2.12.0</commons.pool2.version>
         <commons.collections4.version>4.4</commons.collections4.version>
         <commons.math3.version>3.6.1</commons.math3.version>
         <ok.http3.version>4.12.0</ok.http3.version>
-        <ok.io.version>3.7.0</ok.io.version>
+        <ok.io.version>3.9.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
         <knife4j.openapi3.starter.version>4.5.0</knife4j.openapi3.starter.version>
         <fastjson2.version>2.0.48</fastjson2.version>
@@ -83,9 +83,9 @@
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
-        <easy.es.starter.version>2.0.0-beta6</easy.es.starter.version>
+        <easy.es.starter.version>2.0.0-beta7</easy.es.starter.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.205</tencent.cos.version>
+        <tencent.cos.version>5.6.208</tencent.cos.version>
         <ali.oss.version>3.17.4</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>

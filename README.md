@@ -1,18 +1,18 @@
 <p align="center">
   <a href="https://github.com/AntonyCheng">
-    <img alt="spring-boot-init-template logo" src="logo/logo.png" title="logo"/>
+    <img alt="spring-boot-init-template logo" src="picture/logo/logo.png" title="logo"/>
   </a>
 </p>
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.2**
+> **版本号：v2.1.3**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 
 # SpringBoot初始化模板
 
-**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 * [SpringBoot初始化模板](#springboot初始化模板)
   * [模板特点](#模板特点)
@@ -24,6 +24,7 @@
   * [快速上手](#快速上手)
     * [必须执行](#必须执行)
     * [可选执行](#可选执行)
+      * [启动前端项目](#启动前端项目)
       * [整合缓存服务](#整合缓存服务)
         * [整合系统缓存（Redis）](#整合系统缓存redis)
         * [整合业务缓存（Redisson）](#整合业务缓存redisson)
@@ -48,6 +49,7 @@
         * [开启JWT](#开启jwt)
           * [整合Redis](#整合redis)
           * [整合JWT](#整合jwt)
+          * [确认鉴权模式](#确认鉴权模式)
       * [配置定时任务](#配置定时任务)
         * [SpringBoot任务调度](#springboot任务调度)
         * [XxlJob任务调度](#xxljob任务调度)
@@ -60,6 +62,7 @@
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
   * [兼容Java8](#兼容java8)
   * [申明&联系我](#申明联系我)
+  * [模板预览](#模板预览)
   * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
@@ -67,7 +70,7 @@
 ### 主流框架
 
 - **Java 11**
-  - 兼容性，详情见[兼容Java8](#兼容Java8)
+  - 兼容性，详情见[兼容Java8](#兼容java8)
 - **SpringBoot 2.7.18**
   - spring-boot-starter-web == 基于 Spring MVC 的 Web 应用依赖
   - spring-boot-starter-undertow == 轻量级、高性能 Servlet 容器
@@ -78,24 +81,28 @@
   - spring-boot-starter-freemaker == 模板引擎依赖
   - spring-boot-starter-test == Spring Boot Test 依赖
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
+- **UI**
+  - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
+
 - **Netty**
-  - netty-all  4.1.107.Final == Netty 框架
+  - netty-all  4.1.108.Final == Netty 框架
 - **MySQL**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
+  - druid-spring-boot-starter 1.2.22 == Druid 连接池
   - mybatis-plus-boot-starter 3.5.5 == MySQL 操作框架
   - shardingsphere-jdbc-core 5.3.2 == 分布式数据库解决方案
-  - druid-spring-boot-starter 1.2.21 == Druid 连接池
 - **工具类**
-  - lombok 1.18.30 == POJO 简化工具
-  - hutool-all 5.8.26 == Hutool 工具类
+  - lombok 1.18.32 == POJO 简化工具
+  - hutool-all 5.8.27 == Hutool 工具类
   - commons-lang3 3.14.0 == Apache Commons Lang 工具类
-  - commons-io 2.15.1 == Apache Commons IO 工具类
-  - commons-codec 1.16.0 == Apache Commons Codec 工具类
+  - commons-io 2.16.0 == Apache Commons IO 工具类
+  - commons-codec 1.16.1 == Apache Commons Codec 工具类
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
   - commons-collections4 4.4 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
-  - ok-http 4.12.0 == Ok Http 工具类
-  - fastjson2 2.0.47 == Fast JSON 工具类
+  - okhttp 4.12.0 == OK Http 工具类
+  - okio 3.9.0 == OK IO 工具类
+  - fastjson2 2.0.48 == Fast JSON 工具类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
   - sa-token-spring-boot-starter == SaToken 认证鉴权框架
@@ -105,28 +112,27 @@
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.27.1 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.27.2 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
   - spring-boot-starter-amqp == 支持 AMQP （高级消息队列协议）消息代理
   - spring-rabbit-test == Spring 支持对 RabbitMQ 消息队列的单元测试
 - **搜索引擎**
-  - easy-es-boot-starter 2.0.0-bata5 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+  - easy-es-boot-starter 2.0.0-bata7 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
   - elasticsearch 7.14.0 == Elasticsearch 依赖
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.205 == 腾讯云 COS
+  - cos_api 5.6.208 == 腾讯云 COS
   - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
-  - minio 8.5.8 == Minio 对象存储
+  - minio 8.5.9 == Minio 对象存储
 - **文件操作**
   - poi 5.2.5 == 操作 Word
   - easyexcel 3.3.4 == 操作 Excel
   - itext-core 8.0.3 == 操作 PDF
 - **接口文档 & API调试**
-  - knife4j-openapi3-spring-boot-starter 4.4.0 == Knife4j 依赖
-
+  - knife4j-openapi3-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
   - xxl-job-core 2.4.0 == 分布式定时任务管理平台
   - powerjob-worker-spring-boot-starter 4.3.9 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
@@ -136,6 +142,7 @@
 ### 业务特性
 
 - 使用 Undertow 服务器替换掉 Tomcat 服务器，无阻塞更适合高并发
+- Web UI 选用 vue-admin-template 前端模板，基于 Vue 2 和 Element UI ，极易上手开发调试
 - SaToken 可配置分布式登录 & 认证 & 鉴权
 - AOP 逻辑处理示例
 - 自定义注解处理示例
@@ -154,14 +161,14 @@
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel 等工具类
 
 ## 业务功能
 
 ### 示例业务
 
 - 提供模板 SQL 示例文件（业务数据库 & XxlJob 数据库 & PowerJob 数据库）
-- 用户登录、注册、注销、信息获取
+- 用户登录、注册、注销、信息获取、添加、查询、删除以及修改等后端接口及前端页面
 - Spring Scheduler 单机版定时任务示例
 - XxlJob & PowerJob 使用逻辑代码示例
 - RabbitMQ 多类型消息队列逻辑代码示例
@@ -183,7 +190,7 @@
 
 ### 必须执行
 
-1. 执行 `sql/init_db.sql` 、 `sql/init_xxl_job.sql` 以及 ` sql/init_power_job.sql` 文件；
+1. 执行 `sql/init_db.sql` 、 `sql/init_xxl_job.sql` 以及 ` sql/init_power_job.sql` 文件，模板默认管理员账号：admin，默认用户账号：user，密码均为123456；
 
 2. 修改 `src/main/resources/mysql/mysql.yaml` 文件：
 
@@ -204,11 +211,15 @@
 
    > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 框架，理解相关配置；
 
-3. 直到这一步之后，模板就已经可以直接启动了，访问 `http://localhost:38080/api/doc.html` 即可打开接口文档。
+3. 直到这一步之后，模板后端代码就已经可以直接启动了，访问 `http://localhost:38080/api/doc.html` 即可打开接口文档；
 
 ### 可选执行
 
 > 为了方便开发者快速找到配置文件需要修改的位置，一律使用 todo 待办进行标识，请务必“**必须执行**”。
+
+#### 启动前端项目
+
+如果需要启动前端进行开发或者调试，开发者需要前往 `ui` 文件夹，打开 `vue-admin-template` 项目，参考其 `README.md` 文件启动即可。
 
 #### 整合缓存服务
 
@@ -1386,6 +1397,46 @@ Deployer 只能监听一个 MySQL 的增量日志。
   ```xml
   <caffeine.version>2.9.3</caffeine.version>
   ```
+
+## 前端预览
+
+**注意**：作者前端开发水平较为有限，整合前端模板为项目完整性做保障。
+
+**登陆界面**
+
+![loginPage.png](picture/project/loginPage.png)
+
+**首页界面**
+
+![indexPage.png](picture/project/indexPage.png)
+
+**用户管理界面**
+
+首页：
+
+![userManage-index.png](picture/project/userManage-index.png)
+
+查询：
+
+![userManage-query.png](picture/project/userManage-query.png)
+
+添加：
+
+![userManage-add.png](picture/project/userManage-add.png)
+
+更新：
+
+![userManage-updateInfo.png](picture/project/userManage-updateInfo.png)
+
+![userManage-updatePassword.png](picture/project/userManage-updatePassword.png)
+
+删除：
+
+![userManage-delete.png](picture/project/userManage-delete.png)
+
+导出：
+
+![userManage-export.png](picture/project/userManage-export.png)
 
 ## 申明&联系我
 
