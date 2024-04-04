@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Admin Template' // page title
+const name = defaultSettings.title || 'SpringBoot初始化模板' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -32,14 +32,15 @@ module.exports = {
   devServer: {
     port: 3000,
     proxy: {
-      '/api': { target: 'http://localhost:38080/api' }
+      '/api': { target: 'http://127.0.0.1:38080' }
     },
     open: true,
     overlay: {
       warnings: false,
       errors: true
-    },
-    before: require('./mock/mock-server.js')
+    }
+    // 由devServer代理不能加上模拟数据
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
