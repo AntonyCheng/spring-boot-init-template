@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.excel;
+package top.sharehome.springbootinittemplate.utils.document.excel;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
@@ -797,11 +797,16 @@ public class ExcelUtils {
     /**
      * 处理响应
      *
-     * @param fileName 工作表名
+     * @param fileName 文件名
      * @param response 响应
      */
     private static void handleResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
-        String realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ".xlsx";
+        String realName = null;
+        if (StringUtils.isBlank(fileName)) {
+            realName = UUID.randomUUID().toString().replace("-", "") + ".xlsx";
+        }else {
+            realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ".xlsx";
+        }
         String encodeName = URLEncoder
                 .encode(realName, StandardCharsets.UTF_8.toString())
                 .replaceAll("\\+", "%20");

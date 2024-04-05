@@ -5,7 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import shade.powerjob.org.apache.commons.lang3.RandomUtils;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
 import top.sharehome.springbootinittemplate.document.excel.entity.ExcelUser;
-import top.sharehome.springbootinittemplate.utils.excel.ExcelUtils;
+import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -241,7 +241,12 @@ public enum ReturnCode {
     /**
      * 处理Excel文件出错 40000
      */
-    EXCEL_FILE_ERROR(40000, "处理Excel文件出错");
+    EXCEL_FILE_ERROR(40000, "处理Excel文件出错"),
+
+    /**
+     * 处理Word文件出错 40001
+     */
+    WORD_FILE_ERROR(40001, "处理Word文件出错");
 
     final private int code;
 

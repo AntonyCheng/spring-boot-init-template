@@ -17,7 +17,7 @@ import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.admin.AdminExportVo;
 import top.sharehome.springbootinittemplate.model.vo.admin.AdminPageUserVo;
 import top.sharehome.springbootinittemplate.service.AdminService;
-import top.sharehome.springbootinittemplate.utils.excel.ExcelUtils;
+import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
