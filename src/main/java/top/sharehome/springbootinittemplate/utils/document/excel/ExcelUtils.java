@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.utils.document.excel;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -590,7 +591,7 @@ public class ExcelUtils {
                 if (!file.exists()) {
                     Files.createDirectory(file.toPath());
                 }
-                pathName = pathName + "/" + (StringUtils.isEmpty(sheetName) ? "defaultName" : sheetName) + ".xlsx";
+                pathName = pathName + "/" + (StringUtils.isEmpty(sheetName) ? "defaultName" : sheetName) + ExcelTypeEnum.XLSX.getValue();
             } else {
                 String fullName = file.getName();
                 String parent = file.getParent();
@@ -598,7 +599,7 @@ public class ExcelUtils {
                 if (name.isEmpty()) {
                     name = (StringUtils.isEmpty(sheetName) ? "defaultName" : sheetName);
                 }
-                pathName = parent + "/" + name + ".xlsx";
+                pathName = parent + "/" + name + ExcelTypeEnum.XLSX.getValue();
             }
             file = new File(pathName);
             EasyExcel
@@ -720,7 +721,7 @@ public class ExcelUtils {
      */
     public static <T> void exportTemplateHttpServletResponse(String templateName, HttpServletResponse response) {
         try {
-            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + templateName + ".xlsx");
+            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + templateName + ExcelTypeEnum.XLSX.getValue());
             if (!file.isFile()) {
                 throw new FileNotFoundException();
             }
@@ -803,9 +804,9 @@ public class ExcelUtils {
     private static void handleResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
         String realName = null;
         if (StringUtils.isBlank(fileName)) {
-            realName = UUID.randomUUID().toString().replace("-", "") + ".xlsx";
+            realName = UUID.randomUUID().toString().replace("-", "") + ExcelTypeEnum.XLSX.getValue();
         }else {
-            realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ".xlsx";
+            realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ExcelTypeEnum.XLSX.getValue();
         }
         String encodeName = URLEncoder
                 .encode(realName, StandardCharsets.UTF_8.toString())
