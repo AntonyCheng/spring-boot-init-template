@@ -35,7 +35,6 @@ public class TestWordUtils {
 
     public static void main(String[] args) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(READABLE_WORD_PATH_NAME);
-        FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_ZIP_FILE_PATH_NAME);
         Map<Integer, String> paragraphsText = WordUtils.getParagraphsText(fileInputStream);
         System.out.println();
     }

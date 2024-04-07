@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
 public class WordUtils {
 
     /**
-     * 从Word数据流中获取段落数据，以输出到一个输出流中
+     * 从Word数据流中获取段落数据，转变为TXT格式，输出到响应流中
      *
      * @param fileName    文件名
      * @param inputStream Word输入流
