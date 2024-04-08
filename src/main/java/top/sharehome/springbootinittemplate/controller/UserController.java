@@ -2,12 +2,14 @@ package top.sharehome.springbootinittemplate.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaMode;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
@@ -19,12 +21,9 @@ import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateAvatarDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateNameDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserUpdatePasswordDto;
 import top.sharehome.springbootinittemplate.service.UserService;
-import top.sharehome.springbootinittemplate.utils.document.word.WordUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,17 +56,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    @GetMapping("/test")
-    @SaIgnore
-    public R<Void> test(MultipartFile file, HttpServletResponse response){
-        try {
-            WordUtils.getTxtParagraphs("temp",file.getInputStream(),response);
-            return R.empty();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * 用户更新账号
