@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.utils.document.word;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.deepoove.poi.XWPFTemplate;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Builder;
@@ -16,7 +17,9 @@ import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
+import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.imageio.ImageIO;
@@ -37,6 +40,77 @@ import java.util.zip.ZipEntry;
  */
 @Slf4j
 public class WordUtils {
+
+    /**
+     * 输出Word模板内部类
+     * 该导出模板是基于POI-TL框架的封装，该框架主要以"{{XXX}}"型标签为内容插入点，具体用法查看https://deepoove.com/poi-tl
+     */
+    public static class Template {
+
+        /**
+         * 导出Word.docx模板目录下的模板文件到响应流，模板目录一定是resources文件夹下templates/word目录
+         *
+         * @param templateName 模板名称
+         * @param tagMap       标签Map
+         * @param filename     导出文件名称
+         * @param response     响应流
+         */
+        public static void export(String templateName, Map<String, Object> tagMap, String filename, HttpServletResponse response) {
+            try {
+                handleWordResponse(filename, response);
+                ServletOutputStream outputStream = response.getOutputStream();
+                export(templateName, tagMap, outputStream);
+            } catch (IOException e) {
+                throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
+            }
+        }
+
+        /**
+         * 导出Word.docx模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/word目录
+         *
+         * @param templateName 模板名称
+         * @param tagMap       标签Map
+         * @param outputStream 输出流
+         */
+        public static void export(String templateName, Map<String, Object> tagMap, OutputStream outputStream) {
+            try {
+                ClassPathResource classPathResource = new ClassPathResource("templates/word/" + templateName + ".docx");
+                if (!classPathResource.exists()) {
+                    throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".docx]未找到");
+                }
+                InputStream inputStream = classPathResource.getInputStream();
+                XWPFTemplate template = XWPFTemplate.compile(inputStream).render(tagMap);
+                template.writeAndClose(outputStream);
+                inputStream.close();
+            } catch (IOException e) {
+                throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
+            }
+        }
+
+        /**
+         * 处理ContentType是Word格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private static void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+            } else {
+                realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ".docx";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8.toString())
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=UTF-8");
+        }
+
+    }
 
     /**
      * 写入Word数据内部类

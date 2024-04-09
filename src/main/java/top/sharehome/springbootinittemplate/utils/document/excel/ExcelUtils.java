@@ -3,9 +3,12 @@ package top.sharehome.springbootinittemplate.utils.document.excel;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
@@ -712,29 +715,27 @@ public class ExcelUtils {
     }
 
     /**
-     * 导出Excel模板目录下的模板文件，同时关闭请求响应流并提交响应，模板目录一定是resources文件夹下templates/excel目录
+     * 导出Excel.xlsx模板目录下的模板文件，同时关闭请求响应流并提交响应，模板目录一定是resources文件夹下templates/excel目录
      * 在Controller中建议直接返回void，如果想要统一返回响应类型R<T>，可以使用R.empty()方法。
      *
      * @param templateName resource模板名称（不带后缀）
      * @param response     请求响应流
-     * @param <T>          泛型T
      */
-    public static <T> void exportTemplateHttpServletResponse(String templateName, HttpServletResponse response) {
+    public static void exportTemplateHttpServletResponse(String templateName, HttpServletResponse response) {
         try {
-            File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "templates/excel/" + templateName + ExcelTypeEnum.XLSX.getValue());
-            if (!file.isFile()) {
-                throw new FileNotFoundException();
+            ClassPathResource classPathResource = new ClassPathResource("templates/excel/" + templateName + ExcelTypeEnum.XLSX.getValue());
+            if (!classPathResource.exists()) {
+                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
             }
+            InputStream inputStream = classPathResource.getInputStream();
             handleResponse(templateName, response);
-            FileInputStream fileInputStream = new FileInputStream(file);
             int len = 0;
             byte[] buffer = new byte[1024];
             ServletOutputStream outputStream = response.getOutputStream();
-            while ((len = fileInputStream.read(buffer)) > 0) {
+            while ((len = inputStream.read(buffer)) > 0) {
                 outputStream.write(buffer, 0, len);
             }
-            fileInputStream.close();
-            outputStream.flush();
+            inputStream.close();
             outputStream.close();
         } catch (FileNotFoundException e) {
             throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");

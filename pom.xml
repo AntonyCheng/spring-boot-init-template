@@ -93,6 +93,7 @@
         <minio.version>8.5.9</minio.version>
         <!-- 文件操作相关 -->
         <poi.version>5.2.5</poi.version>
+        <poi.tl.version>1.12.2</poi.tl.version>
         <easy.excel.version>3.3.4</easy.excel.version>
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
@@ -394,6 +395,11 @@
             <version>${poi.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.deepoove</groupId>
+            <artifactId>poi-tl</artifactId>
+            <version>${poi.tl.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>${easy.excel.version}</version>
@@ -513,22 +519,9 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <!-- 关闭过滤 -->
-                <filtering>false</filtering>
             </resource>
             <resource>
                 <directory>src/main/webapp/</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <!-- 引入所有 匹配文件进行过滤 -->
-                <includes>
-                    <include>application*</include>
-                    <include>bootstrap*</include>
-                    <include>logback*</include>
-                </includes>
-                <!-- 启用过滤 即该资源中的变量将会被过滤器中的值替换 -->
-                <filtering>true</filtering>
             </resource>
         </resources>
     </build>
