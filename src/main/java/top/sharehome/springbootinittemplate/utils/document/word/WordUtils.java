@@ -92,7 +92,7 @@ public class WordUtils {
          * @param inputStream 图片输入流
          */
         public static void addPicture(XWPFDocument document, InputStream inputStream) {
-            addPicture(document, inputStream, null, null, null, null);
+            addPicture(document, inputStream, null, null, null, null, null, null);
         }
 
         /**
@@ -109,7 +109,9 @@ public class WordUtils {
                     pictureDetails.getPictureType(),
                     pictureDetails.getFilename(),
                     pictureDetails.getWidth(),
-                    pictureDetails.getHeight()
+                    pictureDetails.getHeight(),
+                    pictureDetails.getAlignment(),
+                    pictureDetails.getSpacingBetween()
             );
         }
 
@@ -117,32 +119,28 @@ public class WordUtils {
          * 添加表格
          *
          * @param document     文档本体
-         * @param rowNumber    行数
-         * @param columnNum    列数
          * @param tableContent 表格内容
          */
-        public static void addTable(XWPFDocument document, Integer rowNumber, Integer columnNum, TableMap tableContent) {
-            // 如果连文档都没有，那就直接返回即可
-            if (Objects.isNull(document) || rowNumber <= 0 || columnNum <= 0) {
-                return;
-            }
-            // 判断表格内容是否超出表格预设值
-            Map<Integer, List<String>> map = tableContent.getMap();
-            map.forEach((k, v) -> {
-                if (k >= rowNumber) {
-                    throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR, "表格内容[行]超出预设值");
-                }
-                if (v.size() > columnNum) {
-                    throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR, "表格内容[列]超出预设值");
-                }
-            });
-            // 开始填充表格
-            XWPFTable table = document.createTable(rowNumber, columnNum);
-            map.forEach((k,v)->{
-                for (int i = 0; i < v.size(); i++) {
-                    table.getRow(k).getCell(i).setText(v.get(i));
-                }
-            });
+        public static void addTable(XWPFDocument document, TableMap tableContent) {
+            addTable(document, tableContent, null, null, null, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param document     文档本体
+         * @param tableContent 表格内容
+         * @param tableDetails 表格细节
+         */
+        public static void addTable(XWPFDocument document, TableMap tableContent, TableDetails tableDetails) {
+            addTable(
+                    document,
+                    tableContent,
+                    tableDetails.getRowNum(),
+                    tableDetails.getColumnNum(),
+                    tableDetails.getWidth(),
+                    tableDetails.getAlignment()
+            );
         }
 
         /**
@@ -209,14 +207,16 @@ public class WordUtils {
         /**
          * 添加图片
          *
-         * @param document    文档本体
-         * @param inputStream 图片输入流
-         * @param pictureType 图片类型
-         * @param filename    图片名称
-         * @param width       图片宽度
-         * @param height      图片高度
+         * @param document       文档本体
+         * @param inputStream    图片输入流
+         * @param pictureType    图片类型，为空即为PictureType.PNG
+         * @param filename       图片名称，为空即为"filename"
+         * @param width          图片宽度，为空即为图片原宽度
+         * @param height         图片高度，为空即为图片原高度
+         * @param alignment      图片段落对齐方式，为空即为ParagraphAlignment.BOTH
+         * @param spacingBetween 图片段落行间距，为空即为1
          */
-        private static void addPicture(XWPFDocument document, InputStream inputStream, PictureType pictureType, String filename, Integer width, Integer height) {
+        private static void addPicture(XWPFDocument document, InputStream inputStream, PictureType pictureType, String filename, Integer width, Integer height, ParagraphAlignment alignment, Integer spacingBetween) {
             try {
                 // 如果连数据流或者文档都没有，那就直接返回即可
                 if (Objects.isNull(document) || Objects.isNull(inputStream)) {
@@ -237,9 +237,66 @@ public class WordUtils {
                 height = Objects.isNull(height) ? imgHeight : height;
                 // 添加图片
                 run.addPicture(inputStream, pictureType, filename, Units.toEMU(width), Units.toEMU(height));
+                // 设置图片段落格式
+                paragraph.setAlignment(Objects.isNull(alignment) ? ParagraphAlignment.BOTH : alignment);
+                // 设置图片段落行间距
+                paragraph.setSpacingBetween(Objects.isNull(spacingBetween) || spacingBetween <= 0 ? 1 : spacingBetween, LineSpacingRule.AUTO);
             } catch (IOException | InvalidFormatException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param document     文档本体
+         * @param tableContent 表格内容
+         * @param rowNum       行数，为空或者数值小于表格本身行值即为表格本身行值
+         * @param columnNum    列数，为空或者数值小于表格本身列值即为表格本身列值
+         * @param width        表格宽度，为空即为8000
+         * @param alignment    表格对齐方式，为空即为TableRowAlign.CENTER
+         */
+        private static void addTable(XWPFDocument document, TableMap tableContent, Integer rowNum, Integer columnNum, Integer width, TableRowAlign alignment) {
+            // 如果连文档都没有，或者输入预设行列值异常，那就直接返回即可
+            if (Objects.isNull(document) || (Objects.nonNull(rowNum) && rowNum <= 0) || (Objects.nonNull(columnNum) && columnNum <= 0)) {
+                return;
+            }
+            // 由表格内容获取表格本身的行列值
+            Map<Integer, List<String>> map = tableContent.getMap();
+            int maxRow = -1;
+            int maxColumn = -1;
+            for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+                if (entry.getKey() > maxRow) {
+                    maxRow = entry.getKey();
+                }
+                if (entry.getValue().size() > maxColumn) {
+                    maxColumn = entry.getValue().size();
+                }
+            }
+            // 如果表格本身无行值，则说明表格内容为空，直接返回即可
+            if (maxRow == -1) {
+                return;
+            } else {
+                // 先把行值从索引值改为真实数值
+                maxRow++;
+                // 如果表格本身有行值，那就和预设值作比较，判断预设值是否是无效值
+                if (Objects.nonNull(rowNum) && maxRow < rowNum) {
+                    maxRow = rowNum;
+                }
+                if (Objects.nonNull(columnNum) && maxColumn < columnNum) {
+                    maxColumn = columnNum;
+                }
+            }
+            // 填充表格
+            XWPFTable table = document.createTable(maxRow, maxColumn);
+            map.forEach((k, v) -> {
+                for (int i = 0; i < v.size(); i++) {
+                    table.getRow(k).getCell(i).setText(v.get(i));
+                }
+            });
+            // 设置表格格式
+            table.setWidth(Objects.isNull(width) ? 8000 : width);
+            table.setTableAlignment(Objects.isNull(alignment) ? TableRowAlign.CENTER : alignment);
         }
 
         /**
@@ -543,20 +600,25 @@ public class WordUtils {
          * 从Word数据流中获取表格文本数据
          *
          * @param inputStream Word输入流
-         * @return 返回Word中所有表格数据，每个表格均封装成Map，key值为行号，从0开始，value为该行每个单元格内容，最后所有Map装进List中返回
+         * @return 返回Word中所有表格数据，每个表格均封装成Map，key值为行号，从0开始，value为表格封装对象
          */
-        public static List<Map<Integer, List<String>>> getTablesText(InputStream inputStream) {
+        public static Map<Integer, TableMap> getTablesText(InputStream inputStream) {
             try (XWPFDocument doc = new XWPFDocument(inputStream); inputStream) {
                 List<XWPFTable> tables = doc.getTables();
-                return tables.stream().map(table -> {
-                    Map<Integer, List<String>> tableMap = new HashMap<>();
+                List<TableMap> tableMaps = tables.stream().map(table -> {
+                    TableMap tableMap = new TableMap();
                     int numberOfRows = table.getNumberOfRows();
                     for (int i = 0; i < numberOfRows; i++) {
                         List<String> cellList = table.getRow(i).getTableCells().stream().map(XWPFTableCell::getText).collect(Collectors.toList());
-                        tableMap.put(i, cellList);
+                        tableMap.put(cellList);
                     }
                     return tableMap;
                 }).collect(Collectors.toList());
+                HashMap<Integer, TableMap> res = new HashMap<>();
+                for (int i = 0; i < tableMaps.size(); i++) {
+                    res.put(i, tableMaps.get(i));
+                }
+                return res;
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
@@ -747,6 +809,45 @@ public class WordUtils {
          */
         Integer height;
 
+        /**
+         * 图片段落对齐方式
+         */
+        ParagraphAlignment alignment;
+
+        /**
+         * 图片段落行间距
+         */
+        Integer spacingBetween;
+
+    }
+
+    /**
+     * 表格细节构造类
+     */
+    @Data
+    @Builder(setterPrefix = "set")
+    public static class TableDetails {
+
+        /**
+         * 行数
+         */
+        private Integer rowNum;
+
+        /**
+         * 列数
+         */
+        private Integer columnNum;
+
+        /**
+         * 表格宽度
+         */
+        private Integer width;
+
+        /**
+         * 表格对齐方式
+         */
+        private TableRowAlign alignment;
+
     }
 
     /**
@@ -755,17 +856,59 @@ public class WordUtils {
     public static class TableMap {
 
         @Getter
-        private final Map<Integer, List<String>> map;
+        private Map<Integer, List<String>> map;
 
-        private final AtomicInteger index;
+        private AtomicInteger index;
 
         public TableMap() {
             map = new HashMap<>();
             index = new AtomicInteger(0);
         }
 
+        /**
+         * 增加
+         *
+         * @param rowContent 行内容
+         */
         public void put(List<String> rowContent) {
+            if (Objects.isNull(rowContent)) {
+                rowContent = new ArrayList<>();
+            }
             map.put(index.getAndIncrement(), rowContent);
+        }
+
+        /**
+         * 删除
+         *
+         * @param index 行索引
+         * @return 返回最大行索引，若被删除行索引无效则返回-1
+         */
+        public int remove(Integer index) {
+            if (Objects.isNull(map.remove(index))) {
+                return -1;
+            }
+            HashMap<Integer, List<String>> newMap = new HashMap<>();
+            AtomicInteger newIndex = new AtomicInteger(0);
+            for (List<String> value : map.values()) {
+                newMap.put(newIndex.getAndIncrement(), value);
+            }
+            this.map = newMap;
+            this.index = newIndex;
+            return this.index.intValue() - 1;
+        }
+
+        /**
+         * 替换
+         *
+         * @param index      行索引
+         * @param rowContent 行内容
+         * @return 返回替换结果，若被替换行索引无效则返回false，其余情况返回true
+         */
+        public boolean replace(Integer index, List<String> rowContent) {
+            if (Objects.isNull(rowContent)) {
+                rowContent = new ArrayList<>();
+            }
+            return Objects.nonNull(map.replace(index, rowContent));
         }
 
     }
