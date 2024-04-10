@@ -702,11 +702,12 @@ public class WordUtils {
          * 从Word数据流中获取段落Byte[]
          *
          * @param inputStream Word数据流
-         * @return 返回图片Byte[]集合
+         * @return 返回段落Byte[]集合
          */
         private static List<byte[]> getParagraphs(InputStream inputStream) {
             try (XWPFDocument doc = new XWPFDocument(inputStream); inputStream) {
-                return doc.getParagraphs().stream()
+                return doc.getParagraphs()
+                        .stream()
                         .map(paragraph -> paragraph.getText().getBytes())
                         .filter(ObjectUtils::isNotEmpty)
                         .collect(Collectors.toList());
@@ -723,7 +724,10 @@ public class WordUtils {
          */
         private static List<byte[]> getPictures(InputStream inputStream) {
             try (XWPFDocument doc = new XWPFDocument(inputStream); inputStream) {
-                return doc.getAllPictures().stream().map(XWPFPictureData::getData).collect(Collectors.toList());
+                return doc.getAllPictures()
+                        .stream()
+                        .map(XWPFPictureData::getData)
+                        .collect(Collectors.toList());
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
@@ -734,7 +738,7 @@ public class WordUtils {
          * 注意：封装后得到xlsx文件不支持“合并”或者“拆分”的表格，即要求表格每行的列数和每列的行数均相同，否则导出得到的表格会不尽人意，如有这样的需求请使用getTablesText()拿到文本数据后自行填充
          *
          * @param inputStream Word输入流
-         * @return 返回Word中所有表格数据，每个表格均封装成Map，key值为行号，从0开始，value为该行每个单元格内容，最后所有Map装进List中返回
+         * @return 返回XLSX文件byte[]集合
          */
         private static List<byte[]> getTables(InputStream inputStream, ExcelTypeEnum excelType) {
             try (XWPFDocument doc = new XWPFDocument(inputStream); inputStream) {
@@ -800,6 +804,7 @@ public class WordUtils {
             response.setHeader("download-filename", encodeName);
             response.setContentType("application/x-zip-compressed;charset=UTF-8");
         }
+
     }
 
     /**

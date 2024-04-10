@@ -34,13 +34,6 @@ public class AuthController {
     @Resource
     private AuthService authService;
 
-    @GetMapping("/test")
-    @SaIgnore
-    public R<Void> test(HttpServletResponse response) {
-        ExcelUtils.exportTemplateHttpServletResponse("test", response);
-        return R.empty();
-    }
-
     /**
      * 注册
      * todo 模板默认不使用该接口，但保留该接口，因为该模板中真实增加用户的接口应该是管理员增加用户

@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.3**
+> **版本号：v2.1.4**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 
@@ -89,7 +89,7 @@
 - **MySQL**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
   - druid-spring-boot-starter 1.2.22 == Druid 连接池
-  - mybatis-plus-boot-starter 3.5.5 == MySQL 操作框架
+  - mybatis-plus-boot-starter 3.5.6 == MySQL 操作框架
   - shardingsphere-jdbc-core 5.3.2 == 分布式数据库解决方案
 - **工具类**
   - lombok 1.18.32 == POJO 简化工具
@@ -100,12 +100,13 @@
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
   - commons-collections4 4.4 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
+  - commons-compress 1.26.1 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
   - fastjson2 2.0.48 == Fast JSON 工具类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - sa-token-spring-boot-starter == SaToken 认证鉴权框架
+  - sa-token-spring-boot-starter 1.37.0 == SaToken 认证鉴权框架
   - sa-token-core 1.37.0 == SaToken 认证鉴权框架核心依赖
   - sa-token-jwt 1.37.0 == SaToken 认证鉴权框架 JWT 依赖
   - sa-token-redis-jackson 1.37.0 == SaToken 认证鉴权框架 Redis 依赖
@@ -124,11 +125,12 @@
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.208 == 腾讯云 COS
+  - cos_api 5.6.210 == 腾讯云 COS
   - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
   - minio 8.5.9 == Minio 对象存储
 - **文件操作**
   - poi 5.2.5 == 操作 Word
+  - poi-tl 1.12.2 == 操作 Word 模板
   - easyexcel 3.3.4 == 操作 Excel
   - itext-core 8.0.3 == 操作 PDF
 - **接口文档 & API调试**
@@ -161,7 +163,7 @@
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel 等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word 等工具类
 
 ## 业务功能
 
@@ -1450,7 +1452,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ## 下一步开发计划
 
-* 设计方便简单的操作 Office 以及 PDF 的工具类
+* 设计方便简单的操作 PDF 的工具类
 * 集成 Prometheus 和 Grafana 监控报警平台（选做）
 * 集成 Apache SkyWalking 链路追踪（选做）
 * ......
