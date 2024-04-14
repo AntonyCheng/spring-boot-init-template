@@ -264,6 +264,11 @@
             <artifactId>fastjson2</artifactId>
             <version>${fastjson2.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2-extension-spring5</artifactId>
+            <version>${fastjson2.version}</version>
+        </dependency>
 
         <!-- 离线 IP 地址定位库 ip2region 依赖配置-->
         <dependency>
