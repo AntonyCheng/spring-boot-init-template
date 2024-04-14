@@ -75,7 +75,7 @@
         <ok.io.version>3.9.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
         <knife4j.openapi3.starter.version>4.5.0</knife4j.openapi3.starter.version>
-        <fastjson2.version>2.0.48</fastjson2.version>
+        <fastjson2.version>2.0.49</fastjson2.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.37.0</sa.token.version>
         <!-- 缓存相关 -->
