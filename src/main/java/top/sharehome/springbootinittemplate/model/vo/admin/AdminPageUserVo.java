@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.model.vo.admin;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,6 +51,6 @@ public class AdminPageUserVo {
     /**
      * 创建时间
      */
-    private String createTime;
+    private LocalDateTime createTime;
 
 }

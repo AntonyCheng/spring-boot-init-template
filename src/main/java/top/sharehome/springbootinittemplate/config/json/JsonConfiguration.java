@@ -1,14 +1,21 @@
 package top.sharehome.springbootinittemplate.config.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import top.sharehome.springbootinittemplate.config.json.serializer.BigNumberSerializer;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 /**
  * SpringMVC JSON 配置
@@ -22,16 +29,24 @@ public class JsonConfiguration {
     /**
      * 添加 Long 转 json 精度丢失的配置
      *
-     * @param builder Json处理器
+     * @return Json自定义处理器
      */
     @Bean
-    public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
-        ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Long.class, ToStringSerializer.instance);
-        module.addSerializer(Long.TYPE, ToStringSerializer.instance);
-        objectMapper.registerModule(module);
-        return objectMapper;
+    public Jackson2ObjectMapperBuilderCustomizer customizer() {
+        return builder -> {
+            // 全局配置序列化返回 JSON 处理
+            JavaTimeModule javaTimeModule = new JavaTimeModule();
+            javaTimeModule.addSerializer(Long.class, BigNumberSerializer.instance);
+            javaTimeModule.addSerializer(Long.TYPE, BigNumberSerializer.instance);
+            javaTimeModule.addSerializer(BigInteger.class, BigNumberSerializer.instance);
+            javaTimeModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
+            javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
+            builder.modules(javaTimeModule);
+            builder.timeZone(TimeZone.getDefault());
+            log.info("初始化 jackson 配置");
+        };
     }
 
     /**

@@ -25,7 +25,6 @@ import top.sharehome.springbootinittemplate.service.AdminService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,7 +50,7 @@ public class AdminServiceImpl extends ServiceImpl<UserMapper, User> implements A
         // 构造查询条件
         userLambdaQueryWrapper
                 .eq(StringUtils.isNotBlank(adminPageUserDto.getRole()), User::getRole, adminPageUserDto.getRole())
-                .eq(Objects.nonNull(adminPageUserDto.getState()), User::getState,adminPageUserDto.getState())
+                .eq(Objects.nonNull(adminPageUserDto.getState()), User::getState, adminPageUserDto.getState())
                 .like(StringUtils.isNotBlank(adminPageUserDto.getAccount()), User::getAccount, adminPageUserDto.getAccount())
                 .like(StringUtils.isNotBlank(adminPageUserDto.getName()), User::getName, adminPageUserDto.getName());
         // 构造查询排序（默认按照创建时间升序排序）
@@ -69,7 +68,7 @@ public class AdminServiceImpl extends ServiceImpl<UserMapper, User> implements A
             adminPageUserVo.setAvatar(user.getAvatar());
             adminPageUserVo.setRole(user.getRole());
             adminPageUserVo.setState(user.getState());
-            adminPageUserVo.setCreateTime(user.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            adminPageUserVo.setCreateTime(user.getCreateTime());
             return adminPageUserVo;
         }).collect(Collectors.toList());
         BeanUtils.copyProperties(page, res, "records");
