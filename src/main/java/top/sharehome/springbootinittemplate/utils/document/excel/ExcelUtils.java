@@ -3,13 +3,10 @@ package top.sharehome.springbootinittemplate.utils.document.excel;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelDateConverter;
 import top.sharehome.springbootinittemplate.config.easyexcel.convert.date.ExcelLocalDateTimeConverter;
@@ -806,8 +803,8 @@ public class ExcelUtils {
         String realName = null;
         if (StringUtils.isBlank(fileName)) {
             realName = UUID.randomUUID().toString().replace("-", "") + ExcelTypeEnum.XLSX.getValue();
-        }else {
-            realName = UUID.randomUUID().toString().replace("-", "") + "_" + fileName + ExcelTypeEnum.XLSX.getValue();
+        } else {
+            realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ExcelTypeEnum.XLSX.getValue();
         }
         String encodeName = URLEncoder
                 .encode(realName, StandardCharsets.UTF_8.toString())
