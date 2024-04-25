@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
-import javax.validation.constraints.Min;
 import java.io.Serializable;
 
 /**
@@ -57,7 +56,7 @@ public class PageModel implements Serializable {
      * @return 构建结果
      */
     public <T> Page<T> build() {
-        Boolean allowDeep = ObjectUtils.defaultIfNull(getAllowDeep(),DEFAULT_ALLOW_DEEP);
+        Boolean allowDeep = ObjectUtils.defaultIfNull(getAllowDeep(), DEFAULT_ALLOW_DEEP);
         Integer page = ObjectUtils.defaultIfNull(getPage(), DEFAULT_PAGE);
         Integer size = allowDeep ?
                 ObjectUtils.defaultIfNull(getSize(), DEFAULT_SIZE_IN_DEEP) : ObjectUtils.defaultIfNull(getSize(), DEFAULT_SIZE_NO_DEEP);

@@ -60,7 +60,7 @@ public class User implements Serializable {
     /**
      * 状态（0表示启用，1表示禁用）
      */
-    @TableField(value = "user_state",fill = FieldFill.INSERT)
+    @TableField(value = "user_state", fill = FieldFill.INSERT)
     private Integer state;
 
     /**

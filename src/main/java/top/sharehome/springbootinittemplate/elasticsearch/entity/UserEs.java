@@ -6,10 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.dromara.easyes.annotation.HighLight;
 import org.dromara.easyes.annotation.IndexField;
-import org.dromara.easyes.annotation.IndexId;
 import org.dromara.easyes.annotation.IndexName;
 import org.dromara.easyes.annotation.rely.FieldType;
-import org.dromara.easyes.annotation.rely.IdType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

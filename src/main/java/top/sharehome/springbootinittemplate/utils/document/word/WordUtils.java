@@ -98,7 +98,7 @@ public class WordUtils {
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
             } else {
-                realName = fileName + "_" +UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8.toString())
@@ -415,7 +415,7 @@ public class WordUtils {
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
             } else {
-                realName = fileName + "_" +UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8.toString())
@@ -770,7 +770,7 @@ public class WordUtils {
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".txt";
             } else {
-                realName = fileName + "_" +UUID.randomUUID().toString().replace("-", "") + ".txt";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".txt";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8.toString())
@@ -793,7 +793,7 @@ public class WordUtils {
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".zip";
             } else {
-                realName = fileName + "_" +UUID.randomUUID().toString().replace("-", "") + ".zip";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".zip";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8.toString())

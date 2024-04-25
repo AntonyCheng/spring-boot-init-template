@@ -1,7 +1,5 @@
 package top.sharehome.springbootinittemplate.model.dto.admin;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

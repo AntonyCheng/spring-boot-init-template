@@ -5,7 +5,6 @@ import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.exception.SameTokenInvalidException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;

@@ -6,6 +6,7 @@ import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.Lo
 
 /**
  * 离线IP库配置属性
+ *
  * @author AntonyCheng
  */
 @Data

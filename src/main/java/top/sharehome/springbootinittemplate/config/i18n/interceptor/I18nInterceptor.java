@@ -31,7 +31,7 @@ public class I18nInterceptor implements HandlerInterceptor {
         String lang = StringUtils.isBlank(request.getParameter("lang")) ? "" : request.getParameter("lang");
 
         // 判断请求中是否带有非空参数
-        if (StringUtils.isBlank(lang)){
+        if (StringUtils.isBlank(lang)) {
             LocaleContextHolder.setLocale(defaultLocale);
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }

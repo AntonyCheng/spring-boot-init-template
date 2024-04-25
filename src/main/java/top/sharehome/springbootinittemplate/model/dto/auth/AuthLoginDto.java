@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.springframework.core.annotation.Order;
-import top.sharehome.springbootinittemplate.common.validate.GetGroup;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**

@@ -4,7 +4,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import javax.validation.constraints.NotBlank;
