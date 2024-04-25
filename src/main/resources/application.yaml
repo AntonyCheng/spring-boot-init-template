@@ -632,9 +632,16 @@ sa-token:
   # 非jwt形式的token风格：uuid 带有中划线的uuid（默认）；simple-uuid 不带有中划线的uuid；random-32 随机32位字符串；random-64 随机64位字符串；random-128 随机128位字符串；tik tik风格。
   token-style: tik
 
+# 离线IP库配置
+ip2region:
+  # todo 是否启用离线IP
+  enable: false
+  # 数据加载方式
+  load-type: memory
+
 # 验证码配置
 captcha:
-  # todo 是否使用验证码（开启的前提是redisson配置完成，预先关闭）
+  # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
   enable: false
   # 验证码类型：char 字符类型；math 数字类型。
   type: char
@@ -646,13 +653,6 @@ captcha:
   char-length: 4
   # 验证码存活时间（单位：秒）
   expired: 180
-
-# 离线IP库配置
-ip2region:
-  # todo 是否启用离线IP
-  enable: false
-  # 数据加载方式
-  load-type: memory
 
 # MyBatisPlus配置
 # https://baomidou.com/config/
