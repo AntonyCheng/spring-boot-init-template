@@ -55,7 +55,6 @@
                 </el-col>
               </el-row>
             </template>
-            <template />
           </el-card>
         </el-collapse-item>
         <el-collapse-item>
