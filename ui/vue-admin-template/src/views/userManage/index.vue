@@ -195,7 +195,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCancelAdd">取 消</el-button>
-          <el-button type="primary" @click="handleAdd">添 加</el-button>
+          <el-button type="primary" :loading="addLoading" @click="handleAdd">添 加</el-button>
         </div>
       </el-dialog>
     </template>
@@ -265,6 +265,7 @@ export default {
   name: 'UserManage',
   data() {
     return {
+      addLoading: false,
       queryLoading: false,
       updateLoading: false,
       pageLoading: false,
@@ -393,6 +394,7 @@ export default {
     handleAdd() {
       this.$refs['addForm'].validate(valid => {
         if (valid) {
+          this.addLoading = true
           const data = {
             account: this.addForm.account,
             password: this.addForm.password,
@@ -410,6 +412,8 @@ export default {
             this.resetAddForm()
             this.addDialogVisible = false
             Message.success(response.msg)
+          }).finally(() => {
+            this.addLoading = false
           })
         }
       })
@@ -417,6 +421,7 @@ export default {
     handleCancelAdd() {
       this.addDialogVisible = false
       this.resetAddForm()
+      this.addLoading = false
     },
     openUpdateDialog(data1, data2) {
       this.updateType = data1
@@ -426,9 +431,9 @@ export default {
       this.updateDialogVisible = true
     },
     handleUpdate() {
-      this.updateLoading = true
       this.$refs['updateForm'].validate(valid => {
         if (valid) {
+          this.updateLoading = true
           if (this.updateType === 'info') {
             const data = {
               id: this.updateForm.id,
@@ -444,6 +449,7 @@ export default {
               this.resetUpdateForm()
               this.updateDialogVisible = false
               Message.success(response.msg)
+            }).finally(() => {
               this.updateLoading = false
             })
           } else {
@@ -460,6 +466,7 @@ export default {
               this.resetUpdateForm()
               this.updateDialogVisible = false
               Message.success(response.msg)
+            }).finally(() => {
               this.updateLoading = false
             })
           }
@@ -470,6 +477,7 @@ export default {
       this.$refs['updateForm'].resetFields()
       this.updateDialogVisible = false
       this.resetUpdateForm()
+      this.updateLoading = false
     },
     handleState(data) {
       updateState(data).then(response => {
