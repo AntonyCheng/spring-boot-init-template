@@ -7,9 +7,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import tech.powerjob.server.common.utils.PropertyUtils;
 
 /**
- * powerjob 启动程序
+ * PowerJobAdmin启动类
  *
- * @author yhan219
+ * @author AntonyCheng
  */
 @Slf4j
 @EnableScheduling
