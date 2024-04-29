@@ -1147,7 +1147,7 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
    spring:
      # 配置XxlJob的MySQL数据库
      datasource:
-       url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+       url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
        driver-class-name: com.mysql.cj.jdbc.Driver
@@ -1209,45 +1209,70 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
 1. 部署 PowerJob 分布式调度系统控制面板；
 
-   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `module/power-job-admin/powerjob-server/powerjob-server-starter` 模块，首先需要修改这个模块的 `application.properties` 和 `application-daily.properties` 配置文件（ PowerJob 支持多环境开发，模板中默认为日常环境），此时在“必须执行”的操作中引入的 `sql/init_power_job.sql` 就起到了作用：
+   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `module/power-job-admin` 模块，首先需要修改这个模块的 `application.properties` 配置文件即可，此时在“必须执行”的操作中引入的 `sql/init_power_job.sql` 就起到了作用：
 
    ```properties
-   ##### application.properties 相关配置 ######
    # Http server port
    server.port=38078
-   spring.profiles.active=daily
+   spring.application.name=power-job-admin
+   server.servlet.context-path=/power-job-admin
    spring.main.banner-mode=console
    spring.jpa.open-in-view=false
    spring.data.mongodb.repositories.type=none
    logging.level.org.mongodb=warn
+   logging.level.tech.powerjob.server=warn
+   logging.level.MONITOR_LOGGER_DB_OPERATION=warn
+   logging.level.MONITOR_LOGGER_WORKER_HEART_BEAT=warn
    # Configuration for uploading files.
    spring.servlet.multipart.enabled=true
    spring.servlet.multipart.file-size-threshold=0
-   spring.servlet.multipart.max-file-size=200MB
-   spring.servlet.multipart.max-request-size=200MB
-   ###### PowerJob transporter configuration  ######
-   oms.transporter.active.protocols=AKKA,HTTP
-   oms.transporter.main.protocol=HTTP
-   oms.akka.port=10086
-   oms.http.port=10010
-   # Prefix for all tables. Default empty string. Config if you have needs, i.e. pj_
-   oms.table-prefix=
-   
-   ##### application-daily.properties 相关配置 ######
-   oms.env=DAILY
-   logging.config=classpath:logback-dev.xml
+   spring.servlet.multipart.max-file-size=209715200
+   spring.servlet.multipart.max-request-size=209715200
+   # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+   spring.boot.admin.client.enabled=false
+   spring.boot.admin.client.url=http://127.0.0.1:38077/spring-boot-admin/
+   spring.boot.admin.client.username=admin
+   spring.boot.admin.client.password=admin123456
+   spring.boot.admin.client.instance.service-host-type=ip
+   spring.boot.admin.client.instance.name=${spring.application.name}
+   spring.boot.admin.client.instance.service-base-url=http://127.0.0.1:38078
+   # todo 配置PowerJob的MySQL数据库
    spring.datasource.core.driver-class-name=com.mysql.cj.jdbc.Driver
-   spring.datasource.core.jdbc-url=jdbc:mysql://127.0.0.1:3306/init_power_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+   spring.datasource.core.jdbc-url=jdbc:mysql://127.0.0.1:3306/init_power_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
    spring.datasource.core.username=root
    spring.datasource.core.password=123456
    spring.datasource.core.maximum-pool-size=20
    spring.datasource.core.minimum-idle=5
-   # Resource cleaning properties
+   # 其他默认配置
+   oms.transporter.active.protocols=AKKA,HTTP
+   oms.transporter.main.protocol=HTTP
+   oms.akka.port=10086
+   oms.http.port=10010
+   oms.mongodb.enable=false
+   ####### Email properties(Non-core configuration properties) #######
+   ####### Delete the following code to disable the mail #######
+   #spring.mail.host=smtp.163.com
+   #spring.mail.username=zqq@163.com
+   #spring.mail.password=GOFZPNARMVKCGONV
+   #spring.mail.properties.mail.smtp.auth=true
+   #spring.mail.properties.mail.smtp.starttls.enable=true
+   #spring.mail.properties.mail.smtp.starttls.required=true
+   ####### DingTalk properties(Non-core configuration properties) #######
+   ####### Delete the following code to disable the DingTalk #######
+   #oms.alarm.ding.app-key=dingauqwkvxxnqskknfv
+   #oms.alarm.ding.app-secret=XWrEPdAZMPgJeFtHuL0LH73LRj-74umF2_0BFcoXMfvnX0pCQvt0rpb1JOJU_HLl
+   #oms.alarm.ding.agent-id=847044348
+   ####### Resource cleaning properties #######
    oms.instanceinfo.retention=1
    oms.container.retention.local=1
    oms.container.retention.remote=-1
-   # Cache properties
-   oms.instance.metadata.cache.size=1024
+   ####### Cache properties #######
+   #oms.instanceinfo.retention=7
+   #oms.container.retention.local=7
+   #oms.container.retention.remote=-1
+   oms.instance.metadata.cache.size=2048
+   ####### Threshold in precise fetching server(0~100). 100 means full detection of server, in which #######
+   ####### split-brain could be avoided while performance overhead would increase. #######
    oms.accurate.select.server.percentage = 50
    ```
 

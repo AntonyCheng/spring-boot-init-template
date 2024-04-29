@@ -1,6 +1,6 @@
-CREATE database if NOT EXISTS `init_power_job.sql` default character set utf8mb4 collate utf8mb4_general_ci;
+CREATE database if NOT EXISTS `init_power_job` default character set utf8mb4 collate utf8mb4_general_ci;
 use
-`init_power_job.sql`;
+    `init_power_job`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -259,7 +259,7 @@ CREATE TABLE `workflow_node_info`
     `type`             int          DEFAULT NULL COMMENT '节点类型,1:任务JOB',
     `workflow_id`      bigint       DEFAULT NULL COMMENT '工作流ID',
     PRIMARY KEY (`id`),
-    KEY `idx01_workflow_node_info` (`workflow_id`,`gmt_create`)
+    KEY `idx01_workflow_node_info` (`workflow_id`, `gmt_create`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4

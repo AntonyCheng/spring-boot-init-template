@@ -98,7 +98,7 @@
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
-        <power.job.version>4.3.9</power.job.version>
+        <powerjob.version>4.3.9</powerjob.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <canal.version>1.1.7</canal.version>
         <!-- 其他（确保系统稳定性，主要是因为ShardingSphere框架中ElasticJob使用了旧版本SnakeYAML的API，目前无法对其进行升级） -->
@@ -435,12 +435,12 @@
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-worker-spring-boot-starter</artifactId>
-            <version>${power.job.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-official-processors</artifactId>
-            <version>${power.job.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- Spring Boot Admin 监控平台依赖配置 -->

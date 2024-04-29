@@ -47,9 +47,9 @@ spring:
     request-context-attribute: request
     settings:
       number_format: 0.##########
-  # 配置XxlJob的MySQL数据库
+  # todo 配置XxlJob的MySQL数据库
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver

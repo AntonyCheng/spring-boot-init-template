@@ -1,34 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>power-job-admin</artifactId>
-    <version>4.3.6</version>
-    <packaging>pom</packaging>
+    <version>2.1.4</version>
     <name>power-job-admin</name>
-
-    <modules>
-        <module>powerjob-server</module>
-        <module>powerjob-common</module>
-        <module>powerjob-client</module>
-        <module>powerjob-remote</module>
-    </modules>
-
+    <description>power-job-admin</description>
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>11</java.version>
+        <powerjob.server.version>4.3.8</powerjob.server.version>
+        <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
+    <dependencies>
 
+        <dependency>
+            <groupId>tech.powerjob</groupId>
+            <artifactId>powerjob-server-starter</artifactId>
+            <version>${powerjob.server.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-client</artifactId>
+            <version>${spring.boot.admin.client.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
