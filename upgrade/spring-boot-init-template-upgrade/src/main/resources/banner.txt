@@ -1,0 +1,15 @@
+
+${AnsiColor.BRIGHT_CYAN}     ██                ██                              ██████████                              ██             ██
+${AnsiColor.BRIGHT_CYAN}    ████              ░██                      ██   ██░░░░░██░░░                      ██████  ░██            ░██
+${AnsiColor.BRIGHT_CYAN}   ██░░██   ███████  ██████  ██████  ███████  ░░██ ██     ░██      █████  ██████████ ░██░░░██ ░██  ██████   ██████  █████
+${AnsiColor.BRIGHT_CYAN}  ██  ░░██ ░░██░░░██░░░██░  ██░░░░██░░██░░░██  ░░███      ░██     ██░░░██░░██░░██░░██░██  ░██ ░██ ░░░░░░██ ░░░██░  ██░░░██
+${AnsiColor.BRIGHT_CYAN} ██████████ ░██  ░██  ░██  ░██   ░██ ░██  ░██   ░██       ░██    ░███████ ░██ ░██ ░██░██████  ░██  ███████   ░██  ░███████
+${AnsiColor.BRIGHT_CYAN}░██░░░░░░██ ░██  ░██  ░██  ░██   ░██ ░██  ░██   ██        ░██    ░██░░░░  ░██ ░██ ░██░██░░░   ░██ ██░░░░██   ░██  ░██░░░░
+${AnsiColor.BRIGHT_CYAN}░██     ░██ ███  ░██  ░░██ ░░██████  ███  ░██  ██         ░██    ░░██████ ███ ░██ ░██░██      ███░░████████  ░░██ ░░██████
+${AnsiColor.BRIGHT_CYAN}░░      ░░ ░░░   ░░    ░░   ░░░░░░  ░░░   ░░  ░░          ░░      ░░░░░░ ░░░  ░░  ░░ ░░      ░░░  ░░░░░░░░    ░░   ░░░░░░
+${AnsiColor.BRIGHT_CYAN}Spring Boot Version: v${spring-boot.version}
+${AnsiColor.BRIGHT_CYAN}Template Base Info:
+${AnsiColor.BRIGHT_CYAN}- Application Name: ${spring.application.name}
+${AnsiColor.BRIGHT_CYAN}- Server Port: ${server.port}
+${AnsiColor.BRIGHT_CYAN}- Servlet Context Path: ${server.servlet.context-path}
+${AnsiStyle.NORMAL}
