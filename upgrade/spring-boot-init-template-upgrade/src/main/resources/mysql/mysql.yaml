@@ -40,23 +40,22 @@ rules:
   - !ENCRYPT
     # 首先定义加密算法
     encryptors:
-      # MD5加密算法
-      MD5:
-        type: MD5
+      # AES加密算法
+      aes_encryptor:
+        type: AES
         props:
-          salt: salt
+          aes-key-value: AntonyCheng
     tables:
       # 加密user表中的数据
       t_user:
         columns:
           # 加密密码
           user_password:
-            cipherColumn: user_password
-            encryptorName: MD5
+            cipher:
+              name: user_password
+              encryptorName: aes_encryptor
   # SQL解析
   - !SQL_PARSER
-    # 是否解析SQL注释
-    sqlCommentParseEnabled: true
     # SQL语句本地缓存配置项
     sqlStatementCache:
       # 本地缓存初始容量

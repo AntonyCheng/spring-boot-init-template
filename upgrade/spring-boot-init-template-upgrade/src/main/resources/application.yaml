@@ -220,12 +220,12 @@ spring:
     default-encoding: UTF-8
     # 邮箱通讯协议
     protocol: smtp
-  ai:
-    ollama:
-      chat:
-        enabled: true
-        model: qwen:1.8b-chat-q8_0
-      base-url: http://127.0.0.1:11434
+#  ai:
+#    ollama:
+#      chat:
+#        enabled: true
+#        model: qwen:1.8b-chat-q8_0
+#      base-url: http://127.0.0.1:11434
   # RabbitMQ配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
