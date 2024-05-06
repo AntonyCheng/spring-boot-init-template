@@ -9,6 +9,8 @@
 > **版本号：v2.1.4**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
+> 
+> **注意事项：该README跟随版本号的更新而更新，master分支其实是一个Pre预览分支，其中更新的内容并不会体现在该README中，所以想要使用稳定且具有对应说明的版本，推荐从Releases中下载。但是想要时刻跟进模板开发进度，也可以直接从master分支拉取，查看每次提交的对应说明！**
 
 # SpringBoot初始化模板
 

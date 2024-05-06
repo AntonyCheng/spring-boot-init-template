@@ -117,7 +117,6 @@ public class AdminController {
      */
     @GetMapping("/export")
     public R<Void> exportExcel(HttpServletResponse response) {
-        System.out.println("1111111111111111111111111111111111111111111111111111111111111111111111");
         List<AdminExportVo> list = adminService.exportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "用户表", AdminExportVo.class, response);
         return R.empty();
