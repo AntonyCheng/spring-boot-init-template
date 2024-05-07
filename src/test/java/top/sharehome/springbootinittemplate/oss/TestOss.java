@@ -97,7 +97,7 @@ public class TestOss {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete("http://xxx.xxx.xxx.xxx:39000/xxxxxxxx/test/init/9d6ff8990d3a47b5a2856dc1d06e97ac_README.md");
+        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/0b2d81aa44ec42aaad8aa7376d6868f81715065474845.md");
     }
 
 }

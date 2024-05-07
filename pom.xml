@@ -12,7 +12,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>2.1.4</version>
+    <version>2.1.5</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <url>https://github.com/AntonyCheng/spring-boot-init-template</url>
@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <!-- Netty相关 -->
-        <netty.version>4.1.108.Final</netty.version>
+        <netty.version>4.1.109.Final</netty.version>
         <!-- MySQL相关 -->
         <mysql.version>8.0.33</mysql.version>
         <druid.starter.version>1.2.22</druid.starter.version>
@@ -65,10 +65,10 @@
         <lombok.version>1.18.32</lombok.version>
         <hutool.version>5.8.27</hutool.version>
         <commons.lang3.version>3.14.0</commons.lang3.version>
-        <commons.io.version>2.16.0</commons.io.version>
-        <commons.codec.version>1.16.1</commons.codec.version>
+        <commons.io.version>2.16.1</commons.io.version>
+        <commons.codec.version>1.17.0</commons.codec.version>
         <commons.pool2.version>2.12.0</commons.pool2.version>
-        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons.collections4.version>4.5.0-M1</commons.collections4.version>
         <commons.math3.version>3.6.1</commons.math3.version>
         <commons.compress.version>1.26.1</commons.compress.version>
         <ok.http3.version>4.12.0</ok.http3.version>
@@ -79,18 +79,18 @@
         <!-- 权限校验相关 -->
         <sa.token.version>1.37.0</sa.token.version>
         <!-- 缓存相关 -->
-        <redisson.version>3.27.2</redisson.version>
+        <redisson.version>3.29.0</redisson.version>
         <caffeine.version>3.1.8</caffeine.version>
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
-        <easy.es.starter.version>2.0.0-beta7</easy.es.starter.version>
+        <easy.es.starter.version>2.0.0-beta8</easy.es.starter.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.210</tencent.cos.version>
+        <tencent.cos.version>5.6.211</tencent.cos.version>
         <ali.oss.version>3.17.4</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>
-        <minio.version>8.5.9</minio.version>
+        <minio.version>8.5.10</minio.version>
         <!-- 文件操作相关 -->
         <poi.version>5.2.5</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>

@@ -6,9 +6,13 @@
 </head>
 <body>
 <form onsubmit="return false">
-    <textarea name="message" style="height: 300px;width: 300px"></textarea>
+    <label>
+        <textarea name="message" style="height: 300px;width: 300px"></textarea>
+    </label>
     <input onclick="send(this.form.message.value)" type="button" value="发送消息">
-    <textarea id="responseText" style="height: 300px;width: 300px"></textarea>
+    <label>
+        <textarea id="responseText" style="height: 300px;width: 300px"></textarea>
+    </label>
     <input onclick="document.getElementById('responseText').value=''" type="button" value="清空内容">
 </form>
 </body>

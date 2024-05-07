@@ -14,7 +14,7 @@ import java.time.Duration;
 @SpringBootTest
 public class TestMail {
 
-    private final String to = "3066170893@qq.com";
+    private final String to = "1911261716@qq.com";
 
     /**
      * 测试发送简单文本邮件
@@ -38,7 +38,7 @@ public class TestMail {
     public void testSendWithHtml() throws InterruptedException {
         String subject = "标题：HTML文本发送测试";
         String text = "<h1>Hello World</h1>";
-        MailUtils.sendSimpleText(to, subject, text);
+        MailUtils.sendWithHtml(to, subject, text);
         ThreadUtils.sleep(Duration.ofSeconds(10));
     }
 
@@ -53,8 +53,8 @@ public class TestMail {
         String htmlContent = "<html><body>" +
                 "<h1>Hello World</h1>" +
                 //cid:是约定好的固定格式，只需要修改后面的变量
-                "<image width='50' height='50' src='cid:gif1'>动图1 </image>" +
-                "<image width='50' height='50' src='cid:pic2'>静图2 </image>" +
+                "<image width='50' height='50' src='cid:gif1'>动图1</image>" +
+                "<image width='50' height='50' src='cid:pic2'>静图2</image>" +
                 "</body></html>";
         //数组中的cid要和上面html中image中的cid一致，否则图片将设置失败
         String[] cids = new String[]{"gif1", "pic2"};

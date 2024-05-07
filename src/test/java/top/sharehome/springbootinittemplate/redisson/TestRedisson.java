@@ -13,6 +13,8 @@ import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUt
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 测试缓存类
@@ -116,23 +118,21 @@ public class TestRedisson {
      */
     @Test
     void testLockUtils1() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    int finalI = i + 1;
-                    LockUtils.lockEvent("test", (VoidFunction) () -> {
-                        System.out.println("子线程第" + finalI + "次拿到锁");
-                        try {
-                            ThreadUtils.sleep(Duration.ofMillis(1000));
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        System.out.println("子线程第" + finalI + "次释放锁");
-                    });
-                }
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            for (int i = 0; i < 10; i++) {
+                int finalI = i + 1;
+                LockUtils.lockEvent("test", (VoidFunction) () -> {
+                    System.out.println("子线程第" + finalI + "次拿到锁");
+                    try {
+                        ThreadUtils.sleep(Duration.ofMillis(1000));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("子线程第" + finalI + "次释放锁");
+                });
             }
-        }).start();
+            return "ok";
+        });
         for (int i = 0; i < 10; i++) {
             int finalI = i + 1;
             LockUtils.lockEvent("test", (VoidFunction) () -> {
@@ -145,7 +145,10 @@ public class TestRedisson {
                 System.out.println("主线程第" + finalI + "次释放锁");
             });
         }
-        for (; ; ) {
+        try {
+            System.out.println(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -155,21 +158,19 @@ public class TestRedisson {
      */
     @Test
     void testLockUtils2() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    int finalI = i + 1;
-                    boolean result = LockUtils.lockEvent("test", (SuccessFunction) () -> {
-                        System.out.println("子线程第" + finalI + "次拿到锁");
-                        System.out.println("子线程第" + finalI + "次释放锁");
-                    });
-                    if (!result) {
-                        System.out.println("子线程第" + finalI + "次没拿到锁");
-                    }
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            for (int i = 0; i < 10; i++) {
+                int finalI = i + 1;
+                boolean result = LockUtils.lockEvent("test", (SuccessFunction) () -> {
+                    System.out.println("子线程第" + finalI + "次拿到锁");
+                    System.out.println("子线程第" + finalI + "次释放锁");
+                });
+                if (!result) {
+                    System.out.println("子线程第" + finalI + "次没拿到锁");
                 }
             }
-        }).start();
+            return "ok";
+        });
         for (int i = 0; i < 10; i++) {
             int finalI = i + 1;
             boolean result = LockUtils.lockEvent("test", (SuccessFunction) () -> {
@@ -180,7 +181,10 @@ public class TestRedisson {
                 System.out.println("主线程第" + finalI + "次没拿到锁");
             }
         }
-        for (; ; ) {
+        try {
+            System.out.println(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 

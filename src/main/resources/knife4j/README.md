@@ -1,10 +1,14 @@
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.4**
+> **版本号：v2.1.5**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
+>
+> **注意事项：该README跟随版本号的更新而更新，master分支其实是一个Pre预览分支，其中更新的内容并不会体现在该README中，所以想要使用稳定且具有对应说明的版本，推荐从Releases中下载。但是想要时刻跟进模板开发进度，也可以直接从master分支拉取，查看每次提交的对应说明！**
 
 # SpringBoot初始化模板
+
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 **基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
@@ -56,7 +60,6 @@
                 * [搭建Deployer&Client系统](#搭建deployerclient系统)
     * [兼容Java8](#兼容java8)
     * [申明&联系我](#申明联系我)
-    * [模板预览](#模板预览)
     * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
@@ -79,25 +82,25 @@
     - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
 
 - **Netty**
-    - netty-all  4.1.108.Final == Netty 框架
+    - netty-all  4.1.109.Final == Netty 框架
 - **MySQL**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
     - druid-spring-boot-starter 1.2.22 == Druid 连接池
     - mybatis-plus-boot-starter 3.5.6 == MySQL 操作框架
-    - shardingsphere-jdbc-core 5.3.2 == 分布式数据库解决方案
+    - shardingsphere-jdbc-core 5.5.0 == 分布式数据库解决方案
 - **工具类**
     - lombok 1.18.32 == POJO 简化工具
     - hutool-all 5.8.27 == Hutool 工具类
     - commons-lang3 3.14.0 == Apache Commons Lang 工具类
-    - commons-io 2.16.0 == Apache Commons IO 工具类
-    - commons-codec 1.16.1 == Apache Commons Codec 工具类
+    - commons-io 2.16.1 == Apache Commons IO 工具类
+    - commons-codec 1.17.0 == Apache Commons Codec 工具类
     - commons-pool2 2.12.0 == Apache Commons Pool 工具类
-    - commons-collections4 4.4 == Apache Commons Collections 工具类
+    - commons-collections4 4.5.0-M1 == Apache Commons Collections 工具类
     - commons-math3 3.6.1 == Apache Commons Math 工具类
     - commons-compress 1.26.1 == Apache Commons Compress 工具类
     - okhttp 4.12.0 == OK Http 工具类
     - okio 3.9.0 == OK IO 工具类
-    - fastjson2 2.0.48 == Fast JSON 工具类
+    - fastjson2 2.0.49 == Fast JSON 工具类
     - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
     - sa-token-spring-boot-starter 1.37.0 == SaToken 认证鉴权框架
@@ -107,21 +110,21 @@
 - **缓存服务**
     - spring-boot-starter-data-redis == Spring Data Redis 依赖
     - spring-boot-starter-cache == Spring Cache 依赖
-    - redisson 3.27.2 == Redis 的基础上实现的 Java 驻内存数据网格
+    - redisson 3.29.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
     - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
     - spring-boot-starter-amqp == 支持 AMQP （高级消息队列协议）消息代理
     - spring-rabbit-test == Spring 支持对 RabbitMQ 消息队列的单元测试
 - **搜索引擎**
-    - easy-es-boot-starter 2.0.0-bata7 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+    - easy-es-boot-starter 2.0.0-bata8 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
     - elasticsearch 7.14.0 == Elasticsearch 依赖
     - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
     - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-    - cos_api 5.6.210 == 腾讯云 COS
+    - cos_api 5.6.211 == 腾讯云 COS
     - aliyun-sdk-oss 3.17.4 == 阿里云 OSS
-    - minio 8.5.9 == Minio 对象存储
+    - minio 8.5.10 == Minio 对象存储
 - **文件操作**
     - poi 5.2.5 == 操作 Word
     - poi-tl 1.12.2 == 操作 Word 模板
@@ -192,20 +195,15 @@
 
    ```yaml
    dataSources:
-     master:
+     ds_master:
        dataSourceClassName: com.zaxxer.hikari.HikariDataSource
        driverClassName: com.mysql.cj.jdbc.Driver
        url: jdbc:mysql://127.0.0.1:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
-       connectionTimeoutMilliseconds: 30000
-       idleTimeoutMilliseconds: 600000
-       maxLifetimeMilliseconds: 1800000
-       maxPoolSize: 20
-       minPoolSize: 10
    ```
 
-   > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 框架，理解相关配置；
+   > 在这个文件中还能看到很多其他的配置，如有需要，请开发者自行学习 ShardingSphere 5.5.0 版本框架，理解相关配置；
 
 3. 直到这一步之后，模板后端代码就已经可以直接启动了，访问 `http://localhost:38080/api/doc.html` 即可打开接口文档；
 
@@ -384,6 +382,7 @@
 1. 修改消息队列相关配置，同时选择配置单机 RabbitMQ 或者集群 RabbitMQ ，切记这两者无法共存，使用其中一个配置的同时需要把另一个配置给注释或者删除掉（不建议删除，说不一定万一哪天有用呢），然后根据自己搭建的 RabbitMQ 进行相关配置：
 
    ```yaml
+   spring:
      # RabbitMQ配置
      rabbitmq:
        # todo 是否开启RabbitMQ（预先关闭）
@@ -453,9 +452,21 @@
      #username:
      # 如果无账号密码则可不配置此行
      #password:
+     # 多数据源
+     #dynamic:
+       #datasource:
+         #ds1:
+           #address: 127.0.0.1:9201
+           # 如果无账号密码则可不配置此行
+           #username:
+           # 如果无账号密码则可不配置此行
+           #password:
+           #...（以下配置和单数据源类似）
+         #ds2:
+           #...（以下配置和ds1相似）
      # 默认为http 可缺省
      schema: http
-     # 默认为true 打印banner 若您不期望打印banner,可配置为false
+     # 打印banner 若您不期望打印banner,可配置为false（预先关闭）
      banner: false
      # 心跳策略时间 单位:ms
      keep-alive-millis: 30000
@@ -485,8 +496,11 @@
          map-underscore-to-camel-case: false
          # 索引前缀,可用于区分环境  默认为空 用法和MP的tablePrefix一样的作用和用法
          index-prefix: template_
-         # id生成策略 customize为自定义,id值由用户生成,比如取MySQL中的数据id,如缺省此项配置,则id默认策略为es自动生成
-         id-type: customize
+         # id生成策略
+         # 1、customize为自定义，_id值由用户生成，比如取MySQL中的数据id，如缺省此项配置，则_id默认策略为ES自动生成
+         # 2、none为默认策略，由ES自动生成id
+         # 3、uuid为全局唯一策略
+         id-type: none
          # 数据刷新策略,默认为不刷新,若对数据时效性要求比较高,可以调整为immediate,但性能损耗高,也可以调整为折中的wait_until
          refresh-policy: immediate
    ```
@@ -512,7 +526,7 @@
 
    ```java
    ......
-   @IndexName("t_user")
+   @IndexName("i_user")
    ......
    public class UserEs implements Serializable {
        ......
@@ -654,9 +668,26 @@ oss:
 1. 修改验证码相关配置，开发者可以自行配置验证码的风格以及参数：
 
    ```yaml
+   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+   # 如果同时开启单机版本和集群版本，只有单机版本生效
+   redisson:
+     # Redis单机版本
+     single-server-config:
+       # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
+       enable-single: true
+     # Redis集群版本
+     cluster-servers-config:
+       # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+       enable-cluster: true
+   # 离线IP库配置
+   ip2region:
+     # todo 是否启用离线IP
+     enable: true
+     # 数据加载方式
+     load-type: memory
    # 验证码配置
    captcha:
-     # todo 是否使用验证码（开启的前提是redisson配置完成，预先关闭）
+     # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
      enable: true
      # 验证码类型：char 字符类型；math 数字类型。
      type: char
@@ -970,7 +1001,7 @@ spring:
     exclude:
       # todo 是否开启Redis依赖类（如果要启动Redis，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置Redis相关配置，预先关闭）
       #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson注释掉，预先不使用）
+      # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
   # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
   redis:
@@ -1141,7 +1172,7 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
    spring:
      # 配置XxlJob的MySQL数据库
      datasource:
-       url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+       url: jdbc:mysql://127.0.0.1:3306/init_xxl_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
        username: root
        password: 123456
        driver-class-name: com.mysql.cj.jdbc.Driver
@@ -1203,45 +1234,70 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
 1. 部署 PowerJob 分布式调度系统控制面板；
 
-   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `module/power-job-admin/powerjob-server/powerjob-server-starter` 模块，首先需要修改这个模块的 `application.properties` 和 `application-daily.properties` 配置文件（ PowerJob 支持多环境开发，模板中默认为日常环境），此时在“必须执行”的操作中引入的 `sql/init_power_job.sql` 就起到了作用：
+   想要使用 PowerJob 分布式任务调度系统的功能，就需要先部署一个 PowerJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 PowerJob 模块来部署一个 PowerJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 `module/power-job-admin` 模块，首先需要修改这个模块的 `application.properties` 配置文件即可，此时在“必须执行”的操作中引入的 `sql/init_power_job.sql` 就起到了作用：
 
    ```properties
-   ##### application.properties 相关配置 ######
    # Http server port
    server.port=38078
-   spring.profiles.active=daily
+   spring.application.name=power-job-admin
+   server.servlet.context-path=/power-job-admin
    spring.main.banner-mode=console
    spring.jpa.open-in-view=false
    spring.data.mongodb.repositories.type=none
    logging.level.org.mongodb=warn
+   logging.level.tech.powerjob.server=warn
+   logging.level.MONITOR_LOGGER_DB_OPERATION=warn
+   logging.level.MONITOR_LOGGER_WORKER_HEART_BEAT=warn
    # Configuration for uploading files.
    spring.servlet.multipart.enabled=true
    spring.servlet.multipart.file-size-threshold=0
-   spring.servlet.multipart.max-file-size=200MB
-   spring.servlet.multipart.max-request-size=200MB
-   ###### PowerJob transporter configuration  ######
-   oms.transporter.active.protocols=AKKA,HTTP
-   oms.transporter.main.protocol=HTTP
-   oms.akka.port=10086
-   oms.http.port=10010
-   # Prefix for all tables. Default empty string. Config if you have needs, i.e. pj_
-   oms.table-prefix=
-   
-   ##### application-daily.properties 相关配置 ######
-   oms.env=DAILY
-   logging.config=classpath:logback-dev.xml
+   spring.servlet.multipart.max-file-size=209715200
+   spring.servlet.multipart.max-request-size=209715200
+   # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+   spring.boot.admin.client.enabled=false
+   spring.boot.admin.client.url=http://127.0.0.1:38077/spring-boot-admin/
+   spring.boot.admin.client.username=admin
+   spring.boot.admin.client.password=admin123456
+   spring.boot.admin.client.instance.service-host-type=ip
+   spring.boot.admin.client.instance.name=${spring.application.name}
+   spring.boot.admin.client.instance.service-base-url=http://127.0.0.1:38078
+   # todo 配置PowerJob的MySQL数据库
    spring.datasource.core.driver-class-name=com.mysql.cj.jdbc.Driver
-   spring.datasource.core.jdbc-url=jdbc:mysql://127.0.0.1:3306/init_power_job?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+   spring.datasource.core.jdbc-url=jdbc:mysql://127.0.0.1:3306/init_power_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
    spring.datasource.core.username=root
    spring.datasource.core.password=123456
    spring.datasource.core.maximum-pool-size=20
    spring.datasource.core.minimum-idle=5
-   # Resource cleaning properties
+   # 其他默认配置
+   oms.transporter.active.protocols=AKKA,HTTP
+   oms.transporter.main.protocol=HTTP
+   oms.akka.port=10086
+   oms.http.port=10010
+   oms.mongodb.enable=false
+   ####### Email properties(Non-core configuration properties) #######
+   ####### Delete the following code to disable the mail #######
+   #spring.mail.host=smtp.163.com
+   #spring.mail.username=zqq@163.com
+   #spring.mail.password=GOFZPNARMVKCGONV
+   #spring.mail.properties.mail.smtp.auth=true
+   #spring.mail.properties.mail.smtp.starttls.enable=true
+   #spring.mail.properties.mail.smtp.starttls.required=true
+   ####### DingTalk properties(Non-core configuration properties) #######
+   ####### Delete the following code to disable the DingTalk #######
+   #oms.alarm.ding.app-key=dingauqwkvxxnqskknfv
+   #oms.alarm.ding.app-secret=XWrEPdAZMPgJeFtHuL0LH73LRj-74umF2_0BFcoXMfvnX0pCQvt0rpb1JOJU_HLl
+   #oms.alarm.ding.agent-id=847044348
+   ####### Resource cleaning properties #######
    oms.instanceinfo.retention=1
    oms.container.retention.local=1
    oms.container.retention.remote=-1
-   # Cache properties
-   oms.instance.metadata.cache.size=1024
+   ####### Cache properties #######
+   #oms.instanceinfo.retention=7
+   #oms.container.retention.local=7
+   #oms.container.retention.remote=-1
+   oms.instance.metadata.cache.size=2048
+   ####### Threshold in precise fetching server(0~100). 100 means full detection of server, in which #######
+   ####### split-brain could be avoided while performance overhead would increase. #######
    oms.accurate.select.server.percentage = 50
    ```
 
@@ -1262,7 +1318,7 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
        # 执行器AppName
        app-name: power-job-executor
        # PowerJob服务器地址
-       server-address: 127.0.0.1:38078
+       server-address: 127.0.0.1:38078/power-job-admin
        # 网络传输协议
        protocol: http
        # 执行器信息存储介质

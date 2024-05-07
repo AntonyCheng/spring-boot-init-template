@@ -14,7 +14,7 @@
     <description>power-job-admin</description>
     <properties>
         <java.version>11</java.version>
-        <powerjob.server.version>4.3.8</powerjob.server.version>
+        <powerjob.server.version>4.3.9</powerjob.server.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
