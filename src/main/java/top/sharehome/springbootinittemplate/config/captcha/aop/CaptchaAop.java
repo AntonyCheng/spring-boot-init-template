@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCond
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.lang.reflect.Field;
 
 /**

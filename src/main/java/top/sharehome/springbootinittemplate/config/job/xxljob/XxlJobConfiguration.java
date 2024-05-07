@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.job.xxljob.condition.XxlJobCondition;
 import top.sharehome.springbootinittemplate.config.job.xxljob.properties.XxlJobProperties;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * XXL-JOB配置文件

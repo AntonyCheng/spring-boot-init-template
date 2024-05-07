@@ -21,7 +21,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.UUID;
 
 /**

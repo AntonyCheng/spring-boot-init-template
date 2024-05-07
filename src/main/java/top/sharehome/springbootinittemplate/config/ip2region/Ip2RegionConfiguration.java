@@ -13,7 +13,7 @@ import top.sharehome.springbootinittemplate.config.ip2region.condition.Ip2Region
 import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2RegionProperties;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 
 /**
@@ -27,10 +27,10 @@ import java.io.IOException;
 @Conditional(Ip2RegionCondition.class)
 public class Ip2RegionConfiguration {
 
-    @javax.annotation.Resource
+    @jakarta.annotation.Resource
     private Ip2RegionProperties ip2RegionProperties;
 
-    @javax.annotation.Resource
+    @jakarta.annotation.Resource
     private ResourceLoader resourceLoader;
 
     private Searcher searcher = null;

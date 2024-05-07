@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import top.sharehome.springbootinittemplate.mongo.entity.UserMg;
 import top.sharehome.springbootinittemplate.mongo.repository.UserMgRepository;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

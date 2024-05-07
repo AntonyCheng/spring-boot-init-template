@@ -5,7 +5,7 @@ import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop.a
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop.annotation.param.Demo;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop.service.AtArgsService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 针对切点参数为@args型的切面类的服务实现类

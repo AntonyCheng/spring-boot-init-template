@@ -95,10 +95,7 @@ public class R<T> implements Serializable {
     }
 
     public static R<Map<String, Object>> okWithToken() {
-        Map<String, Object> res = new HashMap<String, Object>();
-        res.put("token", StpUtil.getTokenValue());
-        res.put("res", null);
-        return restResult(res, SUCCESS, SUCCESS_MSG);
+        return okWithToken(SUCCESS_MSG);
     }
 
     public static <T> R<T> ok(T data) {

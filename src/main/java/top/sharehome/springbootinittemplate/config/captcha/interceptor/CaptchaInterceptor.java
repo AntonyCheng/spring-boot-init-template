@@ -5,8 +5,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 验证码拦截器

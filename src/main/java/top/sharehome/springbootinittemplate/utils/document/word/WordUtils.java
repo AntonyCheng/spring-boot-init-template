@@ -23,8 +23,8 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelEx
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -101,7 +101,7 @@ public class WordUtils {
                 realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
             }
             String encodeName = URLEncoder
-                    .encode(realName, StandardCharsets.UTF_8.toString())
+                    .encode(realName, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
             String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
@@ -418,7 +418,7 @@ public class WordUtils {
                 realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
             }
             String encodeName = URLEncoder
-                    .encode(realName, StandardCharsets.UTF_8.toString())
+                    .encode(realName, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
             String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
@@ -773,7 +773,7 @@ public class WordUtils {
                 realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".txt";
             }
             String encodeName = URLEncoder
-                    .encode(realName, StandardCharsets.UTF_8.toString())
+                    .encode(realName, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
             String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
@@ -796,7 +796,7 @@ public class WordUtils {
                 realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".zip";
             }
             String encodeName = URLEncoder
-                    .encode(realName, StandardCharsets.UTF_8.toString())
+                    .encode(realName, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
             String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");

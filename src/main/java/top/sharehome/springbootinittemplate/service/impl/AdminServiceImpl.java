@@ -24,7 +24,7 @@ import top.sharehome.springbootinittemplate.model.vo.admin.AdminPageUserVo;
 import top.sharehome.springbootinittemplate.service.AdminService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

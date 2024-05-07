@@ -15,7 +15,7 @@ import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRab
 import top.sharehome.springbootinittemplate.config.rabbitmq.properties.RabbitMqProperties;
 import top.sharehome.springbootinittemplate.utils.rabbitmq.model.RabbitMessage;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.UUID;

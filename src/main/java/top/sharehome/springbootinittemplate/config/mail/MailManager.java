@@ -20,10 +20,10 @@ import top.sharehome.springbootinittemplate.config.mail.async.MailAsyncMethod;
 import top.sharehome.springbootinittemplate.config.mail.condition.MailCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeMailException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;

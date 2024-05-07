@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop.annotation.AtWithinSonClass;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop.service.AtWithinService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 针对切点参数为@within型的切面类的服务实现类

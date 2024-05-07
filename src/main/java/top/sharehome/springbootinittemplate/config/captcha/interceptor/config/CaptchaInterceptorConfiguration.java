@@ -10,7 +10,7 @@ import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCond
 import top.sharehome.springbootinittemplate.config.captcha.interceptor.CaptchaInterceptor;
 import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

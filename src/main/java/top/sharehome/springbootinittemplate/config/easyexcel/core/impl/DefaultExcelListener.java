@@ -10,8 +10,8 @@ import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelListener;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;

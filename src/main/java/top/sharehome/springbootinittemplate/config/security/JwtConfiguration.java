@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.security.condition.JwtCondition;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * SaToken是否使用Jwt

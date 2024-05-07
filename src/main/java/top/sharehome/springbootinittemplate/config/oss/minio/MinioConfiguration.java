@@ -19,7 +19,7 @@ import top.sharehome.springbootinittemplate.config.oss.minio.properties.MinioPro
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Objects;

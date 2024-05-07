@@ -15,7 +15,7 @@ import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Map;
 
 /**

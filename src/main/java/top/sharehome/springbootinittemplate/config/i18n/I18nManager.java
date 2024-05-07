@@ -8,7 +8,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.i18n.condition.I18nCondition;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Locale;
 
 /**

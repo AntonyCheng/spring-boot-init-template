@@ -15,8 +15,8 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockExc
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,12 +158,7 @@ public class RateLimitUtils {
      * @param permit       每个操作所要消耗的令牌数
      */
     public static void doRateLimitAndExpire(String key, Long rateInterval, Long rate, Long permit) {
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key);
-        rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
-        boolean canOp = rateLimiter.tryAcquire(permit);
-        if (!canOp) {
-            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
-        }
+        doRateLimit(key, rateInterval, rate, permit);
         String baseKey = KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key;
         List<String> uselessCacheKeys = new ArrayList<String>() {
             {

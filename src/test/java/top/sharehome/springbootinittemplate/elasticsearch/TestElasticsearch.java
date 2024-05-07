@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.elasticsearch.entity.UserEs;
 import top.sharehome.springbootinittemplate.elasticsearch.mapper.UserEsMapper;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**

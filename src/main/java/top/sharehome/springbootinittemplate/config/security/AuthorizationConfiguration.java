@@ -10,7 +10,7 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.config.security.condition.SaCondition;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 

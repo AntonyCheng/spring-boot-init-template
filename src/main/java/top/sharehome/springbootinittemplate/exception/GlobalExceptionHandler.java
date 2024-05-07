@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.exception.SameTokenInvalidException;
+import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindException;
@@ -20,9 +21,9 @@ import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.exception.customize.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import java.util.Objects;
 
 /**
@@ -254,8 +255,8 @@ public class GlobalExceptionHandler {
      * 自定义未找到Bean异常
      * todo Beta测试版本，为合理适配前端框架上传文件时找不到上传文件Bean时报错，一般是因为开发者没有开启OSS功能，这个不影响业务功能，一旦有合理方案就会做出修改
      */
-    @ExceptionHandler(NestedServletException.class)
-    public R<Void> handleNestedServletException(NestedServletException e) {
+    @ExceptionHandler(ServletException.class)
+    public R<Void> handleServletException(ServletException e) {
         log.error(e.getMessage(), e);
         return R.fail(HttpStatus.ERROR, "功能服务未开启");
     }

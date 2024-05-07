@@ -9,9 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.mail.condition.MailCondition;
 
-import javax.annotation.Resource;
-import javax.mail.Message;
-import javax.mail.internet.MimeMessage;
+import jakarta.annotation.Resource;
+import jakarta.mail.Message;
+import jakarta.mail.internet.MimeMessage;
 import java.util.Arrays;
 
 /**

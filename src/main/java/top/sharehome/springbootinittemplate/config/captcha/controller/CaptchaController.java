@@ -8,7 +8,7 @@ import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCond
 import top.sharehome.springbootinittemplate.config.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 验证码控制器

@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.aop.studyDemo.normal.withinAop.servi
 import top.sharehome.springbootinittemplate.aop.studyDemo.normal.withinAop.service.impl.WithinServiceImpl1;
 import top.sharehome.springbootinittemplate.aop.studyDemo.normal.withinAop.service.impl.WithinServiceImpl2;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 切点参数为execution型的切面测试类

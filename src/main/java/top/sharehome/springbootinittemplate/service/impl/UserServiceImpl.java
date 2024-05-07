@@ -19,7 +19,7 @@ import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;

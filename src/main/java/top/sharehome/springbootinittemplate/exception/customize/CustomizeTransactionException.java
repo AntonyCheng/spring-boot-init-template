@@ -18,17 +18,17 @@ public class CustomizeTransactionException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeTransactionException() {
+    public CustomizeTransactionException() {
         this.returnCode = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE;
         this.msg = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE.getMsg();
     }
 
-    public <T> CustomizeTransactionException(ReturnCode returnCode) {
+    public CustomizeTransactionException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeTransactionException(ReturnCode returnCode, String msg) {
+    public CustomizeTransactionException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }

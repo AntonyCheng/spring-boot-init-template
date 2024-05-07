@@ -36,7 +36,7 @@ public class TestWordUtils {
             WordUtils.Writer.addTable(word, tableMap);
             WordUtils.Writer.doWrite(word, outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("意外错误");
         }
     }
 }

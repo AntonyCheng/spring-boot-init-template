@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.rabbitmq.condition.RabbitMqCondition;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * 消息队列RabbitMQ实例配置

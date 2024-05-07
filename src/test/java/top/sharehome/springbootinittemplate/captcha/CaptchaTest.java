@@ -7,7 +7,7 @@ import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaServic
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 验证码测试类

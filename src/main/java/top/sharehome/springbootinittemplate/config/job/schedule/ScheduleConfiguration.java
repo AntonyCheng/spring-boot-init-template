@@ -10,7 +10,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import top.sharehome.springbootinittemplate.config.job.schedule.condition.ScheduleCycleCondition;
 import top.sharehome.springbootinittemplate.config.job.schedule.properties.ScheduleProperties;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.concurrent.Executors;
 
 /**

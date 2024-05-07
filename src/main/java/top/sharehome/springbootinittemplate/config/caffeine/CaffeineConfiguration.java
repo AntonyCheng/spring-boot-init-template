@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.caffeine.condition.CaffeineCondition;
 import top.sharehome.springbootinittemplate.config.caffeine.properties.CaffeineProperties;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 /**

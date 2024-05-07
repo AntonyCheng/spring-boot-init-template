@@ -10,7 +10,7 @@ import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Bean;
 import top.sharehome.springbootinittemplate.config.json.serializer.BigNumberSerializer;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;

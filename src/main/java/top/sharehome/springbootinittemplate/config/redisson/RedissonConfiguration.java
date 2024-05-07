@@ -19,7 +19,7 @@ import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCo
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonSingleCondition;
 import top.sharehome.springbootinittemplate.config.redisson.properties.RedissonProperties;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Redisson配置

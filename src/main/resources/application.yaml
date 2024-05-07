@@ -238,12 +238,44 @@ spring:
       # todo 是否开启MongoDB依赖类（如果要启用MongoDB，就将MongoAutoConfiguration注释掉，该配置类一旦被注释，就需要设置MongoDB相关配置，预先关闭）
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
       # todo 是否使用DruidCP连接池（如果要使用Druid连接池，就将DruidDataSourceAutoConfigure注释掉，然后记得查看spring.datasource.druid相关配置和提示，预先不使用）
-      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
       # todo 是否开启Redis依赖类（如果要启动Redis，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置Redis相关配置，预先关闭）
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
   data:
+    # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+    redis:
+      # 单机地址（单价模式配置和集群模式配置只能存在一个）
+      host: 127.0.0.1
+      # 单机端口，默认为6379
+      port: 6379
+      # 集群地址（单价模式配置和集群模式配置只能存在一个）
+      #cluster:
+      #  nodes:
+      #    - 127.0.0.1:6379
+      #    - 127.0.0.1:6380
+      #    - 127.0.0.1:6381
+      #    - 127.0.0.1:6382
+      #    - 127.0.0.1:6383
+      #    - 127.0.0.1:6384
+      # 数据库索引
+      database: 0
+      # 密码（考虑是否需要密码）
+      #password: 123456
+      # 连接超时时间
+      timeout: 3s
+      # redis连接池
+      lettuce:
+        pool:
+          # 最小空闲连接数
+          min-idle: 8
+          # 最大空闲连接数
+          max-idle: 25
+          # 最大活动连接数
+          max-active: 50
+          # 最大等待时间/ms
+          max-wait: 3000
     # MongoDB配置
     mongodb:
       # 主机地址
@@ -311,38 +343,6 @@ spring:
       test-on-return: false
       web-stat-filter:
         enabled: true
-  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
-  redis:
-    # 单机地址（单价模式配置和集群模式配置只能存在一个）
-    host: 127.0.0.1
-    # 单机端口，默认为6379
-    port: 6379
-    # 集群地址（单价模式配置和集群模式配置只能存在一个）
-    #cluster:
-    #  nodes:
-    #    - 127.0.0.1:6379
-    #    - 127.0.0.1:6380
-    #    - 127.0.0.1:6381
-    #    - 127.0.0.1:6382
-    #    - 127.0.0.1:6383
-    #    - 127.0.0.1:6384
-    # 数据库索引
-    database: 0
-    # 密码（考虑是否需要密码）
-    #password: 123456
-    # 连接超时时间
-    timeout: 3s
-    # redis连接池
-    lettuce:
-      pool:
-        # 最小空闲连接数
-        min-idle: 8
-        # 最大空闲连接数
-        max-idle: 25
-        # 最大活动连接数
-        max-active: 50
-        # 最大等待时间/ms
-        max-wait: 3000
 
 # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
@@ -474,7 +474,7 @@ websocket:
 # Easy-ES配置
 easy-es:
   # todo 是否启动（预先关闭）
-  enable: false
+  enable: true
   # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
   address: 127.0.0.1:9200
   # 如果无账号密码则可不配置此行

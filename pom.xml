@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.sharehome</groupId>
@@ -53,7 +53,7 @@
         <!-- Java相关 -->
         <java.version>11</java.version>
         <!-- SpringBoot相关 -->
-        <spring.boot.version>2.7.18</spring.boot.version>
+        <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Netty相关 -->
         <netty.version>4.1.109.Final</netty.version>
         <!-- MySQL相关 -->
@@ -101,8 +101,6 @@
         <powerjob.version>4.3.9</powerjob.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <canal.version>1.1.7</canal.version>
-        <!-- 搭配ShardingSphere5.5.0框架使用 -->
-        <snakeyaml.version>2.2</snakeyaml.version>
         <!-- 插件版本 -->
         <maven.compiler.plugin.verison>3.13.0</maven.compiler.plugin.verison>
     </properties>
@@ -181,6 +179,17 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis.plus.starter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
@@ -195,7 +204,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
             <version>${druid.starter.version}</version>
         </dependency>
 
@@ -271,7 +280,7 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2-extension-spring5</artifactId>
+            <artifactId>fastjson2-extension-spring6</artifactId>
             <version>${fastjson2.version}</version>
         </dependency>
 
@@ -285,7 +294,7 @@
         <!-- Sa-Token 依赖配置（该初始化模板提供session+cookie和redis+token两种方式，此处依赖配置是redis+token，所以必须保证redis可用） -->
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <artifactId>sa-token-spring-boot3-starter</artifactId>
             <version>${sa.token.version}</version>
         </dependency>
         <dependency>
@@ -475,15 +484,8 @@
         <!-- Knife4j 依赖配置 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>${knife4j.openapi3.starter.version}</version>
-        </dependency>
-
-        <!-- Snakeyaml 依赖配置（用于保证系统稳定性） -->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 

@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * 测试类

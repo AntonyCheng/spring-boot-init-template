@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
