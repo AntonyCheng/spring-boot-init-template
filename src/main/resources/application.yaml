@@ -243,6 +243,20 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
+  # Spring AI相关注解（由于目前阿里云Maven镜像中没有Spring AI，所以要从Spring Maven中获取依赖，如果网络环境不允许，下面的配置可以忽略或者删除）
+  ai:
+    # Ollama AI
+    ollama:
+      chat:
+        options:
+          # 模型名称
+          model: llama3:8b-instruct-q8_0
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
+          top-k: 10
+          # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
   data:
     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
     redis:
@@ -470,7 +484,6 @@ websocket:
   boss-thread: 4
   # WORKER线程组线程数
   worker-thread: 16
-
 # Easy-ES配置
 easy-es:
   # todo 是否启动（预先关闭）
