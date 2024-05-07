@@ -17,17 +17,17 @@ public class CustomizeMailException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeMailException() {
+    public CustomizeMailException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public <T> CustomizeMailException(ReturnCode returnCode) {
+    public CustomizeMailException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeMailException(ReturnCode returnCode, String msg) {
+    public CustomizeMailException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }

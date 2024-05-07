@@ -17,17 +17,17 @@ public class CustomizeFileException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeFileException() {
+    public CustomizeFileException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public <T> CustomizeFileException(ReturnCode returnCode) {
+    public CustomizeFileException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeFileException(ReturnCode returnCode, String msg) {
+    public CustomizeFileException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }

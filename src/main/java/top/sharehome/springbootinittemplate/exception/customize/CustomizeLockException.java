@@ -17,17 +17,17 @@ public class CustomizeLockException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeLockException() {
+    public CustomizeLockException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public <T> CustomizeLockException(ReturnCode returnCode) {
+    public CustomizeLockException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeLockException(ReturnCode returnCode, String msg) {
+    public CustomizeLockException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }

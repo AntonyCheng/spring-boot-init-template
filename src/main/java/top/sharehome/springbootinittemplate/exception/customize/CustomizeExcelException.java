@@ -17,17 +17,17 @@ public class CustomizeExcelException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeExcelException() {
+    public CustomizeExcelException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public <T> CustomizeExcelException(ReturnCode returnCode) {
+    public CustomizeExcelException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeExcelException(ReturnCode returnCode, String msg) {
+    public CustomizeExcelException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }

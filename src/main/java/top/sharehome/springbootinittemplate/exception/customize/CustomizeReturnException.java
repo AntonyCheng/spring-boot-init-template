@@ -17,17 +17,17 @@ public class CustomizeReturnException extends RuntimeException {
 
     private String msg;
 
-    public <T> CustomizeReturnException() {
+    public CustomizeReturnException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public <T> CustomizeReturnException(ReturnCode returnCode) {
+    public CustomizeReturnException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public <T> CustomizeReturnException(ReturnCode returnCode, String msg) {
+    public CustomizeReturnException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }
