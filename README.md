@@ -87,7 +87,7 @@
   - spring-ai-ollama-spring-boot-starter 0.8.1 == Spring AI Ollama框架模型依赖
   - spring-ai-retry 0.8.1 == AI Retry修复依赖
 - **Netty**
-  - netty-all  4.1.109.Final == Netty 框架
+  - netty-all 4.1.109.Final == Netty 框架
 - **数据驱动层**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
   - mybatis-spring 3.0.3 == MyBatis Spring 依赖
