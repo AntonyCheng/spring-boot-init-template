@@ -51,16 +51,17 @@
     <!-- 依赖版本控制 -->
     <properties>
         <!-- Java相关 -->
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Netty相关 -->
         <netty.version>4.1.109.Final</netty.version>
-        <!-- MySQL相关 -->
+        <!-- 数据驱动层相关 -->
         <mysql.version>8.0.33</mysql.version>
-        <druid.starter.version>1.2.22</druid.starter.version>
+        <mybatis.spring.version>3.0.3</mybatis.spring.version>
         <mybatis.plus.starter.version>3.5.6</mybatis.plus.starter.version>
         <shardingsphere.version>5.5.0</shardingsphere.version>
+        <druid.starter.version>1.2.22</druid.starter.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.32</lombok.version>
         <hutool.version>5.8.27</hutool.version>
@@ -97,7 +98,7 @@
         <easy.excel.version>3.3.4</easy.excel.version>
         <itext.version>8.0.3</itext.version>
         <!-- Spring AI相关 -->
-        <spring.ai.version>1.0.0-SNAPSHOT</spring.ai.version>
+        <spring.ai.version>0.8.1</spring.ai.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
         <powerjob.version>4.3.9</powerjob.version>
@@ -134,17 +135,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Web 容器使用 Undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉） -->
+        <!-- Web 容器使用 Undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉，同时编写top.sharehome.springbootinittemplate.config.undertow.UndertowConfiguration） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
-            <!-- 排除这个依赖是为了不报警告 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>io.undertow</groupId>
-                    <artifactId>undertow-websockets-jsr</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -185,20 +179,31 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-retry</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>antlr4-runtime</artifactId>
+                    <groupId>org.antlr</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Netty依赖配置 -->
+        <!-- Netty 依赖配置 -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
         </dependency>
 
-        <!-- MySQL 依赖配置 -->
+        <!-- 数据驱动层依赖配置 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis.spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -206,15 +211,15 @@
             <version>${mybatis.plus.starter.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.mybatis</groupId>
                     <artifactId>mybatis-spring</artifactId>
+                    <groupId>org.mybatis</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-            <version>3.0.3</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-annotation</artifactId>
+            <version>${mybatis.plus.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
