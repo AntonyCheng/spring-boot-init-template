@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.5**
+> **版本号：v2.1.6-jdk17-pre**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -62,7 +62,6 @@
         * [Canal简介](#canal简介)
         * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
-  * [兼容Java8](#兼容java8)
   * [前端预览](#前端预览)
   * [申明&联系我](#申明联系我)
   * [下一步开发计划](#下一步开发计划)
@@ -71,9 +70,8 @@
 
 ### 主流框架
 
-- **Java 11**
-  - 兼容性，详情见[兼容Java8](#兼容java8)
-- **SpringBoot 2.7.18**
+- **Java 17**
+- **SpringBoot 3.2.5**
   - spring-boot-starter-web == 基于 Spring MVC 的 Web 应用依赖
   - spring-boot-starter-undertow == 轻量级、高性能 Servlet 容器
   - spring-boot-starter-aop == 提供面向切面编程功能
@@ -85,14 +83,18 @@
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
 - **UI**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
-
+- **Spring AI**
+  - spring-ai-ollama-spring-boot-starter 0.8.1 == Spring AI Ollama框架模型依赖
+  - spring-ai-retry 0.8.1 == AI Retry修复依赖
 - **Netty**
   - netty-all  4.1.109.Final == Netty 框架
-- **MySQL**
+- **数据驱动层**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
-  - druid-spring-boot-starter 1.2.22 == Druid 连接池
-  - mybatis-plus-boot-starter 3.5.6 == MySQL 操作框架
-  - shardingsphere-jdbc-core 5.5.0 == 分布式数据库解决方案
+  - mybatis-spring 3.0.3 == MyBatis Spring 依赖
+  - mybatis-plus-boot-starter 3.5.6 == MyBatis-Plus 框架
+  - mybatis-plus-annotation 3.5.6 == MyBatis-Plus 注解依赖
+  - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
+  - druid-spring-boot-3-starter 1.2.22 == Druid 连接池
 - **工具类**
   - lombok 1.18.32 == POJO 简化工具
   - hutool-all 5.8.27 == Hutool 工具类
@@ -105,10 +107,11 @@
   - commons-compress 1.26.1 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
-  - fastjson2 2.0.49 == Fast JSON 工具类
+  - fastjson2 2.0.49 == FastJSON 工具类
+  - fastjson2-extension-spring6 2.0.49 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - sa-token-spring-boot-starter 1.37.0 == SaToken 认证鉴权框架
+  - sa-token-spring-boot3-starter 1.37.0 == SaToken 认证鉴权框架
   - sa-token-core 1.37.0 == SaToken 认证鉴权框架核心依赖
   - sa-token-jwt 1.37.0 == SaToken 认证鉴权框架 JWT 依赖
   - sa-token-redis-jackson 1.37.0 == SaToken 认证鉴权框架 Redis 依赖
@@ -136,7 +139,7 @@
   - easyexcel 3.3.4 == 操作 Excel
   - itext-core 8.0.3 == 操作 PDF
 - **接口文档 & API调试**
-  - knife4j-openapi3-spring-boot-starter 4.5.0 == Knife4j 依赖
+  - knife4j-openapi3-jakarta-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
   - xxl-job-core 2.4.0 == 分布式定时任务管理平台
   - powerjob-worker-spring-boot-starter 4.3.9 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
@@ -148,6 +151,7 @@
 - 使用 Undertow 服务器替换掉 Tomcat 服务器，无阻塞更适合高并发
 - Web UI 选用 vue-admin-template 前端模板，基于 Vue 2 和 Element UI ，极易上手开发调试
 - SaToken 可配置分布式登录 & 认证 & 鉴权
+- Spring AI 接入大语言模型
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
@@ -1438,22 +1442,6 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ##### 搭建Deployer&Client系统
 
 该系统和 Deployer & Adapter 系统的区别就在于该系统需要开发者自己写客户端，模板中已经存在了一个客户端示例代码类： `top.sharehome.springbootinittemplate.config.canal.example.SimpleCanalClientExample` ，同样的，Deployer 的部署在 `module/canal-component` 文件夹中有具体介绍，开发者可以参考示例代码类进行相关功能的开发。
-
-## 兼容Java8
-
-模板 **2.x.x** 版本默认适配 Java11 版本，为了更好的兼容 Java8 版本，可以对依赖进行如下修改：
-
-- **java**：11 ==> 1.8
-
-  ```xml
-  <java.version>1.8</java.version>
-  ```
-
-- **caffeine**：3.1.8 ==> 2.9.3
-
-  ```xml
-  <caffeine.version>2.9.3</caffeine.version>
-  ```
 
 ## 前端预览
 

@@ -12,7 +12,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>2.1.5</version>
+    <version>2.1.6-jdk17-pre</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <url>https://github.com/AntonyCheng/spring-boot-init-template</url>
@@ -54,6 +54,8 @@
         <java.version>17</java.version>
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
+        <!-- Spring AI相关 -->
+        <spring.ai.version>0.8.1</spring.ai.version>
         <!-- Netty相关 -->
         <netty.version>4.1.109.Final</netty.version>
         <!-- 数据驱动层相关 -->
@@ -97,8 +99,6 @@
         <poi.tl.version>1.12.2</poi.tl.version>
         <easy.excel.version>3.3.4</easy.excel.version>
         <itext.version>8.0.3</itext.version>
-        <!-- Spring AI相关 -->
-        <spring.ai.version>0.8.1</spring.ai.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.0</xxl.job.version>
         <powerjob.version>4.3.9</powerjob.version>
@@ -468,6 +468,13 @@
             <type>pom</type>
         </dependency>
 
+        <!-- Knife4j 依赖配置 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j.openapi3.starter.version}</version>
+        </dependency>
+
         <!-- XXL-JOB 分布式定时任务依赖配置 -->
         <dependency>
             <groupId>com.xuxueli</groupId>
@@ -509,13 +516,6 @@
             <groupId>com.alibaba.otter</groupId>
             <artifactId>canal.protocol</artifactId>
             <version>${canal.version}</version>
-        </dependency>
-
-        <!-- Knife4j 依赖配置 -->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>${knife4j.openapi3.starter.version}</version>
         </dependency>
     </dependencies>
 
