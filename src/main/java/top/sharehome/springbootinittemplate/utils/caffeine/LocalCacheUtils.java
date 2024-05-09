@@ -17,6 +17,7 @@ public class LocalCacheUtils {
     /**
      * 被封装的caffeine缓存操作类
      */
+    @SuppressWarnings("unchecked")
     private static final Cache<String, Object> CAFFEINE_CLIENT = SpringContextHolder.getBean("localCache", Cache.class);
 
     /**

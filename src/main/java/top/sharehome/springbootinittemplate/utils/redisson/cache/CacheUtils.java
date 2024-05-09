@@ -136,6 +136,7 @@ public class CacheUtils {
      * @param <R>  泛型S
      * @return 返回结果
      */
+    @SuppressWarnings("unchecked")
     public static <T, R> R get(String key, Class<R> type) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key);
         return (R) bucket.get();
@@ -166,6 +167,7 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
+    @SuppressWarnings("unchecked")
     public static <T> Map<String, T> getKeyValuesByPattern(String keyPattern) {
         return getKeysByPattern(keyPattern).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
@@ -680,13 +682,14 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    public static Map<String, List> getListKeyValuesByPattern(String keyPattern) {
+    @SuppressWarnings("unchecked")
+    public static Map<String, List<Object>> getListKeyValuesByPattern(String keyPattern) {
         return getListKeysByPattern(keyPattern).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getList(c));
             return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (List) map.get("value")));
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (List<Object>) map.get("value")));
     }
 
     /**
@@ -840,13 +843,14 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    public static Map<String, Set> getSetKeyValuesByPattern(String keyPattern) {
+    @SuppressWarnings("unchecked")
+    public static Map<String, Set<Object>> getSetKeyValuesByPattern(String keyPattern) {
         return getSetKeysByPattern(keyPattern).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getSet(c));
             return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Set) map.get("value")));
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Set<Object>) map.get("value")));
     }
 
     /**
@@ -1008,13 +1012,14 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    public static Map<String, Map> getMapKeyValuesByPattern(String keyPattern) {
+    @SuppressWarnings("unchecked")
+    public static Map<String, Map<Object,Object>> getMapKeyValuesByPattern(String keyPattern) {
         return getMapKeysByPattern(keyPattern).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getMap(c));
             return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map) map.get("value")));
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map<Object,Object>) map.get("value")));
     }
 
     /**

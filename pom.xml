@@ -56,11 +56,11 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <!-- Netty相关 -->
         <netty.version>4.1.109.Final</netty.version>
-        <!-- MySQL相关 -->
+        <!-- 数据驱动层相关 -->
         <mysql.version>8.0.33</mysql.version>
-        <druid.starter.version>1.2.22</druid.starter.version>
         <mybatis.plus.starter.version>3.5.6</mybatis.plus.starter.version>
         <shardingsphere.version>5.5.0</shardingsphere.version>
+        <druid.starter.version>1.2.22</druid.starter.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.32</lombok.version>
         <hutool.version>5.8.27</hutool.version>
@@ -121,17 +121,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Web 容器使用 Undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉） -->
+        <!-- Web 容器使用 Undertow 性能更强（若要使用Undertow，必须将上方的Tomcat排除掉，同时编写top.sharehome.springbootinittemplate.config.undertow.UndertowConfiguration） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
-            <!-- 排除这个依赖是为了不报警告 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>io.undertow</groupId>
-                    <artifactId>undertow-websockets-jsr</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -164,14 +157,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Netty依赖配置 -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-
-        <!-- MySQL 依赖配置（搭配shardingsphere 5.2.1-5.3.2 一起使用，druid版本控制在1.2.16以下，这种搭配主要是想完成数据库加密、主从库和分库分表的操作，后续会继续更新） -->
+        <!-- 数据驱动层依赖配置 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -180,6 +166,11 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-annotation</artifactId>
             <version>${mybatis.plus.starter.version}</version>
         </dependency>
         <dependency>
