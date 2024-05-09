@@ -19,7 +19,6 @@
         <lombok.version>1.18.30</lombok.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-server-starter</artifactId>
@@ -37,8 +36,34 @@
             <artifactId>spring-boot-admin-client</artifactId>
             <version>${spring.boot.admin.client.version}</version>
         </dependency>
-
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>ALiCloud maven</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
