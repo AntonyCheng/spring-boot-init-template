@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.5**
+> **版本号：v2.1.6-jdk8&11-pre**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -85,14 +85,14 @@
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
 - **UI**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
-
 - **Netty**
-  - netty-all  4.1.109.Final == Netty 框架
-- **MySQL**
-  - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
-  - druid-spring-boot-starter 1.2.22 == Druid 连接池
-  - mybatis-plus-boot-starter 3.5.6 == MySQL 操作框架
-  - shardingsphere-jdbc-core 5.5.0 == 分布式数据库解决方案
+  - netty-all 4.1.109.Final == Netty 框架
+- **数据驱动层**
+    - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
+    - mybatis-plus-boot-starter 3.5.6 == MyBatis-Plus 框架
+    - mybatis-plus-annotation 3.5.6 == MyBatis-Plus 注解依赖
+    - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
+    - druid-spring-boot-3-starter 1.2.22 == Druid 连接池
 - **工具类**
   - lombok 1.18.32 == POJO 简化工具
   - hutool-all 5.8.27 == Hutool 工具类
@@ -106,6 +106,7 @@
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
   - fastjson2 2.0.49 == Fast JSON 工具类
+  - fastjson2-extension-spring6 2.0.49 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
   - sa-token-spring-boot-starter 1.37.0 == SaToken 认证鉴权框架

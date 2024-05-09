@@ -12,7 +12,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>2.1.5</version>
+    <version>v2.1.6-jdk8-11-pre</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <url>https://github.com/AntonyCheng/spring-boot-init-template</url>
@@ -420,6 +420,13 @@
             <type>pom</type>
         </dependency>
 
+        <!-- Knife4j 依赖配置 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+            <version>${knife4j.openapi3.starter.version}</version>
+        </dependency>
+
         <!-- XXL-JOB 分布式定时任务依赖配置 -->
         <dependency>
             <groupId>com.xuxueli</groupId>
@@ -461,13 +468,6 @@
             <groupId>com.alibaba.otter</groupId>
             <artifactId>canal.protocol</artifactId>
             <version>${canal.version}</version>
-        </dependency>
-
-        <!-- Knife4j 依赖配置 -->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-            <version>${knife4j.openapi3.starter.version}</version>
         </dependency>
 
         <!-- Snakeyaml 依赖配置（用于保证系统稳定性） -->
