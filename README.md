@@ -1,11 +1,20 @@
+<p align="center">
+  <a href="https://github.com/AntonyCheng">
+    <img alt="spring-boot-init-template logo" src="picture/logo/logo.png" title="logo"/>
+  </a>
+</p>
+
+> **作者：[AntonyCheng](https://github.com/AntonyCheng)**
+>
+> **版本号：v1.0.4-jdk8&11-pre**
+>
+> **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
+>
+> **注意事项：该README跟随版本号的更新而更新，所有Git分支其实都是Pre预览分支，其中最新的内容并不能及时展现在该README中，所以想要使用稳定且具有对应说明的版本，推荐从Releases中下载。但是想要时刻跟进模板开发进度，也可以直接从各个Git分支拉取，查看每次提交的对应说明！**
+
 # SpringBoot初始化模板
 
-> 作者：[AntonyCheng](https://github.com/AntonyCheng})
-> 基于：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html) 开源协议
-
-> **版本号：v1.x.x**
-
-基于 Java Web 项目 SpringBoot 框架初始化模板，整合了常用的框架，保证大家在此基础上能够快速开发自己的项目，该模板针对于后端启动开发小而精，本项目会由作者持续更新。
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 * [模板特点](#模板特点)
   * [主流框架](#主流框架)
