@@ -2,29 +2,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.xuxueli</groupId>
-        <artifactId>xxl-job</artifactId>
-        <version>2.4.0</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <groupId>top.sharehome</groupId>
     <artifactId>xxl-job-admin</artifactId>
-    <packaging>jar</packaging>
+    <version>v2.1.6-jdk8-11-pre</version>
+    <name>xxl-job-admin</name>
+    <description>xxl-job-admin</description>
     <properties>
         <java.version>11</java.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
+        <xxl.job.version>2.4.1</xxl.job.version>
+        <mybatis.starter.version>2.3.2</mybatis.starter.version>
+        <mysql.version>8.3.0</mysql.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- starter-web：spring-webmvc + autoconfigure + logback + yaml + tomcat -->
@@ -62,21 +57,21 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis-spring-boot-starter.version}</version>
+            <version>${mybatis.starter.version}</version>
         </dependency>
 
         <!-- mysql -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>${mysql-connector-j.version}</version>
+            <version>${mysql.version}</version>
         </dependency>
 
         <!-- xxl-job-core -->
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${xxl.job.version}</version>
         </dependency>
 
         <dependency>
@@ -118,32 +113,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- docker -->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
-                <configuration>
-                    <!-- made of '[a-z0-9-_.]' -->
-                    <imageName>${project.artifactId}:${project.version}</imageName>
-                    <dockerDirectory>${project.basedir}</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
             </plugin>
         </plugins>
     </build>
