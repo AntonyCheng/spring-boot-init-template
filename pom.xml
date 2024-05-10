@@ -100,7 +100,7 @@
         <easy.excel.version>3.3.4</easy.excel.version>
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
-        <xxl.job.version>2.4.0</xxl.job.version>
+        <xxl.job.version>2.4.1</xxl.job.version>
         <powerjob.version>4.3.9</powerjob.version>
         <spring.boot.admin.client.version>2.7.9</spring.boot.admin.client.version>
         <canal.version>1.1.7</canal.version>
