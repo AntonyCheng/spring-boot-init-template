@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.17</version>
+		<version>2.7.18</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>top.sharehome</groupId>
 	<artifactId>spring-boot-admin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>v1.0.4-jdk8-11-pre</version>
 	<name>spring-boot-admin</name>
 	<description>spring-boot-admin</description>
 	<properties>
