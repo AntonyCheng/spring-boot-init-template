@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.17</version>
+        <version>2.7.18</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v1.0.4-jdk8-11-pre</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <properties>
@@ -390,8 +390,8 @@
     <repositories>
         <repository>
             <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <name>ALiCloud maven</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -401,8 +401,8 @@
     <pluginRepositories>
         <pluginRepository>
             <id>public</id>
-            <name>huawei nexus</name>
-            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <name>ALiCloud maven</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
