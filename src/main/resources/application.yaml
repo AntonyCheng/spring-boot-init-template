@@ -550,7 +550,7 @@ schedule:
 xxl:
   job:
     # todo 是否开启（预先关闭）
-    enable: true
+    enable: false
     # Xxl-Job监控面板地址
     admin-addresses: http://127.0.0.1:38079/xxl-job-admin
     # Xxl-Job token
