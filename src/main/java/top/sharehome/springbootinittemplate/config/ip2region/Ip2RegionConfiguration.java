@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.ResourceLoader;
 import top.sharehome.springbootinittemplate.config.ip2region.condition.Ip2RegionCondition;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2RegionProperties;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
@@ -32,9 +31,6 @@ public class Ip2RegionConfiguration {
 
     @jakarta.annotation.Resource
     private Ip2RegionProperties ip2RegionProperties;
-
-    @jakarta.annotation.Resource
-    private ResourceLoader resourceLoader;
 
     private Searcher searcher = null;
 
