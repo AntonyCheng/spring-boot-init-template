@@ -1,20 +1,23 @@
 package top.sharehome.springbootinittemplate.config.ip2region;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import top.sharehome.springbootinittemplate.config.ip2region.condition.Ip2RegionCondition;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2RegionProperties;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 
-import jakarta.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 离线IP库配置
@@ -37,15 +40,20 @@ public class Ip2RegionConfiguration {
 
     /**
      * 初始化配置类
+     * 由于打包之后Ip2Region的数据文件就不能以Path形式导入进来，所以直接在系统临时文件夹创建一个ip2region.xdb文件
      */
     @Bean(destroyMethod = "destroy")
     @Order(1)
     public Ip2RegionConfiguration initConfiguration() {
-        LoadType loadType = ip2RegionProperties.getLoadType();
-        Resource resource = resourceLoader.getResource("classpath:ip2region/ip2region.xdb");
-        String path = null;
-        try {
-            path = resource.getFile().getPath();
+        String fileName = "ip2region/ip2region.xdb";
+        try (InputStream classPathFileStream = new ClassPathResource(fileName).getInputStream()) {
+            LoadType loadType = ip2RegionProperties.getLoadType();
+            String tempFile = FileUtils.getTempDirectoryPath() + fileName;
+            File existFile = new File(tempFile);
+            if (!existFile.exists()) {
+                FileUtils.copyInputStreamToFile(classPathFileStream, existFile);
+            }
+            String path = existFile.getPath();
             if (LoadType.FILE.equals(loadType)) {
                 searcher = Searcher.newWithFileOnly(path);
             } else if (LoadType.INDEX.equals(loadType)) {
