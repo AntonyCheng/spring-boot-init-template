@@ -22,7 +22,7 @@ import java.util.List;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestMongo {
+public class MongoTest {
 
     @Resource
     private UserMgRepository userMgRepository;

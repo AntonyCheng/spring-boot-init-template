@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 @SpringBootTest
-public class TestMail {
+public class MailTest {
 
     private final String to = "1911261716@qq.com";
 

@@ -10,10 +10,10 @@ import top.sharehome.springbootinittemplate.utils.net.NetUtils;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestNet {
+public class NetTest {
 
     @Test
-    public void testGetRegionByIp(){
+    public void testGetRegionByIp() {
         String ipStr = "1.2.3.4";
         String regionByIp = NetUtils.getRegionByIpAddress(ipStr);
         System.out.println(regionByIp);

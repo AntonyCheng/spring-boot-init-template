@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
  */
 @SpringBootTest
 @Slf4j
-public class TestRedisson {
+public class RedissonTest {
 
     /**
      * 测试缓存工具类
