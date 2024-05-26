@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestOss {
+public class OssTest {
 
     /**
      * 测试腾讯云COS工具类——上传

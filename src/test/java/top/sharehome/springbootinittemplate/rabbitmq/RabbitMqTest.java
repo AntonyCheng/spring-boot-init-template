@@ -14,7 +14,7 @@ import java.time.Duration;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestRabbitMq {
+public class RabbitMqTest {
 
     /**
      * 测试RabbitMqUtils
