@@ -1,13 +1,12 @@
 package top.sharehome.springbootinittemplate.aop;
 
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atAnnotationAop.service.AtAnnotationService;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atArgsAop.service.AtArgsService;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atTargetAop.service.AtTargetService;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atWithinAop.service.AtWithinService;
-
-import jakarta.annotation.Resource;
 
 /**
  * 切点参数为execution型的切面测试类

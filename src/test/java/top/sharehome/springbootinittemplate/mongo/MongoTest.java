@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.mongo;
 
 import com.mongodb.client.result.UpdateResult;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
@@ -11,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import top.sharehome.springbootinittemplate.mongo.entity.UserMg;
 import top.sharehome.springbootinittemplate.mongo.repository.UserMgRepository;
 
-import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestMongo {
+public class MongoTest {
 
     @Resource
     private UserMgRepository userMgRepository;

@@ -2,14 +2,13 @@ package top.sharehome.springbootinittemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
-
-import jakarta.annotation.Resource;
 
 /**
  * 测试类

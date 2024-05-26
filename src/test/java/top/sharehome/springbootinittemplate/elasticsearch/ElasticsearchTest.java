@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.elasticsearch;
 
+import jakarta.annotation.Resource;
 import org.dromara.easyes.core.conditions.select.LambdaEsQueryWrapper;
 import org.dromara.easyes.core.conditions.update.LambdaEsUpdateWrapper;
 import org.junit.jupiter.api.Assertions;
@@ -8,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import top.sharehome.springbootinittemplate.elasticsearch.entity.UserEs;
 import top.sharehome.springbootinittemplate.elasticsearch.mapper.UserEsMapper;
 
-import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * @author AntonyCheng
  */
 @SpringBootTest
-public class TestElasticsearch {
+public class ElasticsearchTest {
 
     /**
      * 引入属于Easy-ES的映射类，当测试ElasticSearch时将@Resource注解打开，测试其他示例代码时将其关闭
