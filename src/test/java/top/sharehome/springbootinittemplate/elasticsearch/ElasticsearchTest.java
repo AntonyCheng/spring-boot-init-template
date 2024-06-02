@@ -40,17 +40,6 @@ public class ElasticsearchTest {
     }
 
     /**
-     * 测试Easy-ES删除索引
-     * 这是测试EE其他实例的前置操作
-     */
-    @Test
-    void testEasyEsDeleteIndex() {
-        // 测试删除索引
-        Boolean indexDeleteSuccess = userEsMapper.deleteIndex(UserEs.INDEX);
-        Assertions.assertTrue(indexDeleteSuccess);
-    }
-
-    /**
      * 测试Easy-ES CRUD
      */
     @Test
@@ -127,6 +116,17 @@ public class ElasticsearchTest {
         userEsLambdaEsQueryWrapper.match(UserEs::getAccount, userEs.getAccount());
         UserEs res = userEsMapper.selectOne(userEsLambdaEsQueryWrapper);
         System.out.println("res = " + res);
+    }
+
+    /**
+     * 测试Easy-ES删除索引
+     * 这是测试EE其他实例的前置操作
+     */
+    @Test
+    void testEasyEsDeleteIndex() {
+        // 测试删除索引
+        Boolean indexDeleteSuccess = userEsMapper.deleteIndex(UserEs.INDEX);
+        Assertions.assertTrue(indexDeleteSuccess);
     }
 
 }
