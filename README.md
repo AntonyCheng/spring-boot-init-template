@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.6-jdk17-pre**
+> **版本号：v2.1.6-jdk17**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -27,6 +27,7 @@
     * [必须执行](#必须执行)
     * [可选执行](#可选执行)
       * [启动前端项目](#启动前端项目)
+      * [整合Spring AI](#整合spring-ai)
       * [整合缓存服务](#整合缓存服务)
         * [整合系统缓存（Redis）](#整合系统缓存redis)
         * [整合业务缓存（Redisson）](#整合业务缓存redisson)
@@ -60,7 +61,7 @@
       * [配置SpringBootAdmin](#配置springbootadmin)
       * [配置Canal](#配置canal)
         * [Canal简介](#canal简介)
-        * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
+        * [搭建Deployer&Adapter系统](#搭建deployeradapter系统)
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
   * [前端预览](#前端预览)
   * [申明&联系我](#申明联系我)
@@ -81,56 +82,57 @@
   - spring-boot-starter-freemaker == 模板引擎依赖
   - spring-boot-starter-test == Spring Boot Test 依赖
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
-- **UI**
+- **前端模板**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
-- **Spring AI**
-  - spring-ai-ollama-spring-boot-starter 0.8.1 == Spring AI Ollama框架模型依赖
-  - spring-ai-retry 0.8.1 == AI Retry修复依赖
+- **Spring AI 1.0.4**
+  - spring-ai-openai-spring-boot-starter == Spring AI OpenAI模型依赖
+  - spring-ai-zhipuai-spring-boot-starter == Spring AI 智谱AI模型依赖
+  - spring-ai-ollama-spring-boot-starter == Spring AI Ollama框架AI模型依赖
 - **Netty**
-  - netty-all 4.1.109.Final == Netty 框架
+  - netty-all 4.1.110.Final == Netty 框架
 - **数据驱动层**
   - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
   - mybatis-spring 3.0.3 == MyBatis Spring 依赖
   - mybatis-plus-boot-starter 3.5.6 == MyBatis-Plus 框架
   - mybatis-plus-annotation 3.5.6 == MyBatis-Plus 注解依赖
   - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
-  - druid-spring-boot-3-starter 1.2.22 == Druid 连接池
+  - druid-spring-boot-3-starter 1.2.23 == Druid 连接池
 - **工具类**
   - lombok 1.18.32 == POJO 简化工具
-  - hutool-all 5.8.27 == Hutool 工具类
+  - hutool-all 5.8.28 == Hutool 工具类
   - commons-lang3 3.14.0 == Apache Commons Lang 工具类
   - commons-io 2.16.1 == Apache Commons IO 工具类
   - commons-codec 1.17.0 == Apache Commons Codec 工具类
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
   - commons-collections4 4.5.0-M1 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
-  - commons-compress 1.26.1 == Apache Commons Compress 工具类
+  - commons-compress 1.26.2 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
-  - fastjson2 2.0.49 == FastJSON 工具类
-  - fastjson2-extension-spring6 2.0.49 == FastJSON 工具拓展类
+  - fastjson2 2.0.51 == FastJSON 工具类
+  - fastjson2-extension-spring6 2.0.51 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - sa-token-spring-boot3-starter 1.37.0 == SaToken 认证鉴权框架
-  - sa-token-core 1.37.0 == SaToken 认证鉴权框架核心依赖
-  - sa-token-jwt 1.37.0 == SaToken 认证鉴权框架 JWT 依赖
-  - sa-token-redis-jackson 1.37.0 == SaToken 认证鉴权框架 Redis 依赖
+  - sa-token-spring-boot3-starter 1.38.0 == SaToken 认证鉴权框架
+  - sa-token-core 1.38.0 == SaToken 认证鉴权框架核心依赖
+  - sa-token-jwt 1.38.0 == SaToken 认证鉴权框架 JWT 依赖
+  - sa-token-redis-jackson 1.38.0 == SaToken 认证鉴权框架 Redis 依赖
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.29.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.31.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
   - spring-boot-starter-amqp == 支持 AMQP （高级消息队列协议）消息代理
   - spring-rabbit-test == Spring 支持对 RabbitMQ 消息队列的单元测试
 - **搜索引擎**
-  - easy-es-boot-starter 2.0.0-bata8 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+  - easy-es-boot-starter 2.0.0 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
   - elasticsearch 7.14.0 == Elasticsearch 依赖
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.211 == 腾讯云 COS
+  - cos_api 5.6.213 == 腾讯云 COS
   - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
   - minio 8.5.10 == Minio 对象存储
 - **文件操作**
@@ -141,7 +143,7 @@
 - **接口文档 & API调试**
   - knife4j-openapi3-jakarta-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
-  - xxl-job-core 2.4.0 == 分布式定时任务管理平台
+  - xxl-job-core 2.4.1 == 分布式定时任务管理平台
   - powerjob-worker-spring-boot-starter 4.3.9 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
   - spring-boot-admin-client 2.7.9 == SpringBoot 服务监控平台
   - canal.client 1.1.7 == Canal-Deployer & Canal-Adapter 数据同步系统
@@ -151,7 +153,7 @@
 - 使用 Undertow 服务器替换掉 Tomcat 服务器，无阻塞更适合高并发
 - Web UI 选用 vue-admin-template 前端模板，基于 Vue 2 和 Element UI ，极易上手开发调试
 - SaToken 可配置分布式登录 & 认证 & 鉴权
-- Spring AI 接入大语言模型
+- Spring AI 接入大语言模型（OpenAI、智谱清言以及Ollama本地大模型）
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
@@ -224,6 +226,54 @@
 
 如果需要启动前端进行开发或者调试，开发者需要前往 `ui` 文件夹，打开 `vue-admin-template` 项目，参考其 `README.md` 文件启动即可。
 
+#### 整合Spring AI
+
+如今AIGC在开发过程中或多或少会被实际运用，而它们确实能够为开发者带来许多便利，提高开发效率，所以作为开发者能够基于AIGC开发应用将会是一条必经之路，赋予底层开发模板AI能力自然而然变成了顺应时代潮流的事情。而 Spring AI 可谓是后起之秀，它在 Java 领域开发 AI 应用大概率会成为主流，著名的 Spring Cloud Alibaba 宣称在2023版本支持 Spring AI 就证明了这一点，所以该模板也整合了 Spring AI。目前配置文件内容如下：
+
+```yaml
+spring:
+  # Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
+  ai:
+    # Open AI
+    openai:
+      # OpenAI 密钥
+      api-key: sk-xxx
+      chat:
+        options:
+          # 模型名称
+          model: gpt-3.5-turbo
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
+    # 智谱 AI
+    zhipuai:
+      # 智谱AI 密钥
+      api-key: xxx.xxx
+      chat:
+        options:
+          # 模型名称
+          model: GLM-3-Turbo
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
+    # Ollama AI
+    ollama:
+      chat:
+        options:
+          # 模型名称
+          model: llama3:8b-instruct-q8_0
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
+          top-k: 10
+          # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
+```
+
+目前集成最为著名的 OpenAI、国内知名的智谱清言以及 Ollama 本地大语言模型，在模板往后的发展中会集成更多类型的大语言模型。这些配置文件内容和 Spring AI 的相关用法详情请访问 [Spring AI](https://spring.io/projects/spring-ai#learn) 官网。
+
 #### 整合缓存服务
 
 **说明**：该模板中存在两种 Redis 服务，第一种是系统缓存服务（ **对应整合系统缓存** ），第二种是业务缓存服务（ **对应整合业务缓存** ）。前者承担系统框架本身的缓存服务，例如用户分布式登录信息的缓存；后者承担开发者业务逻辑所需的缓存操作，例如分布式锁、限流工具等。除了 Redis 服务，还有 Caffeine 本地缓存服务，详情请查看以下内容。
@@ -247,38 +297,39 @@
 
    ```yaml
    spring: 
-     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
-     redis:
-       # 单机地址（单价模式配置和集群模式配置只能存在一个）
-       host: 127.0.0.1
-       # 单机端口，默认为6379
-       port: 6379
-       # 集群地址（单价模式配置和集群模式配置只能存在一个）
-       #cluster:
-       #  nodes:
-       #    - 127.0.0.1:6379
-       #    - 127.0.0.1:6380
-       #    - 127.0.0.1:6381
-       #    - 127.0.0.1:6382
-       #    - 127.0.0.1:6383
-       #    - 127.0.0.1:6384
-       # 数据库索引
-       database: 0
-       # 密码（考虑是否需要密码）
-       #password: 123456
-       # 连接超时时间
-       timeout: 3s
-       # redis连接池
-       lettuce:
-         pool:
-           # 最小空闲连接数
-           min-idle: 8
-           # 最大空闲连接数
-           max-idle: 25
-           # 最大活动连接数
-           max-active: 50
-           # 最大等待时间/ms
-           max-wait: 3000
+     data:
+       # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+       redis:
+         # 单机地址（单价模式配置和集群模式配置只能存在一个）
+         host: 127.0.0.1
+         # 单机端口，默认为6379
+         port: 6379
+         # 集群地址（单价模式配置和集群模式配置只能存在一个）
+         #cluster:
+         #  nodes:
+         #    - 127.0.0.1:6379
+         #    - 127.0.0.1:6380
+         #    - 127.0.0.1:6381
+         #    - 127.0.0.1:6382
+         #    - 127.0.0.1:6383
+         #    - 127.0.0.1:6384
+         # 数据库索引
+         database: 0
+         # 密码（考虑是否需要密码）
+         #password: 123456
+         # 连接超时时间
+         timeout: 3s
+         # redis连接池
+         lettuce:
+           pool:
+             # 最小空闲连接数
+             min-idle: 8
+             # 最大空闲连接数
+             max-idle: 25
+             # 最大活动连接数
+             max-active: 50
+             # 最大等待时间/ms
+             max-wait: 3000
    ```
 
 3. 此时项目就能够直接启动， Redis 相关配置就完成了，特别说明一下，为了适应模板的通用性，该模板中依旧保留了 spring-boot-starter-data-redis 中 RedisTemplate 的原生操作途径，在 `top.sharehome.springbootinittemplate.config.redis` 包中设计了 RedisTemplate 的 Bean，同时更新了其序列化方式以防止存入 Redis 之后出现乱码，这意味着开发者依旧可以使用 RedisTemplate 的方式将系统缓存和业务缓存合二为一，这种保留做法仅仅是为了可拓展性，所以没有围绕 RedisTemplate 编写缓存工具类，如果需要使用缓存工具类，详情见 **整合业务缓存** 。
@@ -1012,38 +1063,40 @@ spring:
       #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
-  redis:
-    # 单机地址（单价模式配置和集群模式配置只能存在一个）
-    host: 127.0.0.1
-    # 单机端口，默认为6379
-    port: 6379
-    # 集群地址（单价模式配置和集群模式配置只能存在一个）
-    #cluster:
-    #  nodes:
-    #    - 127.0.0.1:6379
-    #    - 127.0.0.1:6380
-    #    - 127.0.0.1:6381
-    #    - 127.0.0.1:6382
-    #    - 127.0.0.1:6383
-    #    - 127.0.0.1:6384
-    # 数据库索引
-    database: 0
-    # 密码（考虑是否需要密码）
-    #password: 123456
-    # 连接超时时间
-    timeout: 3s
-    # redis连接池
-    lettuce:
-      pool:
-        # 最小空闲连接数
-        min-idle: 8
-        # 最大空闲连接数
-        max-idle: 25
-        # 最大活动连接数
-        max-active: 50
-        # 最大等待时间/ms
-        max-wait: 3000
+  ......
+  data:
+    # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+    redis:
+      # 单机地址（单价模式配置和集群模式配置只能存在一个）
+      host: 127.0.0.1
+      # 单机端口，默认为6379
+      port: 6379
+      # 集群地址（单价模式配置和集群模式配置只能存在一个）
+      #cluster:
+      #  nodes:
+      #    - 127.0.0.1:6379
+      #    - 127.0.0.1:6380
+      #    - 127.0.0.1:6381
+      #    - 127.0.0.1:6382
+      #    - 127.0.0.1:6383
+      #    - 127.0.0.1:6384
+      # 数据库索引
+      database: 0
+      # 密码（考虑是否需要密码）
+      #password: 123456
+      # 连接超时时间
+      timeout: 3s
+      # redis连接池
+      lettuce:
+        pool:
+          # 最小空闲连接数
+          min-idle: 8
+          # 最大空闲连接数
+          max-idle: 25
+          # 最大活动连接数
+          max-active: 50
+          # 最大等待时间/ms
+          max-wait: 3000
 ```
 
 ###### 整合JWT
@@ -1055,7 +1108,7 @@ JWT 全称是 JSON Web Tokens ，见名知意， JWT 就是一种内容为 JSON 
 sa-token:
   # todo 是否启用SaToken认证鉴权功能（此处为false并不是禁用SaToken，而是让SaToken相关注解失效，预先开启）
   enable-sa: true
-  # todo 是否使用JWT（建议如果没有开启redis配置就不要开启jwt，预先关闭）
+  # todo 是否使用JWT格式的Token（建议如果没有开启redis配置就不要开启JWT格式的Token，预先关闭）
   enable-jwt: true
 ```
 
@@ -1066,15 +1119,15 @@ sa-token:
 sa-token:
   ......
   # todo 鉴权模式说明：
-  # 1.is-read-cookie=true; is-read-header==>false; token-prefix=null;   ==> 标准的 Session + Cookie 模式（推荐，模板默认模式）
+  # 1.is-read-cookie=true; is-read-header==>false; token-prefix=null;   ==> 标准的 Session + Cookie 模式（推荐）
   # 2.is-read-cookie=false; is-read-header==>true; token-prefix=exist;
   #   is-read-cookie=false; is-read-header==>true; token-prefix=null;   ==> 标准的 Redis + JWT 模式（推荐）
-  # 3.is-read-cookie=false; is-read-header==>false; token-prefix=null;
+  # 3.is-read-cookie=true; is-read-header==>true; token-prefix=null;    ==> Session + Cookie 模式和 Redis + JWT 模式共存，两者均能实现鉴权（推荐，模板默认模式）
+  # 4.is-read-cookie=true; is-read-header==>true; token-prefix=exist;   ==> 仅有 Redis + JWT 模式起作用，作用等同于标准的 Redis + JWT 模式
+  # 5.is-read-cookie=false; is-read-header==>false; token-prefix=null;
   #   is-read-cookie=false; is-read-header==>false; token-prefix=exist; ==> 无法通过鉴权模式
-  # 4.is-read-cookie=true; is-read-header==>true; token-prefix=null;    ==> Session + Cookie 模式和 Redis + JWT 模式共存，两者均能实现鉴权
-  # 5.is-read-cookie=true; is-read-header==>true; token-prefix=exist;   ==> 仅有 Redis + JWT 模式起作用，作用等同于标准的 Redis + JWT 模式
   # 鉴权模式一：Session + Cookie（Token 由 Cookie 自动传递），如果为 false ，那么前端 Cookie 不会自动填充 Token
-  is-read-cookie: false
+  is-read-cookie: true
   # 鉴权模式二：Redis + JWT（Token 由 Header 手动传递），如果为 true ，正常的实现逻辑应该是将 Token 从登录接口返回给前端，前端存储之后每次发起请求都将 Token 放入 Header 中
   is-read-header: true
   # 在鉴权模式二下，Token 的前缀（这个需要手动添加并从 Header 中传入进来）
@@ -1427,7 +1480,7 @@ Canal 是 Alibaba 开发的基于 MySQL 数据库的增量日志解析工具，�
 - 带业务逻辑的增量数据处理；
 - ......
 
-##### 搭建Deployer&Adapter系统 
+##### 搭建Deployer&Adapter系统
 
 Deployer （Canal-Deployer） 是该系统的主体，它的作用是将自己包装成 MySQL 的从库，进而监听 MySQL 的增量日志（binlog），同时能够将其解析并读取。
 
@@ -1496,6 +1549,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ## 下一步开发计划
 
 * 设计方便简单的操作 PDF 的工具类
+* 设计日志模块
 * 集成 Prometheus 和 Grafana 监控报警平台（选做）
 * 集成 Apache SkyWalking 链路追踪（选做）
 * ......

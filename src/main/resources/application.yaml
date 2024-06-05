@@ -273,6 +273,8 @@ spring:
           top-p: 0.3
     # Ollama AI
     ollama:
+      # Ollama 服务地址
+      base-url: localhost:11434
       chat:
         options:
           # 模型名称
