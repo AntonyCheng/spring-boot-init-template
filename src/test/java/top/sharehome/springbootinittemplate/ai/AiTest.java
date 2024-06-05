@@ -2,7 +2,9 @@ package top.sharehome.springbootinittemplate.ai;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.ollama.OllamaChatClient;
+import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -14,11 +16,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class AiTest {
 
     @Resource
-    private OllamaChatClient ollamaChatClient;
+    private OpenAiChatModel openAiChatModel;
+
+    @Resource
+    private ZhiPuAiChatModel zhiPuAiChatModel;
+
+    @Resource
+    private OllamaChatModel ollamaChatModel;
+
+    @Test
+    public void testOpenAi() {
+        System.out.printf(openAiChatModel.call("你好"));
+    }
+
+    @Test
+    public void testZhiPuAi() {
+        System.out.printf(zhiPuAiChatModel.call("你好"));
+    }
 
     @Test
     public void testOllamaAi() {
-        System.out.println(ollamaChatClient.call("你好"));
+        System.out.println(ollamaChatModel.call("你好"));
     }
 
 }

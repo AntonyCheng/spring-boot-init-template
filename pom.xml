@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Spring AI相关 -->
-        <spring.ai.version>0.8.1</spring.ai.version>
+        <spring.ai.version>1.0.4</spring.ai.version>
         <!-- Netty相关 -->
         <netty.version>4.1.110.Final</netty.version>
         <!-- 数据驱动层相关 -->
@@ -112,7 +112,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.ai</groupId>
+                <groupId>group.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
                 <version>${spring.ai.version}</version>
                 <type>pom</type>
@@ -171,20 +171,18 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring AI相关（由于目前阿里云Maven镜像中没有Spring AI，所以要从Spring Maven中获取依赖，如果网络环境不允许，请将Spring AI相关的依赖项删除） -->
+        <!-- Spring AI相关 -->
         <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <groupId>group.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-retry</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>antlr4-runtime</artifactId>
-                    <groupId>org.antlr</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>group.springframework.ai</groupId>
+            <artifactId>spring-ai-zhipuai-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>group.springframework.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
         </dependency>
 
         <!-- Netty 依赖配置 -->
@@ -576,22 +574,6 @@
             <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
             </releases>
         </repository>
     </repositories>

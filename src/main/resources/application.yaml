@@ -183,6 +183,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+    # 避免访问/api/**造成未找到静态资源错误
+    static-path-pattern: /static/**
   # 不允许bean的定义被覆盖，保证系统稳定，但是某些情况下可能需要反其道而行之，这个由开发者自己定义，默认关闭
   main:
     allow-bean-definition-overriding: false
@@ -243,8 +245,32 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  # Spring AI相关注解（由于目前阿里云Maven镜像中没有Spring AI，所以要从Spring Maven中获取依赖，如果网络环境不允许，下面的配置可以忽略或者删除）
+  # Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
   ai:
+    # Open AI
+    openai:
+      # OpenAI 密钥
+      api-key: sk-xxx
+      chat:
+        options:
+          # 模型名称
+          model: gpt-3.5-turbo
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
+    # 智谱 AI
+    zhipuai:
+      # 智谱AI 密钥
+      api-key: xxx.xxx
+      chat:
+        options:
+          # 模型名称
+          model: GLM-3-Turbo
+          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+          temperature: 0.9
+          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+          top-p: 0.3
     # Ollama AI
     ollama:
       chat:
@@ -473,7 +499,6 @@ oss:
     secret-key: xxxxxxxx
     # 桶名称
     bucket-name: xxxxxxxx
-
 # WebSocket配置
 websocket:
   # todo 是否开启（预先关闭）
