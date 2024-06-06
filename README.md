@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.6-jdk8&11-pre**
+> **版本号：v2.1.6-jdk8&11**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -60,7 +60,7 @@
       * [配置SpringBootAdmin](#配置springbootadmin)
       * [配置Canal](#配置canal)
         * [Canal简介](#canal简介)
-        * [搭建Deployer&Adapter系统](#搭建deployeradapter系统-)
+        * [搭建Deployer&Adapter系统](#搭建deployeradapter系统)
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
   * [兼容Java8](#兼容java8)
   * [前端预览](#前端预览)
@@ -83,19 +83,19 @@
   - spring-boot-starter-freemaker == 模板引擎依赖
   - spring-boot-starter-test == Spring Boot Test 依赖
   - spring-boot-configuration-processor == 生成配置元数据信息，辅助开发工具
-- **UI**
+- **前端模板**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
 - **Netty**
-  - netty-all 4.1.109.Final == Netty 框架
+  - netty-all 4.1.110.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
     - mybatis-plus-boot-starter 3.5.6 == MyBatis-Plus 框架
     - mybatis-plus-annotation 3.5.6 == MyBatis-Plus 注解依赖
     - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
-    - druid-spring-boot-3-starter 1.2.22 == Druid 连接池
+    - druid-spring-boot-starter 1.2.23 == Druid 连接池
 - **工具类**
   - lombok 1.18.32 == POJO 简化工具
-  - hutool-all 5.8.27 == Hutool 工具类
+  - hutool-all 5.8.28 == Hutool 工具类
   - commons-lang3 3.14.0 == Apache Commons Lang 工具类
   - commons-io 2.16.1 == Apache Commons IO 工具类
   - commons-codec 1.17.0 == Apache Commons Codec 工具类
@@ -105,30 +105,30 @@
   - commons-compress 1.26.1 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
-  - fastjson2 2.0.49 == Fast JSON 工具类
-  - fastjson2-extension-spring6 2.0.49 == FastJSON 工具拓展类
+  - fastjson2 2.0.51 == Fast JSON 工具类
+  - fastjson2-extension-spring6 2.0.51 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - sa-token-spring-boot-starter 1.37.0 == SaToken 认证鉴权框架
-  - sa-token-core 1.37.0 == SaToken 认证鉴权框架核心依赖
-  - sa-token-jwt 1.37.0 == SaToken 认证鉴权框架 JWT 依赖
-  - sa-token-redis-jackson 1.37.0 == SaToken 认证鉴权框架 Redis 依赖
+  - sa-token-spring-boot-starter 1.38.0 == SaToken 认证鉴权框架
+  - sa-token-core 1.38.0 == SaToken 认证鉴权框架核心依赖
+  - sa-token-jwt 1.38.0 == SaToken 认证鉴权框架 JWT 依赖
+  - sa-token-redis-jackson 1.38.0 == SaToken 认证鉴权框架 Redis 依赖
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.29.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.31.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
   - spring-boot-starter-amqp == 支持 AMQP （高级消息队列协议）消息代理
   - spring-rabbit-test == Spring 支持对 RabbitMQ 消息队列的单元测试
 - **搜索引擎**
-  - easy-es-boot-starter 2.0.0-bata8 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
+  - easy-es-boot-starter 2.0.0 == 简化 Elasticsearch 搜索引擎，可以像 Mybatis-Plus 操作 MySQL 一样操作 Elasticsearch 的开源框架
   - elasticsearch 7.14.0 == Elasticsearch 依赖
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.211 == 腾讯云 COS
+  - cos_api 5.6.213 == 腾讯云 COS
   - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
   - minio 8.5.10 == Minio 对象存储
 - **文件操作**
@@ -139,7 +139,7 @@
 - **接口文档 & API调试**
   - knife4j-openapi3-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
-  - xxl-job-core 2.4.0 == 分布式定时任务管理平台
+  - xxl-job-core 2.4.1 == 分布式定时任务管理平台
   - powerjob-worker-spring-boot-starter 4.3.9 == 更强劲的分布式定时任务管理平台（个人认为，针对于中小型项目而言，PowerJob 并不适用，可以对比一下 XxlJob ，就能发现 PowerJob 很多功能用不上，当然这得让开发者自己考虑，所以模板依然保留了 XxlJob 的集成模块）
   - spring-boot-admin-client 2.7.9 == SpringBoot 服务监控平台
   - canal.client 1.1.7 == Canal-Deployer & Canal-Adapter 数据同步系统
@@ -1063,15 +1063,15 @@ sa-token:
 sa-token:
   ......
   # todo 鉴权模式说明：
-  # 1.is-read-cookie=true; is-read-header==>false; token-prefix=null;   ==> 标准的 Session + Cookie 模式（推荐，模板默认模式）
+  # 1.is-read-cookie=true; is-read-header==>false; token-prefix=null;   ==> 标准的 Session + Cookie 模式（推荐）
   # 2.is-read-cookie=false; is-read-header==>true; token-prefix=exist;
   #   is-read-cookie=false; is-read-header==>true; token-prefix=null;   ==> 标准的 Redis + JWT 模式（推荐）
-  # 3.is-read-cookie=false; is-read-header==>false; token-prefix=null;
+  # 3.is-read-cookie=true; is-read-header==>true; token-prefix=null;    ==> Session + Cookie 模式和 Redis + JWT 模式共存，两者均能实现鉴权（推荐，模板默认模式）
+  # 4.is-read-cookie=true; is-read-header==>true; token-prefix=exist;   ==> 仅有 Redis + JWT 模式起作用，作用等同于标准的 Redis + JWT 模式
+  # 5.is-read-cookie=false; is-read-header==>false; token-prefix=null;
   #   is-read-cookie=false; is-read-header==>false; token-prefix=exist; ==> 无法通过鉴权模式
-  # 4.is-read-cookie=true; is-read-header==>true; token-prefix=null;    ==> Session + Cookie 模式和 Redis + JWT 模式共存，两者均能实现鉴权
-  # 5.is-read-cookie=true; is-read-header==>true; token-prefix=exist;   ==> 仅有 Redis + JWT 模式起作用，作用等同于标准的 Redis + JWT 模式
   # 鉴权模式一：Session + Cookie（Token 由 Cookie 自动传递），如果为 false ，那么前端 Cookie 不会自动填充 Token
-  is-read-cookie: false
+  is-read-cookie: true
   # 鉴权模式二：Redis + JWT（Token 由 Header 手动传递），如果为 true ，正常的实现逻辑应该是将 Token 从登录接口返回给前端，前端存储之后每次发起请求都将 Token 放入 Header 中
   is-read-header: true
   # 在鉴权模式二下，Token 的前缀（这个需要手动添加并从 Header 中传入进来）
@@ -1424,7 +1424,7 @@ Canal 是 Alibaba 开发的基于 MySQL 数据库的增量日志解析工具，�
 - 带业务逻辑的增量数据处理；
 - ......
 
-##### 搭建Deployer&Adapter系统 
+##### 搭建Deployer&Adapter系统
 
 Deployer （Canal-Deployer） 是该系统的主体，它的作用是将自己包装成 MySQL 的从库，进而监听 MySQL 的增量日志（binlog），同时能够将其解析并读取。
 
@@ -1509,6 +1509,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ## 下一步开发计划
 
 * 设计方便简单的操作 PDF 的工具类
+* 设计日志模块
 * 集成 Prometheus 和 Grafana 监控报警平台（选做）
 * 集成 Apache SkyWalking 链路追踪（选做）
 * ......
