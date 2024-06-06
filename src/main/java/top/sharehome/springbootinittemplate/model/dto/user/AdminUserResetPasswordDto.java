@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.dto.admin;
+package top.sharehome.springbootinittemplate.model.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminResetPasswordDto implements Serializable {
+public class AdminUserResetPasswordDto implements Serializable {
 
     /**
      * ID

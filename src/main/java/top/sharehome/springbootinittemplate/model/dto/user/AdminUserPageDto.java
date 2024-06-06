@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.dto.admin;
+package top.sharehome.springbootinittemplate.model.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminPageUserDto implements Serializable {
+public class AdminUserPageDto implements Serializable {
 
     /**
      * 用户账号（like）

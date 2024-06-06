@@ -257,7 +257,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { addUser, deleteUser, exportExcel, pageUser, resetPassword, updateInfo, updateState } from '@/api/admin'
+import { adminAddUser, adminDeleteUser, adminExportExcel, adminPageUser, adminResetPassword, adminUpdateInfo, adminUpdateState} from '@/api/user'
 import { Loading, Message } from 'element-ui'
 
 export default {
@@ -321,7 +321,7 @@ export default {
   },
   created() {
     this.pageLoading = true
-    pageUser(this.queryForm).then(response => {
+    adminPageUser(this.queryForm).then(response => {
       this.queryResult = response.data
       this.pageLoading = false
     })
@@ -339,7 +339,7 @@ export default {
       this.queryForm.page = 1
       this.pageLoading = true
       this.queryLoading = true
-      pageUser(this.queryForm).then(response => {
+      adminPageUser(this.queryForm).then(response => {
         this.queryResult = response.data
         this.pageLoading = false
         this.queryLoading = false
@@ -356,7 +356,7 @@ export default {
       }
       this.resetQueryForm()
       this.pageLoading = true
-      pageUser(this.queryForm).then(response => {
+      adminPageUser(this.queryForm).then(response => {
         this.queryResult = response.data
         this.pageLoading = false
       })
@@ -367,7 +367,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      exportExcel().then(async data => {
+      adminExportExcel().then(async data => {
         if (data) {
           const blob = new Blob([data.data])
           const url = URL.createObjectURL(blob)
@@ -399,12 +399,12 @@ export default {
             password: this.addForm.password,
             name: this.addForm.name
           }
-          addUser(data).then(response => {
+          adminAddUser(data).then(response => {
             if (this.queryResult.total % this.queryResult.size === 0) {
               this.queryForm.page++
             }
             this.pageLoading = true
-            pageUser(this.queryForm).then(response => {
+            adminPageUser(this.queryForm).then(response => {
               this.queryResult = response.data
               this.pageLoading = false
             })
@@ -439,9 +439,9 @@ export default {
               account: this.updateForm.account,
               name: this.updateForm.name
             }
-            updateInfo(data).then(response => {
+            adminUpdateInfo(data).then(response => {
               this.pageLoading = true
-              pageUser(this.queryForm).then(response => {
+              adminPageUser(this.queryForm).then(response => {
                 this.queryResult = response.data
                 this.pageLoading = false
               })
@@ -456,9 +456,9 @@ export default {
               id: this.updateForm.id,
               newPassword: this.updateForm.newPassword
             }
-            resetPassword(data).then(response => {
+            adminResetPassword(data).then(response => {
               this.pageLoading = true
-              pageUser(this.queryForm).then(response => {
+              adminPageUser(this.queryForm).then(response => {
                 this.queryResult = response.data
                 this.pageLoading = false
               })
@@ -479,9 +479,9 @@ export default {
       this.updateLoading = false
     },
     handleState(data) {
-      updateState(data).then(response => {
+      adminUpdateState(data).then(response => {
         this.pageLoading = true
-        pageUser(this.queryForm).then(response => {
+        adminPageUser(this.queryForm).then(response => {
           this.queryResult = response.data
           this.pageLoading = false
         })
@@ -494,12 +494,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUser(data.id).then(response => {
+        adminDeleteUser(data.id).then(response => {
           if (this.queryResult.total % this.queryResult.size === 1) {
             this.queryForm.page--
           }
           this.pageLoading = true
-          pageUser(this.queryForm).then(response => {
+          adminPageUser(this.queryForm).then(response => {
             this.queryResult = response.data
             this.pageLoading = false
           })
@@ -510,7 +510,7 @@ export default {
     handleSizeChange(val) {
       this.queryForm.size = val
       this.pageLoading = true
-      pageUser(this.queryForm).then(response => {
+      adminPageUser(this.queryForm).then(response => {
         this.queryResult = response.data
         this.pageLoading = false
       })
@@ -518,7 +518,7 @@ export default {
     handleCurrentChange(val) {
       this.queryForm.page = val
       this.pageLoading = true
-      pageUser(this.queryForm).then(response => {
+      adminPageUser(this.queryForm).then(response => {
         this.queryResult = response.data
         this.pageLoading = false
       })

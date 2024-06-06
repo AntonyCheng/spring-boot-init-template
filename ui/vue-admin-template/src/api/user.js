@@ -31,3 +31,58 @@ export function updateAvatar(data) {
     data
   })
 }
+
+export function adminPageUser(data) {
+  return request({
+    url: '/admin/user/page',
+    method: 'get',
+    params: data
+  })
+}
+
+export function adminAddUser(data) {
+  return request({
+    url: '/admin/user/add',
+    method: 'post',
+    data
+  })
+}
+
+export function adminDeleteUser(data) {
+  return request({
+    url: '/admin/user/delete/' + data,
+    method: 'delete'
+  })
+}
+
+export function adminUpdateInfo(data) {
+  return request({
+    url: '/admin/user/update/info',
+    method: 'put',
+    data
+  })
+}
+
+export function adminUpdateState(data) {
+  return request({
+    url: '/admin/user/update/state/' + data,
+    method: 'put'
+  })
+}
+
+export function adminResetPassword(data) {
+  return request({
+    url: '/admin/user/reset/password',
+    method: 'put',
+    data
+  })
+}
+
+export function adminExportExcel() {
+  return request({
+    url: '/admin/user/export',
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
+  })
+}

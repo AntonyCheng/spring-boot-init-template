@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.vo.admin;
+package top.sharehome.springbootinittemplate.model.vo.user;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminExportVo implements Serializable {
+public class AdminUserExportVo implements Serializable {
 
     /**
      * ID
