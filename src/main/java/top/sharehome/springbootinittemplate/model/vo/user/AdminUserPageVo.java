@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.vo.admin;
+package top.sharehome.springbootinittemplate.model.vo.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminPageUserVo {
+public class AdminUserPageVo {
 
     /**
      * 用户ID

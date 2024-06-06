@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.controller;
+package top.sharehome.springbootinittemplate.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;

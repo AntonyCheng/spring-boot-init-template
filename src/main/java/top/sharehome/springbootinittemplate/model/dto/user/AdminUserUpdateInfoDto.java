@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.dto.admin;
+package top.sharehome.springbootinittemplate.model.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUpdateInfoDto implements Serializable {
+public class AdminUserUpdateInfoDto implements Serializable {
 
     /**
      * ID
