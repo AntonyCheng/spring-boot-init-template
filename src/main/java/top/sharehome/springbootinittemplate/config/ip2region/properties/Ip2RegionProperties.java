@@ -14,11 +14,6 @@ import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.Lo
 public class Ip2RegionProperties {
 
     /**
-     * 是否开启离线IP库
-     */
-    private Boolean enable = false;
-
-    /**
      * 加载数据方式，默认为内存加载
      */
     private LoadType loadType = LoadType.MEMORY;

@@ -674,8 +674,6 @@ sa-token:
 
 # 离线IP库配置
 ip2region:
-  # todo 是否启用离线IP
-  enable: false
   # 数据加载方式
   load-type: memory
 

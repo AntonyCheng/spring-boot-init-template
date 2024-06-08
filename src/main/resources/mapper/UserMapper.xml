@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.sharehome.springbootinittemplate.mapper.UserMapper">
     <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.model.entity.User">
-        <!--@mbg.generated-->
-        <!--@Table init_db.t_user-->
         <id column="user_id" jdbcType="BIGINT" property="id"/>
         <result column="user_account" jdbcType="VARCHAR" property="account"/>
         <result column="user_password" jdbcType="VARCHAR" property="password"/>
@@ -16,7 +14,6 @@
         <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
     </resultMap>
     <sql id="Base_Column_List">
-        <!--@mbg.generated-->
         user_id,
         user_account,
         user_password,
