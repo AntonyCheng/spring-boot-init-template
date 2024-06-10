@@ -48,6 +48,11 @@ public class ControllerLogAop {
     private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token"};
 
     /**
+     * 记录日志操作用户ID
+     */
+    private static final ThreadLocal<Long> USER_ID_THREAD_LOCAL = new TransmittableThreadLocal<>();
+
+    /**
      * 计算日志操作访问耗时，TransmittableThreadLocal是Alibaba继承ThreadLocal的一个类，它适用于适用于复杂的线程池、异步任务等场景，由于该日志记录过程中可能会存在这些场景，所以能够保证线程本地变量的传递性。
      */
     private static final ThreadLocal<StopWatch> COST_TIME_THREAD_LOCAL = new TransmittableThreadLocal<>();
@@ -65,6 +70,11 @@ public class ControllerLogAop {
      */
     @Before("pointCutMethod()")
     public void doBefore() {
+        try {
+            USER_ID_THREAD_LOCAL.set(LoginUtils.getLoginUserId());
+        } catch (Exception e) {
+            USER_ID_THREAD_LOCAL.remove();
+        }
         StopWatch stopWatch = new StopWatch();
         COST_TIME_THREAD_LOCAL.set(stopWatch);
         stopWatch.start();
@@ -114,10 +124,12 @@ public class ControllerLogAop {
             resMap.put("data", dataMap);
             log.setJson(JSON.toJSONString(resMap));
             // 设置操作用户ID
+            Long userId = null;
             try {
-                log.setUserId(LoginUtils.getLoginUserId());
+                userId = LoginUtils.getLoginUserId();
             } catch (Exception ignored) {
             }
+            log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI和请求方法类型
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = servletRequestAttributes.getRequest();
@@ -137,6 +149,7 @@ public class ControllerLogAop {
             log.error("日志记录报错：{}", exception.getMessage());
             exception.printStackTrace();
         } finally {
+            USER_ID_THREAD_LOCAL.remove();
             COST_TIME_THREAD_LOCAL.remove();
         }
     }
@@ -188,10 +201,12 @@ public class ControllerLogAop {
                 log.setJson(e.getMessage());
             }
             // 设置操作用户ID
+            Long userId = null;
             try {
-                log.setUserId(LoginUtils.getLoginUserId());
+                userId = LoginUtils.getLoginUserId();
             } catch (Exception ignored) {
             }
+            log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI和请求方法类型
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = servletRequestAttributes.getRequest();
@@ -211,6 +226,7 @@ public class ControllerLogAop {
             log.error("日志记录报错：{}", exception.getMessage());
             exception.printStackTrace();
         } finally {
+            USER_ID_THREAD_LOCAL.remove();
             COST_TIME_THREAD_LOCAL.remove();
         }
     }
