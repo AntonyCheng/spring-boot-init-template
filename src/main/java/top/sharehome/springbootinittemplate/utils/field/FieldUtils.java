@@ -59,7 +59,7 @@ public class FieldUtils {
     public static boolean isAllNull(Object obj, String... exclude) {
         Class<?> aClass = obj.getClass();
         Field[] fields = aClass.getDeclaredFields();
-        List<String> excludeList = Arrays.stream(exclude).collect(Collectors.toList());
+        List<String> excludeList = Arrays.stream(exclude).toList();
         for (Field field : fields) {
             field.setAccessible(true);
             if (excludeList.contains(field.getName())) {
@@ -136,7 +136,7 @@ public class FieldUtils {
     public static boolean isAllEmpty(Object obj, String... exclude) {
         Class<?> aClass = obj.getClass();
         Field[] fields = aClass.getDeclaredFields();
-        List<String> excludeList = Arrays.stream(exclude).collect(Collectors.toList());
+        List<String> excludeList = Arrays.stream(exclude).toList();
         for (Field field : fields) {
             field.setAccessible(true);
             if (excludeList.contains(field.getName())) {
@@ -213,7 +213,7 @@ public class FieldUtils {
     public static boolean existNull(Object obj, String... exclude) {
         Class<?> aClass = obj.getClass();
         Field[] fields = aClass.getDeclaredFields();
-        List<String> excludeList = Arrays.stream(exclude).collect(Collectors.toList());
+        List<String> excludeList = Arrays.stream(exclude).toList();
         for (Field field : fields) {
             field.setAccessible(true);
             if (excludeList.contains(field.getName())) {
@@ -285,7 +285,7 @@ public class FieldUtils {
             if (fieldValue == null) {
                 return true;
             }
-            if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+            if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).isEmpty()) {
                 return true;
             }
             if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {
@@ -311,7 +311,7 @@ public class FieldUtils {
     public static boolean existEmpty(Object obj, String... exclude) {
         Class<?> aClass = obj.getClass();
         Field[] fields = aClass.getDeclaredFields();
-        List<String> excludeList = Arrays.stream(exclude).collect(Collectors.toList());
+        List<String> excludeList = Arrays.stream(exclude).toList();
         for (Field field : fields) {
             field.setAccessible(true);
             if (excludeList.contains(field.getName())) {
@@ -332,7 +332,7 @@ public class FieldUtils {
             if (fieldValue == null) {
                 return true;
             }
-            if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+            if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).isEmpty()) {
                 return true;
             }
             if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {

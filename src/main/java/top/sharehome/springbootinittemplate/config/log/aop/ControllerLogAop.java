@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.config.log.aop;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,8 @@ import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -190,7 +193,8 @@ public class ControllerLogAop {
             // 设置操作结果
             log.setResult(1);
             // 设置响应内容
-            Map throwableMap = JSON.parseObject(JSON.toJSONString(e), Map.class);
+            String jsonString = JSON.toJSONString(e, JSONWriter.Feature.ReferenceDetection);
+            Map throwableMap = JSON.parseObject(jsonString, Map.class);
             Object returnCodeString = throwableMap.get("returnCode");
             if (Objects.nonNull(returnCodeString)) {
                 HashMap jsonMap = new HashMap<>();
@@ -237,7 +241,7 @@ public class ControllerLogAop {
      * @param o 校验过滤对象
      */
     @SuppressWarnings("rawtypes")
-    public boolean isFilterObject(Object o) {
+    private boolean isFilterObject(Object o) {
         Class<?> clazz = o.getClass();
         if (clazz.isArray()) {
             return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
@@ -250,6 +254,22 @@ public class ControllerLogAop {
             Map map = (Map) o;
             for (Object value : map.values()) {
                 return value instanceof MultipartFile;
+            }
+        } else {
+            for (Field declaredField : clazz.getDeclaredFields()) {
+                try {
+                    int modifiers = declaredField.getModifiers();
+                    // 如果是静态属性或者final属性则不进行判断
+                    if (Modifier.isStatic(modifiers)
+                            || Modifier.isFinal(modifiers)) {
+                        continue;
+                    }
+                    declaredField.setAccessible(true);
+                    Object obj = declaredField.get(o);
+                    return obj instanceof MultipartFile;
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse || o instanceof BindingResult;

@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.controller.user;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaMode;
+import jakarta.annotation.Resource;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,8 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
+import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
+import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateAccountDto;
 import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateAvatarDto;
@@ -23,7 +26,6 @@ import top.sharehome.springbootinittemplate.model.dto.user.UserUpdatePasswordDto
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +66,7 @@ public class UserController {
      * @return 返回更新结果
      */
     @PutMapping("/update/account")
+    @ControllerLog(description = "用户更新自身账号", operator = OperatorEnum.UPDATE)
     public R<String> updateAccount(@RequestBody @Validated(PutGroup.class) UserUpdateAccountDto userUpdateAccountDto) {
         if (StringUtils.equals(LoginUtils.getLoginUserAccount(), userUpdateAccountDto.getNewAccount())) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "不能和当前帐号重复");
@@ -79,6 +82,7 @@ public class UserController {
      * @return 返回更新结果
      */
     @PutMapping("/update/name")
+    @ControllerLog(description = "用户更新自身名称", operator = OperatorEnum.UPDATE)
     public R<String> updateName(@RequestBody @Validated(PutGroup.class) UserUpdateNameDto userUpdateNameDto) {
         if (StringUtils.equals(LoginUtils.getLoginUser().getName(), userUpdateNameDto.getNewName())) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "不能和当前名称重复");
@@ -94,6 +98,7 @@ public class UserController {
      * @return 返回更新结果
      */
     @PutMapping("/update/password")
+    @ControllerLog(description = "用户更新自身密码", operator = OperatorEnum.UPDATE)
     public R<String> updatePassword(@RequestBody @Validated({PutGroup.class}) UserUpdatePasswordDto userUpdatePasswordDto) {
         if (!StringUtils.equals(userUpdatePasswordDto.getNewPassword(), userUpdatePasswordDto.getCheckNewPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
@@ -112,6 +117,7 @@ public class UserController {
      * @return 返回更新结果
      */
     @PutMapping("/update/avatar")
+    @ControllerLog(description = "用户更新自身头像", operator = OperatorEnum.UPDATE)
     public R<String> updateAvatar(@Validated({PutGroup.class}) UserUpdateAvatarDto userUpdateAvatarDto) {
         MultipartFile file = userUpdateAvatarDto.getFile();
         if (file.getSize() == 0 || file.getSize() > AVATAR_MAX_SIZE) {

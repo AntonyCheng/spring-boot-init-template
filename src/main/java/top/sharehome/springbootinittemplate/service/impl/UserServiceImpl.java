@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,10 @@ import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 用户服务实现类
@@ -77,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             adminUserPageVo.setState(user.getState());
             adminUserPageVo.setCreateTime(user.getCreateTime());
             return adminUserPageVo;
-        }).collect(Collectors.toList());
+        }).toList();
         BeanUtils.copyProperties(page, res, "records");
         res.setRecords(newRecords);
 
@@ -224,7 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             adminUserExportVo.setCreateTime(user.getCreateTime());
             adminUserExportVo.setUpdateTime(user.getUpdateTime());
             return adminUserExportVo;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Override

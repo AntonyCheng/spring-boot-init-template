@@ -5,6 +5,8 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.deepoove.poi.XWPFTemplate;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -23,14 +25,11 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelEx
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.imageio.ImageIO;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 /**
@@ -683,11 +682,11 @@ public class WordUtils {
                     TableMap tableMap = new TableMap();
                     int numberOfRows = table.getNumberOfRows();
                     for (int i = 0; i < numberOfRows; i++) {
-                        List<String> cellList = table.getRow(i).getTableCells().stream().map(XWPFTableCell::getText).collect(Collectors.toList());
+                        List<String> cellList = table.getRow(i).getTableCells().stream().map(XWPFTableCell::getText).toList();
                         tableMap.put(cellList);
                     }
                     return tableMap;
-                }).collect(Collectors.toList());
+                }).toList();
                 HashMap<Integer, TableMap> res = new HashMap<>();
                 for (int i = 0; i < tableMaps.size(); i++) {
                     res.put(i, tableMaps.get(i));
@@ -710,7 +709,7 @@ public class WordUtils {
                         .stream()
                         .map(paragraph -> paragraph.getText().getBytes())
                         .filter(ObjectUtils::isNotEmpty)
-                        .collect(Collectors.toList());
+                        .toList();
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
@@ -727,7 +726,7 @@ public class WordUtils {
                 return doc.getAllPictures()
                         .stream()
                         .map(XWPFPictureData::getData)
-                        .collect(Collectors.toList());
+                        .toList();
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
@@ -747,13 +746,13 @@ public class WordUtils {
                     List<List<String>> tableList = new ArrayList<>();
                     int numberOfRows = table.getNumberOfRows();
                     for (int i = 0; i < numberOfRows; i++) {
-                        List<String> cellList = table.getRow(i).getTableCells().stream().map(XWPFTableCell::getText).collect(Collectors.toList());
+                        List<String> cellList = table.getRow(i).getTableCells().stream().map(XWPFTableCell::getText).toList();
                         tableList.add(cellList);
                     }
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     EasyExcel.write(byteArrayOutputStream).excelType(Objects.isNull(excelType) ? ExcelTypeEnum.XLSX : excelType).sheet().doWrite(tableList);
                     return byteArrayOutputStream.toByteArray();
-                }).collect(Collectors.toList());
+                }).toList();
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR);
             }
