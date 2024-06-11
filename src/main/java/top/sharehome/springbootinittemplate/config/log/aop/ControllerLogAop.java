@@ -1,7 +1,6 @@
 package top.sharehome.springbootinittemplate.config.log.aop;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
+import top.sharehome.springbootinittemplate.exception.CustomizeException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
@@ -193,17 +193,21 @@ public class ControllerLogAop {
             // 设置操作结果
             log.setResult(1);
             // 设置响应内容
-            String jsonString = JSON.toJSONString(e, JSONWriter.Feature.ReferenceDetection);
-            Map throwableMap = JSON.parseObject(jsonString, Map.class);
-            Object returnCodeString = throwableMap.get("returnCode");
-            if (Objects.nonNull(returnCodeString)) {
-                HashMap jsonMap = new HashMap<>();
-                jsonMap.put("name", throwableMap.get("returnCode"));
-                jsonMap.put("msg", throwableMap.get("msg"));
-                log.setJson(JSON.toJSONString(jsonMap));
+            HashMap jsonMap = new HashMap<>();
+            if (e instanceof CustomizeException customizeException) {
+                jsonMap.put("code", customizeException.getReturnCode().getCode());
+                jsonMap.put("name", customizeException.getReturnCode().name());
+                jsonMap.put("msg", customizeException.getMsg());
             } else {
-                log.setJson(e.getMessage());
+                StackTraceElement[] stackTrace = e.getStackTrace();
+                if (stackTrace.length != 0) {
+                    jsonMap.put("class",stackTrace[0].getClassName());
+                    jsonMap.put("method",stackTrace[0].getMethodName());
+                    jsonMap.put("line",stackTrace[0].getLineNumber());
+                    jsonMap.put("exception",e.toString());
+                }
             }
+            log.setJson(JSON.toJSONString(jsonMap));
             // 设置操作用户ID
             Long userId = null;
             try {
