@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -107,7 +108,7 @@ public class ControllerLogAop {
                     stringJoiner.add(JSON.toJSONString(map));
                 }
             }
-            log.setParam(stringJoiner.toString());
+            log.setParam(StringUtils.isBlank(stringJoiner.toString()) ? "{}" : stringJoiner.toString());
             // 设置操作方法名称
             String clazz = joinPoint.getTarget().getClass().getName();
             String method = joinPoint.getSignature().getName();
@@ -125,7 +126,11 @@ public class ControllerLogAop {
                 Arrays.stream(MASK_PARAMS).forEach(dataMap::remove);
             }
             resMap.put("data", dataMap);
-            log.setJson(JSON.toJSONString(resMap));
+            String json = JSON.toJSONString(resMap);
+            if (json.length() > 2000 && json.charAt(2000) != '}') {
+                json = json.substring(0, 2000) + "...}";
+            }
+            log.setJson(json);
             // 设置操作用户ID
             Long userId = null;
             try {
@@ -149,7 +154,7 @@ public class ControllerLogAop {
             // 插入数据库
             LOG_MAPPER.insert(log);
         } catch (Exception exception) {
-            log.error("日志记录报错：{}", exception.getMessage());
+            log.error("记录正常日志记录报错：{}", exception.getMessage());
             exception.printStackTrace();
         } finally {
             USER_ID_THREAD_LOCAL.remove();
@@ -177,11 +182,12 @@ public class ControllerLogAop {
                     Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
                     if (MapUtils.isNotEmpty(map)) {
                         Arrays.stream(MASK_PARAMS).forEach(map::remove);
+                        Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
                     }
                     stringJoiner.add(JSON.toJSONString(map));
                 }
             }
-            log.setParam(stringJoiner.toString());
+            log.setParam(StringUtils.isBlank(stringJoiner.toString()) ? "{}" : stringJoiner.toString());
             // 设置操作方法名称
             String clazz = joinPoint.getTarget().getClass().getName();
             String method = joinPoint.getSignature().getName();
@@ -201,13 +207,17 @@ public class ControllerLogAop {
             } else {
                 StackTraceElement[] stackTrace = e.getStackTrace();
                 if (stackTrace.length != 0) {
-                    jsonMap.put("class",stackTrace[0].getClassName());
-                    jsonMap.put("method",stackTrace[0].getMethodName());
-                    jsonMap.put("line",stackTrace[0].getLineNumber());
-                    jsonMap.put("exception",e.toString());
+                    jsonMap.put("class", stackTrace[0].getClassName());
+                    jsonMap.put("method", stackTrace[0].getMethodName());
+                    jsonMap.put("line", stackTrace[0].getLineNumber());
+                    jsonMap.put("exception", e.toString());
                 }
             }
-            log.setJson(JSON.toJSONString(jsonMap));
+            String json = JSON.toJSONString(jsonMap);
+            if (json.length() > 2000 && json.charAt(2000) != '}') {
+                json = json.substring(0, 2000) + "...}";
+            }
+            log.setJson(json);
             // 设置操作用户ID
             Long userId = null;
             try {
@@ -231,7 +241,7 @@ public class ControllerLogAop {
             // 插入数据库
             LOG_MAPPER.insert(log);
         } catch (Exception exception) {
-            log.error("日志记录报错：{}", exception.getMessage());
+            log.error("记录异常日志记录报错：{}", exception.getMessage());
             exception.printStackTrace();
         } finally {
             USER_ID_THREAD_LOCAL.remove();
