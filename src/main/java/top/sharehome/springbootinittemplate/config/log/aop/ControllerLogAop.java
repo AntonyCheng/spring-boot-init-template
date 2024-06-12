@@ -11,6 +11,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -89,26 +90,13 @@ public class ControllerLogAop {
      *
      * @param joinPoint     切点
      * @param controllerLog 注解
-     * @param returnResult  响应
+     * @param returnResult  响应结果
      */
     @AfterReturning(value = "pointCutMethod()&&@annotation(controllerLog)", returning = "returnResult")
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void doAfterReturning(JoinPoint joinPoint, ControllerLog controllerLog, R returnResult) {
+    public void doAfterReturning(JoinPoint joinPoint, ControllerLog controllerLog, Object returnResult) {
         try {
             Log log = new Log();
-            // 设置操作参数
-            StringJoiner stringJoiner = new StringJoiner(",");
-            Object[] args = joinPoint.getArgs();
-            for (Object arg : args) {
-                if (Objects.nonNull(arg) && !isFilterObject(arg)) {
-                    Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
-                    if (MapUtils.isNotEmpty(map)) {
-                        Arrays.stream(MASK_PARAMS).forEach(map::remove);
-                    }
-                    stringJoiner.add(JSON.toJSONString(map));
-                }
-            }
-            log.setParam(StringUtils.isBlank(stringJoiner.toString()) ? "{}" : stringJoiner.toString());
             // 设置操作方法名称
             String clazz = joinPoint.getTarget().getClass().getName();
             String method = joinPoint.getSignature().getName();
@@ -118,19 +106,24 @@ public class ControllerLogAop {
             // 设置操作类型
             log.setOperator(controllerLog.operator().getOperatorValue());
             // 设置操作结果
-            log.setResult(returnResult.getCode() == 200 ? 0 : 1);
+            log.setResult(Objects.isNull(returnResult) || ((R) returnResult).getCode() == 200 ? 0 : 1);
             // 设置响应内容
             Map resMap = JSON.parseObject(JSON.toJSONString(returnResult), Map.class);
-            Map dataMap = (Map) resMap.get("data");
-            if (Objects.nonNull(dataMap)) {
-                Arrays.stream(MASK_PARAMS).forEach(dataMap::remove);
+            if (Objects.isNull(resMap)) {
+                log.setJson("{}");
+            } else {
+                Map dataMap = (Map) resMap.get("data");
+                if (Objects.nonNull(dataMap)) {
+                    Arrays.stream(MASK_PARAMS).forEach(dataMap::remove);
+                    Arrays.stream(controllerLog.maskParams()).forEach(dataMap::remove);
+                }
+                resMap.put("data", dataMap);
+                String json = JSON.toJSONString(resMap);
+                if (json.length() > 2000 && json.charAt(2000) != '}') {
+                    json = StringUtils.substring(json, 0, 2000) + "...}";
+                }
+                log.setJson(json);
             }
-            resMap.put("data", dataMap);
-            String json = JSON.toJSONString(resMap);
-            if (json.length() > 2000 && json.charAt(2000) != '}') {
-                json = json.substring(0, 2000) + "...}";
-            }
-            log.setJson(json);
             // 设置操作用户ID
             Long userId = null;
             try {
@@ -138,13 +131,46 @@ public class ControllerLogAop {
             } catch (Exception ignored) {
             }
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
-            // 设置接口URI和请求方法类型
+            // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = servletRequestAttributes.getRequest();
             log.setUri(request.getRequestURI());
-            log.setRequestMethod(request.getMethod());
-            // 设置操作用户的IP和地址
+            // 请求方法类型
+            String requestMethod = request.getMethod();
+            log.setRequestMethod(requestMethod);
+            // 设置操作参数
+            Map<String, String[]> parameter = Collections.unmodifiableMap(request.getParameterMap());
+            Map<String, String> parameterMap = new HashMap<>();
+            for (Map.Entry<String, String[]> entry : parameter.entrySet()) {
+                parameterMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
+            }
+            String param = null;
+            if (MapUtils.isEmpty(parameterMap) && (HttpMethod.POST.name().equals(requestMethod) || HttpMethod.PUT.name().equals(requestMethod))) {
+                StringJoiner stringJoiner = new StringJoiner(",");
+                Object[] args = joinPoint.getArgs();
+                for (Object arg : args) {
+                    if (Objects.nonNull(arg) && !isFilterObject(arg)) {
+                        Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
+                        if (MapUtils.isNotEmpty(map)) {
+                            Arrays.stream(MASK_PARAMS).forEach(map::remove);
+                            Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
+                        }
+                        stringJoiner.add(JSON.toJSONString(map));
+                    }
+                }
+                param = stringJoiner.toString();
+            } else {
+                Arrays.stream(MASK_PARAMS).forEach(parameterMap::remove);
+                Arrays.stream(controllerLog.maskParams()).forEach(parameterMap::remove);
+                param = JSON.toJSONString(parameterMap);
+            }
+            if (param.length() > 2000 && param.charAt(2000) != '}') {
+                param = StringUtils.substring(param, 0, 2000) + "...}";
+            }
+            log.setParam(StringUtils.isBlank(param) ? "{}" : param);
+            // 设置操作用户IP
             log.setIp(NetUtils.getIpAddressByRequest(request));
+            // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时
             StopWatch stopWatch = COST_TIME_THREAD_LOCAL.get();
@@ -174,20 +200,6 @@ public class ControllerLogAop {
     public void doAfterThrowing(JoinPoint joinPoint, ControllerLog controllerLog, final Throwable e) {
         try {
             Log log = new Log();
-            // 设置操作参数
-            StringJoiner stringJoiner = new StringJoiner(",");
-            Object[] args = joinPoint.getArgs();
-            for (Object arg : args) {
-                if (Objects.nonNull(arg) && !isFilterObject(arg)) {
-                    Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
-                    if (MapUtils.isNotEmpty(map)) {
-                        Arrays.stream(MASK_PARAMS).forEach(map::remove);
-                        Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
-                    }
-                    stringJoiner.add(JSON.toJSONString(map));
-                }
-            }
-            log.setParam(StringUtils.isBlank(stringJoiner.toString()) ? "{}" : stringJoiner.toString());
             // 设置操作方法名称
             String clazz = joinPoint.getTarget().getClass().getName();
             String method = joinPoint.getSignature().getName();
@@ -225,13 +237,46 @@ public class ControllerLogAop {
             } catch (Exception ignored) {
             }
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
-            // 设置接口URI和请求方法类型
+            // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = servletRequestAttributes.getRequest();
             log.setUri(request.getRequestURI());
-            log.setRequestMethod(request.getMethod());
-            // 设置操作用户的IP和地址
+            // 请求方法类型
+            String requestMethod = request.getMethod();
+            log.setRequestMethod(requestMethod);
+            // 设置操作参数
+            Map<String, String[]> parameter = Collections.unmodifiableMap(request.getParameterMap());
+            Map<String, String> parameterMap = new HashMap<>();
+            for (Map.Entry<String, String[]> entry : parameter.entrySet()) {
+                parameterMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
+            }
+            String param = null;
+            if (MapUtils.isEmpty(parameterMap) && (HttpMethod.POST.name().equals(requestMethod) || HttpMethod.PUT.name().equals(requestMethod))) {
+                StringJoiner stringJoiner = new StringJoiner(",");
+                Object[] args = joinPoint.getArgs();
+                for (Object arg : args) {
+                    if (Objects.nonNull(arg) && !isFilterObject(arg)) {
+                        Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
+                        if (MapUtils.isNotEmpty(map)) {
+                            Arrays.stream(MASK_PARAMS).forEach(map::remove);
+                            Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
+                        }
+                        stringJoiner.add(JSON.toJSONString(map));
+                    }
+                }
+                param = stringJoiner.toString();
+            } else {
+                Arrays.stream(MASK_PARAMS).forEach(parameterMap::remove);
+                Arrays.stream(controllerLog.maskParams()).forEach(parameterMap::remove);
+                param = JSON.toJSONString(parameterMap);
+            }
+            if (param.length() > 2000 && param.charAt(2000) != '}') {
+                param = StringUtils.substring(param, 0, 2000) + "...}";
+            }
+            log.setParam(StringUtils.isBlank(param) ? "{}" : param);
+            // 设置操作用户IP
             log.setIp(NetUtils.getIpAddressByRequest(request));
+            // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时
             StopWatch stopWatch = COST_TIME_THREAD_LOCAL.get();

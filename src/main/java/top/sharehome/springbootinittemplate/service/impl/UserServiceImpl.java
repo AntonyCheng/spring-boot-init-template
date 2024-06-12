@@ -16,11 +16,13 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
+import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.user.AdminUserAddDto;
 import top.sharehome.springbootinittemplate.model.dto.user.AdminUserPageDto;
 import top.sharehome.springbootinittemplate.model.dto.user.AdminUserResetPasswordDto;
 import top.sharehome.springbootinittemplate.model.dto.user.AdminUserUpdateInfoDto;
+import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
@@ -45,6 +47,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private LogMapper logMapper;
 
     @Override
     @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
@@ -115,8 +120,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CustomizeReturnException(ReturnCode.ABNORMAL_USER_OPERATION, "无法对管理员进行操作");
         }
         // 删除用户信息
-        int deleteResult = userMapper.deleteById(id);
-        if (deleteResult == 0) {
+        int userDeleteResult = userMapper.deleteById(id);
+        // 删除该用户在平台中的操作日志记录
+        LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        logLambdaQueryWrapper.eq(Log::getUserId, id);
+        int logDeleteResult = logMapper.delete(logLambdaQueryWrapper);
+        if (userDeleteResult == 0 || logDeleteResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
         LoginUtils.logout(id);
