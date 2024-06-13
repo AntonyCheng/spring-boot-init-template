@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -27,6 +29,7 @@ public class UserUpdateAvatarDto implements Serializable {
     @NotNull(message = "文件不能为空", groups = {PutGroup.class})
     private MultipartFile file;
 
+    @Serial
     private static final long serialVersionUID = 6802990543785064888L;
 
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -66,6 +67,7 @@ public class AdminUserExportVo implements Serializable {
     @ExcelProperty(value = "更新时间")
     private LocalDateTime updateTime;
 
+    @Serial
     private static final long serialVersionUID = -8051043139343116641L;
 
 }

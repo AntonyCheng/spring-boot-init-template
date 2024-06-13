@@ -10,6 +10,8 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
@@ -47,6 +49,7 @@ public class AdminUserAddDto implements Serializable {
     @NotBlank(message = "名称不能为空", groups = {PutGroup.class})
     private String name;
 
+    @Serial
     private static final long serialVersionUID = 3927650956290675182L;
 
 }

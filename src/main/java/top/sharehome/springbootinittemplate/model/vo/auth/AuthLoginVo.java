@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -43,6 +44,7 @@ public class AuthLoginVo implements Serializable {
      */
     private String role;
 
+    @Serial
     private static final long serialVersionUID = 3559885844441381994L;
 
 }

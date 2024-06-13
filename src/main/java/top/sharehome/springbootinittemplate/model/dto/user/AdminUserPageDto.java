@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -38,6 +39,7 @@ public class AdminUserPageDto implements Serializable {
      */
     private Integer state;
 
+    @Serial
     private static final long serialVersionUID = -6011180811019851334L;
 
 }

@@ -10,6 +10,8 @@ import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
@@ -51,6 +53,7 @@ public class AuthRegisterDto implements Serializable {
      */
     private Captcha captcha;
 
+    @Serial
     private static final long serialVersionUID = -535414393059407250L;
 
 }

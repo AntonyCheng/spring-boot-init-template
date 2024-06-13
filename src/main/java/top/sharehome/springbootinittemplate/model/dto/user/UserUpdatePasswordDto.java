@@ -8,6 +8,8 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,8 +22,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class UserUpdatePasswordDto implements Serializable {
-
-    private static final long serialVersionUID = -2873349826470166944L;
 
     /**
      * 旧密码
@@ -41,5 +41,8 @@ public class UserUpdatePasswordDto implements Serializable {
      */
     @NotBlank(message = "二次新密码不能为空", groups = {PutGroup.class})
     private String checkNewPassword;
+
+    @Serial
+    private static final long serialVersionUID = -2873349826470166944L;
 
 }

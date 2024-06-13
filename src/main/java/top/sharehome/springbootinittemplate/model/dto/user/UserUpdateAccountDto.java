@@ -9,6 +9,8 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
@@ -32,6 +34,7 @@ public class UserUpdateAccountDto implements Serializable {
     @Pattern(regexp = REGEX_NUMBER_AND_LETTER, message = "账户名称包含特殊字符", groups = {PutGroup.class})
     private String newAccount;
 
+    @Serial
     private static final long serialVersionUID = -2873349826470166944L;
 
 }

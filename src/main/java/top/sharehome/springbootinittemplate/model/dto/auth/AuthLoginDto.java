@@ -8,6 +8,8 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -38,6 +40,7 @@ public class AuthLoginDto implements Serializable {
      */
     private Captcha captcha;
 
+    @Serial
     private static final long serialVersionUID = -2121896284587465661L;
 
 }

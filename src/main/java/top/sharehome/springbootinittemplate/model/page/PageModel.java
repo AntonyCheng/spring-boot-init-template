@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -66,6 +67,7 @@ public class PageModel implements Serializable {
         return new Page<T>(page, size);
     }
 
+    @Serial
     private static final long serialVersionUID = -7445813604888145436L;
 
 }

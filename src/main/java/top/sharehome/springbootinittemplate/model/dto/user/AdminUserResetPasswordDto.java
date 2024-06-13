@@ -8,6 +8,8 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -33,6 +35,7 @@ public class AdminUserResetPasswordDto implements Serializable {
     @NotBlank(message = "新密码密码不能为空", groups = {PutGroup.class})
     private String newPassword;
 
+    @Serial
     private static final long serialVersionUID = 1519776431197537670L;
 
 }

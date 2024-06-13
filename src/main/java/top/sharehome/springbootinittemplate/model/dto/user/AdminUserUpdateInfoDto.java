@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
@@ -46,6 +48,7 @@ public class AdminUserUpdateInfoDto implements Serializable {
     @NotBlank(message = "名称不能为空", groups = {PutGroup.class})
     private String name;
 
+    @Serial
     private static final long serialVersionUID = -286594763281759462L;
 
 }

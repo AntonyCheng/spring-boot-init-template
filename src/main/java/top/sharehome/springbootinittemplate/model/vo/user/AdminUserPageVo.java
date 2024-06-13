@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserPageVo {
+public class AdminUserPageVo implements Serializable {
 
     /**
      * 用户ID
@@ -52,5 +54,8 @@ public class AdminUserPageVo {
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    @Serial
+    private static final long serialVersionUID = 8592635184824125033L;
 
 }
