@@ -11,7 +11,7 @@ export function adminPageLog(data) {
 export function adminClearLog() {
   return request({
     url: '/admin/log/clear',
-    method: 'get'
+    method: 'delete'
   })
 }
 

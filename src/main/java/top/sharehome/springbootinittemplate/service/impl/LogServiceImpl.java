@@ -65,8 +65,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
                 logLambdaQueryWrapper.in(Log::getUserId, userIdList);
             }
         }
-        // 构造查询排序（默认按照创建时间升序排序）
-        logLambdaQueryWrapper.orderByAsc(Log::getCreateTime);
+        // 构造查询排序（默认按照创建时间降序排序）
+        logLambdaQueryWrapper.orderByDesc(Log::getCreateTime);
 
         // 分页查询
         logMapper.selectPage(page, logLambdaQueryWrapper);
