@@ -121,13 +121,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 删除用户信息
         int userDeleteResult = userMapper.deleteById(id);
+        if (userDeleteResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
         // 删除该用户在平台中的操作日志记录
         LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
         logLambdaQueryWrapper.eq(Log::getUserId, id);
-        int logDeleteResult = logMapper.delete(logLambdaQueryWrapper);
-        if (userDeleteResult == 0 || logDeleteResult == 0) {
-            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
-        }
+        logMapper.delete(logLambdaQueryWrapper);
         LoginUtils.logout(id);
         // 如果业务上有需求在删除用户之后删除用户头像...
         //MinioUtils.delete(userInDatabase.getAvatar());

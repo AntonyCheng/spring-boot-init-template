@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
@@ -16,6 +18,7 @@ import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;
 
@@ -95,10 +98,43 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     @Override
     @Transactional(rollbackFor = CustomizeTransactionException.class)
+    public void adminDeleteLog(Long id) {
+        int deleteResult = logMapper.deleteById(id);
+        if (deleteResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public void adminClearLog() {
         LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
         logLambdaQueryWrapper.isNotNull(Log::getId);
         logMapper.delete(logLambdaQueryWrapper);
+    }
+
+    @Override
+    public List<AdminLogExportVo> adminExportExcelList() {
+        List<Log> logsInDatabase = logMapper.selectList(null);
+        return logsInDatabase.stream().map(log -> {
+            AdminLogExportVo adminLogExportVo = new AdminLogExportVo();
+            adminLogExportVo.setId(log.getId());
+            adminLogExportVo.setUri(log.getUri());
+            adminLogExportVo.setDescription(log.getDescription());
+            adminLogExportVo.setOperator(OperatorEnum.getLabelByValue(log.getOperator()));
+            adminLogExportVo.setRequestMethod(log.getRequestMethod());
+            adminLogExportVo.setMethod(log.getMethod());
+            adminLogExportVo.setUserAccount(userMapper.selectById(log.getUserId()).getAccount());
+            adminLogExportVo.setIp(log.getIp());
+            adminLogExportVo.setLocation(log.getLocation());
+            adminLogExportVo.setParam(log.getParam());
+            adminLogExportVo.setResult(log.getResult() == 0 ? "正常" : "异常");
+            adminLogExportVo.setJson(log.getJson());
+            adminLogExportVo.setTime(log.getTime());
+            adminLogExportVo.setCreateTime(log.getCreateTime());
+            adminLogExportVo.setUpdateTime(log.getUpdateTime());
+            return adminLogExportVo;
+        }).toList();
     }
 
 }
