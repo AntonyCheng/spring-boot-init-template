@@ -478,7 +478,10 @@ export default {
       this.resetUpdateForm()
       this.updateLoading = false
     },
-    handleState(data) {
+    handleState(id) {
+      const data = {
+        id: id
+      }
       adminUpdateState(data).then(response => {
         this.pageLoading = true
         adminPageUser(this.queryForm).then(response => {

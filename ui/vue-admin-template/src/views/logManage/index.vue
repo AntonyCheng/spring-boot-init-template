@@ -115,10 +115,12 @@
         <el-table-column
           prop="operator"
           label="类型"
+          align="center"
         />
         <el-table-column
           prop="requestMethod"
           label="请求方法"
+          align="center"
         />
         <el-table-column
           prop="method"
@@ -139,10 +141,16 @@
         <el-table-column
           prop="param"
           label="参数"
-        />
+          width="180"
+        >
+          <template v-slot="scope">
+            <el-input type="textarea" :rows="6" resize="none" disabled style="font-size: smaller" :value="JSON.stringify(JSON.parse(scope.row.param), null, '  ')" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="result"
           label="结果"
+          align="center"
         >
           <template v-slot="scope">
             <el-button type="primary" size="mini">
@@ -153,10 +161,25 @@
         <el-table-column
           prop="json"
           label="响应内容"
-        />
+          align="center"
+        >
+          <template v-slot="scope">
+            <el-popover
+              placement="bottom"
+              width="500"
+              trigger="click"
+            >
+              <el-button v-if="scope.row.result === 0" slot="reference" type="success" size="mini">查看内容</el-button>
+              <el-button v-else slot="reference" type="danger" size="mini">查看内容</el-button>
+              <!--              <el-input type="textarea" :rows="10" :value="JSON.stringify(JSON.parse(scope.row.json), null, '\t')" />-->
+              <el-input type="textarea" :rows="10" :value="scope.row.json" />
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="time"
           label="耗时（ms）"
+          align="center"
         />
         <el-table-column
           prop="createTime"

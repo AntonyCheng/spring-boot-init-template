@@ -18,10 +18,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserAddDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserPageDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserResetPasswordDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserUpdateInfoDto;
+import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
@@ -169,7 +166,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = CustomizeTransactionException.class)
-    public void adminUpdateState(Long id) {
+    public void adminUpdateState(AdminUserUpdateStateDto adminUserUpdateStateDto) {
+        Long id = adminUserUpdateStateDto.getId();
         User userInDatabase = userMapper.selectById(id);
         // 无法对非存在或管理员账号进行操作
         if (Objects.isNull(userInDatabase)) {
@@ -265,7 +263,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
         LoginUtils.syncLoginUser();
-        System.out.println(LoginUtils.getLoginUser());
     }
 
     @Override

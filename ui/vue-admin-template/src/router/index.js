@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'manage',
         name: 'LogManage',
         component: () => import('@/views/logManage/index'),
-        meta: { title: '日志管理', icon: 'table' }
+        meta: { title: '日志管理', icon: 'el-icon-s-help' }
       }
     ],
     role: ['admin']
