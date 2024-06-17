@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
- * 管理员控制器
+ * 管理员管理用户控制器
  *
  * @author AntonyCheng
  */
