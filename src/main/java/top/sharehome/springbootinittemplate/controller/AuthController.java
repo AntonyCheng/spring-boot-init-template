@@ -71,6 +71,7 @@ public class AuthController {
      * @return 返回登录用户信息结果
      */
     @GetMapping("/info")
+    @ControllerLog(description = "用户获取个人信息", operator = OperatorEnum.QUERY)
     public R<AuthLoginVo> info() {
         LoginUtils.syncLoginUser();
         return R.ok(LoginUtils.getLoginUser());
@@ -82,6 +83,7 @@ public class AuthController {
      * @return 返回退出结果
      */
     @DeleteMapping("/logout")
+    @ControllerLog(description = "用户退出", operator = OperatorEnum.OTHER)
     public R<String> logout() {
         LoginUtils.logout();
         return R.ok("退出成功");
