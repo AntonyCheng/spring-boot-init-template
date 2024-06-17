@@ -19,8 +19,7 @@ public class CaptchaCondition implements Condition {
         boolean redissonResult = StringUtils.equals(Boolean.TRUE.toString(), redissonSingleProperty)
                 || StringUtils.equals(Boolean.TRUE.toString(), redissonClusterProperty);
         String captchaProperty = context.getEnvironment().getProperty("captcha.enable");
-        String ip2regionProperty = context.getEnvironment().getProperty("ip2region.enable");
-        return StringUtils.equals(Boolean.TRUE.toString(), captchaProperty) && redissonResult && StringUtils.equals(Boolean.TRUE.toString(), ip2regionProperty);
+        return StringUtils.equals(Boolean.TRUE.toString(), captchaProperty) && redissonResult;
     }
 
 }

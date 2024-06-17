@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.sharehome.springbootinittemplate.mapper.LogMapper">
+    <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.model.entity.Log">
+        <id column="log_id" jdbcType="BIGINT" property="id"/>
+        <result column="log_uri" jdbcType="VARCHAR" property="uri"/>
+        <result column="log_description" jdbcType="VARCHAR" property="description"/>
+        <result column="log_operator" jdbcType="INTEGER" property="operator"/>
+        <result column="log_request_method" jdbcType="VARCHAR" property="requestMethod"/>
+        <result column="log_method" jdbcType="VARCHAR" property="method"/>
+        <result column="log_user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="log_ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="log_location" jdbcType="VARCHAR" property="location"/>
+        <result column="log_param" jdbcType="VARCHAR" property="param"/>
+        <result column="log_result" jdbcType="INTEGER" property="result"/>
+        <result column="log_json" jdbcType="VARCHAR" property="json"/>
+        <result column="log_time" jdbcType="BIGINT" property="time"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        log_id,
+        log_uri,
+        log_description,
+        log_operator,
+        log_request_method,
+        log_method,
+        log_user_id,
+        log_ip,
+        log_location,
+        log_param,
+        log_result,
+        log_json,
+        log_time,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+</mapper>

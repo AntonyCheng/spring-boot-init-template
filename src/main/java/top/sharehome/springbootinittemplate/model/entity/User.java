@@ -84,22 +84,4 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -5943787044496569074L;
 
-    public static final String COL_USER_ID = "user_id";
-
-    public static final String COL_USER_ACCOUNT = "user_account";
-
-    public static final String COL_USER_PASSWORD = "user_password";
-
-    public static final String COL_USER_NAME = "user_name";
-
-    public static final String COL_USER_AVATAR = "user_avatar";
-
-    public static final String COL_USER_ROLE = "user_role";
-
-    public static final String COL_CREATE_TIME = "create_time";
-
-    public static final String COL_UPDATE_TIME = "update_time";
-
-    public static final String COL_IS_DELETED = "is_deleted";
-
 }

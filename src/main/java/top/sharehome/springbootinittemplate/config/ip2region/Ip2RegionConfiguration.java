@@ -5,15 +5,14 @@ import org.apache.commons.io.FileUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
-import top.sharehome.springbootinittemplate.config.ip2region.condition.Ip2RegionCondition;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2RegionProperties;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,10 +25,9 @@ import java.io.InputStream;
 @Configuration
 @EnableConfigurationProperties(Ip2RegionProperties.class)
 @Slf4j
-@Conditional(Ip2RegionCondition.class)
 public class Ip2RegionConfiguration {
 
-    @javax.annotation.Resource
+    @Resource
     private Ip2RegionProperties ip2RegionProperties;
 
     private Searcher searcher = null;
