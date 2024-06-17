@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.exception.customize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
 /**
  * 自定义邮件异常
@@ -11,11 +12,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeMailException extends RuntimeException {
-
-    private ReturnCode returnCode;
-
-    private String msg;
+public class CustomizeMailException extends CustomizeException{
 
     public CustomizeMailException() {
         this.returnCode = ReturnCode.FAIL;

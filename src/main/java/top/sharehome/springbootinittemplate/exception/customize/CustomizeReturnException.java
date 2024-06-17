@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.exception.customize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
 /**
  * 自定义返回错误异常类
@@ -11,11 +12,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeReturnException extends RuntimeException {
-
-    private ReturnCode returnCode;
-
-    private String msg;
+public class CustomizeReturnException extends CustomizeException{
 
     public CustomizeReturnException() {
         this.returnCode = ReturnCode.FAIL;

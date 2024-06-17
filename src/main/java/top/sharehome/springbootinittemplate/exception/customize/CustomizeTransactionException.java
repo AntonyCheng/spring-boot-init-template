@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.exception.customize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
 /**
  * 自定义事务异常
@@ -12,11 +13,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeTransactionException extends RuntimeException {
-
-    private ReturnCode returnCode;
-
-    private String msg;
+public class CustomizeTransactionException extends CustomizeException {
 
     public CustomizeTransactionException() {
         this.returnCode = ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE;
