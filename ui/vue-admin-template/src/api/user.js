@@ -65,8 +65,9 @@ export function adminUpdateInfo(data) {
 
 export function adminUpdateState(data) {
   return request({
-    url: '/admin/user/update/state/' + data,
-    method: 'put'
+    url: '/admin/user/update/state',
+    method: 'put',
+    data
   })
 }
 

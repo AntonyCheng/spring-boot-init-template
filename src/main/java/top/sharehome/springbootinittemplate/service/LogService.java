@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
+
+import java.util.List;
 
 /**
  * 日志服务接口
@@ -24,8 +27,19 @@ public interface LogService extends IService<Log> {
     Page<AdminLogPageVo> adminPageLog(AdminLogPageDto adminLogPageDto, PageModel pageModel);
 
     /**
+     * 管理员删除日志信息
+     */
+    void adminDeleteLog(Long id);
+
+    /**
      * 管理员清空日志信息
      */
     void adminClearLog();
 
+    /**
+     * 导出日志表格
+     *
+     * @return 导出表格
+     */
+    List<AdminLogExportVo> adminExportExcelList();
 }

@@ -73,6 +73,19 @@ export const constantRoutes = [
     role: ['admin']
   },
   {
+    path: '/log',
+    component: Layout,
+    children: [
+      {
+        path: 'manage',
+        name: 'LogManage',
+        component: () => import('@/views/logManage/index'),
+        meta: { title: '日志管理', icon: 'el-icon-s-help' }
+      }
+    ],
+    role: ['admin']
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [

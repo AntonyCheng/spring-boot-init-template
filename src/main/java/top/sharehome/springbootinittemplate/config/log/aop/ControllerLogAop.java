@@ -145,6 +145,7 @@ public class ControllerLogAop {
                 parameterMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
             }
             String param = null;
+            // 只对原本请求参数为空的POST类型请求进行请求体参数内容的获取
             if (MapUtils.isEmpty(parameterMap) && (HttpMethod.POST.name().equals(requestMethod) || HttpMethod.PUT.name().equals(requestMethod))) {
                 StringJoiner stringJoiner = new StringJoiner(",");
                 Object[] args = joinPoint.getArgs();

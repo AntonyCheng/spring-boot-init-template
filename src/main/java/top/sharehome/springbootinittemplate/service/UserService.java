@@ -3,10 +3,7 @@ package top.sharehome.springbootinittemplate.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserAddDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserPageDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserResetPasswordDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserUpdateInfoDto;
+import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
@@ -54,9 +51,9 @@ public interface UserService extends IService<User> {
     /**
      * 管理员修改用户状态
      *
-     * @param id 被修改用户的ID
+     * @param adminUserUpdateStateDto 被修改用户的ID对象
      */
-    void adminUpdateState(Long id);
+    void adminUpdateState(AdminUserUpdateStateDto adminUserUpdateStateDto);
 
     /**
      * 管理员重置用户密码
@@ -103,5 +100,4 @@ public interface UserService extends IService<User> {
      * @param file 新头像文件
      */
     void updateAvatar(MultipartFile file);
-
 }

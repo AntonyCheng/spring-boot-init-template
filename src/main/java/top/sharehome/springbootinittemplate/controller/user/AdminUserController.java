@@ -11,10 +11,7 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserAddDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserPageDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserResetPasswordDto;
-import top.sharehome.springbootinittemplate.model.dto.user.AdminUserUpdateInfoDto;
+import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
@@ -95,13 +92,13 @@ public class AdminUserController {
     /**
      * 管理员修改用户状态
      *
-     * @param id 被修改用户的ID
+     * @param adminUserUpdateStateDto 被修改用户的ID对象
      * @return 修改结果
      */
-    @PutMapping("/update/state/{id}")
+    @PutMapping("/update/state")
     @ControllerLog(description = "管理员修改用户状态", operator = OperatorEnum.UPDATE)
-    public R<String> updateState(@PathVariable("id") Long id) {
-        userService.adminUpdateState(id);
+    public R<String> updateState(@RequestBody @Validated({PutGroup.class}) AdminUserUpdateStateDto adminUserUpdateStateDto) {
+        userService.adminUpdateState(adminUserUpdateStateDto);
         return R.ok("修改状态成功");
     }
 

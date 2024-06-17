@@ -257,7 +257,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { adminAddUser, adminDeleteUser, adminExportExcel, adminPageUser, adminResetPassword, adminUpdateInfo, adminUpdateState} from '@/api/user'
+import { adminAddUser, adminDeleteUser, adminExportExcel, adminPageUser, adminResetPassword, adminUpdateInfo, adminUpdateState } from '@/api/user'
 import { Loading, Message } from 'element-ui'
 
 export default {
@@ -478,7 +478,10 @@ export default {
       this.resetUpdateForm()
       this.updateLoading = false
     },
-    handleState(data) {
+    handleState(id) {
+      const data = {
+        id: id
+      }
       adminUpdateState(data).then(response => {
         this.pageLoading = true
         adminPageUser(this.queryForm).then(response => {
