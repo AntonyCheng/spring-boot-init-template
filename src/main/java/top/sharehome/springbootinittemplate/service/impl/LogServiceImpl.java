@@ -80,7 +80,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
             adminLogPageVo.setOperator(OperatorEnum.getLabelByValue(log.getOperator()));
             adminLogPageVo.setRequestMethod(log.getRequestMethod());
             adminLogPageVo.setMethod(log.getMethod());
-            adminLogPageVo.setUserAccount(userMapper.selectById(log.getUserId()).getAccount());
+            // todo 优化日志记录中获取用户的id信息
+            adminLogPageVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");
             adminLogPageVo.setIp(log.getIp());
             adminLogPageVo.setLocation(log.getLocation());
             adminLogPageVo.setParam(log.getParam());
@@ -124,7 +125,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
             adminLogExportVo.setOperator(OperatorEnum.getLabelByValue(log.getOperator()));
             adminLogExportVo.setRequestMethod(log.getRequestMethod());
             adminLogExportVo.setMethod(log.getMethod());
-            adminLogExportVo.setUserAccount(userMapper.selectById(log.getUserId()).getAccount());
+            // todo 优化日志记录中获取用户的id信息
+            adminLogExportVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");
             adminLogExportVo.setIp(log.getIp());
             adminLogExportVo.setLocation(log.getLocation());
             adminLogExportVo.setParam(log.getParam());
