@@ -55,20 +55,20 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <!-- Netty相关 -->
-        <netty.version>4.1.110.Final</netty.version>
+        <netty.version>4.1.111.Final</netty.version>
         <!-- 数据驱动层相关 -->
         <mysql.version>8.0.33</mysql.version>
-        <mybatis.plus.starter.version>3.5.6</mybatis.plus.starter.version>
+        <mybatis.plus.starter.version>3.5.7</mybatis.plus.starter.version>
         <shardingsphere.version>5.5.0</shardingsphere.version>
         <druid.starter.version>1.2.23</druid.starter.version>
         <!-- 工具类相关 -->
-        <lombok.version>1.18.32</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <hutool.version>5.8.28</hutool.version>
         <commons.lang3.version>3.14.0</commons.lang3.version>
         <commons.io.version>2.16.1</commons.io.version>
         <commons.codec.version>1.17.0</commons.codec.version>
         <commons.pool2.version>2.12.0</commons.pool2.version>
-        <commons.collections4.version>4.5.0-M1</commons.collections4.version>
+        <commons.collections4.version>4.5.0-M2</commons.collections4.version>
         <commons.math3.version>3.6.1</commons.math3.version>
         <commons.compress.version>1.26.2</commons.compress.version>
         <ok.http3.version>4.12.0</ok.http3.version>
@@ -79,22 +79,22 @@
         <!-- 权限校验相关 -->
         <sa.token.version>1.38.0</sa.token.version>
         <!-- 缓存相关 -->
-        <redisson.version>3.31.0</redisson.version>
+        <redisson.version>3.32.0</redisson.version>
         <caffeine.version>3.1.8</caffeine.version>
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
         <easy.es.starter.version>2.0.0</easy.es.starter.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.213</tencent.cos.version>
-        <ali.oss.version>3.17.4</ali.oss.version>
+        <tencent.cos.version>5.6.219</tencent.cos.version>
+        <ali.oss.version>3.18.0</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>
-        <minio.version>8.5.10</minio.version>
+        <minio.version>8.5.11</minio.version>
         <!-- 文件操作相关 -->
         <poi.version>5.2.5</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>
-        <easy.excel.version>3.3.4</easy.excel.version>
+        <easy.excel.version>4.0.1</easy.excel.version>
         <itext.version>8.0.3</itext.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.1</xxl.job.version>

@@ -144,7 +144,7 @@
           width="180"
         >
           <template v-slot="scope">
-            <el-input type="textarea" :rows="6" resize="none" disabled style="font-size: smaller" :value="JSON.stringify(JSON.parse(scope.row.param), null, '  ')" />
+            <el-input type="textarea" :rows="6" resize="none" disabled style="font-size: small" :value="JSON.stringify(JSON.parse(scope.row.param), null, '  ')" />
           </template>
         </el-table-column>
         <el-table-column
@@ -153,8 +153,11 @@
           align="center"
         >
           <template v-slot="scope">
-            <el-button type="primary" size="mini">
-              {{ scope.row.result === 0 ? '正常' : '异常' }}
+            <el-button v-if="scope.row.result === 0" type="primary" size="mini">
+              正常
+            </el-button>
+            <el-button v-else type="danger" size="mini">
+              异常
             </el-button>
           </template>
         </el-table-column>
