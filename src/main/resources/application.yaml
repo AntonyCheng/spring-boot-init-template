@@ -274,7 +274,7 @@ spring:
     # Ollama AI
     ollama:
       # Ollama 服务地址
-      base-url: localhost:11434
+      base-url: 127.0.0.1:11434
       chat:
         options:
           # 模型名称

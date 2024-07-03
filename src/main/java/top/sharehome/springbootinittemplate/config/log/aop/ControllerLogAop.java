@@ -53,12 +53,12 @@ public class ControllerLogAop {
     private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token"};
 
     /**
-     * 记录日志操作用户ID
+     * 记录日志操作用户ID，TransmittableThreadLocal是Alibaba继承ThreadLocal的一个类，它适用于适用于复杂的线程池、异步任务等场景，由于该日志记录过程中可能会存在这些场景，所以能够保证线程本地变量的传递性。
      */
     private static final ThreadLocal<Long> USER_ID_THREAD_LOCAL = new TransmittableThreadLocal<>();
 
     /**
-     * 计算日志操作访问耗时，TransmittableThreadLocal是Alibaba继承ThreadLocal的一个类，它适用于适用于复杂的线程池、异步任务等场景，由于该日志记录过程中可能会存在这些场景，所以能够保证线程本地变量的传递性。
+     * 计算日志操作访问耗时
      */
     private static final ThreadLocal<StopWatch> COST_TIME_THREAD_LOCAL = new TransmittableThreadLocal<>();
 
