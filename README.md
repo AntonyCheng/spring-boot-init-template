@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.7-jdk8&11-pre**
+> **版本号：v2.1.7-jdk8&11**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -86,23 +86,23 @@
 - **前端模板**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
 - **Netty**
-  - netty-all 4.1.110.Final == Netty 框架
+  - netty-all 4.1.111.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
-    - mybatis-plus-boot-starter 3.5.6 == MyBatis-Plus 框架
-    - mybatis-plus-annotation 3.5.6 == MyBatis-Plus 注解依赖
+    - mybatis-plus-boot-starter 3.5.7 == MyBatis-Plus 框架
+    - mybatis-plus-annotation 3.5.7 == MyBatis-Plus 注解依赖
     - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
     - druid-spring-boot-starter 1.2.23 == Druid 连接池
 - **工具类**
-  - lombok 1.18.32 == POJO 简化工具
+  - lombok 1.18.34 == POJO 简化工具
   - hutool-all 5.8.28 == Hutool 工具类
   - commons-lang3 3.14.0 == Apache Commons Lang 工具类
   - commons-io 2.16.1 == Apache Commons IO 工具类
   - commons-codec 1.17.0 == Apache Commons Codec 工具类
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
-  - commons-collections4 4.5.0-M1 == Apache Commons Collections 工具类
+  - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
-  - commons-compress 1.26.1 == Apache Commons Compress 工具类
+  - commons-compress 1.26.2 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
   - fastjson2 2.0.51 == Fast JSON 工具类
@@ -116,7 +116,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.31.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.32.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -128,13 +128,13 @@
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.213 == 腾讯云 COS
-  - aliyun-sdk-oss 3.17.4 == 阿里云 OSS 
-  - minio 8.5.10 == Minio 对象存储
+  - cos_api 5.6.219 == 腾讯云 COS
+  - aliyun-sdk-oss 3.18.0 == 阿里云 OSS 
+  - minio 8.5.11 == Minio 对象存储
 - **文件操作**
   - poi 5.2.5 == 操作 Word
   - poi-tl 1.12.2 == 操作 Word 模板
-  - easyexcel 3.3.4 == 操作 Excel
+  - easyexcel 4.0.1 == 操作 Excel
   - itext-core 8.0.3 == 操作 PDF
 - **接口文档 & API调试**
   - knife4j-openapi3-spring-boot-starter 4.5.0 == Knife4j 依赖
@@ -152,6 +152,7 @@
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
+- 无感注解式记录日志
 - 全局请求拦截器 & 过滤器
 - 全局异常处理器
 - 封装统一响应对象
@@ -1466,41 +1467,29 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 **首页界面**
 
-![indexPage.png](picture/project/indexPage.png)
+![image-20240703194343499](picture/project/indexPage.png)
 
 **用户管理界面**
 
-首页：
+![image-20240703195225551](picture/project/userManage1.png)
 
-![userManage-index.png](picture/project/userManage-index.png)
+![image-20240703194830096](picture/project/userManage2.png)
 
-查询：
+![image-20240703194841696](picture/project/userManage3.png)
 
-![userManage-query.png](picture/project/userManage-query.png)
+**日志管理界面**
 
-添加：
+![image-20240703194918458](picture/project/logManage1.png)
 
-![userManage-add.png](picture/project/userManage-add.png)
+![image-20240703194927970](picture/project/logManage2.png)
 
-更新：
-
-![userManage-updateInfo.png](picture/project/userManage-updateInfo.png)
-
-![userManage-updatePassword.png](picture/project/userManage-updatePassword.png)
-
-删除：
-
-![userManage-delete.png](picture/project/userManage-delete.png)
-
-导出：
-
-![userManage-export.png](picture/project/userManage-export.png)
+![image-20240703194938997](picture/project/logManage3.png)
 
 ## 申明&联系我
 
 作者能力有限，暂时还不能精通使用本模板中所整合的所有框架，若在使用当中遇到问题或者确定 BUG ，请发布 ISSUES 或者直接提交 PR ，作者定会逐一查看，采纳意见并且做出修改。
 
-如果你也想成为该项目的共建者，请直接提交 PR ，并**对其进行详细说明**，作者审核之后会并入该模板 Master 分支中（暂时性操作，如果有一天项目真能做大，从该项目中规划分支也不是没有可能）。
+如果你也想成为该项目的共建者，请直接提交 PR ，并**对其进行详细说明**，作者审核之后会并入该模板对应分支中。
 
 如果你在使用模板的过程中有建议或者看法，请尽管发布 ISSUES 。
 
@@ -1509,7 +1498,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ## 下一步开发计划
 
 * 设计方便简单的操作 PDF 的工具类
-* 设计日志模块
+* 设计幂等模块
 * 集成 Prometheus 和 Grafana 监控报警平台（选做）
 * 集成 Apache SkyWalking 链路追踪（选做）
 * ......
