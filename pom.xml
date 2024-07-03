@@ -106,6 +106,8 @@
         <canal.version>1.1.7</canal.version>
         <!-- 插件版本 -->
         <maven.compiler.plugin.verison>3.13.0</maven.compiler.plugin.verison>
+        <!-- 修复警告 -->
+        <antlr.fix.version>4.10.1</antlr.fix.version>
     </properties>
 
     <!-- 依赖管理 -->
@@ -514,6 +516,13 @@
             <groupId>com.alibaba.otter</groupId>
             <artifactId>canal.protocol</artifactId>
             <version>${canal.version}</version>
+        </dependency>
+
+        <!-- 修复 ANTLR Tool 版本不一致警告-->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr.fix.version}</version>
         </dependency>
     </dependencies>
 
