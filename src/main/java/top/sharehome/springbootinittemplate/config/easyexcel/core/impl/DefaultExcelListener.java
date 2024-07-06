@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelListener;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -90,6 +90,6 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
             log.error(errorMsg);
         }
         excelResult.getErrorList().add(errorMsg);
-        throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, errorMsg);
+        throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR, errorMsg);
     }
 }

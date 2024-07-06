@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.common.usermodel.PictureType;
@@ -21,7 +22,7 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import javax.imageio.ImageIO;
@@ -49,7 +50,7 @@ public class WordUtils {
         /**
          * 导出Word.docx模板目录下的模板文件到响应流，模板目录一定是resources文件夹下templates/word目录
          *
-         * @param templateName 模板名称
+         * @param templateName 模板名称（需要带上扩展名）
          * @param tagMap       标签Map
          * @param filename     导出文件名称
          * @param response     响应流
@@ -67,15 +68,19 @@ public class WordUtils {
         /**
          * 导出Word.docx模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/word目录
          *
-         * @param templateName 模板名称
+         * @param templateName 模板名称（需要带上扩展名）
          * @param tagMap       标签Map
          * @param outputStream 输出流
          */
         public static void export(String templateName, Map<String, Object> tagMap, OutputStream outputStream) {
             try {
-                ClassPathResource classPathResource = new ClassPathResource("templates/word/" + templateName + ".docx");
+                String extension = FilenameUtils.getExtension(templateName);
+                if (!Objects.equals(extension, "docx") && !Objects.equals(extension, "doc")) {
+                    throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "指定模板文件扩展名不正确");
+                }
+                ClassPathResource classPathResource = new ClassPathResource("templates/word/" + templateName);
                 if (!classPathResource.exists()) {
-                    throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".docx]未找到");
+                    throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "模板文件[" + templateName + "]未找到");
                 }
                 InputStream inputStream = classPathResource.getInputStream();
                 XWPFTemplate template = XWPFTemplate.compile(inputStream).render(tagMap);
@@ -94,10 +99,12 @@ public class WordUtils {
          */
         private static void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
-            if (StringUtils.isBlank(fileName)) {
-                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+            String baseName = FilenameUtils.getBaseName(fileName);
+            String extension = FilenameUtils.getExtension(fileName);
+            if (StringUtils.isBlank(baseName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + extension;
             } else {
-                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = baseName + "_" + UUID.randomUUID().toString().replace("-", "") + extension;
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8)

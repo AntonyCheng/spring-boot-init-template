@@ -19,7 +19,7 @@ import top.sharehome.springbootinittemplate.config.easyexcel.convert.intNum.Exce
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelListener;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.impl.DefaultExcelListener;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeExcelException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -583,7 +583,7 @@ public class ExcelUtils {
     public static <T> String exportLocalFile(List<T> list, String sheetName, Class<T> clazz, String pathName) {
         try {
             if (StringUtils.isEmpty(pathName)) {
-                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "未找到该Excel文件所在路径");
+                throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR, "未找到该Excel文件所在路径");
             }
             String extension = FilenameUtils.getExtension(pathName);
             File file = new File(pathName);
@@ -617,7 +617,7 @@ public class ExcelUtils {
                     .doWrite(list);
             return file.getAbsolutePath();
         } catch (IOException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "Excel文件路径[" + pathName + "]异常");
+            throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR, "Excel文件路径[" + pathName + "]异常");
         }
     }
 
@@ -663,7 +663,7 @@ public class ExcelUtils {
             ServletOutputStream outputStream = response.getOutputStream();
             exportOutputStreamAndClose(list, sheetName, clazz, outputStream);
         } catch (IOException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
+            throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR);
         }
     }
 
@@ -707,7 +707,7 @@ public class ExcelUtils {
             ServletOutputStream outputStream = response.getOutputStream();
             exportOutputStreamAndClose(new ArrayList<T>(), templateName, clazz, outputStream);
         } catch (IOException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
+            throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR);
         }
     }
 
@@ -722,7 +722,7 @@ public class ExcelUtils {
         try {
             ClassPathResource classPathResource = new ClassPathResource("templates/excel/" + templateName + ExcelTypeEnum.XLSX.getValue());
             if (!classPathResource.exists()) {
-                throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
+                throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
             }
             InputStream inputStream = classPathResource.getInputStream();
             handleResponse(templateName, response);
@@ -735,9 +735,9 @@ public class ExcelUtils {
             inputStream.close();
             outputStream.close();
         } catch (FileNotFoundException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
+            throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR, "模板文件[" + templateName + ".xlsx]未找到");
         } catch (IOException e) {
-            throw new CustomizeExcelException(ReturnCode.EXCEL_FILE_ERROR);
+            throw new CustomizeDocumentException(ReturnCode.EXCEL_FILE_ERROR);
         }
 
     }
