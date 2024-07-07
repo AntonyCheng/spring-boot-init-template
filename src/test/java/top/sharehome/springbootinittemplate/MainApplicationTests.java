@@ -67,8 +67,7 @@ class MainApplicationTests {
 
     public static void main(String[] args) {
         System.out.println("hello world");
-        String name = FilenameUtils.getBaseName("a.x");
-        System.out.println(name);
+
     }
 
 }
