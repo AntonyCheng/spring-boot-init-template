@@ -1,14 +1,10 @@
 package top.sharehome.springbootinittemplate.document.pdf;
 
-import org.dromara.pdf.pdfbox.core.base.Page;
-import org.dromara.pdf.pdfbox.core.component.Textarea;
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
-import top.sharehome.springbootinittemplate.utils.document.word.WordUtils;
 
+import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -25,10 +21,10 @@ public class TestPdfUtils {
         new PdfUtils.PdfPage();
         new PdfUtils.Writer()
                 .addPage()
-                .addTextarea(List.of("1 2 3\r\n"))
-                .addTextarea(List.of("1 2 3\r\n"))
-                .addPage()
-                .addTextarea(List.of("123","123456"))
+                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("Hello World")).setIsBold(true).setIsItalic(true))
+                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("你好 世界")).setIsItalic(true))
+                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("1","2","3")).setFontColor(Color.CYAN))
+                .addTextarea(new PdfUtils.PdfTextarea())
                 .savePdf(fileOutputStream);
     }
 
