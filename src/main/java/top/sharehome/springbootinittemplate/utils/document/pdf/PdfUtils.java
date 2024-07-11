@@ -21,7 +21,6 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
 import java.awt.*;
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -240,6 +239,7 @@ public class PdfUtils {
          */
         public Writer addTextarea(PdfTextarea pdfTextarea) {
             if (Objects.isNull(pdfTextarea)) {
+                log.error("处理PDF文件出错，PdfTextarea参数为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
             }
             Textarea textarea = new Textarea(pageList.get(pageIndex));
@@ -351,6 +351,7 @@ public class PdfUtils {
          */
         public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
             if (Objects.isNull(pdfSplitLine)) {
+                log.error("处理PDF文件出错，PdfSplitLine参数为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
             }
             // 设置分割线上边距
@@ -379,26 +380,108 @@ public class PdfUtils {
         }
 
         /**
-         * 添加图片
+         * 添加图像
+         *
+         * @param inputStream 图像对象流
+         */
+        public Writer addImage(InputStream inputStream) {
+            return addImage(
+                    new PdfImage()
+                            .setInputStream(inputStream)
+            );
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream         图像对象流
+         * @param horizontalAlignment 图像对齐方式
+         */
+        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment) {
+            return addImage(
+                    new PdfImage()
+                            .setInputStream(inputStream)
+                            .setHorizontalAlignment(horizontalAlignment)
+            );
+        }
+
+        /**
+         * 天机图象
+         *
+         * @param inputStream         图像对象流
+         * @param horizontalAlignment 图像对齐方式
+         * @param scale               图像缩放比例
+         */
+        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Float scale) {
+            return addImage(
+                    new PdfImage()
+                            .setInputStream(inputStream)
+                            .setHorizontalAlignment(horizontalAlignment)
+                            .setScale(scale)
+            );
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream         图像对象流
+         * @param horizontalAlignment 图像对齐方式
+         * @param width               图像宽度
+         * @param height              图像高度
+         */
+        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Integer width, Integer height) {
+            return addImage(
+                    new PdfImage()
+                            .setInputStream(inputStream)
+                            .setHorizontalAlignment(horizontalAlignment)
+                            .setWidth(width)
+                            .setHeight(height)
+            );
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param pdfImage PDF图像构造器
          */
         public Writer addImage(PdfImage pdfImage) {
             if (Objects.isNull(pdfImage)) {
+                log.error("处理PDF文件出错，PdfImage参数为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
             }
-            // 设置图片上边距
+            // 设置图像上边距
             addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
             Page page = pageList.get(pageIndex);
             Image image = new Image(page);
             image.setIsWrap(true);
-            String logoPath = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/logo.png";
-            image.setImage(new File(logoPath));
-            Float width = page.getWithoutMarginWidth();
-            int width1 = image.getImage().getWidth();
-            Float marginLeft = page.getMarginLeft();
-            float relativeBeginX = width / 2 - width1 / 2;
-            image.setRelativeBeginX(relativeBeginX);
+            // 设置图像对象流
+            if (Objects.isNull(pdfImage.getInputStream())) {
+                log.error("处理PDF文件出错，图像对象流为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像对象流为空");
+            }
+            image.setImage(pdfImage.getInputStream());
+            // 设置图像高度
+            image.setHeight(Objects.isNull(pdfImage.getHeight()) ? image.getImage().getHeight() : pdfImage.getHeight());
+            // 设置图像宽度
+            image.setWidth(Objects.isNull(pdfImage.getWidth()) ? image.getImage().getWidth() : pdfImage.getWidth());
+            // 设置图像缩放比例
+            if (Objects.nonNull(pdfImage.getScale())) {
+                image.setWidth((int) (image.getWidth() * pdfImage.getScale()));
+                image.setHeight((int) (image.getHeight() * pdfImage.getScale()));
+            }
+            // 设置图像对齐方式
+            if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.CENTER)) {
+                float relativeBeginX = page.getWithoutMarginWidth() / 2 - (float) image.getWidth() / 2;
+                image.setRelativeBeginX(relativeBeginX);
+            } else if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.RIGHT)) {
+                float relativeBeginX = page.getWithoutMarginWidth() - (float) image.getWidth();
+                image.setRelativeBeginX(relativeBeginX);
+            } else {
+                image.setRelativeBeginX(0f);
+            }
+            // 渲染图像
             image.render();
-            // 设置图片下边距
+            // 设置图像下边距
             addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
             return this;
         }
@@ -435,27 +518,27 @@ public class PdfUtils {
         /**
          * 页面纸张大小，默认为A4
          */
-        PageSize pageSize = PageSize.A4;
+        PageSize pageSize;
 
         /**
          * 页面字体名称，默认为"SimHei"（黑体）
          */
-        String pageFontName = "SimHei";
+        String pageFontName;
 
         /**
          * 页面字体大小。默认为12
          */
-        Float pageFontSize = 12f;
+        Float pageFontSize;
 
         /**
          * 页面四周边距，默认25
          */
-        Float pageMargin = 25f;
+        Float pageMargin;
 
         /**
          * 页面背景颜色，默认白色
          */
-        Color color = Color.WHITE;
+        Color color;
 
     }
 
@@ -606,6 +689,11 @@ public class PdfUtils {
         private Float margin = 10f;
 
         /**
+         * 图像对齐方式，默认为左对齐
+         */
+        private HorizontalAlignment horizontalAlignment;
+
+        /**
          * 图像宽度
          */
         private Integer width;
@@ -616,12 +704,7 @@ public class PdfUtils {
         private Integer height;
 
         /**
-         * 图像旋转角度
-         */
-        private Float angle;
-
-        /**
-         * 图像缩放比例
+         * 图像缩放比例，如果图像宽度和高度均为null，则在原图像基础上进行等比例缩放，如果图像宽度和高度不都为null，则在不为空的基础上进行等比例缩放
          */
         private Float scale;
 
