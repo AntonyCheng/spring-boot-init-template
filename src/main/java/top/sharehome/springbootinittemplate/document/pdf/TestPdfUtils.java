@@ -20,11 +20,18 @@ public class TestPdfUtils {
         FileOutputStream fileOutputStream = new FileOutputStream(path);
         new PdfUtils.PdfPage();
         new PdfUtils.Writer()
+                .addPage(new PdfUtils.PdfPage(null, null, null, null, null))
+                .addTextarea("Hello World")
+                .addTextarea((List<String>) null, null, null, null, null, null)
+                .addBlank()
+                .addSplitLine()
+                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("Hello World")))
                 .addPage()
-                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("Hello World")).setIsBold(true).setIsItalic(true))
-                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("你好 世界")).setIsItalic(true))
-                .addTextarea(new PdfUtils.PdfTextarea().setTextList(List.of("1","2","3")).setFontColor(Color.CYAN))
-                .addTextarea(new PdfUtils.PdfTextarea())
+                .addTextarea("你好 世界")
+                .addImage(new PdfUtils.PdfImage())
+                .addSplitLine(Color.blue, 10f)
+                .addTextarea("嘻嘻")
+                .addTextarea(List.of("1", "2", "3"))
                 .savePdf(fileOutputStream);
     }
 

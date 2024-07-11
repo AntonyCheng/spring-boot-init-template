@@ -246,7 +246,12 @@ public enum ReturnCode {
     /**
      * 处理Word文件出错 40001
      */
-    WORD_FILE_ERROR(40001, "处理Word文件出错");
+    WORD_FILE_ERROR(40001, "处理Word文件出错"),
+
+    /**
+     * 处理Word文件出错 40002
+     */
+    PDF_FILE_ERROR(40002, "处理PDF文件出错");
 
     final private int code;
 

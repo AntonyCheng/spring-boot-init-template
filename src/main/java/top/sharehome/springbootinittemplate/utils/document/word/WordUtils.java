@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -817,7 +818,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordParagraph {
 
         /**
@@ -873,7 +874,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordPicture {
 
         /**
@@ -914,7 +915,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordTable {
 
         /**

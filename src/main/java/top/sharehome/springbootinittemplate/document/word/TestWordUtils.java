@@ -25,7 +25,7 @@ public class TestWordUtils {
         // 创建Word
         try (XWPFDocument word = WordUtils.Writer.createWord(); FileOutputStream outputStream = new FileOutputStream(WRITABLE_WORD_FILE_PATH_NAME)) {
             // 插入WRITABLE_WORD_FILE_PATH_NAME文档段落
-            WordUtils.Writer.addParagraph(word, "Hello World, 你好世界！", WordUtils.WordParagraph.builder().setIsBold(true).build());
+            WordUtils.Writer.addParagraph(word, "Hello World, 你好世界！", new WordUtils.WordParagraph().setIsBold(true));
             // 插入WRITABLE_WORD_FILE_PATH_NAME文档新的一页
             WordUtils.Writer.addBreakPage(word);
             // 插入WRITABLE_WORD_FILE_PATH_NAME文档段落

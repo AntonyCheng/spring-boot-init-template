@@ -1,7 +1,6 @@
 package top.sharehome.springbootinittemplate.utils.document.pdf;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -12,12 +11,18 @@ import org.dromara.pdf.pdfbox.core.base.Document;
 import org.dromara.pdf.pdfbox.core.base.MemoryPolicy;
 import org.dromara.pdf.pdfbox.core.base.Page;
 import org.dromara.pdf.pdfbox.core.base.PageSize;
+import org.dromara.pdf.pdfbox.core.component.Image;
+import org.dromara.pdf.pdfbox.core.component.SplitLine;
 import org.dromara.pdf.pdfbox.core.component.Textarea;
 import org.dromara.pdf.pdfbox.core.enums.FontStyle;
 import org.dromara.pdf.pdfbox.core.enums.HorizontalAlignment;
 import org.dromara.pdf.pdfbox.handler.PdfHandler;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
 import java.awt.*;
+import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +39,7 @@ public class PdfUtils {
     /**
      * 输出PDF模板内部类
      */
-    public class Template {
+    public static class Template {
 
     }
 
@@ -92,6 +97,8 @@ public class PdfUtils {
             Page page = document.createPage(Objects.isNull(pdfPage.getPageSize()) ? PageSize.A4 : pdfPage.getPageSize());
             // 设置页面默认字体为SimHei（黑体）
             page.setFontName(Objects.isNull(pdfPage.getPageFontName()) ? "SimHei" : pdfPage.getPageFontName());
+            // 设置页面默认字体大小为12
+            page.setFontSize(Objects.isNull(pdfPage.getPageFontSize()) ? 12 : pdfPage.getPageFontSize());
             // 设置页面默认四周边距为25
             page.setMargin(Objects.isNull(pdfPage.getPageMargin()) ? 25 : pdfPage.getPageMargin());
             // 设置页面默认背景颜色为白色
@@ -112,6 +119,17 @@ public class PdfUtils {
         }
 
         /**
+         * 添加文本内容和其他组件的间隔
+         */
+        private void addComponentInterval(Float intervalSize) {
+            addTextarea(
+                    new PdfTextarea()
+                            .setFontSize(intervalSize)
+                            .setIsBlank(true)
+            );
+        }
+
+        /**
          * 添加文本内容
          *
          * @param textarea 单段落文本内容
@@ -119,7 +137,25 @@ public class PdfUtils {
         public Writer addTextarea(String textarea) {
             return addTextarea(
                     new PdfTextarea()
-                            .setTextList(List.of(textarea))
+                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
+            );
+        }
+
+        /**
+         * 添加文本内容
+         *
+         * @param textarea  单段落文本内容
+         * @param fontColor 字体颜色
+         * @param isBold    是否加粗
+         * @param isItalic  是否斜体
+         */
+        public Writer addTextarea(String textarea, Color fontColor, Boolean isBold, Boolean isItalic) {
+            return addTextarea(
+                    new PdfTextarea()
+                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
+                            .setFontColor(fontColor)
+                            .setIsBold(isBold)
+                            .setIsItalic(isItalic)
             );
         }
 
@@ -136,7 +172,7 @@ public class PdfUtils {
         public Writer addTextarea(String textarea, String fontName, Float fontSize, Color fontColor, Boolean isBold, Boolean isItalic) {
             return addTextarea(
                     new PdfTextarea()
-                            .setTextList(List.of(textarea))
+                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
                             .setFontName(fontName)
                             .setFontSize(fontSize)
                             .setFontColor(fontColor)
@@ -154,6 +190,24 @@ public class PdfUtils {
             return addTextarea(
                     new PdfTextarea()
                             .setTextList(textareaList)
+            );
+        }
+
+        /**
+         * 添加文本内容
+         *
+         * @param textareaList 多段落文本内容
+         * @param fontColor    字体颜色
+         * @param isBold       是否加粗
+         * @param isItalic     是否斜体
+         */
+        public Writer addTextarea(List<String> textareaList, Color fontColor, Boolean isBold, Boolean isItalic) {
+            return addTextarea(
+                    new PdfTextarea()
+                            .setTextList(textareaList)
+                            .setFontColor(fontColor)
+                            .setIsBold(isBold)
+                            .setIsItalic(isItalic)
             );
         }
 
@@ -185,6 +239,9 @@ public class PdfUtils {
          * @param pdfTextarea PDF文本内容构造器
          */
         public Writer addTextarea(PdfTextarea pdfTextarea) {
+            if (Objects.isNull(pdfTextarea)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
+            }
             Textarea textarea = new Textarea(pageList.get(pageIndex));
             // 设置文本内容
             if (CollectionUtils.isEmpty(pdfTextarea.getTextList()) || pdfTextarea.getIsBlank()) {
@@ -205,6 +262,8 @@ public class PdfUtils {
             // 设置文本内容字体大小
             textarea.setFontSize(Objects.isNull(pdfTextarea.getFontSize()) ? 12f : pdfTextarea.getFontSize());
             // 设置文本内容是否加粗或斜体
+            pdfTextarea.setIsBold(Objects.isNull(pdfTextarea.getIsBold()) ? Boolean.FALSE : pdfTextarea.getIsBold());
+            pdfTextarea.setIsItalic(Objects.isNull(pdfTextarea.getIsItalic()) ? Boolean.FALSE : pdfTextarea.getIsItalic());
             if (pdfTextarea.getIsBold() && !pdfTextarea.getIsItalic()) {
                 textarea.setFontStyle(FontStyle.BOLD);
             } else if (!pdfTextarea.getIsBold() && pdfTextarea.getIsItalic()) {
@@ -235,13 +294,120 @@ public class PdfUtils {
             textarea.setLeading(Objects.isNull(pdfTextarea.getLeading()) ? 1f : pdfTextarea.getLeading());
             // 设置文本内容对齐方式默认为左对齐
             textarea.setHorizontalAlignment(Objects.isNull(pdfTextarea.getHorizontalAlignment()) ? HorizontalAlignment.LEFT : pdfTextarea.getHorizontalAlignment());
-            // 设置文本内容之间的间距
-            textarea.setMarginTop(Objects.isNull(pdfTextarea.getMarginTop()) ? 5f : pdfTextarea.getMarginTop());
+            // 设置文本内容之间的边距
+            textarea.setMarginTop(Objects.isNull(pdfTextarea.getMargin()) ? textarea.getFontSize() / 2 : pdfTextarea.getMargin());
             // 熏染文本内容
             textarea.render();
             return this;
         }
 
+        /**
+         * 添加分割线
+         */
+        public Writer addSplitLine() {
+            return addSplitLine(
+                    new PdfSplitLine()
+            );
+        }
+
+        /**
+         * 添加分割线
+         *
+         * @param color     分割线颜色
+         * @param lineWidth 分割线宽度
+         */
+        public Writer addSplitLine(Color color, Float lineWidth) {
+            return addSplitLine(
+                    new PdfSplitLine()
+                            .setLineColor(color)
+                            .setLineWidth(lineWidth)
+            );
+        }
+
+        /**
+         * 添加分割线
+         *
+         * @param color         分割线颜色
+         * @param lineWidth     分割线宽度
+         * @param isDotted      分割线是否为点线
+         * @param dottedLength  点线长度
+         * @param dottedSpacing 点线间隔
+         */
+        public Writer addSplitLine(Color color, Float lineWidth, Boolean isDotted, Float dottedLength, Float dottedSpacing) {
+            return addSplitLine(
+                    new PdfSplitLine()
+                            .setLineColor(color)
+                            .setLineWidth(lineWidth)
+                            .setIsDotted(isDotted)
+                            .setDottedLength(dottedLength)
+                            .setDottedSpacing(dottedSpacing)
+            );
+        }
+
+        /**
+         * 添加分割线
+         *
+         * @param pdfSplitLine PDF分割线构造器
+         */
+        public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
+            if (Objects.isNull(pdfSplitLine)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
+            }
+            // 设置分割线上边距
+            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
+            Page page = pageList.get(pageIndex);
+            SplitLine splitLine = new SplitLine(page);
+            splitLine.setIsWrap(true);
+            // 设置分割线颜色
+            splitLine.setLineColor(Objects.isNull(pdfSplitLine.getLineColor()) ? Color.BLACK : pdfSplitLine.getLineColor());
+            // 设置分割线长度
+            splitLine.setLineLength(Objects.isNull(pdfSplitLine.getLineLength()) ? page.getWidth() - page.getMarginLeft() - page.getMarginRight() : pdfSplitLine.getLineLength());
+            // 设置分割线宽度
+            splitLine.setLineWidth(Objects.isNull(pdfSplitLine.getLineWidth()) ? 1f : pdfSplitLine.getLineWidth());
+            // 判断是否需要点线
+            if (pdfSplitLine.getIsDotted()) {
+                // 设置点线长度
+                splitLine.setDottedLength(Objects.isNull(pdfSplitLine.getLineLength()) ? 1f : pdfSplitLine.getDottedLength());
+                // 设置点线间隔
+                splitLine.setDottedSpacing(Objects.isNull(pdfSplitLine.getDottedSpacing()) ? 0f : pdfSplitLine.getDottedSpacing());
+            }
+            // 渲染分割线
+            splitLine.render();
+            // 设置分割线下边距
+            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
+            return this;
+        }
+
+        /**
+         * 添加图片
+         */
+        public Writer addImage(PdfImage pdfImage) {
+            if (Objects.isNull(pdfImage)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
+            }
+            // 设置图片上边距
+            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
+            Page page = pageList.get(pageIndex);
+            Image image = new Image(page);
+            image.setIsWrap(true);
+            String logoPath = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/logo.png";
+            image.setImage(new File(logoPath));
+            Float width = page.getWithoutMarginWidth();
+            int width1 = image.getImage().getWidth();
+            Float marginLeft = page.getMarginLeft();
+            float relativeBeginX = width / 2 - width1 / 2;
+            image.setRelativeBeginX(relativeBeginX);
+            image.render();
+            // 设置图片下边距
+            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
+            return this;
+        }
+
+        /**
+         * 保存并输出PDF
+         *
+         * @param outputStream 输出流
+         */
         public void savePdf(OutputStream outputStream) {
             document.appendPage(pageList);
             document.save(outputStream);
@@ -253,7 +419,7 @@ public class PdfUtils {
     /**
      * 读取PDF数据内部类
      */
-    public class Reader {
+    public static class Reader {
 
     }
 
@@ -263,7 +429,7 @@ public class PdfUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class PdfPage {
 
         /**
@@ -272,9 +438,14 @@ public class PdfUtils {
         PageSize pageSize = PageSize.A4;
 
         /**
-         * 页面字体名称，默认"SimHei"（黑体）
+         * 页面字体名称，默认为"SimHei"（黑体）
          */
         String pageFontName = "SimHei";
+
+        /**
+         * 页面字体大小。默认为12
+         */
+        Float pageFontSize = 12f;
 
         /**
          * 页面四周边距，默认25
@@ -310,12 +481,12 @@ public class PdfUtils {
         /**
          * 文本内容字体，默认为"SimHei"（黑体）
          */
-        private String fontName = "SimHei";
+        private String fontName;
 
         /**
          * 文本内容字体大小，默认为12
          */
-        private Float fontSize = 12f;
+        private Float fontSize;
 
         /**
          * 文本内容字体是否加粗，默认为false
@@ -330,7 +501,7 @@ public class PdfUtils {
         /**
          * 文本内容字体颜色，默认为黑色
          */
-        private Color fontColor = Color.BLACK;
+        private Color fontColor;
 
         /**
          * 文本内容高亮颜色
@@ -350,22 +521,109 @@ public class PdfUtils {
         /**
          * 文本内容字间距，默认为1
          */
-        private Float characterSpacing = 1f;
+        private Float characterSpacing;
 
         /**
          * 文本内容行间距，默认为1
          */
-        private Float leading = 1f;
+        private Float leading;
 
         /**
          * 文本内容对齐方式，默认为左对齐
          */
-        private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+        private HorizontalAlignment horizontalAlignment;
 
         /**
-         * 文本内容之间的间距，默认为5
+         * 文本内容之间的间距
          */
-        private Float marginTop = 5f;
+        private Float margin;
+
+    }
+
+    /**
+     * PDF分割线构造器
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfSplitLine {
+
+        /**
+         * 分割线颜色，默认为黑色
+         */
+        private Color lineColor;
+
+        /**
+         * 分割线边距大小，默认为10
+         */
+        private Float margin;
+
+        /**
+         * 分割线是否为点线，默认为false
+         */
+        private Boolean isDotted = false;
+
+        /**
+         * 分割线点线间隔，如果isDotted为false，则dottedSpacing为null
+         */
+        private Float dottedSpacing;
+
+        /**
+         * 分割线点线长度，如果isDotted为false，则dottedLength为null
+         */
+        private Float dottedLength;
+
+        /**
+         * 分割线线长
+         */
+        private Float lineLength;
+
+        /**
+         * 分割线线宽
+         */
+        private Float lineWidth;
+
+    }
+
+    /**
+     * PDF图像构造器
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfImage {
+
+        /**
+         * 图像对象流
+         */
+        private InputStream inputStream;
+
+        /**
+         * 图像边距大小，默认为10
+         */
+        private Float margin = 10f;
+
+        /**
+         * 图像宽度
+         */
+        private Integer width;
+
+        /**
+         * 图像高度
+         */
+        private Integer height;
+
+        /**
+         * 图像旋转角度
+         */
+        private Float angle;
+
+        /**
+         * 图像缩放比例
+         */
+        private Float scale;
 
     }
 
