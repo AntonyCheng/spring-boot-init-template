@@ -1,31 +1,37 @@
 package top.sharehome.springbootinittemplate.utils.document.pdf;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.pdf.pdfbox.core.base.Document;
+import org.dromara.pdf.fop.core.doc.Document;
+import org.dromara.pdf.fop.core.doc.component.text.Text;
+import org.dromara.pdf.fop.core.doc.page.Page;
+import org.dromara.pdf.fop.handler.TemplateHandler;
 import org.dromara.pdf.pdfbox.core.base.MemoryPolicy;
-import org.dromara.pdf.pdfbox.core.base.Page;
 import org.dromara.pdf.pdfbox.core.base.PageSize;
 import org.dromara.pdf.pdfbox.core.component.Image;
 import org.dromara.pdf.pdfbox.core.component.SplitLine;
-import org.dromara.pdf.pdfbox.core.component.Textarea;
-import org.dromara.pdf.pdfbox.core.enums.FontStyle;
 import org.dromara.pdf.pdfbox.core.enums.HorizontalAlignment;
-import org.dromara.pdf.pdfbox.handler.PdfHandler;
+import org.lionsoul.ip2region.xdb.Searcher;
+import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import java.awt.*;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * PDF工具类
@@ -34,6 +40,25 @@ import java.util.Objects;
  */
 @Slf4j
 public class PdfUtils {
+
+    /**
+     * POF配置文件路径
+     */
+    private static final String pofConfPath;
+
+    static {
+        String fileName = "templates/pdf/fop.xconf";
+        try (InputStream classPathFileStream = new ClassPathResource(fileName).getInputStream()) {
+            String tempFile = FileUtils.getTempDirectoryPath() + fileName;
+            File existFile = new File(tempFile);
+            if (!existFile.exists()) {
+                FileUtils.copyInputStreamToFile(classPathFileStream, existFile);
+            }
+            pofConfPath = existFile.getPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * 输出PDF模板内部类
@@ -63,19 +88,9 @@ public class PdfUtils {
         private int pageIndex;
 
         public Writer() {
-            // PDFBox存储策略默认仅主存MainMemoryOnly，如果内存有限或者需要长时间重复操作PDF，请选择仅临时文件TempFileOnly或混合模式Mix
-            this.document = PdfHandler.getDocumentHandler().create(MemoryPolicy.setupMainMemoryOnly());
-            // 设置文档默认字体为SimHei（黑体）
-            this.document.setFontName("SimHei");
+            this.document = TemplateHandler.Document.build().setConfigPath(pofConfPath);
             this.pageList = new ArrayList<>();
             // 因为是索引，从0开始，所以初始化为-1
-            this.pageIndex = -1;
-        }
-
-        public Writer(String fontName, MemoryPolicy memoryPolicy) {
-            this.document = PdfHandler.getDocumentHandler().create(Objects.isNull(memoryPolicy) ? MemoryPolicy.setupMainMemoryOnly() : memoryPolicy);
-            this.document.setFontName(Objects.isNull(fontName) ? "SimHei" : fontName);
-            this.pageList = new ArrayList<>();
             this.pageIndex = -1;
         }
 
@@ -93,15 +108,19 @@ public class PdfUtils {
          */
         public Writer addPage(PdfPage pdfPage) {
             // 创建新页面
-            Page page = document.createPage(Objects.isNull(pdfPage.getPageSize()) ? PageSize.A4 : pdfPage.getPageSize());
-            // 设置页面默认字体为SimHei（黑体）
-            page.setFontName(Objects.isNull(pdfPage.getPageFontName()) ? "SimHei" : pdfPage.getPageFontName());
-            // 设置页面默认字体大小为12
-            page.setFontSize(Objects.isNull(pdfPage.getPageFontSize()) ? 12 : pdfPage.getPageFontSize());
-            // 设置页面默认四周边距为25
-            page.setMargin(Objects.isNull(pdfPage.getPageMargin()) ? 25 : pdfPage.getPageMargin());
-            // 设置页面默认背景颜色为白色
-            page.setBackgroundColor(Objects.isNull(pdfPage.getColor()) ? Color.WHITE : pdfPage.getColor());
+            Page page = TemplateHandler.Page.build()
+                    .setFontSize("12")
+                    .setMargin("25")
+                    .setBodyBackgroundColor(String.format("#%02X%02X%02X", pdfPage.getColor().getRed(), pdfPage.getColor().getGreen(), pdfPage.getColor().getBlue()));
+//            Page page = document.createPage(Objects.isNull(pdfPage.getPageSize()) ? PageSize.A4 : pdfPage.getPageSize());
+//            // 设置页面默认字体为SimHei（黑体）
+//            page.setFontName(Objects.isNull(pdfPage.getPageFontName()) ? "SimHei" : pdfPage.getPageFontName());
+//            // 设置页面默认字体大小为12
+//            page.setFontSize(Objects.isNull(pdfPage.getPageFontSize()) ? 12 : pdfPage.getPageFontSize());
+//            // 设置页面默认四周边距为25
+//            page.setMargin(Objects.isNull(pdfPage.getPageMargin()) ? 25 : pdfPage.getPageMargin());
+//            // 设置页面默认背景颜色为白色
+//            page.setBackgroundColor(Objects.isNull(pdfPage.getColor()) ? Color.WHITE : pdfPage.getColor());
             pageList.add(page);
             this.pageIndex++;
             return this;
@@ -238,77 +257,92 @@ public class PdfUtils {
          * @param pdfTextarea PDF文本内容构造器
          */
         public Writer addTextarea(PdfTextarea pdfTextarea) {
-            if (Objects.isNull(pdfTextarea)) {
-                log.error("处理PDF文件出错，PdfTextarea参数为空");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
-            }
-            Textarea textarea = new Textarea(pageList.get(pageIndex));
-            // 设置文本内容
-            if (CollectionUtils.isEmpty(pdfTextarea.getTextList()) || pdfTextarea.getIsBlank()) {
-                // 设置是换行还是空行
-                textarea.setIsWrap(pdfTextarea.getIsBlank());
-                textarea.setText(StringUtils.EMPTY);
-            } else if (Objects.equals(pdfTextarea.getTextList().size(), 1)) {
-                // 设置单段落文本内容
-                textarea.setIsWrap(true);
-                textarea.setText(pdfTextarea.getTextList().get(0));
-            } else {
-                // 设置多段落文本内容
-                textarea.setIsWrap(true);
-                textarea.setTextList(pdfTextarea.getTextList());
-            }
-            // 设置文本内容字体
-            textarea.setFontName(Objects.isNull(pdfTextarea.getFontName()) ? "SimHei" : pdfTextarea.getFontName());
-            // 设置文本内容字体大小
-            textarea.setFontSize(Objects.isNull(pdfTextarea.getFontSize()) ? 12f : pdfTextarea.getFontSize());
-            // 设置文本内容是否加粗或斜体
-            pdfTextarea.setIsBold(Objects.isNull(pdfTextarea.getIsBold()) ? Boolean.FALSE : pdfTextarea.getIsBold());
-            pdfTextarea.setIsItalic(Objects.isNull(pdfTextarea.getIsItalic()) ? Boolean.FALSE : pdfTextarea.getIsItalic());
-            if (pdfTextarea.getIsBold() && !pdfTextarea.getIsItalic()) {
-                textarea.setFontStyle(FontStyle.BOLD);
-            } else if (!pdfTextarea.getIsBold() && pdfTextarea.getIsItalic()) {
-                textarea.setFontStyle(FontStyle.ITALIC);
-            } else if (pdfTextarea.getIsBold()) {
-                textarea.setFontStyle(FontStyle.ITALIC_BOLD);
-            }
-            // 设置文本内容字体颜色
-            textarea.setFontColor(Objects.isNull(pdfTextarea.getFontColor()) ? Color.BLACK : pdfTextarea.getFontColor());
-            // 设置文本内容高亮颜色
-            if (Objects.nonNull(pdfTextarea.getHighlightColor())) {
-                textarea.setIsHighlight(true);
-                textarea.setHighlightColor(pdfTextarea.getHighlightColor());
-            }
-            // 设置文本内容删除线颜色
-            if (Objects.nonNull(pdfTextarea.getDeleteLineColor())) {
-                textarea.setIsDeleteLine(true);
-                textarea.setDeleteLineColor(pdfTextarea.getDeleteLineColor());
-            }
-            // 设置文本内容下划线颜色
-            if (Objects.nonNull(pdfTextarea.getUnderlineColor())) {
-                textarea.setIsUnderline(true);
-                textarea.setUnderlineColor(pdfTextarea.getUnderlineColor());
-            }
-            // 设置文本内容字间距
-            textarea.setCharacterSpacing(Objects.isNull(pdfTextarea.getCharacterSpacing()) ? 1f : pdfTextarea.getCharacterSpacing());
-            // 设置文本内容行间距
-            textarea.setLeading(Objects.isNull(pdfTextarea.getLeading()) ? 1f : pdfTextarea.getLeading());
-            // 设置文本内容对齐方式默认为左对齐
-            textarea.setHorizontalAlignment(Objects.isNull(pdfTextarea.getHorizontalAlignment()) ? HorizontalAlignment.LEFT : pdfTextarea.getHorizontalAlignment());
-            // 设置文本内容之间的边距
-            textarea.setMarginTop(Objects.isNull(pdfTextarea.getMargin()) ? textarea.getFontSize() / 2 : pdfTextarea.getMargin());
-            // 熏染文本内容
-            textarea.render();
+            Text text = TemplateHandler.Text.build()
+                    .setText("你好世界 Hello World")
+                    .setFontFamily("思源宋体")
+                    .setFontSize("12")
+                    .setFontWeight("bold")
+                    .setFontStyle("italic")
+                    .setFontColor(String.format("#%02X%02X%02X", pdfTextarea.getFontColor().getRed(), pdfTextarea.getFontColor().getGreen(), pdfTextarea.getFontColor().getBlue()))
+//                    .setBackgroundColor(String.format("#%02X%02X%02X", pdfTextarea.getHighlightColor().getRed(), pdfTextarea.getHighlightColor().getGreen(), pdfTextarea.getHighlightColor().getBlue()))
+                    .enableDeleteLine()
+//                    .setDeleteLineColor(String.format("#%02X%02X%02X", pdfTextarea.getDeleteLineColor().getRed(), pdfTextarea.getDeleteLineColor().getGreen(), pdfTextarea.getDeleteLineColor().getBlue()))
+                    .enableUnderLine()
+//                    .setUnderLineColor(String.format("#%02X%02X%02X", pdfTextarea.getUnderlineColor().getRed(), pdfTextarea.getUnderlineColor().getGreen(), pdfTextarea.getUnderlineColor().getBlue()))
+                    .setHorizontalStyle(HorizontalAlignment.LEFT.name())
+                    .setMarginTop("10");
+            pageList.get(pageIndex).addBodyComponent(text);
+//            if (Objects.isNull(pdfTextarea)) {
+//                log.error("处理PDF文件出错，PdfTextarea参数为空");
+//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
+//            }
+//            Textarea textarea = new Textarea(pageList.get(pageIndex));
+//            // 设置文本内容
+//            if (CollectionUtils.isEmpty(pdfTextarea.getTextList()) || pdfTextarea.getIsBlank()) {
+//                // 设置是换行还是空行
+//                textarea.setIsWrap(pdfTextarea.getIsBlank());
+//                textarea.setText(StringUtils.EMPTY);
+//            } else if (Objects.equals(pdfTextarea.getTextList().size(), 1)) {
+//                // 设置单段落文本内容
+//                textarea.setIsWrap(true);
+//                textarea.setText(pdfTextarea.getTextList().get(0));
+//            } else {
+//                // 设置多段落文本内容
+//                textarea.setIsWrap(true);
+//                textarea.setTextList(pdfTextarea.getTextList());
+//            }
+//            // 设置文本内容字体
+//            textarea.setFontName(Objects.isNull(pdfTextarea.getFontName()) ? "SimHei" : pdfTextarea.getFontName());
+//            // 设置文本内容字体大小
+//            textarea.setFontSize(Objects.isNull(pdfTextarea.getFontSize()) ? 12f : pdfTextarea.getFontSize());
+//            // 设置文本内容是否加粗或斜体
+//            pdfTextarea.setIsBold(Objects.isNull(pdfTextarea.getIsBold()) ? Boolean.FALSE : pdfTextarea.getIsBold());
+//            pdfTextarea.setIsItalic(Objects.isNull(pdfTextarea.getIsItalic()) ? Boolean.FALSE : pdfTextarea.getIsItalic());
+//            if (pdfTextarea.getIsBold() && !pdfTextarea.getIsItalic()) {
+//                textarea.setFontStyle(FontStyle.BOLD);
+//            } else if (!pdfTextarea.getIsBold() && pdfTextarea.getIsItalic()) {
+//                textarea.setFontStyle(FontStyle.ITALIC);
+//            } else if (pdfTextarea.getIsBold()) {
+//                textarea.setFontStyle(FontStyle.ITALIC_BOLD);
+//            }
+//            // 设置文本内容字体颜色
+//            textarea.setFontColor(Objects.isNull(pdfTextarea.getFontColor()) ? Color.BLACK : pdfTextarea.getFontColor());
+//            // 设置文本内容高亮颜色
+//            if (Objects.nonNull(pdfTextarea.getHighlightColor())) {
+//                textarea.setIsHighlight(true);
+//                textarea.setHighlightColor(pdfTextarea.getHighlightColor());
+//            }
+//            // 设置文本内容删除线颜色
+//            if (Objects.nonNull(pdfTextarea.getDeleteLineColor())) {
+//                textarea.setIsDeleteLine(true);
+//                textarea.setDeleteLineColor(pdfTextarea.getDeleteLineColor());
+//            }
+//            // 设置文本内容下划线颜色
+//            if (Objects.nonNull(pdfTextarea.getUnderlineColor())) {
+//                textarea.setIsUnderline(true);
+//                textarea.setUnderlineColor(pdfTextarea.getUnderlineColor());
+//            }
+//            // 设置文本内容字间距
+//            textarea.setCharacterSpacing(Objects.isNull(pdfTextarea.getCharacterSpacing()) ? 1f : pdfTextarea.getCharacterSpacing());
+//            // 设置文本内容行间距
+//            textarea.setLeading(Objects.isNull(pdfTextarea.getLeading()) ? 1f : pdfTextarea.getLeading());
+//            // 设置文本内容对齐方式默认为左对齐
+//            textarea.setHorizontalAlignment(Objects.isNull(pdfTextarea.getHorizontalAlignment()) ? HorizontalAlignment.LEFT : pdfTextarea.getHorizontalAlignment());
+//            // 设置文本内容之间的边距
+//            textarea.setMarginTop(Objects.isNull(pdfTextarea.getMargin()) ? textarea.getFontSize() / 2 : pdfTextarea.getMargin());
+//            // 熏染文本内容
+//            textarea.render();
             return this;
         }
 
         /**
          * 添加分割线
          */
-        public Writer addSplitLine() {
-            return addSplitLine(
-                    new PdfSplitLine()
-            );
-        }
+//        public Writer addSplitLine() {
+//            return addSplitLine(
+//                    new PdfSplitLine()
+//            );
+//        }
 
         /**
          * 添加分割线
@@ -316,13 +350,13 @@ public class PdfUtils {
          * @param color     分割线颜色
          * @param lineWidth 分割线宽度
          */
-        public Writer addSplitLine(Color color, Float lineWidth) {
-            return addSplitLine(
-                    new PdfSplitLine()
-                            .setLineColor(color)
-                            .setLineWidth(lineWidth)
-            );
-        }
+//        public Writer addSplitLine(Color color, Float lineWidth) {
+//            return addSplitLine(
+//                    new PdfSplitLine()
+//                            .setLineColor(color)
+//                            .setLineWidth(lineWidth)
+//            );
+//        }
 
         /**
          * 添加分割线
@@ -333,63 +367,61 @@ public class PdfUtils {
          * @param dottedLength  点线长度
          * @param dottedSpacing 点线间隔
          */
-        public Writer addSplitLine(Color color, Float lineWidth, Boolean isDotted, Float dottedLength, Float dottedSpacing) {
-            return addSplitLine(
-                    new PdfSplitLine()
-                            .setLineColor(color)
-                            .setLineWidth(lineWidth)
-                            .setIsDotted(isDotted)
-                            .setDottedLength(dottedLength)
-                            .setDottedSpacing(dottedSpacing)
-            );
-        }
+//        public Writer addSplitLine(Color color, Float lineWidth, Boolean isDotted, Float dottedLength, Float dottedSpacing) {
+//            return addSplitLine(
+//                    new PdfSplitLine()
+//                            .setLineColor(color)
+//                            .setLineWidth(lineWidth)
+//                            .setIsDotted(isDotted)
+//                            .setDottedLength(dottedLength)
+//                            .setDottedSpacing(dottedSpacing)
+//            );
+//        }
 
         /**
          * 添加分割线
          *
          * @param pdfSplitLine PDF分割线构造器
          */
-        public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
-            if (Objects.isNull(pdfSplitLine)) {
-                log.error("处理PDF文件出错，PdfSplitLine参数为空");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
-            }
-            // 设置分割线上边距
-            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
-            Page page = pageList.get(pageIndex);
-            SplitLine splitLine = new SplitLine(page);
-            splitLine.setIsWrap(true);
-            // 设置分割线颜色
-            splitLine.setLineColor(Objects.isNull(pdfSplitLine.getLineColor()) ? Color.BLACK : pdfSplitLine.getLineColor());
-            // 设置分割线长度
-            splitLine.setLineLength(Objects.isNull(pdfSplitLine.getLineLength()) ? page.getWidth() - page.getMarginLeft() - page.getMarginRight() : pdfSplitLine.getLineLength());
-            // 设置分割线宽度
-            splitLine.setLineWidth(Objects.isNull(pdfSplitLine.getLineWidth()) ? 1f : pdfSplitLine.getLineWidth());
-            // 判断是否需要点线
-            if (pdfSplitLine.getIsDotted()) {
-                // 设置点线长度
-                splitLine.setDottedLength(Objects.isNull(pdfSplitLine.getLineLength()) ? 1f : pdfSplitLine.getDottedLength());
-                // 设置点线间隔
-                splitLine.setDottedSpacing(Objects.isNull(pdfSplitLine.getDottedSpacing()) ? 0f : pdfSplitLine.getDottedSpacing());
-            }
-            // 渲染分割线
-            splitLine.render();
-            // 设置分割线下边距
-            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
-            return this;
-        }
+//        public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
+//            if (Objects.isNull(pdfSplitLine)) {
+//                log.error("处理PDF文件出错，PdfSplitLine参数为空");
+//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
+//            }
+//            Page page = pageList.get(pageIndex);
+//            SplitLine splitLine = new SplitLine(page);
+//            splitLine.setIsWrap(true);
+//            // 设置分割线颜色
+//            splitLine.setLineColor(Objects.isNull(pdfSplitLine.getLineColor()) ? Color.BLACK : pdfSplitLine.getLineColor());
+//            // 设置分割线长度
+//            splitLine.setLineLength(Objects.isNull(pdfSplitLine.getLineLength()) ? page.getWidth() - page.getMarginLeft() - page.getMarginRight() : pdfSplitLine.getLineLength());
+//            // 设置分割线宽度
+//            splitLine.setLineWidth(Objects.isNull(pdfSplitLine.getLineWidth()) ? 1f : pdfSplitLine.getLineWidth());
+//            // 判断是否需要点线
+//            if (pdfSplitLine.getIsDotted()) {
+//                // 设置点线长度
+//                splitLine.setDottedLength(Objects.isNull(pdfSplitLine.getLineLength()) ? 1f : pdfSplitLine.getDottedLength());
+//                // 设置点线间隔
+//                splitLine.setDottedSpacing(Objects.isNull(pdfSplitLine.getDottedSpacing()) ? 0f : pdfSplitLine.getDottedSpacing());
+//            }
+//            // 渲染分割线
+//            splitLine.render();
+//            // 设置分割线边距
+//            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
+//            return this;
+//        }
 
         /**
          * 添加图像
          *
          * @param inputStream 图像对象流
          */
-        public Writer addImage(InputStream inputStream) {
-            return addImage(
-                    new PdfImage()
-                            .setInputStream(inputStream)
-            );
-        }
+//        public Writer addImage(InputStream inputStream) {
+//            return addImage(
+//                    new PdfImage()
+//                            .setInputStream(inputStream)
+//            );
+//        }
 
         /**
          * 添加图像
@@ -397,13 +429,13 @@ public class PdfUtils {
          * @param inputStream         图像对象流
          * @param horizontalAlignment 图像对齐方式
          */
-        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment) {
-            return addImage(
-                    new PdfImage()
-                            .setInputStream(inputStream)
-                            .setHorizontalAlignment(horizontalAlignment)
-            );
-        }
+//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment) {
+//            return addImage(
+//                    new PdfImage()
+//                            .setInputStream(inputStream)
+//                            .setHorizontalAlignment(horizontalAlignment)
+//            );
+//        }
 
         /**
          * 天机图象
@@ -412,14 +444,14 @@ public class PdfUtils {
          * @param horizontalAlignment 图像对齐方式
          * @param scale               图像缩放比例
          */
-        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Float scale) {
-            return addImage(
-                    new PdfImage()
-                            .setInputStream(inputStream)
-                            .setHorizontalAlignment(horizontalAlignment)
-                            .setScale(scale)
-            );
-        }
+//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Float scale) {
+//            return addImage(
+//                    new PdfImage()
+//                            .setInputStream(inputStream)
+//                            .setHorizontalAlignment(horizontalAlignment)
+//                            .setScale(scale)
+//            );
+//        }
 
         /**
          * 添加图像
@@ -429,61 +461,75 @@ public class PdfUtils {
          * @param width               图像宽度
          * @param height              图像高度
          */
-        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Integer width, Integer height) {
-            return addImage(
-                    new PdfImage()
-                            .setInputStream(inputStream)
-                            .setHorizontalAlignment(horizontalAlignment)
-                            .setWidth(width)
-                            .setHeight(height)
-            );
-        }
+//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Integer width, Integer height) {
+//            return addImage(
+//                    new PdfImage()
+//                            .setInputStream(inputStream)
+//                            .setHorizontalAlignment(horizontalAlignment)
+//                            .setWidth(width)
+//                            .setHeight(height)
+//            );
+//        }
 
         /**
          * 添加图像
          *
          * @param pdfImage PDF图像构造器
          */
-        public Writer addImage(PdfImage pdfImage) {
-            if (Objects.isNull(pdfImage)) {
-                log.error("处理PDF文件出错，PdfImage参数为空");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
+//        public Writer addImage(PdfImage pdfImage) {
+//            if (Objects.isNull(pdfImage)) {
+//                log.error("处理PDF文件出错，PdfImage参数为空");
+//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
+//            }
+//            Page page = pageList.get(pageIndex);
+//            Image image = new Image(page);
+//            image.setIsWrap(true);
+//            // 设置图像对象流
+//            if (Objects.isNull(pdfImage.getInputStream())) {
+//                log.error("处理PDF文件出错，图像对象流为空");
+//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像对象流为空");
+//            }
+//            image.setImage(pdfImage.getInputStream());
+//            // 设置图像高度
+//            image.setHeight(Objects.isNull(pdfImage.getHeight()) ? image.getImage().getHeight() : pdfImage.getHeight());
+//            // 设置图像宽度
+//            image.setWidth(Objects.isNull(pdfImage.getWidth()) ? image.getImage().getWidth() : pdfImage.getWidth());
+//            // 设置图像缩放比例
+//            if (Objects.nonNull(pdfImage.getScale())) {
+//                image.setWidth((int) (image.getWidth() * pdfImage.getScale()));
+//                image.setHeight((int) (image.getHeight() * pdfImage.getScale()));
+//            }
+//            // 设置图像对齐方式
+//            if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.CENTER)) {
+//                float relativeBeginX = page.getWithoutMarginWidth() / 2 - (float) image.getWidth() / 2;
+//                image.setRelativeBeginX(relativeBeginX);
+//            } else if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.RIGHT)) {
+//                float relativeBeginX = page.getWithoutMarginWidth() - (float) image.getWidth();
+//                image.setRelativeBeginX(relativeBeginX);
+//            } else {
+//                image.setRelativeBeginX(0f);
+//            }
+//            // 渲染图像
+//            image.render();
+//            // 设置图像边距
+//            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
+//            return this;
+//        }
+
+        /**
+         * 将Word写入响应流
+         *
+         * @param fileName 响应文件名
+         * @param response 响应流
+         */
+        public void doWrite(String fileName, HttpServletResponse response) {
+            try {
+                handlePdfResponse(fileName, response);
+                ServletOutputStream outputStream = response.getOutputStream();
+                doWrite(outputStream);
+            } catch (IOException e) {
+                throw new CustomizeReturnException(ReturnCode.PDF_FILE_ERROR);
             }
-            // 设置图像上边距
-            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
-            Page page = pageList.get(pageIndex);
-            Image image = new Image(page);
-            image.setIsWrap(true);
-            // 设置图像对象流
-            if (Objects.isNull(pdfImage.getInputStream())) {
-                log.error("处理PDF文件出错，图像对象流为空");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像对象流为空");
-            }
-            image.setImage(pdfImage.getInputStream());
-            // 设置图像高度
-            image.setHeight(Objects.isNull(pdfImage.getHeight()) ? image.getImage().getHeight() : pdfImage.getHeight());
-            // 设置图像宽度
-            image.setWidth(Objects.isNull(pdfImage.getWidth()) ? image.getImage().getWidth() : pdfImage.getWidth());
-            // 设置图像缩放比例
-            if (Objects.nonNull(pdfImage.getScale())) {
-                image.setWidth((int) (image.getWidth() * pdfImage.getScale()));
-                image.setHeight((int) (image.getHeight() * pdfImage.getScale()));
-            }
-            // 设置图像对齐方式
-            if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.CENTER)) {
-                float relativeBeginX = page.getWithoutMarginWidth() / 2 - (float) image.getWidth() / 2;
-                image.setRelativeBeginX(relativeBeginX);
-            } else if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.RIGHT)) {
-                float relativeBeginX = page.getWithoutMarginWidth() - (float) image.getWidth();
-                image.setRelativeBeginX(relativeBeginX);
-            } else {
-                image.setRelativeBeginX(0f);
-            }
-            // 渲染图像
-            image.render();
-            // 设置图像下边距
-            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
-            return this;
         }
 
         /**
@@ -491,10 +537,32 @@ public class PdfUtils {
          *
          * @param outputStream 输出流
          */
-        public void savePdf(OutputStream outputStream) {
-            document.appendPage(pageList);
-            document.save(outputStream);
-            document.close();
+        public void doWrite(OutputStream outputStream) {
+            document.addPage(pageList.toArray(new Page[0]));
+            document.transform(outputStream);
+        }
+
+        /**
+         * 处理ContentType是PDF格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private static void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/pdf;charset=UTF-8");
         }
 
     }

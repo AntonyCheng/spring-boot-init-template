@@ -1,0 +1,1 @@
+### 存放PDF模板的目录，注意不要删除fop.xconf，这个是PdfUtils所依赖的FOP配置文件
