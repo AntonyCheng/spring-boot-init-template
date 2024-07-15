@@ -1,7 +1,8 @@
 package top.sharehome.springbootinittemplate.document.pdf;
 
-import org.dromara.pdf.pdfbox.core.enums.HorizontalAlignment;
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyleEnum;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeightEnum;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -27,9 +28,9 @@ public class TestPdfUtils {
         ) {
             new PdfUtils.Writer()
                     .addPage(new PdfUtils.PdfPage().setColor(Color.WHITE))
-                    .addTextarea(new PdfUtils.PdfTextarea().setFontColor(Color.BLUE))
-                    .addPage(new PdfUtils.PdfPage().setColor(Color.WHITE))
-                    .addTextarea(new PdfUtils.PdfTextarea().setFontColor(Color.RED))
+                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World")
+                    .addPage(new PdfUtils.PdfPage().setColor(Color.BLACK))
+                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeightEnum.BOLDER, FontStyleEnum.ITALIC)
                     .doWrite(fileOutputStream);
 //            new PdfUtils.Writer()
 //                    .addPage()

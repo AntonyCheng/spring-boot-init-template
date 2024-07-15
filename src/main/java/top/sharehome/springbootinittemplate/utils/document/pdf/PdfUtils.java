@@ -7,31 +7,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.pdf.fop.core.doc.Document;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
 import org.dromara.pdf.fop.handler.TemplateHandler;
-import org.dromara.pdf.pdfbox.core.base.MemoryPolicy;
-import org.dromara.pdf.pdfbox.core.base.PageSize;
-import org.dromara.pdf.pdfbox.core.component.Image;
-import org.dromara.pdf.pdfbox.core.component.SplitLine;
 import org.dromara.pdf.pdfbox.core.enums.HorizontalAlignment;
-import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyleEnum;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeightEnum;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.HorizontalAlignmentEnum;
 
 import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * PDF工具类
@@ -44,17 +42,33 @@ public class PdfUtils {
     /**
      * POF配置文件路径
      */
-    private static final String pofConfPath;
+    private static final String POF_CONF_PATH;
 
+    /**
+     * 设置模板默认字体名称，此处将templates/pdf/XXX.ttf文件的XXX名称提取出来进行填充
+     */
+    private static final String DEFAULT_FONT_FAMILY = "SourceHanSansCN-Regular";
+
+    // 初始化配置文件和字体，即将配置文件和字体文件处理之后复制到系统临时文件夹中
     static {
-        String fileName = "templates/pdf/fop.xconf";
-        try (InputStream classPathFileStream = new ClassPathResource(fileName).getInputStream()) {
-            String tempFile = FileUtils.getTempDirectoryPath() + fileName;
-            File existFile = new File(tempFile);
-            if (!existFile.exists()) {
-                FileUtils.copyInputStreamToFile(classPathFileStream, existFile);
+        String confResourcePath = "templates" + File.separator + "pdf" + File.separator + "fop.xconf";
+        String fontResourcePath = "templates" + File.separator + "pdf" + File.separator + DEFAULT_FONT_FAMILY + ".ttf";
+        try (InputStream readConfStream = new ClassPathResource(confResourcePath).getInputStream()) {
+            String tempConf = FileUtils.getTempDirectoryPath() + confResourcePath;
+            String tempFont = FileUtils.getTempDirectoryPath() + fontResourcePath;
+            File existConf = new File(tempConf);
+            File existFont = new File(tempFont);
+            if (!existConf.exists() || !existFont.exists()) {
+                String fontPathname = FileUtils.getTempDirectoryPath() + fontResourcePath;
+                File fontFile = new File(fontPathname);
+                FileUtils.copyInputStreamToFile(new ClassPathResource(fontResourcePath).getInputStream(), fontFile);
+                String replacement = File.separator + fontPathname;
+                String confContent = new String(readConfStream.readAllBytes())
+                        .replace("ReplaceFontURL", replacement)
+                        .replaceAll("ReplaceFontFamily", FilenameUtils.getBaseName(fontResourcePath));
+                FileUtils.copyInputStreamToFile(new ByteArrayInputStream(confContent.getBytes()), existConf);
             }
-            pofConfPath = existFile.getPath();
+            POF_CONF_PATH = existConf.getPath();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +102,7 @@ public class PdfUtils {
         private int pageIndex;
 
         public Writer() {
-            this.document = TemplateHandler.Document.build().setConfigPath(pofConfPath);
+            this.document = TemplateHandler.Document.build().setConfigPath(POF_CONF_PATH);
             this.pageList = new ArrayList<>();
             // 因为是索引，从0开始，所以初始化为-1
             this.pageIndex = -1;
@@ -107,231 +121,134 @@ public class PdfUtils {
          * @param pdfPage 页面构造类
          */
         public Writer addPage(PdfPage pdfPage) {
+            if (Objects.isNull(pdfPage)) {
+                log.error("处理PDF文件出错，pdfPage参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "pdfPage参数为空");
+            }
             // 创建新页面
             Page page = TemplateHandler.Page.build()
-                    .setFontSize("12")
-                    .setMargin("25")
-                    .setBodyBackgroundColor(String.format("#%02X%02X%02X", pdfPage.getColor().getRed(), pdfPage.getColor().getGreen(), pdfPage.getColor().getBlue()));
-//            Page page = document.createPage(Objects.isNull(pdfPage.getPageSize()) ? PageSize.A4 : pdfPage.getPageSize());
-//            // 设置页面默认字体为SimHei（黑体）
-//            page.setFontName(Objects.isNull(pdfPage.getPageFontName()) ? "SimHei" : pdfPage.getPageFontName());
-//            // 设置页面默认字体大小为12
-//            page.setFontSize(Objects.isNull(pdfPage.getPageFontSize()) ? 12 : pdfPage.getPageFontSize());
-//            // 设置页面默认四周边距为25
-//            page.setMargin(Objects.isNull(pdfPage.getPageMargin()) ? 25 : pdfPage.getPageMargin());
-//            // 设置页面默认背景颜色为白色
-//            page.setBackgroundColor(Objects.isNull(pdfPage.getColor()) ? Color.WHITE : pdfPage.getColor());
+                    // 设置页面字体大小，默认为12
+                    .setFontSize(String.valueOf(Objects.isNull(pdfPage.getFontSize()) ? 12 : pdfPage.getFontSize()))
+                    // 设置页面默认四周边距，默认为25
+                    .setMargin(String.valueOf(Objects.isNull(pdfPage.getMargin()) ? 25 : pdfPage.getMargin()))
+                    // 设置页面默认背景颜色，默认为白色
+                    .setBodyBackgroundColor(Objects.isNull(pdfPage.getColor()) ? "#FFFFFF" : colorToHex(pdfPage.getColor()));
+            // 添加到Page列表中
             pageList.add(page);
+            // Page页码索引加一
             this.pageIndex++;
             return this;
         }
 
-        /**
-         * 添加空行文本内容
-         */
-        public Writer addBlank() {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setIsBlank(true)
-            );
-        }
 
         /**
-         * 添加文本内容和其他组件的间隔
-         */
-        private void addComponentInterval(Float intervalSize) {
-            addTextarea(
-                    new PdfTextarea()
-                            .setFontSize(intervalSize)
-                            .setIsBlank(true)
-            );
-        }
-
-        /**
-         * 添加文本内容
+         * 添加段落
          *
-         * @param textarea 单段落文本内容
+         * @param textarea 文本内容
          */
-        public Writer addTextarea(String textarea) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
+        public Writer addParagraph(String textarea) {
+            return addParagraph(
+                    new PdfParagraph()
+                            .setTextContent(textarea)
             );
         }
 
         /**
-         * 添加文本内容
+         * 添加段落
          *
-         * @param textarea  单段落文本内容
-         * @param fontColor 字体颜色
-         * @param isBold    是否加粗
-         * @param isItalic  是否斜体
+         * @param textarea 文本内容
+         * @param fontSize 字体大小
          */
-        public Writer addTextarea(String textarea, Color fontColor, Boolean isBold, Boolean isItalic) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
-                            .setFontColor(fontColor)
-                            .setIsBold(isBold)
-                            .setIsItalic(isItalic)
+        public Writer addParagraph(String textarea, Integer fontSize) {
+            return addParagraph(
+                    new PdfParagraph()
+                            .setTextContent(textarea)
+                            .setFontSize(fontSize)
             );
         }
 
         /**
-         * 添加文本内容
+         * 添加段落
          *
-         * @param textarea  单段落文本内容
-         * @param fontName  字体名称
+         * @param textarea  文本内容
          * @param fontSize  字体大小
          * @param fontColor 字体颜色
-         * @param isBold    是否加粗
-         * @param isItalic  是否斜体
          */
-        public Writer addTextarea(String textarea, String fontName, Float fontSize, Color fontColor, Boolean isBold, Boolean isItalic) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(Objects.nonNull(textarea) ? List.of(textarea) : null)
-                            .setFontName(fontName)
+        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor) {
+            return addParagraph(
+                    new PdfParagraph()
+                            .setTextContent(textarea)
                             .setFontSize(fontSize)
                             .setFontColor(fontColor)
-                            .setIsBold(isBold)
-                            .setIsItalic(isItalic)
             );
         }
 
         /**
-         * 添加文本内容
+         * 添加段落
          *
-         * @param textareaList 多段落文本内容
+         * @param textarea   文本内容
+         * @param fontSize   字体大小
+         * @param fontColor  字体颜色
+         * @param fontWeight 字体字重
+         * @param fontStyle  字体样式
          */
-        public Writer addTextarea(List<String> textareaList) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(textareaList)
-            );
-        }
-
-        /**
-         * 添加文本内容
-         *
-         * @param textareaList 多段落文本内容
-         * @param fontColor    字体颜色
-         * @param isBold       是否加粗
-         * @param isItalic     是否斜体
-         */
-        public Writer addTextarea(List<String> textareaList, Color fontColor, Boolean isBold, Boolean isItalic) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(textareaList)
-                            .setFontColor(fontColor)
-                            .setIsBold(isBold)
-                            .setIsItalic(isItalic)
-            );
-        }
-
-        /**
-         * 添加文本内容
-         *
-         * @param textareaList 多段落文本内容
-         * @param fontName     字体名称
-         * @param fontSize     字体大小
-         * @param fontColor    字体颜色
-         * @param isBold       是否加粗
-         * @param isItalic     是否斜体
-         */
-        public Writer addTextarea(List<String> textareaList, String fontName, Float fontSize, Color fontColor, Boolean isBold, Boolean isItalic) {
-            return addTextarea(
-                    new PdfTextarea()
-                            .setTextList(textareaList)
-                            .setFontName(fontName)
+        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor, FontWeightEnum fontWeight, FontStyleEnum fontStyle) {
+            return addParagraph(
+                    new PdfParagraph()
+                            .setTextContent(textarea)
                             .setFontSize(fontSize)
                             .setFontColor(fontColor)
-                            .setIsBold(isBold)
-                            .setIsItalic(isItalic)
+                            .setFontWeight(fontWeight)
+                            .setFontStyle(fontStyle)
             );
         }
 
         /**
-         * 添加文本内容
+         * 添加段落
          *
-         * @param pdfTextarea PDF文本内容构造器
+         * @param pdfParagraph PDF段落构造器
          */
-        public Writer addTextarea(PdfTextarea pdfTextarea) {
+        public Writer addParagraph(PdfParagraph pdfParagraph) {
+            if (Objects.isNull(pdfParagraph)) {
+                log.error("处理PDF文件出错，PdfTextarea参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
+            }
             Text text = TemplateHandler.Text.build()
-                    .setText("你好世界 Hello World")
-                    .setFontFamily("思源宋体")
-                    .setFontSize("12")
-                    .setFontWeight("bold")
-                    .setFontStyle("italic")
-                    .setFontColor(String.format("#%02X%02X%02X", pdfTextarea.getFontColor().getRed(), pdfTextarea.getFontColor().getGreen(), pdfTextarea.getFontColor().getBlue()))
-//                    .setBackgroundColor(String.format("#%02X%02X%02X", pdfTextarea.getHighlightColor().getRed(), pdfTextarea.getHighlightColor().getGreen(), pdfTextarea.getHighlightColor().getBlue()))
-                    .enableDeleteLine()
-//                    .setDeleteLineColor(String.format("#%02X%02X%02X", pdfTextarea.getDeleteLineColor().getRed(), pdfTextarea.getDeleteLineColor().getGreen(), pdfTextarea.getDeleteLineColor().getBlue()))
-                    .enableUnderLine()
-//                    .setUnderLineColor(String.format("#%02X%02X%02X", pdfTextarea.getUnderlineColor().getRed(), pdfTextarea.getUnderlineColor().getGreen(), pdfTextarea.getUnderlineColor().getBlue()))
-                    .setHorizontalStyle(HorizontalAlignment.LEFT.name())
-                    .setMarginTop("10");
+                    // 设置文本
+                    .setText(Objects.isNull(pdfParagraph.getTextContent()) ? "" : pdfParagraph.getTextContent())
+                    // 设置字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setFontFamily(Objects.isNull(pdfParagraph.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfParagraph.getFontFamily())
+                    // 设置字号，默认12
+                    .setFontSize(String.valueOf(Objects.isNull(pdfParagraph.getFontSize()) ? 12 : pdfParagraph.getFontSize()))
+                    // 设置字重，默认正常
+                    .setFontWeight(Objects.isNull(pdfParagraph.getFontWeight()) ? FontWeightEnum.NORMAL.getName() : pdfParagraph.getFontWeight().getName())
+                    // 设置斜体，默认正常
+                    .setFontStyle(Objects.isNull(pdfParagraph.getFontStyle()) ? FontStyleEnum.NORMAL.getName() : pdfParagraph.getFontStyle().getName())
+                    // 设置字体颜色，默认黑色
+                    .setFontColor(Objects.isNull(pdfParagraph.getFontColor()) ? "#000000" : colorToHex(pdfParagraph.getFontColor()))
+                    // 设置段落首行缩进，默认不缩进
+                    .setTextIndent(String.valueOf(Objects.isNull(pdfParagraph.getTextIndent()) ?
+                            0 : (Objects.isNull(pdfParagraph.getFontSize()) ? 12 * pdfParagraph.getTextIndent() : pdfParagraph.getFontSize() * pdfParagraph.getTextIndent())))
+                    // 设置段间距，默认为5
+                    .setSpaceBefore(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) ? 5 : pdfParagraph.getMargin()))
+                    .setSpaceAfter(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) ? 5 : pdfParagraph.getMargin()))
+                    // 设置行间距，默认为1
+                    .setLeading(String.valueOf(Objects.isNull(pdfParagraph.getLeading()) ? 1 : pdfParagraph.getLeading()))
+                    // 设置对齐方式，默认两端对齐
+                    .setHorizontalStyle(Objects.isNull(pdfParagraph.getHorizontalAlignment()) ? HorizontalAlignmentEnum.JUSTIFY.getName() : pdfParagraph.getHorizontalAlignment().getName());
+            // 设置背景颜色，默认没有颜色
+            if (Objects.nonNull(pdfParagraph.getBackgroundColor())) {
+                text.setBackgroundColor(colorToHex(pdfParagraph.getBackgroundColor()));
+            }
+            // 设置删除线颜色，默认没有删除线
+            if (Objects.nonNull(pdfParagraph.getDeleteLineColor())) {
+                text.enableDeleteLine().setDeleteLineColor(colorToHex(pdfParagraph.getDeleteLineColor()));
+            }
+            // 设置下划线颜色，默认没有下划线
+            if (Objects.nonNull(pdfParagraph.getUnderLineColor())) {
+                text.enableUnderLine().setUnderLineColor(colorToHex(pdfParagraph.getUnderLineColor()));
+            }
             pageList.get(pageIndex).addBodyComponent(text);
-//            if (Objects.isNull(pdfTextarea)) {
-//                log.error("处理PDF文件出错，PdfTextarea参数为空");
-//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
-//            }
-//            Textarea textarea = new Textarea(pageList.get(pageIndex));
-//            // 设置文本内容
-//            if (CollectionUtils.isEmpty(pdfTextarea.getTextList()) || pdfTextarea.getIsBlank()) {
-//                // 设置是换行还是空行
-//                textarea.setIsWrap(pdfTextarea.getIsBlank());
-//                textarea.setText(StringUtils.EMPTY);
-//            } else if (Objects.equals(pdfTextarea.getTextList().size(), 1)) {
-//                // 设置单段落文本内容
-//                textarea.setIsWrap(true);
-//                textarea.setText(pdfTextarea.getTextList().get(0));
-//            } else {
-//                // 设置多段落文本内容
-//                textarea.setIsWrap(true);
-//                textarea.setTextList(pdfTextarea.getTextList());
-//            }
-//            // 设置文本内容字体
-//            textarea.setFontName(Objects.isNull(pdfTextarea.getFontName()) ? "SimHei" : pdfTextarea.getFontName());
-//            // 设置文本内容字体大小
-//            textarea.setFontSize(Objects.isNull(pdfTextarea.getFontSize()) ? 12f : pdfTextarea.getFontSize());
-//            // 设置文本内容是否加粗或斜体
-//            pdfTextarea.setIsBold(Objects.isNull(pdfTextarea.getIsBold()) ? Boolean.FALSE : pdfTextarea.getIsBold());
-//            pdfTextarea.setIsItalic(Objects.isNull(pdfTextarea.getIsItalic()) ? Boolean.FALSE : pdfTextarea.getIsItalic());
-//            if (pdfTextarea.getIsBold() && !pdfTextarea.getIsItalic()) {
-//                textarea.setFontStyle(FontStyle.BOLD);
-//            } else if (!pdfTextarea.getIsBold() && pdfTextarea.getIsItalic()) {
-//                textarea.setFontStyle(FontStyle.ITALIC);
-//            } else if (pdfTextarea.getIsBold()) {
-//                textarea.setFontStyle(FontStyle.ITALIC_BOLD);
-//            }
-//            // 设置文本内容字体颜色
-//            textarea.setFontColor(Objects.isNull(pdfTextarea.getFontColor()) ? Color.BLACK : pdfTextarea.getFontColor());
-//            // 设置文本内容高亮颜色
-//            if (Objects.nonNull(pdfTextarea.getHighlightColor())) {
-//                textarea.setIsHighlight(true);
-//                textarea.setHighlightColor(pdfTextarea.getHighlightColor());
-//            }
-//            // 设置文本内容删除线颜色
-//            if (Objects.nonNull(pdfTextarea.getDeleteLineColor())) {
-//                textarea.setIsDeleteLine(true);
-//                textarea.setDeleteLineColor(pdfTextarea.getDeleteLineColor());
-//            }
-//            // 设置文本内容下划线颜色
-//            if (Objects.nonNull(pdfTextarea.getUnderlineColor())) {
-//                textarea.setIsUnderline(true);
-//                textarea.setUnderlineColor(pdfTextarea.getUnderlineColor());
-//            }
-//            // 设置文本内容字间距
-//            textarea.setCharacterSpacing(Objects.isNull(pdfTextarea.getCharacterSpacing()) ? 1f : pdfTextarea.getCharacterSpacing());
-//            // 设置文本内容行间距
-//            textarea.setLeading(Objects.isNull(pdfTextarea.getLeading()) ? 1f : pdfTextarea.getLeading());
-//            // 设置文本内容对齐方式默认为左对齐
-//            textarea.setHorizontalAlignment(Objects.isNull(pdfTextarea.getHorizontalAlignment()) ? HorizontalAlignment.LEFT : pdfTextarea.getHorizontalAlignment());
-//            // 设置文本内容之间的边距
-//            textarea.setMarginTop(Objects.isNull(pdfTextarea.getMargin()) ? textarea.getFontSize() / 2 : pdfTextarea.getMargin());
-//            // 熏染文本内容
-//            textarea.render();
             return this;
         }
 
@@ -406,8 +323,6 @@ public class PdfUtils {
 //            }
 //            // 渲染分割线
 //            splitLine.render();
-//            // 设置分割线边距
-//            addComponentInterval(Objects.isNull(pdfSplitLine.getMargin()) ? 10f : pdfSplitLine.getMargin());
 //            return this;
 //        }
 
@@ -511,8 +426,6 @@ public class PdfUtils {
 //            }
 //            // 渲染图像
 //            image.render();
-//            // 设置图像边距
-//            addComponentInterval(Objects.isNull(pdfImage.getMargin()) ? 10f : pdfImage.getMargin());
 //            return this;
 //        }
 
@@ -565,6 +478,16 @@ public class PdfUtils {
             response.setContentType("application/pdf;charset=UTF-8");
         }
 
+        /**
+         * 将Color转换成16进制数
+         */
+        private static String colorToHex(Color color) {
+            if (Objects.isNull(color)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "Color转换为16进制数时，Color对象不能为空");
+            }
+            return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        }
+
     }
 
     /**
@@ -584,24 +507,14 @@ public class PdfUtils {
     public static class PdfPage {
 
         /**
-         * 页面纸张大小，默认为A4
-         */
-        PageSize pageSize;
-
-        /**
-         * 页面字体名称，默认为"SimHei"（黑体）
-         */
-        String pageFontName;
-
-        /**
          * 页面字体大小。默认为12
          */
-        Float pageFontSize;
+        Integer fontSize;
 
         /**
          * 页面四周边距，默认25
          */
-        Float pageMargin;
+        Integer margin;
 
         /**
          * 页面背景颜色，默认白色
@@ -611,88 +524,83 @@ public class PdfUtils {
     }
 
     /**
-     * PDF文本构造器
+     * PDF段落构造类
      */
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Accessors(chain = true)
-    public static class PdfTextarea {
+    public static class PdfParagraph {
 
         /**
-         * 文本内容，默认{""}
+         * 段落文本内容
          */
-        private List<String> textList = new ArrayList<>();
+        private String textContent;
 
         /**
-         * 文本内容是否为空行，默认为false，如果设置为true，无论textList为何值，均默认为空行
+         * 段落字体
          */
-        private Boolean isBlank = false;
+        private String fontFamily;
 
         /**
-         * 文本内容字体，默认为"SimHei"（黑体）
+         * 段落字体大小
          */
-        private String fontName;
+        private Integer fontSize;
 
         /**
-         * 文本内容字体大小，默认为12
+         * 段落字重
          */
-        private Float fontSize;
+        private FontWeightEnum fontWeight;
 
         /**
-         * 文本内容字体是否加粗，默认为false
+         * 段落样式
          */
-        private Boolean isBold = false;
+        private FontStyleEnum fontStyle;
 
         /**
-         * 文本内容字体是否斜体，默认为false
-         */
-        private Boolean isItalic = false;
-
-        /**
-         * 文本内容字体颜色，默认为黑色
+         * 段落字体颜色
          */
         private Color fontColor;
 
         /**
-         * 文本内容高亮颜色
+         * 段落首行缩进字符数
          */
-        private Color highlightColor;
+        private Integer textIndent;
 
         /**
-         * 文本内容删除线颜色
+         * 段落背景颜色
+         */
+        private Color backgroundColor;
+
+        /**
+         * 段落删除线颜色
          */
         private Color deleteLineColor;
 
         /**
-         * 文本内容下划线颜色
+         * 段落下划线颜色
          */
-        private Color underlineColor;
+        private Color underLineColor;
 
         /**
-         * 文本内容字间距，默认为1
+         * 段落行间距
          */
-        private Float characterSpacing;
+        private Integer leading;
 
         /**
-         * 文本内容行间距，默认为1
+         * 段落段间距
          */
-        private Float leading;
+        private Integer margin;
 
         /**
-         * 文本内容对齐方式，默认为左对齐
+         * 段落对齐方式
          */
-        private HorizontalAlignment horizontalAlignment;
-
-        /**
-         * 文本内容之间的间距
-         */
-        private Float margin;
+        private HorizontalAlignmentEnum horizontalAlignment;
 
     }
 
     /**
-     * PDF分割线构造器
+     * PDF分割线构造类
      */
     @Data
     @AllArgsConstructor
@@ -738,7 +646,7 @@ public class PdfUtils {
     }
 
     /**
-     * PDF图像构造器
+     * PDF图像构造类
      */
     @Data
     @AllArgsConstructor
