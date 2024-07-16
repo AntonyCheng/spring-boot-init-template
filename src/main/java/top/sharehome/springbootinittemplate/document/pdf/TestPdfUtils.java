@@ -1,8 +1,10 @@
 package top.sharehome.springbootinittemplate.document.pdf;
 
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyleEnum;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeightEnum;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyle;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeight;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ImageExtension;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ImageHorizontal;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -22,15 +24,25 @@ public class TestPdfUtils {
         String logoPath2 = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/logo(横版封面图).png";
         try (
                 FileOutputStream fileOutputStream = new FileOutputStream(path);
-                FileInputStream fileInputStream1 = new FileInputStream(logoPath1);
+//                FileInputStream fileInputStream1 = new FileInputStream(logoPath1);
                 FileInputStream fileInputStream2 = new FileInputStream(logoPath2);
-                FileInputStream fileInputStream3 = new FileInputStream(path);
+//                FileInputStream fileInputStream3 = new FileInputStream(path);
         ) {
             new PdfUtils.Writer()
-                    .addPage(new PdfUtils.PdfPage().setColor(Color.WHITE))
+                    .addPage()
+                    .addSplitLine()
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
+                    .addSplitLine()
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setFontSize(24).setTextIndent(2).setUnderLineColor(Color.orange).setDeleteLineColor(Color.blue))
+                    .addSplitLine()
                     .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World")
-                    .addPage(new PdfUtils.PdfPage().setColor(Color.BLACK))
-                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeightEnum.BOLDER, FontStyleEnum.ITALIC)
+                    .addSplitLine()
+                    .addImage(new PdfUtils.PdfImage().setPath(logoPath1).setImageHorizontal(ImageHorizontal.CENTER).setHeight(300))
+                    .addSplitLine()
+                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeight.BOLDER, FontStyle.ITALIC)
+                    .addSplitLine()
+                    .addImage(fileInputStream2, ImageExtension.PNG)
+                    .addSplitLine()
                     .doWrite(fileOutputStream);
 //            new PdfUtils.Writer()
 //                    .addPage()

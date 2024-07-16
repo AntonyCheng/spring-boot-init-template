@@ -10,7 +10,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
-import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
+import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
@@ -58,7 +58,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @EnableCaptcha
-    @ControllerLog(description = "用户登录", operator = OperatorEnum.OTHER)
+    @ControllerLog(description = "用户登录", operator = Operator.OTHER)
     public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
@@ -82,7 +82,7 @@ public class AuthController {
      * @return 返回退出结果
      */
     @DeleteMapping("/logout")
-    @ControllerLog(description = "用户退出", operator = OperatorEnum.OTHER)
+    @ControllerLog(description = "用户退出", operator = Operator.OTHER)
     public R<String> logout() {
         LoginUtils.logout();
         return R.ok("退出成功");

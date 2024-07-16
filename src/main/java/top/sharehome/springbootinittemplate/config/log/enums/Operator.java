@@ -12,7 +12,7 @@ import java.util.List;
  * @author AntonyCheng
  */
 @Getter
-public enum OperatorEnum {
+public enum Operator {
 
     OTHER("其他操作", 0),
 
@@ -32,14 +32,14 @@ public enum OperatorEnum {
 
     private final Integer OperatorValue;
 
-    OperatorEnum(String operatorLabel, Integer operatorValue) {
+    Operator(String operatorLabel, Integer operatorValue) {
         this.OperatorLabel = operatorLabel;
         this.OperatorValue = operatorValue;
     }
 
-    public static String getLabelByValue(Integer operatorValue){
-        List<OperatorEnum> list = Arrays.stream(OperatorEnum.values()).filter(operatorEnum -> Objects.equal(operatorEnum.getOperatorValue(), operatorValue)).toList();
-        if (list.isEmpty()){
+    public static String getLabelByValue(Integer operatorValue) {
+        List<Operator> list = Arrays.stream(Operator.values()).filter(operatorEnum -> Objects.equal(operatorEnum.getOperatorValue(), operatorValue)).toList();
+        if (list.isEmpty()) {
             return "UNKNOWN";
         }
         return list.get(0).getOperatorLabel();

@@ -4,23 +4,33 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF字体样式
+ * PDF段落对齐方式
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum FontStyleEnum {
+public enum ParagraphHorizontal {
 
     /**
-     * 正常
+     * 居左
      */
-    NORMAL("normal"),
+    LEFT("left"),
 
     /**
-     * 斜体
+     * 居中
      */
-    ITALIC("italic");
+    CENTER("center"),
+
+    /**
+     * 居右
+     */
+    RIGHT("right"),
+
+    /**
+     * 两端对齐
+     */
+    JUSTIFY("justify");
 
     private final String name;
 

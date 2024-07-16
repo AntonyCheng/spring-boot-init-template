@@ -4,36 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF字体字重
+ * PDF字体样式
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum FontWeightEnum {
+public enum FontStyle {
 
     /**
      * 正常
      */
-    NORMAL("normal", 400),
+    NORMAL("normal"),
 
     /**
-     * 粗体
+     * 斜体
      */
-    BOLD("bold", 700),
-
-    /**
-     * 加粗
-     */
-    BOLDER("bolder", 900),
-
-    /**
-     * 细体
-     */
-    LIGHTER("lighter", 100);
+    ITALIC("italic");
 
     private final String name;
-
-    private final Integer value;
 
 }

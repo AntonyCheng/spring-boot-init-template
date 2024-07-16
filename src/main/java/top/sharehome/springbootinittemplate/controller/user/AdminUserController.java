@@ -12,7 +12,7 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
-import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
+import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
@@ -44,7 +44,7 @@ public class AdminUserController {
      * @return 分页查询结果
      */
     @GetMapping("/page")
-    @ControllerLog(description = "管理员查询用户信息", operator = OperatorEnum.QUERY)
+    @ControllerLog(description = "管理员查询用户信息", operator = Operator.QUERY)
     public R<Page<AdminUserPageVo>> pageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel) {
         Page<AdminUserPageVo> page = userService.adminPageUser(adminUserPageDto, pageModel);
         return R.ok(page);
@@ -57,7 +57,7 @@ public class AdminUserController {
      * @return 添加结果
      */
     @PostMapping("/add")
-    @ControllerLog(description = "管理员添加用户信息", operator = OperatorEnum.INSERT)
+    @ControllerLog(description = "管理员添加用户信息", operator = Operator.INSERT)
     public R<String> addUser(@RequestBody @Validated({PostGroup.class}) AdminUserAddDto adminUserAddDto) {
         userService.adminAddUser(adminUserAddDto);
         return R.ok("添加成功");
@@ -70,7 +70,7 @@ public class AdminUserController {
      * @return 删除结果
      */
     @DeleteMapping("/delete/{id}")
-    @ControllerLog(description = "管理员删除用户信息", operator = OperatorEnum.DELETE)
+    @ControllerLog(description = "管理员删除用户信息", operator = Operator.DELETE)
     public R<String> deleteUser(@PathVariable("id") Long id) {
         userService.adminDeleteUser(id);
         return R.ok("删除成功");
@@ -83,7 +83,7 @@ public class AdminUserController {
      * @return 修改结果
      */
     @PutMapping("/update/info")
-    @ControllerLog(description = "管理员修改用户信息", operator = OperatorEnum.UPDATE)
+    @ControllerLog(description = "管理员修改用户信息", operator = Operator.UPDATE)
     public R<String> updateInfo(@RequestBody @Validated({PutGroup.class}) AdminUserUpdateInfoDto adminUserUpdateInfoDto) {
         userService.adminUpdateInfo(adminUserUpdateInfoDto);
         return R.ok("修改信息成功");
@@ -96,7 +96,7 @@ public class AdminUserController {
      * @return 修改结果
      */
     @PutMapping("/update/state")
-    @ControllerLog(description = "管理员修改用户状态", operator = OperatorEnum.UPDATE)
+    @ControllerLog(description = "管理员修改用户状态", operator = Operator.UPDATE)
     public R<String> updateState(@RequestBody @Validated({PutGroup.class}) AdminUserUpdateStateDto adminUserUpdateStateDto) {
         userService.adminUpdateState(adminUserUpdateStateDto);
         return R.ok("修改状态成功");
@@ -109,7 +109,7 @@ public class AdminUserController {
      * @return 重置结果
      */
     @PutMapping("/reset/password")
-    @ControllerLog(description = "管理员重置用户密码", operator = OperatorEnum.UPDATE)
+    @ControllerLog(description = "管理员重置用户密码", operator = Operator.UPDATE)
     public R<String> resetPassword(@RequestBody @Validated({PutGroup.class}) AdminUserResetPasswordDto adminUserResetPasswordDto) {
         userService.adminResetPassword(adminUserResetPasswordDto);
         return R.ok("重置密码成功");
@@ -121,7 +121,7 @@ public class AdminUserController {
      * @return 导出表格
      */
     @GetMapping("/export")
-    @ControllerLog(description = "管理员导出用户表格", operator = OperatorEnum.EXPORT)
+    @ControllerLog(description = "管理员导出用户表格", operator = Operator.EXPORT)
     public R<Void> exportExcel(HttpServletResponse response) {
         List<AdminUserExportVo> list = userService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "用户表", AdminUserExportVo.class, response);
