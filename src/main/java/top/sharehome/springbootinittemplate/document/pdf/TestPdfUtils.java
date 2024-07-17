@@ -27,19 +27,7 @@ public class TestPdfUtils {
 //                FileInputStream fileInputStream3 = new FileInputStream(path);
         ) {
             PdfUtils.PdfTable pdfTable = new PdfUtils.PdfTable()
-                    .setPdfTableHead(
-                            new PdfUtils.PdfTable.PdfTableHead().setPdfTableRows(new ArrayList<>() {
-                                {
-                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
-                                        {
-                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明1"));
-                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红1"));
-                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑1"));
-                                        }
-                                    }));
-                                }
-                            })
-                    ).setPdfTableBody(
+                    .setPdfTableBody(
                             new PdfUtils.PdfTable.PdfTableBody().setPdfTableRows(new ArrayList<>() {
                                 {
                                     add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
@@ -54,6 +42,18 @@ public class TestPdfUtils {
                                             add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明3"));
                                             add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红3"));
                                             add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑3"));
+                                        }
+                                    }));
+                                }
+                            })
+                    ).setPdfTableHead(
+                            new PdfUtils.PdfTable.PdfTableHead().setPdfTableRows(new ArrayList<>() {
+                                {
+                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
+                                        {
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明1"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红1"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑1"));
                                         }
                                     }));
                                 }
@@ -74,7 +74,7 @@ public class TestPdfUtils {
             new PdfUtils.Writer()
                     .addPage()
                     .addSplitLine()
-                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2).setFontWeight(FontWeight.BOLD))
                     .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
                     .addSplitLine()
                     .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setFontSize(24).setTextIndent(2).setUnderLineColor(Color.orange).setDeleteLineColor(Color.blue))
@@ -83,7 +83,7 @@ public class TestPdfUtils {
                     .addSplitLine()
                     .addImage(new PdfUtils.PdfImage().setPath(logoPath1).setImageHorizontal(ImageHorizontal.CENTER).setHeight(300))
                     .addSplitLine()
-                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeight.BOLDER, FontStyle.ITALIC)
+                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeight.BOLD, FontStyle.ITALIC)
                     .addSplitLine()
                     .addImage(fileInputStream2, ImageExtension.PNG, ImageHorizontal.CENTER, null, 100)
                     .addSplitLine()

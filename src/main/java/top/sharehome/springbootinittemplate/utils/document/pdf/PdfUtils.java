@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -273,6 +274,9 @@ public class PdfUtils {
                 log.error("处理PDF文件出错，PdfTable参数为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTable参数为空");
             }
+            // 设置填充表格的标志符号
+            int isAddTable = 0;
+            // 设置表格整体属性
             Table table = TemplateHandler.Table.build()
                     // 设置表格字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
                     .setFontFamily(Objects.isNull(pdfTable.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfTable.getFontFamily())
@@ -281,65 +285,100 @@ public class PdfUtils {
                     // 设置表格上下边距，默认为1
                     .setMarginTop(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()))
                     .setMarginBottom(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()));
+            // 设置表体
+            TableBody tableBody = TemplateHandler.Table.Body.build();
+            if (Objects.nonNull(pdfTable.getPdfTableBody()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableBody().getPdfTableRows())) {
+                List<TableRow> tableBodyRows = pdfTable.getPdfTableBody().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(new TableCell()
+                                .addComponent(
+                                        TemplateHandler.Text.build()
+                                                // 设置表体单元格文本内容，默认""
+                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                                // 设置表体单元格内容对齐方式，默认居中
+                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                )
+                                // 设置表体单元格边框颜色，默认黑色
+                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                // 设置表体单元格边框宽度为1
+                                .setBorderWidth("1")
+                                // 设置表体单元格边框样式为实现
+                                .setBorderStyle("solid"));
+                    });
+                    return tableRow;
+                }).toList();
+                tableBody.addRow(tableBodyRows);
+                isAddTable += 1;
+            }
             // 设置表头
             TableHeader tableHeader = TemplateHandler.Table.Header.build();
-            List<TableRow> tableHeaderRows = pdfTable.getPdfTableHead().getPdfTableRows().stream().map(pdfTableRow -> {
-                TableRow tableRow = new TableRow();
-                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                    tableRow.addCell(new TableCell()
-                            .addComponent(
-                                    TemplateHandler.Text.build()
-                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                                            .setFontWeight(FontWeight.BOLD.getName())
-                            )
-                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                            .setBorderWidth("1")
-                            .setBorderStyle("solid"));
-                });
-                return tableRow;
-            }).toList();
-            tableHeader.addRow(tableHeaderRows);
-
-            TableBody tableBody = TemplateHandler.Table.Body.build();
-            List<TableRow> tableBodyRows = pdfTable.getPdfTableBody().getPdfTableRows().stream().map(pdfTableRow -> {
-                TableRow tableRow = new TableRow();
-                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                    tableRow.addCell(new TableCell()
-                            .addComponent(
-                                    TemplateHandler.Text.build()
-                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                            )
-                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                            .setBorderWidth("1")
-                            .setBorderStyle("solid"));
-                });
-                return tableRow;
-            }).toList();
-            tableBody.addRow(tableBodyRows);
-
+            if (Objects.nonNull(pdfTable.getPdfTableHead()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableHead().getPdfTableRows())) {
+                List<TableRow> tableHeaderRows = pdfTable.getPdfTableHead().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(new TableCell()
+                                .addComponent(
+                                        TemplateHandler.Text.build()
+                                                // 设置表头单元格文本内容，默认""
+                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                                // 设置表头单元格内容对齐方式，默认居中
+                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                                // 设置表头单元格内容加粗
+                                                .setFontWeight(FontWeight.BOLD.getName())
+                                )
+                                // 设置表头单元格边框颜色，默认黑色
+                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                // 设置表头单元格边框宽度为1
+                                .setBorderWidth("1")
+                                // 设置表头单元格边框样式为实现
+                                .setBorderStyle("solid"));
+                    });
+                    return tableRow;
+                }).toList();
+                tableHeader.addRow(tableHeaderRows);
+                isAddTable += 2;
+            }
+            // 设置表尾
             TableFooter tableFooter = TemplateHandler.Table.Footer.build();
-            List<TableRow> tableFooterRows = pdfTable.getPdfTableFooter().getPdfTableRows().stream().map(pdfTableRow -> {
-                TableRow tableRow = new TableRow();
-                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                    tableRow.addCell(new TableCell()
-                            .addComponent(
-                                    TemplateHandler.Text.build()
-                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                            )
-                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                            .setBorderWidth("1")
-                            .setBorderStyle("solid"));
-                });
-                return tableRow;
-            }).toList();
-            tableFooter.addRow(tableFooterRows);
-
-            table.setHeader(tableHeader)
-                    .setBody(tableBody)
-                    .setFooter(tableFooter);
+            if (Objects.nonNull(pdfTable.getPdfTableFooter()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableFooter().getPdfTableRows())) {
+                List<TableRow> tableFooterRows = pdfTable.getPdfTableFooter().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(new TableCell()
+                                .addComponent(
+                                        TemplateHandler.Text.build()
+                                                // 设置表尾单元格文本内容，默认""
+                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                                // 设置表尾单元格内容对齐方式，默认居中
+                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                )
+                                // 设置表尾单元格边框颜色，默认黑色
+                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                // 设置表尾单元格边框宽度为1
+                                .setBorderWidth("1")
+                                // 设置表尾单元格边框样式为实现
+                                .setBorderStyle("solid"));
+                    });
+                    return tableRow;
+                }).toList();
+                tableFooter.addRow(tableFooterRows);
+                isAddTable += 4;
+            }
+            // 以二进制做判断依据，进行判断该表格是否需要进行插入数据
+            byte[] isAddTableBinArray = String.format("%3s", Integer.toBinaryString(isAddTable)).replace(' ', '0').getBytes();
+            // 要求必须包含表体数据，否则不进行填充文本内容操作
+            if (isAddTableBinArray[2] == '1') {
+                table.setBody(tableBody);
+            } else {
+                return this;
+            }
+            if (isAddTableBinArray[1] == '1') {
+                table.setHeader(tableHeader);
+            }
+            if (isAddTableBinArray[0] == '1') {
+                table.setFooter(tableFooter);
+            }
             pageList.get(pageIndex).addBodyComponent(table);
             return this;
         }

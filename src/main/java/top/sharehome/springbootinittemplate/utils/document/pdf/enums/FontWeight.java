@@ -20,17 +20,7 @@ public enum FontWeight {
     /**
      * 粗体
      */
-    BOLD("bold", 700),
-
-    /**
-     * 加粗
-     */
-    BOLDER("bolder", 900),
-
-    /**
-     * 细体
-     */
-    LIGHTER("lighter", 100);
+    BOLD("bold", 700);
 
     private final String name;
 
