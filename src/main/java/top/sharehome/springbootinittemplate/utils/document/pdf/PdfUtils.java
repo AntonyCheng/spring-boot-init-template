@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.pdf.fop.core.doc.Document;
 import org.dromara.pdf.fop.core.doc.component.image.Image;
 import org.dromara.pdf.fop.core.doc.component.line.SplitLine;
+import org.dromara.pdf.fop.core.doc.component.table.*;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
 import org.dromara.pdf.fop.handler.TemplateHandler;
@@ -30,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -120,7 +122,7 @@ public class PdfUtils {
         /**
          * 添加页面
          *
-         * @param pdfPage 页面构造类
+         * @param pdfPage PDF页面构造类
          */
         public Writer addPage(PdfPage pdfPage) {
             if (Objects.isNull(pdfPage)) {
@@ -141,7 +143,6 @@ public class PdfUtils {
             this.pageIndex++;
             return this;
         }
-
 
         /**
          * 添加段落
@@ -208,7 +209,7 @@ public class PdfUtils {
         /**
          * 添加段落
          *
-         * @param pdfParagraph PDF段落构造器
+         * @param pdfParagraph PDF段落构造类
          */
         public Writer addParagraph(PdfParagraph pdfParagraph) {
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
@@ -220,41 +221,126 @@ public class PdfUtils {
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfParagraph参数为空");
             }
             Text text = TemplateHandler.Text.build()
-                    // 设置文本
+                    // 设置段落文本
                     .setText(Objects.isNull(pdfParagraph.getTextContent()) ? "" : pdfParagraph.getTextContent())
-                    // 设置字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    // 设置段落字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
                     .setFontFamily(Objects.isNull(pdfParagraph.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfParagraph.getFontFamily())
-                    // 设置字号，默认12
+                    // 设置段落字号，默认12
                     .setFontSize(String.valueOf(Objects.isNull(pdfParagraph.getFontSize()) || pdfParagraph.getFontSize() <= 0 ? 12 : pdfParagraph.getFontSize()))
-                    // 设置字重，默认正常
+                    // 设置段落字重，默认正常
                     .setFontWeight(Objects.isNull(pdfParagraph.getFontWeight()) ? FontWeight.NORMAL.getName() : pdfParagraph.getFontWeight().getName())
-                    // 设置斜体，默认正常
+                    // 设置段落斜体，默认正常
                     .setFontStyle(Objects.isNull(pdfParagraph.getFontStyle()) ? FontStyle.NORMAL.getName() : pdfParagraph.getFontStyle().getName())
-                    // 设置字体颜色，默认黑色
+                    // 设置段落字体颜色，默认黑色
                     .setFontColor(colorToHex(Objects.isNull(pdfParagraph.getFontColor()) ? Color.BLACK : pdfParagraph.getFontColor()))
                     // 设置段落首行缩进，默认不缩进
                     .setTextIndent(String.valueOf(Objects.isNull(pdfParagraph.getTextIndent()) || pdfParagraph.getTextIndent() <= 0 ?
                             0 : (Objects.isNull(pdfParagraph.getFontSize()) ? 12 * pdfParagraph.getTextIndent() : pdfParagraph.getFontSize() * pdfParagraph.getTextIndent())))
-                    // 设置段间距，默认为5
-                    .setSpaceBefore(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 5 : pdfParagraph.getMargin()))
-                    .setSpaceAfter(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 5 : pdfParagraph.getMargin()))
-                    // 设置行间距，默认为1
+                    // 设置段落上下边距，默认为1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 1 : pdfParagraph.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 1 : pdfParagraph.getMargin()))
+                    // 设置段落行间距，默认为1
                     .setLeading(String.valueOf(Objects.isNull(pdfParagraph.getLeading()) || pdfParagraph.getLeading() <= 0 ? 1 : pdfParagraph.getLeading()))
-                    // 设置对齐方式，默认两端对齐
+                    // 设置段落对齐方式，默认两端对齐
                     .setHorizontalStyle(Objects.isNull(pdfParagraph.getParagraphHorizontal()) ? ParagraphHorizontal.JUSTIFY.getName() : pdfParagraph.getParagraphHorizontal().getName());
-            // 设置背景颜色，默认没有颜色
+            // 设置段落背景颜色，默认没有颜色
             if (Objects.nonNull(pdfParagraph.getBackgroundColor())) {
                 text.setBackgroundColor(colorToHex(pdfParagraph.getBackgroundColor()));
             }
-            // 设置删除线颜色，默认没有删除线
+            // 设置段落删除线颜色，默认没有删除线
             if (Objects.nonNull(pdfParagraph.getDeleteLineColor())) {
                 text.enableDeleteLine().setDeleteLineColor(colorToHex(pdfParagraph.getDeleteLineColor()));
             }
-            // 设置下划线颜色，默认没有下划线
+            // 设置段落下划线颜色，默认没有下划线
             if (Objects.nonNull(pdfParagraph.getUnderLineColor())) {
                 text.enableUnderLine().setUnderLineColor(colorToHex(pdfParagraph.getUnderLineColor()));
             }
             pageList.get(pageIndex).addBodyComponent(text);
+            return this;
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTable PDF表格构造类
+         */
+        public Writer addTable(PdfTable pdfTable) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfTable)) {
+                log.error("处理PDF文件出错，PdfTable参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTable参数为空");
+            }
+            Table table = TemplateHandler.Table.build()
+                    // 设置表格字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setFontFamily(Objects.isNull(pdfTable.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfTable.getFontFamily())
+                    // 设置表格对齐方式，默认居中
+                    .setHorizontalStyle(Objects.isNull(pdfTable.getTableHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTable.getTableHorizontal().getName())
+                    // 设置表格上下边距，默认为1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()));
+            // 设置表头
+            TableHeader tableHeader = TemplateHandler.Table.Header.build();
+            List<TableRow> tableHeaderRows = pdfTable.getPdfTableHead().getPdfTableRows().stream().map(pdfTableRow -> {
+                TableRow tableRow = new TableRow();
+                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                    tableRow.addCell(new TableCell()
+                            .addComponent(
+                                    TemplateHandler.Text.build()
+                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                            .setFontWeight(FontWeight.BOLD.getName())
+                            )
+                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                            .setBorderWidth("1")
+                            .setBorderStyle("solid"));
+                });
+                return tableRow;
+            }).toList();
+            tableHeader.addRow(tableHeaderRows);
+
+            TableBody tableBody = TemplateHandler.Table.Body.build();
+            List<TableRow> tableBodyRows = pdfTable.getPdfTableBody().getPdfTableRows().stream().map(pdfTableRow -> {
+                TableRow tableRow = new TableRow();
+                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                    tableRow.addCell(new TableCell()
+                            .addComponent(
+                                    TemplateHandler.Text.build()
+                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                            )
+                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                            .setBorderWidth("1")
+                            .setBorderStyle("solid"));
+                });
+                return tableRow;
+            }).toList();
+            tableBody.addRow(tableBodyRows);
+
+            TableFooter tableFooter = TemplateHandler.Table.Footer.build();
+            List<TableRow> tableFooterRows = pdfTable.getPdfTableFooter().getPdfTableRows().stream().map(pdfTableRow -> {
+                TableRow tableRow = new TableRow();
+                pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                    tableRow.addCell(new TableCell()
+                            .addComponent(
+                                    TemplateHandler.Text.build()
+                                            .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                            .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                            )
+                            .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                            .setBorderWidth("1")
+                            .setBorderStyle("solid"));
+                });
+                return tableRow;
+            }).toList();
+            tableFooter.addRow(tableFooterRows);
+
+            table.setHeader(tableHeader)
+                    .setBody(tableBody)
+                    .setFooter(tableFooter);
+            pageList.get(pageIndex).addBodyComponent(table);
             return this;
         }
 
@@ -315,7 +401,7 @@ public class PdfUtils {
         /**
          * 添加分割线
          *
-         * @param pdfSplitLine PDF分割线构造器
+         * @param pdfSplitLine PDF分割线构造类
          */
         public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
@@ -458,7 +544,7 @@ public class PdfUtils {
         }
 
         /**
-         * 天机图象
+         * 添加图象
          *
          * @param path            图像所在路径
          * @param imageHorizontal 图像对齐方式
@@ -478,7 +564,7 @@ public class PdfUtils {
         /**
          * 添加图像
          *
-         * @param pdfImage PDF图像构造器
+         * @param pdfImage PDF图像构造类
          */
         public Writer addImage(PdfImage pdfImage) {
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
@@ -502,9 +588,9 @@ public class PdfUtils {
                     .setWidth(Objects.isNull(pdfImage.getWidth()) || pdfImage.getWidth() <= 0 ? null : String.valueOf(pdfImage.getWidth()))
                     // 设置图像长度
                     .setHeight(Objects.isNull(pdfImage.getHeight()) || pdfImage.getHeight() <= 0 ? null : String.valueOf(pdfImage.getHeight()))
-                    // 设置图像上下边距，默认2
-                    .setMarginTop(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 2 : pdfImage.getMargin()))
-                    .setMarginBottom(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 2 : pdfImage.getMargin()));
+                    // 设置图像上下边距，默认1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 1 : pdfImage.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 1 : pdfImage.getMargin()));
             pageList.get(pageIndex).addBodyComponent(image);
             return this;
         }
@@ -695,7 +781,7 @@ public class PdfUtils {
         private Integer leading;
 
         /**
-         * 段落段间距
+         * 段落上下边距
          */
         private Integer margin;
 
@@ -703,6 +789,119 @@ public class PdfUtils {
          * 段落对齐方式
          */
         private ParagraphHorizontal paragraphHorizontal;
+
+    }
+
+    /**
+     * PDF表格构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfTable {
+
+        private String fontFamily;
+
+        private TableHorizontal tableHorizontal;
+
+        private Integer margin;
+
+        private PdfTableHead pdfTableHead;
+
+        private PdfTableBody pdfTableBody;
+
+        private PdfTableFooter pdfTableFooter;
+
+        /**
+         * PDF表格表头
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableHead {
+
+            /**
+             * 表格表行列表
+             */
+            private ArrayList<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表体
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableBody {
+
+            /**
+             * 表格表行列表
+             */
+            private ArrayList<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表尾
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableFooter {
+
+            /**
+             * 表格表行列表
+             */
+            private ArrayList<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表行
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableRow {
+
+            /**
+             * 表格单元格列表
+             */
+            private ArrayList<PdfTableCell> pdfTableCells;
+
+        }
+
+        /**
+         * PDF表格单元格
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableCell {
+
+            /**
+             * 单元格内容
+             */
+            private String cellContent;
+
+            /**
+             * 单元格内容对齐方式
+             */
+            private TableHorizontal cellHorizontal;
+
+            /**
+             * 单元格边框颜色
+             */
+            private Color broderColor;
+
+        }
 
     }
 

@@ -1,15 +1,13 @@
 package top.sharehome.springbootinittemplate.document.pdf;
 
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyle;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeight;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ImageExtension;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ImageHorizontal;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.*;
 
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * 直接使用main函数对PdfUtils进行测试
@@ -28,9 +26,55 @@ public class TestPdfUtils {
                 FileInputStream fileInputStream2 = new FileInputStream(logoPath2);
 //                FileInputStream fileInputStream3 = new FileInputStream(path);
         ) {
+            PdfUtils.PdfTable pdfTable = new PdfUtils.PdfTable()
+                    .setPdfTableHead(
+                            new PdfUtils.PdfTable.PdfTableHead().setPdfTableRows(new ArrayList<>() {
+                                {
+                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
+                                        {
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明1"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红1"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑1"));
+                                        }
+                                    }));
+                                }
+                            })
+                    ).setPdfTableBody(
+                            new PdfUtils.PdfTable.PdfTableBody().setPdfTableRows(new ArrayList<>() {
+                                {
+                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
+                                        {
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明2"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红2"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑2"));
+                                        }
+                                    }));
+                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
+                                        {
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明3"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红3"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑3"));
+                                        }
+                                    }));
+                                }
+                            })
+                    ).setPdfTableFooter(
+                            new PdfUtils.PdfTable.PdfTableFooter().setPdfTableRows(new ArrayList<>() {
+                                {
+                                    add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
+                                        {
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小明4"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小红4"));
+                                            add(new PdfUtils.PdfTable.PdfTableCell().setCellContent("小黑4"));
+                                        }
+                                    }));
+                                }
+                            })
+                    );
             new PdfUtils.Writer()
                     .addPage()
                     .addSplitLine()
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
                     .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
                     .addSplitLine()
                     .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setFontSize(24).setTextIndent(2).setUnderLineColor(Color.orange).setDeleteLineColor(Color.blue))
@@ -41,8 +85,9 @@ public class TestPdfUtils {
                     .addSplitLine()
                     .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeight.BOLDER, FontStyle.ITALIC)
                     .addSplitLine()
-                    .addImage(fileInputStream2, ImageExtension.PNG)
+                    .addImage(fileInputStream2, ImageExtension.PNG, ImageHorizontal.CENTER, null, 100)
                     .addSplitLine()
+                    .addTable(pdfTable)
                     .doWrite(fileOutputStream);
 //            new PdfUtils.Writer()
 //                    .addPage()
