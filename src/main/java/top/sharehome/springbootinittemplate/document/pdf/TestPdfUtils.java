@@ -46,8 +46,8 @@ public class TestPdfUtils {
                                     }));
                                 }
                             })
-                    ).setPdfTableHead(
-                            new PdfUtils.PdfTable.PdfTableHead().setPdfTableRows(new ArrayList<>() {
+                    ).setPdfTableHeader(
+                            new PdfUtils.PdfTable.PdfTableHeader().setPdfTableRows(new ArrayList<>() {
                                 {
                                     add(new PdfUtils.PdfTable.PdfTableRow().setPdfTableCells(new ArrayList<>() {
                                         {

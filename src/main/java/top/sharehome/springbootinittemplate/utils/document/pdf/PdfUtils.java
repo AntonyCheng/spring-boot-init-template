@@ -99,7 +99,7 @@ public class PdfUtils {
         /**
          * 页面管理
          */
-        private final ArrayList<Page> pageList;
+        private final List<Page> pageList;
 
         /**
          * 当前页面索引
@@ -151,10 +151,7 @@ public class PdfUtils {
          * @param textarea 文本内容
          */
         public Writer addParagraph(String textarea) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-            );
+            return addParagraph(textarea, null, null, null, null);
         }
 
         /**
@@ -164,11 +161,7 @@ public class PdfUtils {
          * @param fontSize 字体大小
          */
         public Writer addParagraph(String textarea, Integer fontSize) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-                            .setFontSize(fontSize)
-            );
+            return addParagraph(textarea, fontSize, null, null, null);
         }
 
         /**
@@ -179,12 +172,7 @@ public class PdfUtils {
          * @param fontColor 字体颜色
          */
         public Writer addParagraph(String textarea, Integer fontSize, Color fontColor) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-                            .setFontSize(fontSize)
-                            .setFontColor(fontColor)
-            );
+            return addParagraph(textarea, fontSize, fontColor, null, null);
         }
 
         /**
@@ -263,6 +251,110 @@ public class PdfUtils {
         /**
          * 添加表格
          *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, boolean existHeader, boolean existFooter) {
+            if (CollectionUtils.isEmpty(pdfTableRows)) {
+                log.error("处理PDF文件出错，List<PdfTable.PdfTableRow>参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "List<PdfTable.PdfTableRow>参数为空");
+            }
+            PdfTable.PdfTableBody pdfTableBody = new PdfTable.PdfTableBody();
+            PdfTable.PdfTableHeader pdfTableHeader = null;
+            PdfTable.PdfTableFooter pdfTableFooter = null;
+            if (existHeader) {
+                pdfTableHeader = new PdfTable.PdfTableHeader().setPdfTableRows(List.of(pdfTableRows.get(0)));
+                pdfTableRows.remove(0);
+                if (pdfTableRows.isEmpty()) {
+                    log.warn("填充表头后，表格表体数据缺失，无法渲染表格");
+                    return this;
+                }
+            }
+            if (existFooter) {
+                pdfTableFooter = new PdfTable.PdfTableFooter().setPdfTableRows(List.of(pdfTableRows.get(pdfTableRows.size() - 1)));
+                pdfTableRows.remove(pdfTableRows.size() - 1);
+                if (pdfTableRows.isEmpty()) {
+                    log.warn("填充表尾后，表格表体数据缺失，无法渲染表格");
+                    return this;
+                }
+            }
+            pdfTableBody.setPdfTableRows(pdfTableRows);
+            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody PDF表格表体构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody) {
+            return addTable(pdfTableBody, null, null, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody PDF表格表体构造类
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, String fontFamily) {
+            return addTable(pdfTableBody, null, null, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader) {
+            return addTable(pdfTableBody, pdfTableHeader, null, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param fontFamily     表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, String fontFamily) {
+            return addTable(pdfTableBody, pdfTableHeader, null, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param pdfTableFooter PDF表格表尾构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, PdfTable.PdfTableFooter pdfTableFooter) {
+            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param pdfTableFooter PDF表格表尾构造类
+         * @param fontFamily     表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, PdfTable.PdfTableFooter pdfTableFooter, String fontFamily) {
+            return addTable(
+                    new PdfTable()
+                            .setPdfTableBody(pdfTableBody)
+                            .setPdfTableHeader(pdfTableHeader)
+                            .setPdfTableFooter(pdfTableFooter)
+                            .setFontFamily(fontFamily)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
          * @param pdfTable PDF表格构造类
          */
         public Writer addTable(PdfTable pdfTable) {
@@ -313,8 +405,8 @@ public class PdfUtils {
             }
             // 设置表头
             TableHeader tableHeader = TemplateHandler.Table.Header.build();
-            if (Objects.nonNull(pdfTable.getPdfTableHead()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableHead().getPdfTableRows())) {
-                List<TableRow> tableHeaderRows = pdfTable.getPdfTableHead().getPdfTableRows().stream().map(pdfTableRow -> {
+            if (Objects.nonNull(pdfTable.getPdfTableHeader()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableHeader().getPdfTableRows())) {
+                List<TableRow> tableHeaderRows = pdfTable.getPdfTableHeader().getPdfTableRows().stream().map(pdfTableRow -> {
                     TableRow tableRow = new TableRow();
                     pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
                         tableRow.addCell(new TableCell()
@@ -371,6 +463,7 @@ public class PdfUtils {
             if (isAddTableBinArray[2] == '1') {
                 table.setBody(tableBody);
             } else {
+                log.warn("表格表体为空，无法渲染表格");
                 return this;
             }
             if (isAddTableBinArray[1] == '1') {
@@ -398,9 +491,7 @@ public class PdfUtils {
          * @param style 分割线样式
          */
         public Writer addSplitLine(SplitLineStyle style) {
-            return addSplitLine(
-                    new PdfSplitLine().setStyle(style)
-            );
+            return addSplitLine(style, null, null, null, null);
         }
 
         /**
@@ -410,11 +501,7 @@ public class PdfUtils {
          * @param color 分割线颜色
          */
         public Writer addSplitLine(SplitLineStyle style, Color color) {
-            return addSplitLine(
-                    new PdfSplitLine()
-                            .setStyle(style)
-                            .setColor(color)
-            );
+            return addSplitLine(style, color, null, null, null);
         }
 
         /**
@@ -500,10 +587,7 @@ public class PdfUtils {
          * @param path 图像所在路径
          */
         public Writer addImage(String path) {
-            return addImage(
-                    new PdfImage()
-                            .setPath(path)
-            );
+            return addImage(path, null, null, null);
         }
 
         /**
@@ -542,11 +626,7 @@ public class PdfUtils {
          * @param imageHorizontal 图像对齐方式
          */
         public Writer addImage(String path, ImageHorizontal imageHorizontal) {
-            return addImage(
-                    new PdfImage()
-                            .setPath(path)
-                            .setImageHorizontal(imageHorizontal)
-            );
+            return addImage(path, imageHorizontal, null, null);
         }
 
         /**
@@ -840,36 +920,54 @@ public class PdfUtils {
     @Accessors(chain = true)
     public static class PdfTable {
 
-        private String fontFamily;
-
-        private TableHorizontal tableHorizontal;
-
-        private Integer margin;
-
-        private PdfTableHead pdfTableHead;
-
+        /**
+         * 表格表体
+         */
         private PdfTableBody pdfTableBody;
 
+        /**
+         * 表格表头
+         */
+        private PdfTableHeader pdfTableHeader;
+
+        /**
+         * 表格表尾
+         */
         private PdfTableFooter pdfTableFooter;
 
         /**
-         * PDF表格表头
+         * 表格文本内容字体
+         */
+        private String fontFamily;
+
+        /**
+         * 表格对齐方式
+         */
+        private TableHorizontal tableHorizontal;
+
+        /**
+         * 表格上下边距
+         */
+        private Integer margin;
+
+        /**
+         * PDF表格表头构造类
          */
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
         @Accessors(chain = true)
-        public static class PdfTableHead {
+        public static class PdfTableHeader {
 
             /**
              * 表格表行列表
              */
-            private ArrayList<PdfTableRow> pdfTableRows;
+            private List<PdfTableRow> pdfTableRows;
 
         }
 
         /**
-         * PDF表格表体
+         * PDF表格表体构造类
          */
         @Data
         @AllArgsConstructor
@@ -880,12 +978,12 @@ public class PdfUtils {
             /**
              * 表格表行列表
              */
-            private ArrayList<PdfTableRow> pdfTableRows;
+            private List<PdfTableRow> pdfTableRows;
 
         }
 
         /**
-         * PDF表格表尾
+         * PDF表格表尾构造类
          */
         @Data
         @AllArgsConstructor
@@ -896,12 +994,12 @@ public class PdfUtils {
             /**
              * 表格表行列表
              */
-            private ArrayList<PdfTableRow> pdfTableRows;
+            private List<PdfTableRow> pdfTableRows;
 
         }
 
         /**
-         * PDF表格表行
+         * PDF表格表行构造类
          */
         @Data
         @AllArgsConstructor
@@ -912,12 +1010,12 @@ public class PdfUtils {
             /**
              * 表格单元格列表
              */
-            private ArrayList<PdfTableCell> pdfTableCells;
+            private List<PdfTableCell> pdfTableCells;
 
         }
 
         /**
-         * PDF表格单元格
+         * PDF表格单元格构造类
          */
         @Data
         @AllArgsConstructor
