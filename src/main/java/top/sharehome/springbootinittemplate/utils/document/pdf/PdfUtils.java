@@ -31,10 +31,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * PDF工具类
@@ -251,15 +250,114 @@ public class PdfUtils {
         /**
          * 添加表格
          *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         */
+        public Writer addTable(String[][] pdfTableDataArray) {
+            return addTable(pdfTableDataArray, false, false, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param fontFamily  表格文本内容字体
+         */
+        public Writer addTable(String[][] pdfTableDataArray, String fontFamily) {
+            return addTable(pdfTableDataArray, false, false, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         */
+        public Writer addTable(String[][] pdfTableDataArray, boolean existHeader, boolean existFooter) {
+            return addTable(pdfTableDataArray, existHeader, existFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(String[][] pdfTableDataArray, boolean existHeader, boolean existFooter, String fontFamily) {
+            List<PdfTable.PdfTableRow> pdfTableRows = Arrays.stream(pdfTableDataArray)
+                    .map(pdfTableRowData ->
+                            new PdfTable.PdfTableRow().setPdfTableCells(Arrays.stream(pdfTableRowData)
+                                    .map(pdfTableRowCell ->
+                                            new PdfTable.PdfTableCell().setCellContent(pdfTableRowCell))
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+            return addTable(pdfTableRows, existHeader, existFooter, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows) {
+            return addTable(pdfTableRows, false, false, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, String fontFamily) {
+            return addTable(pdfTableRows, false, false, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
          * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
          * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
          * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
          */
         public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, boolean existHeader, boolean existFooter) {
+            return addTable(pdfTableRows, existHeader, existFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, boolean existHeader, boolean existFooter, String fontFamily) {
             if (CollectionUtils.isEmpty(pdfTableRows)) {
                 log.error("处理PDF文件出错，List<PdfTable.PdfTableRow>参数为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "List<PdfTable.PdfTableRow>参数为空");
             }
+            // 校准每行填充长度
+            int maxSize = 0;
+            for (PdfTable.PdfTableRow pdfTableRow : pdfTableRows) {
+                if (pdfTableRow.getPdfTableCells().size() > maxSize) {
+                    maxSize = pdfTableRow.getPdfTableCells().size();
+                }
+            }
+            if (maxSize != 0) {
+                for (PdfTable.PdfTableRow pdfTableRow : pdfTableRows) {
+                    int size = pdfTableRow.getPdfTableCells().size();
+                    for (int i = 0; i < maxSize - size; i++) {
+                        pdfTableRow.getPdfTableCells().add(new PdfTable.PdfTableCell());
+                    }
+                }
+            } else {
+                log.warn("表格表体数据缺失，无法渲染表格");
+                return this;
+            }
+            // 构造表体、表头和表尾
             PdfTable.PdfTableBody pdfTableBody = new PdfTable.PdfTableBody();
             PdfTable.PdfTableHeader pdfTableHeader = null;
             PdfTable.PdfTableFooter pdfTableFooter = null;
@@ -280,7 +378,7 @@ public class PdfUtils {
                 }
             }
             pdfTableBody.setPdfTableRows(pdfTableRows);
-            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, null);
+            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, fontFamily);
         }
 
         /**
@@ -383,21 +481,28 @@ public class PdfUtils {
                 List<TableRow> tableBodyRows = pdfTable.getPdfTableBody().getPdfTableRows().stream().map(pdfTableRow -> {
                     TableRow tableRow = new TableRow();
                     pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                        tableRow.addCell(new TableCell()
-                                .addComponent(
-                                        TemplateHandler.Text.build()
-                                                // 设置表体单元格文本内容，默认""
-                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                                // 设置表体单元格内容对齐方式，默认居中
-                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                                )
-                                // 设置表体单元格边框颜色，默认黑色
-                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                                // 设置表体单元格边框宽度为1
-                                .setBorderWidth("1")
-                                // 设置表体单元格边框样式为实现
-                                .setBorderStyle("solid"));
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
                     });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
                     return tableRow;
                 }).toList();
                 tableBody.addRow(tableBodyRows);
@@ -409,23 +514,30 @@ public class PdfUtils {
                 List<TableRow> tableHeaderRows = pdfTable.getPdfTableHeader().getPdfTableRows().stream().map(pdfTableRow -> {
                     TableRow tableRow = new TableRow();
                     pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                        tableRow.addCell(new TableCell()
-                                .addComponent(
-                                        TemplateHandler.Text.build()
-                                                // 设置表头单元格文本内容，默认""
-                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                                // 设置表头单元格内容对齐方式，默认居中
-                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                                                // 设置表头单元格内容加粗
-                                                .setFontWeight(FontWeight.BOLD.getName())
-                                )
-                                // 设置表头单元格边框颜色，默认黑色
-                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                                // 设置表头单元格边框宽度为1
-                                .setBorderWidth("1")
-                                // 设置表头单元格边框样式为实现
-                                .setBorderStyle("solid"));
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                                        // 设置表头单元格内容加粗
+                                                        .setFontWeight(FontWeight.BOLD.getName())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
                     });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
                     return tableRow;
                 }).toList();
                 tableHeader.addRow(tableHeaderRows);
@@ -437,21 +549,28 @@ public class PdfUtils {
                 List<TableRow> tableFooterRows = pdfTable.getPdfTableFooter().getPdfTableRows().stream().map(pdfTableRow -> {
                     TableRow tableRow = new TableRow();
                     pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
-                        tableRow.addCell(new TableCell()
-                                .addComponent(
-                                        TemplateHandler.Text.build()
-                                                // 设置表尾单元格文本内容，默认""
-                                                .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
-                                                // 设置表尾单元格内容对齐方式，默认居中
-                                                .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
-                                )
-                                // 设置表尾单元格边框颜色，默认黑色
-                                .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
-                                // 设置表尾单元格边框宽度为1
-                                .setBorderWidth("1")
-                                // 设置表尾单元格边框样式为实现
-                                .setBorderStyle("solid"));
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
                     });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
                     return tableRow;
                 }).toList();
                 tableFooter.addRow(tableFooterRows);
@@ -1010,7 +1129,7 @@ public class PdfUtils {
             /**
              * 表格单元格列表
              */
-            private List<PdfTableCell> pdfTableCells;
+            private List<PdfTableCell> pdfTableCells = new ArrayList<>();
 
         }
 
@@ -1029,9 +1148,19 @@ public class PdfUtils {
             private String cellContent;
 
             /**
-             * 单元格内容对齐方式
+             * 单元格内容字号
+             */
+            private Integer fontSize;
+
+            /**
+             * 单元格内容水平对齐方式
              */
             private TableHorizontal cellHorizontal;
+
+            /**
+             * 单元格内容垂直对齐方式
+             */
+            private TableVertical tableVertical;
 
             /**
              * 单元格边框颜色
