@@ -183,8 +183,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-    # 避免访问/api/**造成未找到静态资源错误
-    static-path-pattern: /static/**
   # 不允许bean的定义被覆盖，保证系统稳定，但是某些情况下可能需要反其道而行之，这个由开发者自己定义，默认关闭
   main:
     allow-bean-definition-overriding: false
