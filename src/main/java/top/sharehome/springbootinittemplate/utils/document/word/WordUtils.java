@@ -513,7 +513,7 @@ public class WordUtils {
          *
          * @param inputStream  Word输入流
          * @param outputStream 输出流
-         * @param zipLevel     压缩等级1-9，等级越高，压缩效率越高
+         * @param zipLevel     压缩等级-1~9，等级越高，压缩效率越高
          * @param pictureType  图片格式
          */
         public static void getPictures(InputStream inputStream, OutputStream outputStream, Integer zipLevel, PictureType pictureType) {

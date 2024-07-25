@@ -1,5 +1,7 @@
 package top.sharehome.springbootinittemplate.utils.document.pdf;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -8,16 +10,23 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.pdf.fop.core.doc.Document;
+import org.dromara.pdf.fop.core.doc.component.barcode.Barcode;
 import org.dromara.pdf.fop.core.doc.component.image.Image;
 import org.dromara.pdf.fop.core.doc.component.line.SplitLine;
 import org.dromara.pdf.fop.core.doc.component.table.*;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
 import org.dromara.pdf.fop.handler.TemplateHandler;
+import org.dromara.pdf.pdfbox.core.ext.analyzer.DocumentAnalyzer;
+import org.dromara.pdf.pdfbox.core.info.ImageInfo;
+import org.dromara.pdf.pdfbox.core.info.TextInfo;
+import org.dromara.pdf.pdfbox.handler.PdfHandler;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -25,6 +34,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumen
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
@@ -34,6 +44,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
 /**
  * PDF工具类
@@ -74,7 +85,8 @@ public class PdfUtils {
             }
             POF_CONF_PATH = existConf.getPath();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("处理PDF文件出错，初始化配置文件失败");
+            throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "初始化配置文件失败");
         }
     }
 
@@ -105,6 +117,9 @@ public class PdfUtils {
          */
         private int pageIndex;
 
+        /**
+         * 写入PDF数据内部类构造器
+         */
         public Writer() {
             this.document = TemplateHandler.Document.build().setConfigPath(POF_CONF_PATH);
             this.pageList = new ArrayList<>();
@@ -693,7 +708,7 @@ public class PdfUtils {
          * 添加图像
          *
          * @param inputStream    图像数据流
-         * @param imageExtension 图像拓展名
+         * @param imageExtension 图像扩展名
          */
         public Writer addImage(InputStream inputStream, ImageExtension imageExtension) {
             String imageTempPath = copyImageToTempDir(inputStream, imageExtension);
@@ -730,7 +745,7 @@ public class PdfUtils {
          * 添加图像
          *
          * @param inputStream     图像数据流
-         * @param imageExtension  图像拓展名
+         * @param imageExtension  图像扩展名
          * @param imageHorizontal 图像对齐方式
          */
         public Writer addImage(InputStream inputStream, ImageExtension imageExtension, ImageHorizontal imageHorizontal) {
@@ -771,7 +786,7 @@ public class PdfUtils {
          * 添加图像
          *
          * @param inputStream     图像数据流
-         * @param imageExtension  图像拓展名
+         * @param imageExtension  图像扩展名
          * @param imageHorizontal 图像对齐方式
          * @param width           图像宽度
          * @param height          图像高度
@@ -814,8 +829,8 @@ public class PdfUtils {
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
             }
             if (!Files.isRegularFile(Path.of(pdfImage.getPath()))) {
-                log.error("处理PDF文件出错，PdfImage参数中图片所在路径[path]为不存在或者非文件");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数中图片所在路径为不存在或者非文件");
+                log.error("处理PDF文件出错，PdfImage参数中图像所在路径[path]为不存在或者非文件");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数中图像所在路径为不存在或者非文件");
             }
             Image image = TemplateHandler.Image.build()
                     // 设置图像所在路径
@@ -834,6 +849,34 @@ public class PdfUtils {
         }
 
         /**
+         * todo 添加条码
+         *
+         * @param pdfBarcode PDF条码构造类
+         */
+        public Writer addBarcode(PdfBarcode pdfBarcode) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfBarcode)) {
+                log.error("处理PDF文件出错，PdfBarcode参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfBarcode参数为空");
+            }
+            Barcode barcode = TemplateHandler.Barcode.build()
+                    .setType(BarcodeType.QR_CODE.getName())
+                    .setScaleRate("1")
+                    .setHeight("150px")
+                    .setWidth("150px")
+                    .setContent("https://github.com/AntonyCheng")
+                    .setWords("https://github.com/AntonyCheng")
+                    .setHorizontalStyle(BarcodeHorizontal.CENTER.getName())
+                    .setMarginTop("1")
+                    .setMarginBottom("1");
+            pageList.get(pageIndex).addBodyComponent(barcode);
+            return this;
+        }
+
+        /**
          * 将Word写入响应流
          *
          * @param fileName 响应文件名
@@ -845,7 +888,8 @@ public class PdfUtils {
                 ServletOutputStream outputStream = response.getOutputStream();
                 doWrite(outputStream);
             } catch (IOException e) {
-                throw new CustomizeReturnException(ReturnCode.PDF_FILE_ERROR);
+                log.error("处理PDF文件出错，获取响应输出流异常");
+                throw new CustomizeReturnException(ReturnCode.PDF_FILE_ERROR, "获取响应输出流异常");
             }
         }
 
@@ -865,7 +909,7 @@ public class PdfUtils {
          * @param fileName 文件名
          * @param response 响应
          */
-        private static void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+        private void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
@@ -885,28 +929,30 @@ public class PdfUtils {
         /**
          * 将Color转换成16进制数
          */
-        private static String colorToHex(Color color) {
+        private String colorToHex(Color color) {
             if (Objects.isNull(color)) {
+                log.error("处理PDF文件出错，Color转换为16进制数时，Color对象不能为空");
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "Color转换为16进制数时，Color对象不能为空");
             }
             return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         }
 
         /**
-         * 设置PDF插入图片存放在系统临时文件夹中的子路径
+         * 设置PDF插入图像存放在系统临时文件夹中的子路径
          */
-        private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
+        private final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
 
         /**
          * 将图像拷贝至临时文件夹中
          *
          * @param inputStream    图像数据流
-         * @param imageExtension 图像拓展名
+         * @param imageExtension 图像扩展名
          */
-        private static String copyImageToTempDir(InputStream inputStream, ImageExtension imageExtension) {
+        private String copyImageToTempDir(InputStream inputStream, ImageExtension imageExtension) {
             try {
                 if (Objects.isNull(imageExtension)) {
-                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像拓展名为空");
+                    log.error("处理PDF文件出错，图像扩展名为空");
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像扩展名为空");
                 }
                 String imageTempPath = TEMP_IMAGE_DIR + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
                 Path path = Path.of(imageTempPath);
@@ -925,6 +971,404 @@ public class PdfUtils {
      * 读取PDF数据内部类
      */
     public static class Reader {
+
+        /**
+         * 初始化文档
+         */
+        private final org.dromara.pdf.pdfbox.core.base.Document document;
+
+        /**
+         * 读取PDF数据内部类构造器
+         */
+        public Reader(InputStream inputStream) {
+            this.document = PdfHandler.getDocumentHandler().load(inputStream);
+        }
+
+        /**
+         * 获取PDF文档中的段落数据，并写入响应流
+         *
+         * @param txtFileName TXT文件名
+         * @param response 响应
+         */
+        public void getParagraphResponse(String txtFileName, HttpServletResponse response) {
+            getParagraphResponse(null, txtFileName, response);
+        }
+
+        /**
+         * 获取PDF文档中的段落数据，并写入响应流
+         * @param pageIndex PDF页码索引，从0开始
+         * @param txtFileName TXT文件名
+         * @param response 响应
+         */
+        public void getParagraphResponse(Integer pageIndex, String txtFileName, HttpServletResponse response) {
+            // 获取响应中的响应流
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                // 预处理TXT类型响应
+                handleTxtResponse(txtFileName, response);
+                getParagraphTxt(pageIndex, outputStream);
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，获取响应输出流异常");
+                throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
+            }
+        }
+
+        /**
+         * 获取PDF文档中的段落数据，并写入输出流
+         *
+         * @param outputStream 输出流
+         */
+        public void getParagraphTxt(OutputStream outputStream) {
+            getParagraphTxt(null, outputStream);
+        }
+
+        /**
+         * 获取PDF文档中的段落数据，并写入输出流
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         * @param outputStream 输出流
+         */
+        public void getParagraphTxt(Integer pageIndex, OutputStream outputStream) {
+            if (Objects.isNull(outputStream)) {
+                log.error("处理PDF文件出错，获取段落数据时，输出流不能为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "获取段落数据时，输出流不能为空");
+            }
+            List<String> paragraphList = getParagraphList(pageIndex);
+            // 遍历段落列表，同时将数据传至输出流
+            paragraphList.forEach(paragraph -> {
+                try {
+                    outputStream.write(paragraph.getBytes(StandardCharsets.UTF_8));
+                    outputStream.write('\n');
+                } catch (IOException e) {
+                    log.error("处理PDF文件出错，获取段落数据时，写入输出流异常");
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "获取段落数据时，写入输出流异常");
+                }
+            });
+        }
+
+        /**
+         * 获取PDF文档中的段落数据
+         */
+        public List<String> getParagraphList() {
+            return getParagraphList(null);
+        }
+
+        /**
+         * 获取PDF文档中的段落数据
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         */
+        public List<String> getParagraphList(Integer pageIndex) {
+            // 创建结果集
+            List<String> result = new ArrayList<>();
+            if (Objects.isNull(pageIndex)) {
+                for (int i = 0; i < document.getTotalPageNumber(); i++) {
+                    // 创建PDF文档分析器
+                    DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer(document);
+                    // 获取当前页的段落信息Set
+                    Set<TextInfo> textInfos = documentAnalyzer.analyzeText(i);
+                    // 将段落信息Set排序后，遍历添加至结果集
+                    textInfos.stream().sorted((text1, text2) -> {
+                        try {
+                            double height1 = Double.parseDouble(text1.getTextBeginPosition().split(",")[1]);
+                            double height2 = Double.parseDouble(text2.getTextBeginPosition().split(",")[1]);
+                            return Double.compare(height2, height1);
+                        } catch (NumberFormatException e) {
+                            log.error("处理PDF文件出错，段落位置获取或转换失败");
+                            throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "段落位置获取或转换失败");
+                        }
+                    }).forEach(textInfo -> {
+                        String textContent = handleDigitalDecoding(textInfo.getTextContent());
+                        result.add(textContent);
+                    });
+                }
+            } else {
+                if (document.getTotalPageNumber() <= pageIndex || pageIndex < 0) {
+                    log.error("处理PDF文件出错，读取PDF中的段落时，无法解析非法页码数");
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "读取PDF中的段落时，无法解析非法页码数");
+                }
+                // 创建PDF文档分析器
+                DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer(document);
+                // 获取当前页的段落信息Set
+                Set<TextInfo> textInfos = documentAnalyzer.analyzeText(pageIndex);
+                // 将段落信息Set排序后，遍历添加至结果集
+                textInfos.stream().sorted((text1, text2) -> {
+                    try {
+                        double height1 = Double.parseDouble(text1.getTextBeginPosition().split(",")[1]);
+                        double height2 = Double.parseDouble(text2.getTextBeginPosition().split(",")[1]);
+                        return Double.compare(height2, height1);
+                    } catch (NumberFormatException e) {
+                        log.error("处理PDF文件出错，段落位置获取或转换失败");
+                        throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "段落位置获取或转换失败");
+                    }
+                }).forEach(textInfo -> {
+                    String textContent = handleDigitalDecoding(textInfo.getTextContent());
+                    result.add(textContent);
+                });
+            }
+            return result;
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         */
+        public void getImagesResponse(String zipFileName, HttpServletResponse response) {
+            getImagesResponse(null, zipFileName, response, 5);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         */
+        public void getImagesResponse(Integer pageIndex, String zipFileName, HttpServletResponse response) {
+            getImagesResponse(pageIndex, zipFileName, response, 5);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         * @param zipLevel 压缩等级：-1~9，理论上等级越高，压缩效率越高，耗时越长
+         */
+        public void getImagesResponse(String zipFileName, HttpServletResponse response, Integer zipLevel) {
+            getImagesResponse(null, zipFileName, response, zipLevel);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         * @param zipLevel 压缩等级：-1~9，理论上等级越高，压缩效率越高，耗时越长
+         */
+        public void getImagesResponse(Integer pageIndex, String zipFileName, HttpServletResponse response, Integer zipLevel) {
+            // 获取响应中的响应流
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                // 预处理ZIP类型响应
+                handleZipResponse(zipFileName, response);
+                getImagesZip(pageIndex, outputStream, zipLevel);
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，获取响应输出流异常");
+                throw new CustomizeReturnException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
+            }
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为输出流
+         *
+         * @param outputStream 输出流
+         */
+        public void getImagesZip(OutputStream outputStream) {
+            getImagesZip(null, outputStream, 5);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为输出流
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         * @param outputStream 输出流
+         */
+        public void getImagesZip(Integer pageIndex, OutputStream outputStream) {
+            getImagesZip(pageIndex, outputStream, 5);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为输出流
+         *
+         * @param outputStream 输出流
+         * @param zipLevel 压缩等级：-1~9，理论上等级越高，压缩效率越高，耗时越长
+         */
+        public void getImagesZip(OutputStream outputStream, Integer zipLevel) {
+            getImagesZip(null, outputStream, zipLevel);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，并且进行压缩，将压缩后的数据转为输出流
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         * @param outputStream 输出流
+         * @param zipLevel 压缩等级：-1~9，理论上等级越高，压缩效率越高，耗时越长
+         */
+        public void getImagesZip(Integer pageIndex, OutputStream outputStream, Integer zipLevel) {
+            if (Objects.isNull(outputStream)) {
+                log.error("处理PDF文件出错，读取PDF中的图像时，压缩数据输出流不能为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "读取PDF中的图像时，压缩数据输出流不能为空");
+            }
+            // 构造ZIP文件输出流
+            try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(outputStream)) {
+                // 获取图像byte数组
+                Map<String, List<byte[]>> imagesByteArray = getImagesByteArray(pageIndex);
+                // 设置压缩等级
+                zipArchiveOutputStream.setLevel(Objects.isNull(zipLevel) ? 5 : zipLevel);
+                // 设置压缩方法
+                zipArchiveOutputStream.setMethod(ZipEntry.DEFLATED);
+                // 准备压缩计数和名称
+                int index = 1;
+                String uuid = UUID.randomUUID().toString().replace("-", "");
+                for (Map.Entry<String, List<byte[]>> stringListEntry : imagesByteArray.entrySet()) {
+                    // 根据图像扩展名进行遍历
+                    String extension = stringListEntry.getKey();
+                    List<byte[]> imageArrayList = stringListEntry.getValue();
+                    // 将每张图像byte数组数据传至压缩输出流中
+                    for (byte[] image : imageArrayList) {
+                        String entryName = uuid + "_" + index + "." + extension;
+                        ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
+                        zipArchiveOutputStream.putArchiveEntry(entry);
+                        ByteBuf buf = Unpooled.copiedBuffer(image);
+                        buf.readBytes(zipArchiveOutputStream, buf.readableBytes());
+                        zipArchiveOutputStream.closeArchiveEntry();
+                        index++;
+                    }
+                }
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，读取PDF中的图像时，压缩发生异常");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "读取PDF中的图像时，压缩发生异常");
+            }
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，同时按照扩展名分类，并转换为byte[]类型
+         */
+        public Map<String, List<byte[]>> getImagesByteArray() {
+            return getImagesByteArray(null);
+        }
+
+        /**
+         * 获取PDF文档中的图像数据，同时按照扩展名分类，并转换为byte[]类型
+         *
+         * @param pageIndex PDF页码索引，从0开始
+         */
+        public Map<String, List<byte[]>> getImagesByteArray(Integer pageIndex) {
+            try {
+                // 创建结果集
+                Map<String, List<byte[]>> result = new HashMap<>();
+                if (Objects.isNull(pageIndex)) {
+                    for (int i = 0; i < document.getTotalPageNumber(); i++) {
+                        // 创建PDF文档分析器
+                        DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer(document);
+                        // 获取当前页的图像信息Set
+                        Set<ImageInfo> imageInfos = documentAnalyzer.analyzeImage(i);
+                        // 遍历图像信息
+                        for (ImageInfo imageInfo : imageInfos) {
+                            // 创建临时Byte数组输出流
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            // 获取图像扩展名
+                            String extension = imageInfo.getImageType();
+                            // 将图像信息数据写入输出流中
+                            ImageIO.write(imageInfo.getImage(), extension, byteArrayOutputStream);
+                            // 封装结果集
+                            if (Objects.isNull(result.get(extension))) {
+                                ArrayList<byte[]> value = new ArrayList<>();
+                                value.add(byteArrayOutputStream.toByteArray());
+                                result.put(extension, value);
+                            } else {
+                                result.get(extension).add(byteArrayOutputStream.toByteArray());
+                            }
+                        }
+                    }
+                } else {
+                    if (document.getTotalPageNumber() <= pageIndex || pageIndex < 0) {
+                        log.error("处理PDF文件出错，读取PDF中的图像时，无法解析非法页码数");
+                        throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "读取PDF中的图像时，无法解析非法页码数");
+                    }
+                    // 创建PDF文档分析器
+                    DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer(document);
+                    // 获取当前页的图像信息Set
+                    Set<ImageInfo> imageInfos = documentAnalyzer.analyzeImage(pageIndex);
+                    // 遍历图像信息
+                    for (ImageInfo imageInfo : imageInfos) {
+                        // 创建临时Byte数组输出流
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        // 获取图像扩展名
+                        String extension = imageInfo.getImageType();
+                        // 将图像信息数据写入输出流中
+                        ImageIO.write(imageInfo.getImage(), extension, byteArrayOutputStream);
+                        // 封装结果集
+                        if (Objects.isNull(result.get(extension))) {
+                            ArrayList<byte[]> value = new ArrayList<>();
+                            value.add(byteArrayOutputStream.toByteArray());
+                            result.put(extension, value);
+                        } else {
+                            result.get(extension).add(byteArrayOutputStream.toByteArray());
+                        }
+                    }
+                }
+                return result;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "读取PDF中的图像时，发生异常");
+            }
+        }
+
+        /**
+         * 段落数字解码
+         *
+         * @param paragraph 段落
+         */
+        private String handleDigitalDecoding(String paragraph) {
+            return paragraph.replace("\uE000", "1")
+                    .replace("\uE001", "2")
+                    .replace("\uE002", "3")
+                    .replace("\uE003", "4")
+                    .replace("\uE004", "5")
+                    .replace("\uE005", "6")
+                    .replace("\uE006", "7")
+                    .replace("\uE007", "8")
+                    .replace("\uE008", "9")
+                    .replace("\uE009", "0");
+        }
+
+        /**
+         * 处理ContentType是Txt格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handleTxtResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".txt";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".txt";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("text/plain;charset=UTF-8");
+        }
+
+        /**
+         * 处理ContentType是Zip格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handleZipResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".zip";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".zip";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/x-zip-compressed;charset=UTF-8");
+        }
 
     }
 
@@ -1238,6 +1682,67 @@ public class PdfUtils {
 
         /**
          * 图像上下边距
+         */
+        private Integer margin;
+
+    }
+
+    /**
+     * PDF条码构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfBarcode {
+
+        /**
+         * 条码类型
+         */
+        private BarcodeType barcodeType;
+
+        /**
+         * 条码缩放比例
+         */
+        private Integer scaleRate;
+
+        /**
+         * 条码高度
+         */
+        private Integer height;
+
+        /**
+         * 条码宽度
+         */
+        private Integer width;
+
+        /**
+         * 条码内容
+         */
+        private String content;
+
+        /**
+         * 条码文字
+         */
+        private String words;
+
+        /**
+         * 条码文字字体
+         */
+        private String fontFamily;
+
+        /**
+         * 条码文字字号
+         */
+        private Integer wordsSize;
+
+        /**
+         * 条码对齐方式
+         */
+        private BarcodeHorizontal barcodeHorizontal;
+
+        /**
+         * 条码上下边距
          */
         private Integer margin;
 

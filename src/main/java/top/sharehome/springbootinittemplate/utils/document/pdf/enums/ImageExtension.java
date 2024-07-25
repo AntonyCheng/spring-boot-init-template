@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * PDF图像文件拓展名
+ * PDF图像文件扩展名
  *
  * @author AntonyCheng
  */
