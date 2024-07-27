@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF表格对齐方式
+ * PDF表格水平对齐方式
  *
  * @author AntonyCheng
  */
