@@ -25,7 +25,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.document.word.enums.ImageExtension;
 
 import javax.imageio.ImageIO;
@@ -927,7 +926,7 @@ public class WordUtils {
                     index++;
                 }
             } catch (IOException e) {
-                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR,"读取Word中的表格时，压缩发生异常");
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "读取Word中的表格时，压缩发生异常");
             }
         }
 

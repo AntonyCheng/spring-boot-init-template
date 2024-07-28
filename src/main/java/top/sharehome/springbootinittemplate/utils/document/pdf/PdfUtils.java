@@ -837,7 +837,46 @@ public class PdfUtils {
         }
 
         /**
-         * todo 添加条码
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType) {
+            return addBarcode(content, barcodeType, null, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal) {
+            return addBarcode(content, barcodeType, barcodeHorizontal, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         * @param words 条码文字
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal, String words) {
+            return addBarcode(
+                    new PdfBarcode()
+                            .setContent(content)
+                            .setBarcodeType(barcodeType)
+                            .setWords(words)
+                            .setBarcodeHorizontal(barcodeHorizontal)
+            );
+        }
+
+        /**
+         * 添加条码
          *
          * @param pdfBarcode PDF条码构造类
          */
@@ -850,21 +889,27 @@ public class PdfUtils {
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfBarcode参数为空");
             }
             Barcode barcode = TemplateHandler.Barcode.build()
-                    .setType(BarcodeType.QR_CODE.getName())
-                    .setScaleRate("1")
-                    .setHeight("150px")
-                    .setWidth("150px")
-                    .setContent("https://github.com/AntonyCheng")
-                    .setWords("https://github.com/AntonyCheng")
-                    .setHorizontalStyle(BarcodeHorizontal.CENTER.getName())
-                    .setMarginTop("1")
-                    .setMarginBottom("1");
+                    // 设置条码类型，默认二维码
+                    .setType(Objects.isNull(pdfBarcode.getBarcodeType()) ? BarcodeType.QR_CODE.getName() : pdfBarcode.getBarcodeType().getName())
+                    // 设置条码高度，默认100
+                    .setHeight((Objects.isNull(pdfBarcode.getHeight()) || pdfBarcode.getHeight() <= 0 ? 100 : pdfBarcode.getHeight()) + "px")
+                    // 设置条码宽度，默认100
+                    .setWidth((Objects.isNull(pdfBarcode.getWidth()) || pdfBarcode.getWidth() <= 0 ? 100 : pdfBarcode.getWidth()) + "px")
+                    // 设置条码内容
+                    .setContent(StringUtils.isBlank(pdfBarcode.getContent()) ? null : pdfBarcode.getContent())
+                    // 设置条码描述文字
+                    .setWords(StringUtils.isBlank(pdfBarcode.getWords()) ? null : pdfBarcode.getWords())
+                    // 设置条码对齐方式，默认左对齐
+                    .setHorizontalStyle(Objects.isNull(pdfBarcode.getBarcodeHorizontal()) ? BarcodeHorizontal.LEFT.getName() : pdfBarcode.getBarcodeHorizontal().getName())
+                    // 设置条码上下边距，默认1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfBarcode.getMargin()) || pdfBarcode.getMargin() <= 0 ? 1 : pdfBarcode.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfBarcode.getMargin()) || pdfBarcode.getMargin() <= 0 ? 1 : pdfBarcode.getMargin()));
             pageList.get(pageIndex).addBodyComponent(barcode);
             return this;
         }
 
         /**
-         * 将Word写入响应流
+         * 将PDF写入响应流
          *
          * @param fileName 响应文件名
          * @param response 响应流
@@ -1707,11 +1752,6 @@ public class PdfUtils {
          * 条码类型
          */
         private BarcodeType barcodeType;
-
-        /**
-         * 条码缩放比例
-         */
-        private Integer scaleRate;
 
         /**
          * 条码高度
