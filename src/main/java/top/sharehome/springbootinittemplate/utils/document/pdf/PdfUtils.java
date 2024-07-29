@@ -22,6 +22,7 @@ import org.dromara.pdf.fop.core.doc.component.line.SplitLine;
 import org.dromara.pdf.fop.core.doc.component.table.*;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
+import org.dromara.pdf.fop.core.doc.watermark.Watermark;
 import org.dromara.pdf.fop.handler.TemplateHandler;
 import org.dromara.pdf.pdfbox.core.ext.analyzer.DocumentAnalyzer;
 import org.dromara.pdf.pdfbox.core.info.ImageInfo;
@@ -62,6 +63,11 @@ public class PdfUtils {
      * 设置模板默认字体名称，此处将templates/pdf/XXX.ttf文件的XXX名称提取出来进行填充
      */
     private static final String DEFAULT_FONT_FAMILY = "SourceHanSansCN-Regular";
+
+    /**
+     * 设置PDF插入图像存放在系统临时文件夹中的子路径
+     */
+    private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
 
     // 初始化配置文件和字体，即将配置文件和字体文件处理之后复制到系统临时文件夹中
     static {
@@ -153,6 +159,119 @@ public class PdfUtils {
             pageList.add(page);
             // Page页码索引加一
             this.pageIndex++;
+            return this;
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param texts 水印文本数组，数组元素个数对应文本行数
+         */
+        public Writer addWatermark(String... texts) {
+            return addWatermark(null, Arrays.stream(texts).toList(), null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         */
+        public Writer addWatermark(List<String> texts) {
+            return addWatermark(null, texts, null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         */
+        public Writer addWatermark(String id, List<String> texts) {
+            return addWatermark(id, texts, null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize) {
+            return addWatermark(id, texts, fontSize, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         * @param fontAlpha 水印文本透明度
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha) {
+            return addWatermark(id, texts, fontSize, fontAlpha, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         * @param fontAlpha 水印文本透明度
+         * @param width 水印文本宽度
+         * @param height 水印文本高度
+         * @param showWidth 水印文本显示宽度
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha, Integer width, Integer height, Integer showWidth) {
+            return addWatermark(
+                    new PdfWatermark()
+                            .setId(id)
+                            .setTexts(texts)
+                            .setFontSize(fontSize)
+                            .setFontAlpha(fontAlpha)
+                            .setWidth(width)
+                            .setHeight(height)
+                            .setShowWidth(showWidth)
+            );
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param pdfWatermark PDF水印构造类
+         */
+        public Writer addWatermark(PdfWatermark pdfWatermark) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfWatermark)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfWatermark参数为空");
+            }
+            Watermark watermark = TemplateHandler.Watermark.build()
+                    // 设置水印ID，必须保持唯一性，默认UUID
+                    .setId(StringUtils.isBlank(pdfWatermark.getId()) ? UUID.randomUUID().toString().replace("-", "") : pdfWatermark.getId())
+                    // 设置水印水印文本列表
+                    .setText(CollectionUtils.isEmpty(pdfWatermark.getTexts()) ? null : pdfWatermark.getTexts())
+                    // 设置水印文本字号，默认25
+                    .setFontSize((Objects.isNull(pdfWatermark.getFontSize()) || pdfWatermark.getFontSize() <= 0 ? 25 : pdfWatermark.getFontSize()) + "px")
+                    // 设置水印文本透明度，范围是0-255，值越小越透明，默认50
+                    .setFontAlpha(String.valueOf(Objects.isNull(pdfWatermark.getFontAlpha()) || pdfWatermark.getFontAlpha() < 0 || pdfWatermark.getFontAlpha() > 255 ? 50 : pdfWatermark.getFontAlpha()))
+                    // 设置水印文本宽度，默认200px
+                    .setWidth((Objects.isNull(pdfWatermark.getWidth()) || pdfWatermark.getWidth() <= 0 ? 200 : pdfWatermark.getWidth()) + "px")
+                    // 设置水印文本高度，默认200px
+                    .setHeight((Objects.isNull(pdfWatermark.getHeight()) || pdfWatermark.getHeight() <= 0 ? 200 : pdfWatermark.getHeight()) + "px")
+                    // 设置水印文本显示宽度，默认180px
+                    .setShowWidth((Objects.isNull(pdfWatermark.getShowWidth()) || pdfWatermark.getShowWidth() <= 0 ? 180 : pdfWatermark.getShowWidth()) + "px")
+                    // 设置水印文本旋转45°
+                    .setRadians("45")
+                    // 设置水印文本粗体
+                    .setFontStyle("bold")
+                    // 设置水印文本图像临时文件夹
+                    .setTempDir(TEMP_IMAGE_DIR);
+            pageList.get(pageIndex).setBodyWatermark(watermark);
             return this;
         }
 
@@ -843,7 +962,7 @@ public class PdfUtils {
          * @param barcodeType 条码类型
          */
         public Writer addBarcode(String content, BarcodeType barcodeType) {
-            return addBarcode(content, barcodeType, null, null);
+            return addBarcode(content, barcodeType, null, null, null);
         }
 
         /**
@@ -854,7 +973,7 @@ public class PdfUtils {
          * @param barcodeHorizontal 条码对齐方式
          */
         public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal) {
-            return addBarcode(content, barcodeType, barcodeHorizontal, null);
+            return addBarcode(content, barcodeType, barcodeHorizontal, null, null);
         }
 
         /**
@@ -863,15 +982,29 @@ public class PdfUtils {
          * @param content 条码内容
          * @param barcodeType 条码类型
          * @param barcodeHorizontal 条码对齐方式
-         * @param words 条码文字
+         * @param words 条码描述文字
          */
         public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal, String words) {
+            return addBarcode(content, barcodeType, barcodeHorizontal, words, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         * @param words 条码描述文字
+         * @param wordsSize 条码描述文字字号
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal, String words, Integer wordsSize) {
             return addBarcode(
                     new PdfBarcode()
                             .setContent(content)
                             .setBarcodeType(barcodeType)
-                            .setWords(words)
                             .setBarcodeHorizontal(barcodeHorizontal)
+                            .setWords(words)
+                            .setWordsSize(wordsSize)
             );
         }
 
@@ -899,6 +1032,10 @@ public class PdfUtils {
                     .setContent(StringUtils.isBlank(pdfBarcode.getContent()) ? null : pdfBarcode.getContent())
                     // 设置条码描述文字
                     .setWords(StringUtils.isBlank(pdfBarcode.getWords()) ? null : pdfBarcode.getWords())
+                    // 设置条码描述文字字体，默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setWordsFamily(Objects.isNull(pdfBarcode.getWordsFamily()) ? DEFAULT_FONT_FAMILY : pdfBarcode.getWordsFamily())
+                    // 设置条码描述文字字号，默认10
+                    .setWordsSize((Objects.isNull(pdfBarcode.getWordsSize()) || pdfBarcode.getWordsSize() <= 0 ? 10 : pdfBarcode.getWordsSize()) + "px")
                     // 设置条码对齐方式，默认左对齐
                     .setHorizontalStyle(Objects.isNull(pdfBarcode.getBarcodeHorizontal()) ? BarcodeHorizontal.LEFT.getName() : pdfBarcode.getBarcodeHorizontal().getName())
                     // 设置条码上下边距，默认1
@@ -966,11 +1103,6 @@ public class PdfUtils {
             }
             return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         }
-
-        /**
-         * 设置PDF插入图像存放在系统临时文件夹中的子路径
-         */
-        private final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
 
         /**
          * 将图像拷贝至临时文件夹中
@@ -1451,6 +1583,57 @@ public class PdfUtils {
     }
 
     /**
+     * PDF水印构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfWatermark {
+
+        /**
+         * 水印ID
+         */
+        private String id;
+
+        /**
+         * 水印文本列表，列表元素个数对应文本行数
+         */
+        private List<String> texts;
+
+        /**
+         * 水印文本字号
+         */
+        private Integer fontSize;
+
+        /**
+         * 水印文本透明度
+         */
+        private Integer fontAlpha;
+
+        /**
+         * 水印文本宽度
+         */
+        private Integer width;
+
+        /**
+         * 水印文本高度
+         */
+        private Integer height;
+
+        /**
+         * 水印文本显示宽度
+         */
+        private Integer showWidth;
+
+        public PdfWatermark setTextArray(String... texts) {
+            this.texts = Arrays.stream(texts).toList();
+            return this;
+        }
+
+    }
+
+    /**
      * PDF段落构造类
      */
     @Data
@@ -1769,17 +1952,17 @@ public class PdfUtils {
         private String content;
 
         /**
-         * 条码文字
+         * 条码描述文字
          */
         private String words;
 
         /**
-         * 条码文字字体
+         * 条码描述文字字体
          */
-        private String fontFamily;
+        private String wordsFamily;
 
         /**
-         * 条码文字字号
+         * 条码描述文字字号
          */
         private Integer wordsSize;
 

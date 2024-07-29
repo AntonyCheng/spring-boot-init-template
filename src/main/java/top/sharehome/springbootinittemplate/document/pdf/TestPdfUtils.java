@@ -1,13 +1,11 @@
 package top.sharehome.springbootinittemplate.document.pdf;
 
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.BarcodeHorizontal;
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.BarcodeType;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 直接使用main函数对PdfUtils进行测试
@@ -20,15 +18,27 @@ public class TestPdfUtils {
         String path = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/test.pdf";
         try {
             new PdfUtils.Writer()
-                    .addParagraph("1234567890")
                     .addPage()
-                    .addParagraph("a我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123")
-                    .addParagraph("b我爱你123我爱你")
+                    .addWatermark("伍程成", "202051020123")
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123").setTextIndent(2).setFontSize(15))
+                    .addPage()
+                    .addWatermark(new PdfUtils.PdfWatermark().setTextArray("伍程成", "202051020123"))
+                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123").setLeading(3).setMargin(5))
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
+                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE, BarcodeHorizontal.CENTER, "扫码查看详细信息", 10)
                     .addParagraph("c我爱你123我爱你")
+                    .addSplitLine()
                     .addParagraph("d我爱你123我爱你")
                     .addParagraph("e我爱你123我爱你")
-                    .addBarcode("https://www.baidu.com", BarcodeType.QR_CODE)
-                    .addParagraph("f我爱你123我爱你")
                     .doWrite(new FileOutputStream(path));
 //            FileInputStream inputStream1 = new FileInputStream(path);
 //            List<String> paragraphList = new PdfUtils.Reader(inputStream1).getParagraphsList(1);

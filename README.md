@@ -1535,6 +1535,10 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 **作者在线时间一般分布在工作日的晚上，其他时间若是查看到消息，在有电脑的情况下也会进行回复或说明。**
 
+## 项目历史
+
+![Star History Chart](https://api.star-history.com/svg?repos=AntonyCheng/spring-boot-init-template&type=Date)
+
 ## 下一步开发计划
 
 * 设计方便简单的操作 PDF 的工具类
