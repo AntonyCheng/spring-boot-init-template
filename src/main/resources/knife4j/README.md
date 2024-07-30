@@ -1,6 +1,6 @@
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.8-jdk17-pre**
+> **版本号：v2.1.8-jdk17**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 >
@@ -58,6 +58,7 @@
                 * [搭建Deployer&Adapter系统](#搭建deployeradapter系统)
                 * [搭建Deployer&Client系统](#搭建deployerclient系统)
     * [申明&联系我](#申明联系我)
+    * [项目历史](#项目历史)
     * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
@@ -82,7 +83,7 @@
     - spring-ai-zhipuai-spring-boot-starter == Spring AI 智谱AI模型依赖
     - spring-ai-ollama-spring-boot-starter == Spring AI Ollama框架AI模型依赖
 - **Netty**
-    - netty-all 4.1.111.Final == Netty 框架
+    - netty-all 4.1.112.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
     - mybatis-spring 3.0.3 == MyBatis Spring 依赖
@@ -92,18 +93,18 @@
     - druid-spring-boot-3-starter 1.2.23 == Druid 连接池
 - **工具类**
     - lombok 1.18.34 == POJO 简化工具
-    - hutool-all 5.8.28 == Hutool 工具类
-    - commons-lang3 3.14.0 == Apache Commons Lang 工具类
+    - hutool-all 5.8.29 == Hutool 工具类
+    - commons-lang3 3.15.0 == Apache Commons Lang 工具类
     - commons-io 2.16.1 == Apache Commons IO 工具类
-    - commons-codec 1.17.0 == Apache Commons Codec 工具类
+    - commons-codec 1.17.1 == Apache Commons Codec 工具类
     - commons-pool2 2.12.0 == Apache Commons Pool 工具类
     - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
     - commons-math3 3.6.1 == Apache Commons Math 工具类
     - commons-compress 1.26.2 == Apache Commons Compress 工具类
     - okhttp 4.12.0 == OK Http 工具类
     - okio 3.9.0 == OK IO 工具类
-    - fastjson2 2.0.51 == FastJSON 工具类
-    - fastjson2-extension-spring6 2.0.51 == FastJSON 工具拓展类
+    - fastjson2 2.0.52 == FastJSON 工具类
+    - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
     - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
     - sa-token-spring-boot3-starter 1.38.0 == SaToken 认证鉴权框架
@@ -113,7 +114,7 @@
 - **缓存服务**
     - spring-boot-starter-data-redis == Spring Data Redis 依赖
     - spring-boot-starter-cache == Spring Cache 依赖
-    - redisson 3.32.0 == Redis 的基础上实现的 Java 驻内存数据网格
+    - redisson 3.33.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
     - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -125,14 +126,16 @@
     - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
     - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-    - cos_api 5.6.219 == 腾讯云 COS
-    - aliyun-sdk-oss 3.18.0 == 阿里云 OSS
+    - cos_api 5.6.221 == 腾讯云 COS
+    - aliyun-sdk-oss 3.18.1 == 阿里云 OSS
     - minio 8.5.11 == Minio 对象存储
 - **文件操作**
-    - poi 5.2.5 == 操作 Word
+    - poi 5.3.0 == 操作 Word
     - poi-tl 1.12.2 == 操作 Word 模板
     - easyexcel 4.0.1 == 操作 Excel
-    - itext-core 8.0.3 == 操作 PDF
+    - x-easypdf 3.1.0 == 操作 PDF
+    - thymeleaf 3.1.2.RELEASE == 操作 PDF Thymeleaf 模板
+    - jte 2.3.2 == 操作 PDF JTE 数据源模板
 - **接口文档 & API调试**
     - knife4j-openapi3-jakarta-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
@@ -165,7 +168,7 @@
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word 等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF 等工具类
 
 ## 业务功能
 
@@ -182,6 +185,7 @@
 - 验证码逻辑代码示例
 - 操作 Elasticsearch 代码示例
 - 操作 MongoDB 代码示例
+- 操作 Excel、Word 以及 PDF 文件代码示例
 
 ### 单元测试
 
@@ -1500,10 +1504,13 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 **作者在线时间一般分布在工作日的晚上，其他时间若是查看到消息，在有电脑的情况下也会进行回复或说明。**
 
+## 项目历史
+
+![Star History Chart](https://api.star-history.com/svg?repos=AntonyCheng/spring-boot-init-template&type=Date)
+
 ## 下一步开发计划
 
-* 设计方便简单的操作 PDF 的工具类
 * 设计幂等模块
-* 集成 Prometheus 和 Grafana 监控报警平台（选做）
-* 集成 Apache SkyWalking 链路追踪（选做）
+* 设计相关工具类前端功能示例界面
+* 扩展新的前端模板
 * ......

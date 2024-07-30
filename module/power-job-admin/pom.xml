@@ -9,7 +9,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>power-job-admin</artifactId>
-    <version>v2.1.8-jdk17-pre</version>
+    <version>v2.1.8-jdk17</version>
     <name>power-job-admin</name>
     <description>power-job-admin</description>
     <properties>

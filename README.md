@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.8-jdk17-pre**
+> **版本号：v2.1.8-jdk17**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -14,7 +14,7 @@
 
 # SpringBoot初始化模板
 
-**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，广泛支持JDK11和JDK17，部分版本兼容JDK8，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 * [SpringBoot初始化模板](#springboot初始化模板)
   * [模板特点](#模板特点)
@@ -65,6 +65,7 @@
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
   * [前端预览](#前端预览)
   * [申明&联系我](#申明联系我)
+  * [项目历史](#项目历史)
   * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
