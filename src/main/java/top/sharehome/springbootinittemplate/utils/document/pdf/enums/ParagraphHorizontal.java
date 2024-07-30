@@ -4,36 +4,38 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF字体字重
+ * PDF对齐方式
+ * left：居左
+ * center：居中
+ * right：居右
+ * justify：两端对齐
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum FontWeightEnum {
+public enum ParagraphHorizontal {
 
     /**
-     * 正常
+     * 居左
      */
-    NORMAL("normal", 400),
+    LEFT("left"),
 
     /**
-     * 粗体
+     * 居中
      */
-    BOLD("bold", 700),
+    CENTER("center"),
 
     /**
-     * 加粗
+     * 居右
      */
-    BOLDER("bolder", 900),
+    RIGHT("right"),
 
     /**
-     * 细体
+     * 两端对齐
      */
-    LIGHTER("lighter", 100);
+    JUSTIFY("justify");
 
     private final String name;
-
-    private final Integer value;
 
 }

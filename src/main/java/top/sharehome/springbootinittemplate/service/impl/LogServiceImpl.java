@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
+import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
@@ -78,7 +78,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
             adminLogPageVo.setId(log.getId());
             adminLogPageVo.setUri(log.getUri());
             adminLogPageVo.setDescription(log.getDescription());
-            adminLogPageVo.setOperator(OperatorEnum.getLabelByValue(log.getOperator()));
+            adminLogPageVo.setOperator(Operator.getLabelByValue(log.getOperator()));
             adminLogPageVo.setRequestMethod(log.getRequestMethod());
             adminLogPageVo.setMethod(log.getMethod());
             adminLogPageVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");
@@ -122,7 +122,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
             adminLogExportVo.setId(log.getId());
             adminLogExportVo.setUri(log.getUri());
             adminLogExportVo.setDescription(log.getDescription());
-            adminLogExportVo.setOperator(OperatorEnum.getLabelByValue(log.getOperator()));
+            adminLogExportVo.setOperator(Operator.getLabelByValue(log.getOperator()));
             adminLogExportVo.setRequestMethod(log.getRequestMethod());
             adminLogExportVo.setMethod(log.getMethod());
             adminLogExportVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");

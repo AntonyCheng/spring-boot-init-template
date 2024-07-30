@@ -1,6 +1,6 @@
 package top.sharehome.springbootinittemplate.config.log.annotation;
 
-import top.sharehome.springbootinittemplate.config.log.enums.OperatorEnum;
+import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 
 import java.lang.annotation.*;
 
@@ -22,7 +22,7 @@ public @interface ControllerLog {
     /**
      * 操作类型（0其他1增2删3查4改5导入6导出）
      */
-    OperatorEnum operator() default OperatorEnum.OTHER;
+    Operator operator() default Operator.OTHER;
 
     /**
      * 屏蔽请求/响应参数

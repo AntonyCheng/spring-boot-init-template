@@ -8,7 +8,7 @@ import lombok.Getter;
  * @author AntonyCheng
  */
 @Getter
-public enum RequestMethodEnum {
+public enum RequestMethod {
 
     GET("GET"),
 
@@ -22,7 +22,7 @@ public enum RequestMethodEnum {
 
     private final String methodName;
 
-    RequestMethodEnum(String methodName) {
+    RequestMethod(String methodName) {
         this.methodName = methodName;
     }
 

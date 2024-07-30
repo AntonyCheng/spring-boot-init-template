@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * @author AntonyCheng
  */
 @Getter
-public enum OperatorEnum {
+public enum Operator {
 
     OTHER("其他操作", 0),
 
@@ -33,13 +33,13 @@ public enum OperatorEnum {
 
     private final Integer OperatorValue;
 
-    OperatorEnum(String operatorLabel, Integer operatorValue) {
+    Operator(String operatorLabel, Integer operatorValue) {
         this.OperatorLabel = operatorLabel;
         this.OperatorValue = operatorValue;
     }
 
     public static String getLabelByValue(Integer operatorValue){
-        List<OperatorEnum> list = Arrays.stream(OperatorEnum.values()).filter(operatorEnum -> Objects.equal(operatorEnum.getOperatorValue(), operatorValue)).collect(Collectors.toList());
+        List<Operator> list = Arrays.stream(Operator.values()).filter(operatorEnum -> Objects.equal(operatorEnum.getOperatorValue(), operatorValue)).collect(Collectors.toList());
         if (list.isEmpty()){
             return "UNKNOWN";
         }

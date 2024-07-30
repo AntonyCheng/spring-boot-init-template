@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum FontStyleEnum {
+public enum FontStyle {
 
     /**
      * 正常

@@ -10,24 +10,18 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.pdf.fop.core.doc.Document;
+import org.dromara.pdf.fop.core.doc.component.image.Image;
+import org.dromara.pdf.fop.core.doc.component.line.SplitLine;
+import org.dromara.pdf.fop.core.doc.component.table.*;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
 import org.dromara.pdf.fop.handler.TemplateHandler;
-import org.dromara.pdf.pdfbox.core.base.MemoryPolicy;
-import org.dromara.pdf.pdfbox.core.base.PageSize;
-import org.dromara.pdf.pdfbox.core.component.Image;
-import org.dromara.pdf.pdfbox.core.component.SplitLine;
-import org.dromara.pdf.pdfbox.core.component.Textarea;
-import org.dromara.pdf.pdfbox.core.enums.FontStyle;
-import org.dromara.pdf.pdfbox.core.enums.HorizontalAlignment;
-import org.dromara.pdf.pdfbox.handler.PdfHandler;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontStyleEnum;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.FontWeightEnum;
-import top.sharehome.springbootinittemplate.utils.document.pdf.enums.HorizontalAlignmentEnum;
+import top.sharehome.springbootinittemplate.utils.document.pdf.enums.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -35,10 +29,11 @@ import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * PDF工具类
@@ -67,14 +62,14 @@ public class PdfUtils {
             String tempFont = FileUtils.getTempDirectoryPath() + fontResourcePath;
             File existConf = new File(tempConf);
             File existFont = new File(tempFont);
-            if (!existConf.exists() || !existFont.exists()) {
-                String fontPathname = FileUtils.getTempDirectoryPath() + fontResourcePath;
-                File fontFile = new File(fontPathname);
+            String fontPathname = FileUtils.getTempDirectoryPath() + fontResourcePath;
+            File fontFile = new File(fontPathname);
+            String replacement = "/" + fontPathname;
+            String confContent = new String(readConfStream.readAllBytes())
+                    .replace("ReplaceFontURL", replacement)
+                    .replaceAll("ReplaceFontFamily", FilenameUtils.getBaseName(fontResourcePath));
+            if (!existConf.exists() || !existFont.exists() || existConf.length() != confContent.getBytes().length) {
                 FileUtils.copyInputStreamToFile(new ClassPathResource(fontResourcePath).getInputStream(), fontFile);
-                String replacement = File.separator + fontPathname;
-                String confContent = new String(readConfStream.readAllBytes())
-                        .replace("ReplaceFontURL", replacement)
-                        .replaceAll("ReplaceFontFamily", FilenameUtils.getBaseName(fontResourcePath));
                 FileUtils.copyInputStreamToFile(new ByteArrayInputStream(confContent.getBytes()), existConf);
             }
             POF_CONF_PATH = existConf.getPath();
@@ -103,7 +98,7 @@ public class PdfUtils {
         /**
          * 页面管理
          */
-        private final ArrayList<Page> pageList;
+        private final List<Page> pageList;
 
         /**
          * 当前页面索引
@@ -127,7 +122,7 @@ public class PdfUtils {
         /**
          * 添加页面
          *
-         * @param pdfPage 页面构造类
+         * @param pdfPage PDF页面构造类
          */
         public Writer addPage(PdfPage pdfPage) {
             if (Objects.isNull(pdfPage)) {
@@ -137,11 +132,11 @@ public class PdfUtils {
             // 创建新页面
             Page page = TemplateHandler.Page.build()
                     // 设置页面字体大小，默认为12
-                    .setFontSize(String.valueOf(Objects.isNull(pdfPage.getFontSize()) ? 12 : pdfPage.getFontSize()))
+                    .setFontSize(String.valueOf(Objects.isNull(pdfPage.getFontSize()) || pdfPage.getFontSize() <= 0 ? 12 : pdfPage.getFontSize()))
                     // 设置页面默认四周边距，默认为25
-                    .setMargin(String.valueOf(Objects.isNull(pdfPage.getMargin()) ? 25 : pdfPage.getMargin()))
+                    .setMargin(String.valueOf(Objects.isNull(pdfPage.getMargin()) || pdfPage.getMargin() <= 0 ? 25 : pdfPage.getMargin()))
                     // 设置页面默认背景颜色，默认为白色
-                    .setBodyBackgroundColor(Objects.isNull(pdfPage.getColor()) ? "#FFFFFF" : colorToHex(pdfPage.getColor()));
+                    .setBodyBackgroundColor(colorToHex(Objects.isNull(pdfPage.getColor()) ? Color.WHITE : pdfPage.getColor()));
             // 添加到Page列表中
             pageList.add(page);
             // Page页码索引加一
@@ -149,17 +144,13 @@ public class PdfUtils {
             return this;
         }
 
-
         /**
          * 添加段落
          *
          * @param textarea 文本内容
          */
         public Writer addParagraph(String textarea) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-            );
+            return addParagraph(textarea, null, null, null, null);
         }
 
         /**
@@ -169,11 +160,7 @@ public class PdfUtils {
          * @param fontSize 字体大小
          */
         public Writer addParagraph(String textarea, Integer fontSize) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-                            .setFontSize(fontSize)
-            );
+            return addParagraph(textarea, fontSize, null, null, null);
         }
 
         /**
@@ -184,12 +171,7 @@ public class PdfUtils {
          * @param fontColor 字体颜色
          */
         public Writer addParagraph(String textarea, Integer fontSize, Color fontColor) {
-            return addParagraph(
-                    new PdfParagraph()
-                            .setTextContent(textarea)
-                            .setFontSize(fontSize)
-                            .setFontColor(fontColor)
-            );
+            return addParagraph(textarea, fontSize, fontColor, null, null);
         }
 
         /**
@@ -201,7 +183,7 @@ public class PdfUtils {
          * @param fontWeight 字体字重
          * @param fontStyle  字体样式
          */
-        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor, FontWeightEnum fontWeight, FontStyleEnum fontStyle) {
+        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor, FontWeight fontWeight, FontStyle fontStyle) {
             return addParagraph(
                     new PdfParagraph()
                             .setTextContent(textarea)
@@ -215,45 +197,49 @@ public class PdfUtils {
         /**
          * 添加段落
          *
-         * @param pdfParagraph PDF段落构造器
+         * @param pdfParagraph PDF段落构造类
          */
         public Writer addParagraph(PdfParagraph pdfParagraph) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
             if (Objects.isNull(pdfParagraph)) {
-                log.error("处理PDF文件出错，PdfTextarea参数为空");
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTextarea参数为空");
+                log.error("处理PDF文件出错，PdfParagraph参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfParagraph参数为空");
             }
             Text text = TemplateHandler.Text.build()
-                    // 设置文本
+                    // 设置段落文本
                     .setText(Objects.isNull(pdfParagraph.getTextContent()) ? "" : pdfParagraph.getTextContent())
-                    // 设置字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    // 设置段落字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
                     .setFontFamily(Objects.isNull(pdfParagraph.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfParagraph.getFontFamily())
-                    // 设置字号，默认12
-                    .setFontSize(String.valueOf(Objects.isNull(pdfParagraph.getFontSize()) ? 12 : pdfParagraph.getFontSize()))
-                    // 设置字重，默认正常
-                    .setFontWeight(Objects.isNull(pdfParagraph.getFontWeight()) ? FontWeightEnum.NORMAL.getName() : pdfParagraph.getFontWeight().getName())
-                    // 设置斜体，默认正常
-                    .setFontStyle(Objects.isNull(pdfParagraph.getFontStyle()) ? FontStyleEnum.NORMAL.getName() : pdfParagraph.getFontStyle().getName())
-                    // 设置字体颜色，默认黑色
-                    .setFontColor(Objects.isNull(pdfParagraph.getFontColor()) ? "#000000" : colorToHex(pdfParagraph.getFontColor()))
+                    // 设置段落字号，默认12
+                    .setFontSize(String.valueOf(Objects.isNull(pdfParagraph.getFontSize()) || pdfParagraph.getFontSize() <= 0 ? 12 : pdfParagraph.getFontSize()))
+                    // 设置段落字重，默认正常
+                    .setFontWeight(Objects.isNull(pdfParagraph.getFontWeight()) ? FontWeight.NORMAL.getName() : pdfParagraph.getFontWeight().getName())
+                    // 设置段落斜体，默认正常
+                    .setFontStyle(Objects.isNull(pdfParagraph.getFontStyle()) ? FontStyle.NORMAL.getName() : pdfParagraph.getFontStyle().getName())
+                    // 设置段落字体颜色，默认黑色
+                    .setFontColor(colorToHex(Objects.isNull(pdfParagraph.getFontColor()) ? Color.BLACK : pdfParagraph.getFontColor()))
                     // 设置段落首行缩进，默认不缩进
-                    .setTextIndent(String.valueOf(Objects.isNull(pdfParagraph.getTextIndent()) ?
+                    .setTextIndent(String.valueOf(Objects.isNull(pdfParagraph.getTextIndent()) || pdfParagraph.getTextIndent() <= 0 ?
                             0 : (Objects.isNull(pdfParagraph.getFontSize()) ? 12 * pdfParagraph.getTextIndent() : pdfParagraph.getFontSize() * pdfParagraph.getTextIndent())))
-                    // 设置段间距，默认为5
-                    .setSpaceBefore(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) ? 5 : pdfParagraph.getMargin()))
-                    .setSpaceAfter(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) ? 5 : pdfParagraph.getMargin()))
-                    // 设置行间距，默认为1
-                    .setLeading(String.valueOf(Objects.isNull(pdfParagraph.getLeading()) ? 1 : pdfParagraph.getLeading()))
-                    // 设置对齐方式，默认两端对齐
-                    .setHorizontalStyle(Objects.isNull(pdfParagraph.getHorizontalAlignment()) ? HorizontalAlignmentEnum.JUSTIFY.getName() : pdfParagraph.getHorizontalAlignment().getName());
-            // 设置背景颜色，默认没有颜色
+                    // 设置段落上下边距，默认为1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 1 : pdfParagraph.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfParagraph.getMargin()) || pdfParagraph.getMargin() <= 0 ? 1 : pdfParagraph.getMargin()))
+                    // 设置段落行间距，默认为1
+                    .setLeading(String.valueOf(Objects.isNull(pdfParagraph.getLeading()) || pdfParagraph.getLeading() <= 0 ? 1 : pdfParagraph.getLeading()))
+                    // 设置段落对齐方式，默认两端对齐
+                    .setHorizontalStyle(Objects.isNull(pdfParagraph.getParagraphHorizontal()) ? ParagraphHorizontal.JUSTIFY.getName() : pdfParagraph.getParagraphHorizontal().getName());
+            // 设置段落背景颜色，默认没有颜色
             if (Objects.nonNull(pdfParagraph.getBackgroundColor())) {
                 text.setBackgroundColor(colorToHex(pdfParagraph.getBackgroundColor()));
             }
-            // 设置删除线颜色，默认没有删除线
+            // 设置段落删除线颜色，默认没有删除线
             if (Objects.nonNull(pdfParagraph.getDeleteLineColor())) {
                 text.enableDeleteLine().setDeleteLineColor(colorToHex(pdfParagraph.getDeleteLineColor()));
             }
-            // 设置下划线颜色，默认没有下划线
+            // 设置段落下划线颜色，默认没有下划线
             if (Objects.nonNull(pdfParagraph.getUnderLineColor())) {
                 text.enableUnderLine().setUnderLineColor(colorToHex(pdfParagraph.getUnderLineColor()));
             }
@@ -262,181 +248,590 @@ public class PdfUtils {
         }
 
         /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         */
+        public Writer addTable(String[][] pdfTableDataArray) {
+            return addTable(pdfTableDataArray, false, false, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param fontFamily  表格文本内容字体
+         */
+        public Writer addTable(String[][] pdfTableDataArray, String fontFamily) {
+            return addTable(pdfTableDataArray, false, false, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         */
+        public Writer addTable(String[][] pdfTableDataArray, boolean existHeader, boolean existFooter) {
+            return addTable(pdfTableDataArray, existHeader, existFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableDataArray 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(String[][] pdfTableDataArray, boolean existHeader, boolean existFooter, String fontFamily) {
+            List<PdfTable.PdfTableRow> pdfTableRows = Arrays.stream(pdfTableDataArray)
+                    .map(pdfTableRowData ->
+                            new PdfTable.PdfTableRow().setPdfTableCells(Arrays.stream(pdfTableRowData)
+                                    .map(pdfTableRowCell ->
+                                            new PdfTable.PdfTableCell().setCellContent(pdfTableRowCell))
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+            return addTable(pdfTableRows, existHeader, existFooter, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows) {
+            return addTable(pdfTableRows, false, false, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, String fontFamily) {
+            return addTable(pdfTableRows, false, false, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, boolean existHeader, boolean existFooter) {
+            return addTable(pdfTableRows, existHeader, existFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableRows 表格完整数据，工具类暂不支持合并操作，即每一行列数均相同，若不相同，那就以最长行为基准填充空值
+         * @param existHeader  是否存在表头，如果存在则自动提取数据中第一行作为表头
+         * @param existFooter  是否存在表尾，如果存在则自动提取数据中最后一行作为表尾
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(List<PdfTable.PdfTableRow> pdfTableRows, boolean existHeader, boolean existFooter, String fontFamily) {
+            if (CollectionUtils.isEmpty(pdfTableRows)) {
+                log.error("处理PDF文件出错，List<PdfTable.PdfTableRow>参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "List<PdfTable.PdfTableRow>参数为空");
+            }
+            // 校准每行填充长度
+            int maxSize = 0;
+            for (PdfTable.PdfTableRow pdfTableRow : pdfTableRows) {
+                if (pdfTableRow.getPdfTableCells().size() > maxSize) {
+                    maxSize = pdfTableRow.getPdfTableCells().size();
+                }
+            }
+            if (maxSize != 0) {
+                for (PdfTable.PdfTableRow pdfTableRow : pdfTableRows) {
+                    int size = pdfTableRow.getPdfTableCells().size();
+                    for (int i = 0; i < maxSize - size; i++) {
+                        pdfTableRow.getPdfTableCells().add(new PdfTable.PdfTableCell());
+                    }
+                }
+            } else {
+                log.warn("表格表体数据缺失，无法渲染表格");
+                return this;
+            }
+            // 构造表体、表头和表尾
+            PdfTable.PdfTableBody pdfTableBody = new PdfTable.PdfTableBody();
+            PdfTable.PdfTableHeader pdfTableHeader = null;
+            PdfTable.PdfTableFooter pdfTableFooter = null;
+            if (existHeader) {
+                pdfTableHeader = new PdfTable.PdfTableHeader().setPdfTableRows(List.of(pdfTableRows.get(0)));
+                pdfTableRows.remove(0);
+                if (pdfTableRows.isEmpty()) {
+                    log.warn("填充表头后，表格表体数据缺失，无法渲染表格");
+                    return this;
+                }
+            }
+            if (existFooter) {
+                pdfTableFooter = new PdfTable.PdfTableFooter().setPdfTableRows(List.of(pdfTableRows.get(pdfTableRows.size() - 1)));
+                pdfTableRows.remove(pdfTableRows.size() - 1);
+                if (pdfTableRows.isEmpty()) {
+                    log.warn("填充表尾后，表格表体数据缺失，无法渲染表格");
+                    return this;
+                }
+            }
+            pdfTableBody.setPdfTableRows(pdfTableRows);
+            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody PDF表格表体构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody) {
+            return addTable(pdfTableBody, null, null, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody PDF表格表体构造类
+         * @param fontFamily   表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, String fontFamily) {
+            return addTable(pdfTableBody, null, null, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader) {
+            return addTable(pdfTableBody, pdfTableHeader, null, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param fontFamily     表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, String fontFamily) {
+            return addTable(pdfTableBody, pdfTableHeader, null, fontFamily);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param pdfTableFooter PDF表格表尾构造类
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, PdfTable.PdfTableFooter pdfTableFooter) {
+            return addTable(pdfTableBody, pdfTableHeader, pdfTableFooter, null);
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTableBody   PDF表格表体构造类
+         * @param pdfTableHeader PDF表格表头构造类
+         * @param pdfTableFooter PDF表格表尾构造类
+         * @param fontFamily     表格文本内容字体
+         */
+        public Writer addTable(PdfTable.PdfTableBody pdfTableBody, PdfTable.PdfTableHeader pdfTableHeader, PdfTable.PdfTableFooter pdfTableFooter, String fontFamily) {
+            return addTable(
+                    new PdfTable()
+                            .setPdfTableBody(pdfTableBody)
+                            .setPdfTableHeader(pdfTableHeader)
+                            .setPdfTableFooter(pdfTableFooter)
+                            .setFontFamily(fontFamily)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pdfTable PDF表格构造类
+         */
+        public Writer addTable(PdfTable pdfTable) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfTable)) {
+                log.error("处理PDF文件出错，PdfTable参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTable参数为空");
+            }
+            // 设置填充表格的标志符号
+            int isAddTable = 0;
+            // 设置表格整体属性
+            Table table = TemplateHandler.Table.build()
+                    // 设置表格字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setFontFamily(Objects.isNull(pdfTable.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfTable.getFontFamily())
+                    // 设置表格对齐方式，默认居中
+                    .setHorizontalStyle(Objects.isNull(pdfTable.getTableHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTable.getTableHorizontal().getName())
+                    // 设置表格上下边距，默认为1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfTable.getMargin()) || pdfTable.getMargin() <= 0 ? 1 : pdfTable.getMargin()));
+            // 设置表体
+            TableBody tableBody = TemplateHandler.Table.Body.build();
+            if (Objects.nonNull(pdfTable.getPdfTableBody()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableBody().getPdfTableRows())) {
+                List<TableRow> tableBodyRows = pdfTable.getPdfTableBody().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
+                    });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
+                    return tableRow;
+                }).toList();
+                tableBody.addRow(tableBodyRows);
+                isAddTable += 1;
+            }
+            // 设置表头
+            TableHeader tableHeader = TemplateHandler.Table.Header.build();
+            if (Objects.nonNull(pdfTable.getPdfTableHeader()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableHeader().getPdfTableRows())) {
+                List<TableRow> tableHeaderRows = pdfTable.getPdfTableHeader().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                                        // 设置表头单元格内容加粗
+                                                        .setFontWeight(FontWeight.BOLD.getName())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
+                    });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
+                    return tableRow;
+                }).toList();
+                tableHeader.addRow(tableHeaderRows);
+                isAddTable += 2;
+            }
+            // 设置表尾
+            TableFooter tableFooter = TemplateHandler.Table.Footer.build();
+            if (Objects.nonNull(pdfTable.getPdfTableFooter()) && CollectionUtils.isNotEmpty(pdfTable.getPdfTableFooter().getPdfTableRows())) {
+                List<TableRow> tableFooterRows = pdfTable.getPdfTableFooter().getPdfTableRows().stream().map(pdfTableRow -> {
+                    TableRow tableRow = new TableRow();
+                    pdfTableRow.getPdfTableCells().forEach(pdfTableCell -> {
+                        tableRow.addCell(
+                                new TableCell()
+                                        .addComponent(
+                                                TemplateHandler.Text.build()
+                                                        // 设置表体单元格文本字号，默认12
+                                                        .setFontSize(String.valueOf(Objects.isNull(pdfTableCell.getFontSize()) || pdfTableCell.getFontSize() <= 0 ? 12 : pdfTableCell.getFontSize()))
+                                                        // 设置表体单元格文本内容，默认""
+                                                        .setText(Objects.isNull(pdfTableCell.getCellContent()) ? "" : pdfTableCell.getCellContent())
+                                        )
+                                        // 设置表体单元格内容水平对齐方式，默认居中
+                                        .setHorizontalStyle(Objects.isNull(pdfTableCell.getCellHorizontal()) ? TableHorizontal.CENTER.getName() : pdfTableCell.getCellHorizontal().getName())
+                                        // 设置表体单元格内容垂直对齐方式，默认居中
+                                        .setVerticalStyle(Objects.isNull(pdfTableCell.getTableVertical()) ? TableVertical.CENTER.getName() : pdfTableCell.getTableVertical().getName())
+                                        // 设置表体单元格边框颜色，默认黑色
+                                        .setBorderColor(colorToHex(Objects.isNull(pdfTableCell.getBroderColor()) ? Color.BLACK : pdfTableCell.getBroderColor()))
+                                        // 设置表体单元格边框宽度为1
+                                        .setBorderWidth("1")
+                                        // 设置表体单元格边框样式为实现
+                                        .setBorderStyle("solid"));
+                    });
+                    // 设置表格体表行最小高度为15
+                    tableRow.setMinRowHeight("15");
+                    return tableRow;
+                }).toList();
+                tableFooter.addRow(tableFooterRows);
+                isAddTable += 4;
+            }
+            // 以二进制做判断依据，进行判断该表格是否需要进行插入数据
+            byte[] isAddTableBinArray = String.format("%3s", Integer.toBinaryString(isAddTable)).replace(' ', '0').getBytes();
+            // 要求必须包含表体数据，否则不进行填充文本内容操作
+            if (isAddTableBinArray[2] == '1') {
+                table.setBody(tableBody);
+            } else {
+                log.warn("表格表体为空，无法渲染表格");
+                return this;
+            }
+            if (isAddTableBinArray[1] == '1') {
+                table.setHeader(tableHeader);
+            }
+            if (isAddTableBinArray[0] == '1') {
+                table.setFooter(tableFooter);
+            }
+            pageList.get(pageIndex).addBodyComponent(table);
+            return this;
+        }
+
+        /**
          * 添加分割线
          */
-//        public Writer addSplitLine() {
-//            return addSplitLine(
-//                    new PdfSplitLine()
-//            );
-//        }
+        public Writer addSplitLine() {
+            return addSplitLine(
+                    new PdfSplitLine()
+            );
+        }
 
         /**
          * 添加分割线
          *
-         * @param color     分割线颜色
-         * @param lineWidth 分割线宽度
+         * @param style 分割线样式
          */
-//        public Writer addSplitLine(Color color, Float lineWidth) {
-//            return addSplitLine(
-//                    new PdfSplitLine()
-//                            .setLineColor(color)
-//                            .setLineWidth(lineWidth)
-//            );
-//        }
+        public Writer addSplitLine(SplitLineStyle style) {
+            return addSplitLine(style, null, null, null, null);
+        }
 
         /**
          * 添加分割线
          *
-         * @param color         分割线颜色
-         * @param lineWidth     分割线宽度
-         * @param isDotted      分割线是否为点线
-         * @param dottedLength  点线长度
-         * @param dottedSpacing 点线间隔
+         * @param style 分割线样式
+         * @param color 分割线颜色
          */
-//        public Writer addSplitLine(Color color, Float lineWidth, Boolean isDotted, Float dottedLength, Float dottedSpacing) {
-//            return addSplitLine(
-//                    new PdfSplitLine()
-//                            .setLineColor(color)
-//                            .setLineWidth(lineWidth)
-//                            .setIsDotted(isDotted)
-//                            .setDottedLength(dottedLength)
-//                            .setDottedSpacing(dottedSpacing)
-//            );
-//        }
+        public Writer addSplitLine(SplitLineStyle style, Color color) {
+            return addSplitLine(style, color, null, null, null);
+        }
 
         /**
          * 添加分割线
          *
-         * @param pdfSplitLine PDF分割线构造器
+         * @param style               分割线样式
+         * @param color               分割线颜色
+         * @param length              分割线长度占比，合理范围[0,100]，允许范围[0,无穷大)
+         * @param margin              分割线上下边距
+         * @param splitLineHorizontal 分割线对齐方式
          */
-//        public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
-//            if (Objects.isNull(pdfSplitLine)) {
-//                log.error("处理PDF文件出错，PdfSplitLine参数为空");
-//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
-//            }
-//            Page page = pageList.get(pageIndex);
-//            SplitLine splitLine = new SplitLine(page);
-//            splitLine.setIsWrap(true);
-//            // 设置分割线颜色
-//            splitLine.setLineColor(Objects.isNull(pdfSplitLine.getLineColor()) ? Color.BLACK : pdfSplitLine.getLineColor());
-//            // 设置分割线长度
-//            splitLine.setLineLength(Objects.isNull(pdfSplitLine.getLineLength()) ? page.getWidth() - page.getMarginLeft() - page.getMarginRight() : pdfSplitLine.getLineLength());
-//            // 设置分割线宽度
-//            splitLine.setLineWidth(Objects.isNull(pdfSplitLine.getLineWidth()) ? 1f : pdfSplitLine.getLineWidth());
-//            // 判断是否需要点线
-//            if (pdfSplitLine.getIsDotted()) {
-//                // 设置点线长度
-//                splitLine.setDottedLength(Objects.isNull(pdfSplitLine.getLineLength()) ? 1f : pdfSplitLine.getDottedLength());
-//                // 设置点线间隔
-//                splitLine.setDottedSpacing(Objects.isNull(pdfSplitLine.getDottedSpacing()) ? 0f : pdfSplitLine.getDottedSpacing());
-//            }
-//            // 渲染分割线
-//            splitLine.render();
-//            return this;
-//        }
+        public Writer addSplitLine(SplitLineStyle style, Color color, Integer length, Integer margin, SplitLineHorizontal splitLineHorizontal) {
+            return addSplitLine(
+                    new PdfSplitLine()
+                            .setStyle(style)
+                            .setColor(color)
+                            .setLength(length)
+                            .setMargin(margin)
+                            .setSplitLineHorizontal(splitLineHorizontal)
+            );
+        }
+
+        /**
+         * 添加分割线
+         *
+         * @param pdfSplitLine PDF分割线构造类
+         */
+        public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfSplitLine)) {
+                log.error("处理PDF文件出错，PdfSplitLine参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
+            }
+            SplitLine splitLine = TemplateHandler.SplitLine.build()
+                    // 设置分割线长度占比，默认100，合理范围[0,100]，允许范围[0,无穷大)
+                    .setLength(Objects.isNull(pdfSplitLine.getLength()) || pdfSplitLine.getLength() <= 0 ? "100%" : pdfSplitLine.getLength() + "%")
+                    // 设置分割线样式，默认实线
+                    .setStyle(Objects.isNull(pdfSplitLine.getStyle()) ? SplitLineStyle.SOLID.getName() : pdfSplitLine.getStyle().getName())
+                    // 设置分割线颜色，默认黑色
+                    .setColor(colorToHex(Objects.isNull(pdfSplitLine.getColor()) ? Color.BLACK : pdfSplitLine.getColor()))
+                    // 设置分割线上下边距，默认1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfSplitLine.getMargin()) || pdfSplitLine.getMargin() <= 0 ? 1 : pdfSplitLine.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfSplitLine.getMargin()) || pdfSplitLine.getMargin() <= 0 ? 1 : pdfSplitLine.getMargin()))
+                    // 设置分割线对齐方式，默认居中
+                    .setHorizontalStyle(Objects.isNull(pdfSplitLine.getStyle()) ? SplitLineHorizontal.CENTER.getName() : pdfSplitLine.getStyle().getName());
+            pageList.get(pageIndex).addBodyComponent(splitLine);
+            return this;
+        }
 
         /**
          * 添加图像
          *
-         * @param inputStream 图像对象流
+         * @param multipartFile 图像文件
          */
-//        public Writer addImage(InputStream inputStream) {
-//            return addImage(
-//                    new PdfImage()
-//                            .setInputStream(inputStream)
-//            );
-//        }
+        public Writer addImage(MultipartFile multipartFile) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                String extension = FilenameUtils.getExtension(StringUtils.isNotBlank(multipartFile.getOriginalFilename()) ? multipartFile.getOriginalFilename() : multipartFile.getName());
+                ImageExtension imageExtension = ImageExtension.getEnumByName("." + extension);
+                return addImage(inputStream, imageExtension);
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，获取图像数据流失败");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "获取图像数据流失败");
+            }
+        }
 
         /**
          * 添加图像
          *
-         * @param inputStream         图像对象流
-         * @param horizontalAlignment 图像对齐方式
+         * @param inputStream    图像数据流
+         * @param imageExtension 图像拓展名
          */
-//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment) {
-//            return addImage(
-//                    new PdfImage()
-//                            .setInputStream(inputStream)
-//                            .setHorizontalAlignment(horizontalAlignment)
-//            );
-//        }
-
-        /**
-         * 天机图象
-         *
-         * @param inputStream         图像对象流
-         * @param horizontalAlignment 图像对齐方式
-         * @param scale               图像缩放比例
-         */
-//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Float scale) {
-//            return addImage(
-//                    new PdfImage()
-//                            .setInputStream(inputStream)
-//                            .setHorizontalAlignment(horizontalAlignment)
-//                            .setScale(scale)
-//            );
-//        }
+        public Writer addImage(InputStream inputStream, ImageExtension imageExtension) {
+            String imageTempPath = copyImageToTempDir(inputStream, imageExtension);
+            return addImage(imageTempPath);
+        }
 
         /**
          * 添加图像
          *
-         * @param inputStream         图像对象流
-         * @param horizontalAlignment 图像对齐方式
-         * @param width               图像宽度
-         * @param height              图像高度
+         * @param path 图像所在路径
          */
-//        public Writer addImage(InputStream inputStream, HorizontalAlignment horizontalAlignment, Integer width, Integer height) {
-//            return addImage(
-//                    new PdfImage()
-//                            .setInputStream(inputStream)
-//                            .setHorizontalAlignment(horizontalAlignment)
-//                            .setWidth(width)
-//                            .setHeight(height)
-//            );
-//        }
+        public Writer addImage(String path) {
+            return addImage(path, null, null, null);
+        }
 
         /**
          * 添加图像
          *
-         * @param pdfImage PDF图像构造器
+         * @param multipartFile   图像文件
+         * @param imageHorizontal 图像对齐方式
          */
-//        public Writer addImage(PdfImage pdfImage) {
-//            if (Objects.isNull(pdfImage)) {
-//                log.error("处理PDF文件出错，PdfImage参数为空");
-//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
-//            }
-//            Page page = pageList.get(pageIndex);
-//            Image image = new Image(page);
-//            image.setIsWrap(true);
-//            // 设置图像对象流
-//            if (Objects.isNull(pdfImage.getInputStream())) {
-//                log.error("处理PDF文件出错，图像对象流为空");
-//                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像对象流为空");
-//            }
-//            image.setImage(pdfImage.getInputStream());
-//            // 设置图像高度
-//            image.setHeight(Objects.isNull(pdfImage.getHeight()) ? image.getImage().getHeight() : pdfImage.getHeight());
-//            // 设置图像宽度
-//            image.setWidth(Objects.isNull(pdfImage.getWidth()) ? image.getImage().getWidth() : pdfImage.getWidth());
-//            // 设置图像缩放比例
-//            if (Objects.nonNull(pdfImage.getScale())) {
-//                image.setWidth((int) (image.getWidth() * pdfImage.getScale()));
-//                image.setHeight((int) (image.getHeight() * pdfImage.getScale()));
-//            }
-//            // 设置图像对齐方式
-//            if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.CENTER)) {
-//                float relativeBeginX = page.getWithoutMarginWidth() / 2 - (float) image.getWidth() / 2;
-//                image.setRelativeBeginX(relativeBeginX);
-//            } else if (Objects.equals(pdfImage.getHorizontalAlignment(), HorizontalAlignment.RIGHT)) {
-//                float relativeBeginX = page.getWithoutMarginWidth() - (float) image.getWidth();
-//                image.setRelativeBeginX(relativeBeginX);
-//            } else {
-//                image.setRelativeBeginX(0f);
-//            }
-//            // 渲染图像
-//            image.render();
-//            return this;
-//        }
+        public Writer addImage(MultipartFile multipartFile, ImageHorizontal imageHorizontal) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                String extension = FilenameUtils.getExtension(StringUtils.isNotBlank(multipartFile.getOriginalFilename()) ? multipartFile.getOriginalFilename() : multipartFile.getName());
+                ImageExtension imageExtension = ImageExtension.getEnumByName("." + extension);
+                return addImage(inputStream, imageExtension, imageHorizontal);
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，获取图像数据流失败");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "获取图像数据流失败");
+            }
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream     图像数据流
+         * @param imageExtension  图像拓展名
+         * @param imageHorizontal 图像对齐方式
+         */
+        public Writer addImage(InputStream inputStream, ImageExtension imageExtension, ImageHorizontal imageHorizontal) {
+            String imageTempPath = copyImageToTempDir(inputStream, imageExtension);
+            return addImage(imageTempPath, imageHorizontal);
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param path            图像所在路径
+         * @param imageHorizontal 图像对齐方式
+         */
+        public Writer addImage(String path, ImageHorizontal imageHorizontal) {
+            return addImage(path, imageHorizontal, null, null);
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param multipartFile   图像文件
+         * @param imageHorizontal 图像对齐方式
+         * @param width           图像宽度
+         * @param height          图像高度
+         */
+        public Writer addImage(MultipartFile multipartFile, ImageHorizontal imageHorizontal, Integer width, Integer height) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                String extension = FilenameUtils.getExtension(StringUtils.isNotBlank(multipartFile.getOriginalFilename()) ? multipartFile.getOriginalFilename() : multipartFile.getName());
+                ImageExtension imageExtension = ImageExtension.getEnumByName("." + extension);
+                return addImage(inputStream, imageExtension, imageHorizontal, width, height);
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，获取图像数据流失败");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "获取图像数据流失败");
+            }
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream     图像数据流
+         * @param imageExtension  图像拓展名
+         * @param imageHorizontal 图像对齐方式
+         * @param width           图像宽度
+         * @param height          图像高度
+         */
+        public Writer addImage(InputStream inputStream, ImageExtension imageExtension, ImageHorizontal imageHorizontal, Integer width, Integer height) {
+            String imageTempPath = copyImageToTempDir(inputStream, imageExtension);
+            return addImage(imageTempPath, imageHorizontal, width, height);
+        }
+
+        /**
+         * 添加图象
+         *
+         * @param path            图像所在路径
+         * @param imageHorizontal 图像对齐方式
+         * @param width           图像宽度
+         * @param height          图像高度
+         */
+        public Writer addImage(String path, ImageHorizontal imageHorizontal, Integer width, Integer height) {
+            return addImage(
+                    new PdfImage()
+                            .setPath(path)
+                            .setImageHorizontal(imageHorizontal)
+                            .setWidth(width)
+                            .setHeight(height)
+            );
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param pdfImage PDF图像构造类
+         */
+        public Writer addImage(PdfImage pdfImage) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfImage)) {
+                log.error("处理PDF文件出错，PdfImage参数为空");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
+            }
+            if (!Files.isRegularFile(Path.of(pdfImage.getPath()))) {
+                log.error("处理PDF文件出错，PdfImage参数中图片所在路径[path]为不存在或者非文件");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数中图片所在路径为不存在或者非文件");
+            }
+            Image image = TemplateHandler.Image.build()
+                    // 设置图像所在路径
+                    .setPath("/" + pdfImage.getPath())
+                    // 设置图像对齐方式，默认左对齐
+                    .setHorizontalStyle(Objects.isNull(pdfImage.getImageHorizontal()) ? ImageHorizontal.LEFT.getName() : pdfImage.getImageHorizontal().getName())
+                    // 设置图像宽度
+                    .setWidth(Objects.isNull(pdfImage.getWidth()) || pdfImage.getWidth() <= 0 ? null : String.valueOf(pdfImage.getWidth()))
+                    // 设置图像长度
+                    .setHeight(Objects.isNull(pdfImage.getHeight()) || pdfImage.getHeight() <= 0 ? null : String.valueOf(pdfImage.getHeight()))
+                    // 设置图像上下边距，默认1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 1 : pdfImage.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfImage.getMargin()) || pdfImage.getMargin() <= 0 ? 1 : pdfImage.getMargin()));
+            pageList.get(pageIndex).addBodyComponent(image);
+            return this;
+        }
 
         /**
          * 将Word写入响应流
@@ -497,6 +892,33 @@ public class PdfUtils {
             return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         }
 
+        /**
+         * 设置PDF插入图片存放在系统临时文件夹中的子路径
+         */
+        private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
+
+        /**
+         * 将图像拷贝至临时文件夹中
+         *
+         * @param inputStream    图像数据流
+         * @param imageExtension 图像拓展名
+         */
+        private static String copyImageToTempDir(InputStream inputStream, ImageExtension imageExtension) {
+            try {
+                if (Objects.isNull(imageExtension)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像拓展名为空");
+                }
+                String imageTempPath = TEMP_IMAGE_DIR + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
+                Path path = Path.of(imageTempPath);
+                Files.deleteIfExists(path);
+                FileUtils.copyInputStreamToFile(inputStream, new File(imageTempPath));
+                return imageTempPath;
+            } catch (IOException e) {
+                log.error("处理PDF文件出错，图像数据拷贝异常");
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像数据拷贝异常");
+            }
+        }
+
     }
 
     /**
@@ -516,17 +938,17 @@ public class PdfUtils {
     public static class PdfPage {
 
         /**
-         * 页面字体大小。默认为12
+         * 页面字体大小
          */
         Integer fontSize;
 
         /**
-         * 页面四周边距，默认25
+         * 页面四周边距
          */
         Integer margin;
 
         /**
-         * 页面背景颜色，默认白色
+         * 页面背景颜色
          */
         Color color;
 
@@ -559,12 +981,12 @@ public class PdfUtils {
         /**
          * 段落字重
          */
-        private FontWeightEnum fontWeight;
+        private FontWeight fontWeight;
 
         /**
          * 段落样式
          */
-        private FontStyleEnum fontStyle;
+        private FontStyle fontStyle;
 
         /**
          * 段落字体颜色
@@ -597,14 +1019,155 @@ public class PdfUtils {
         private Integer leading;
 
         /**
-         * 段落段间距
+         * 段落上下边距
          */
         private Integer margin;
 
         /**
          * 段落对齐方式
          */
-        private HorizontalAlignmentEnum horizontalAlignment;
+        private ParagraphHorizontal paragraphHorizontal;
+
+    }
+
+    /**
+     * PDF表格构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfTable {
+
+        /**
+         * 表格表体
+         */
+        private PdfTableBody pdfTableBody;
+
+        /**
+         * 表格表头
+         */
+        private PdfTableHeader pdfTableHeader;
+
+        /**
+         * 表格表尾
+         */
+        private PdfTableFooter pdfTableFooter;
+
+        /**
+         * 表格文本内容字体
+         */
+        private String fontFamily;
+
+        /**
+         * 表格对齐方式
+         */
+        private TableHorizontal tableHorizontal;
+
+        /**
+         * 表格上下边距
+         */
+        private Integer margin;
+
+        /**
+         * PDF表格表头构造类
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableHeader {
+
+            /**
+             * 表格表行列表
+             */
+            private List<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表体构造类
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableBody {
+
+            /**
+             * 表格表行列表
+             */
+            private List<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表尾构造类
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableFooter {
+
+            /**
+             * 表格表行列表
+             */
+            private List<PdfTableRow> pdfTableRows;
+
+        }
+
+        /**
+         * PDF表格表行构造类
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableRow {
+
+            /**
+             * 表格单元格列表
+             */
+            private List<PdfTableCell> pdfTableCells = new ArrayList<>();
+
+        }
+
+        /**
+         * PDF表格单元格构造类
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Accessors(chain = true)
+        public static class PdfTableCell {
+
+            /**
+             * 单元格内容
+             */
+            private String cellContent;
+
+            /**
+             * 单元格内容字号
+             */
+            private Integer fontSize;
+
+            /**
+             * 单元格内容水平对齐方式
+             */
+            private TableHorizontal cellHorizontal;
+
+            /**
+             * 单元格内容垂直对齐方式
+             */
+            private TableVertical tableVertical;
+
+            /**
+             * 单元格边框颜色
+             */
+            private Color broderColor;
+
+        }
 
     }
 
@@ -618,39 +1181,29 @@ public class PdfUtils {
     public static class PdfSplitLine {
 
         /**
-         * 分割线颜色，默认为黑色
+         * 分割线样式
          */
-        private Color lineColor;
+        private SplitLineStyle style;
 
         /**
-         * 分割线边距大小，默认为10
+         * 分割线颜色
          */
-        private Float margin;
+        private Color color;
 
         /**
-         * 分割线是否为点线，默认为false
+         * 分割线长度占比，合理范围[0,100]，允许范围[0,无穷大)
          */
-        private Boolean isDotted = false;
+        private Integer length;
 
         /**
-         * 分割线点线间隔，如果isDotted为false，则dottedSpacing为null
+         * 分割线上下边距
          */
-        private Float dottedSpacing;
+        private Integer margin;
 
         /**
-         * 分割线点线长度，如果isDotted为false，则dottedLength为null
+         * 分割线对齐方式
          */
-        private Float dottedLength;
-
-        /**
-         * 分割线线长
-         */
-        private Float lineLength;
-
-        /**
-         * 分割线线宽
-         */
-        private Float lineWidth;
+        private SplitLineHorizontal splitLineHorizontal;
 
     }
 
@@ -664,19 +1217,9 @@ public class PdfUtils {
     public static class PdfImage {
 
         /**
-         * 图像对象流
+         * 图像所在路径
          */
-        private InputStream inputStream;
-
-        /**
-         * 图像边距大小，默认为10
-         */
-        private Float margin = 10f;
-
-        /**
-         * 图像对齐方式，默认为左对齐
-         */
-        private HorizontalAlignment horizontalAlignment;
+        private String path;
 
         /**
          * 图像宽度
@@ -689,9 +1232,14 @@ public class PdfUtils {
         private Integer height;
 
         /**
-         * 图像缩放比例，如果图像宽度和高度均为null，则在原图像基础上进行等比例缩放，如果图像宽度和高度不都为null，则在不为空的基础上进行等比例缩放
+         * 图像对齐方式
          */
-        private Float scale;
+        private ImageHorizontal imageHorizontal;
+
+        /**
+         * 图像上下边距
+         */
+        private Integer margin;
 
     }
 

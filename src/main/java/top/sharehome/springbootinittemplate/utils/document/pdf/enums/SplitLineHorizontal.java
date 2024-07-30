@@ -4,17 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF对齐方式
- * left：居左
- * center：居中
- * right：居右
- * justify：两端对齐
+ * PDF分割线对齐方式
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum HorizontalAlignmentEnum {
+public enum SplitLineHorizontal {
 
     /**
      * 居左
@@ -29,12 +25,7 @@ public enum HorizontalAlignmentEnum {
     /**
      * 居右
      */
-    RIGHT("right"),
-
-    /**
-     * 两端对齐
-     */
-    JUSTIFY("justify");
+    RIGHT("right");
 
     private final String name;
 
