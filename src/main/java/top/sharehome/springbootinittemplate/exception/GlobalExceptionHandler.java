@@ -322,7 +322,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 自定义Excel异常
+     * 自定义文档异常
      *
      * @param e 异常
      * @return 返回结果
