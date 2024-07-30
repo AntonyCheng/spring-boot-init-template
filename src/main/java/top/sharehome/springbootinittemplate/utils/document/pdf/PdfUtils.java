@@ -22,6 +22,7 @@ import org.dromara.pdf.fop.core.doc.component.line.SplitLine;
 import org.dromara.pdf.fop.core.doc.component.table.*;
 import org.dromara.pdf.fop.core.doc.component.text.Text;
 import org.dromara.pdf.fop.core.doc.page.Page;
+import org.dromara.pdf.fop.core.doc.watermark.Watermark;
 import org.dromara.pdf.fop.handler.TemplateHandler;
 import org.dromara.pdf.pdfbox.core.ext.analyzer.DocumentAnalyzer;
 import org.dromara.pdf.pdfbox.core.info.ImageInfo;
@@ -63,6 +64,16 @@ public class PdfUtils {
      */
     private static final String DEFAULT_FONT_FAMILY = "SourceHanSansCN-Regular";
 
+    /**
+     * 设置PDF插入图像存放在系统临时文件夹中的子路径
+     */
+    private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage";
+
+    /**
+     * 设置PDF导出模板文件存放在系统临时文件夹中的子路径
+     */
+    private static final String TEMP_TEMPLATE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempTemplate";
+
     // 初始化配置文件和字体，即将配置文件和字体文件处理之后复制到系统临时文件夹中
     static {
         String confResourcePath = "templates" + File.separator + "pdf" + File.separator + "fop.xconf";
@@ -92,6 +103,107 @@ public class PdfUtils {
      * 输出PDF模板内部类
      */
     public static class Template {
+
+        /**
+         * 导出PDF模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/pdf目录
+         *
+         * @param templateName 模板名称（需要带上扩展名），fo文件对应FREEMARKER数据源和THYMELEAF数据源，jte文件对应JTE数据源
+         * @param exportDataSource 导出数据源类型
+         * @param tagMap 标签Map
+         * @param outputStream 输出流
+         */
+        public void export(String templateName, ExportDataSource exportDataSource, Map<String, Object> tagMap, OutputStream outputStream) {
+            try {
+                if (Objects.isNull(outputStream)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件输出时，输出流为空");
+                }
+                if (Objects.isNull(tagMap)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件输出时，标签Map为空");
+                }
+                // 检查模板文件是否存在
+                ClassPathResource classPathResource = new ClassPathResource("templates/pdf/" + templateName);
+                if (StringUtils.isBlank(templateName) || !classPathResource.exists()) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件[" + templateName + "]未找到");
+                }
+                // 根据数据源和模板文件扩展名进行匹配判断
+                String extension = FilenameUtils.getExtension(templateName);
+                if (Objects.equals(exportDataSource, ExportDataSource.FREEMARKER) && Objects.equals(extension, "fo")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.FO);
+                    // 进行模板导出操作
+                    TemplateHandler.DataSource.Freemarker.setTemplatePath(TEMP_TEMPLATE_DIR);
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Freemarker.build().setTemplateName(FilenameUtils.getName(templatePath)).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else if (Objects.equals(exportDataSource, ExportDataSource.THYMELEAF) && Objects.equals(extension, "fo")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.FO);
+                    // 进行模板导出操作
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Thymeleaf.build().setTemplatePath(templatePath).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else if (Objects.equals(exportDataSource, ExportDataSource.JTE) && Objects.equals(extension, "jte")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.JTE);
+                    // 进行模板导出操作
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Jte.build().setTemplatePath(templatePath).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "指定模板文件扩展名和数据源不匹配");
+                }
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板导出时，数据流处理错误");
+            }
+        }
+
+        /**
+         * 处理ContentType是PDF格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/pdf;charset=UTF-8");
+        }
+
+        /**
+         * 将模板文件拷贝至临时文件夹中
+         *
+         * @param inputStream    模板文件按数据流
+         * @param exportExtension 模板文件扩展名
+         */
+        private String copyTemplateToTempDir(InputStream inputStream, ExportExtension exportExtension) {
+            try {
+                if (Objects.isNull(exportExtension)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件扩展名为空");
+                }
+                String templateTempPath = TEMP_TEMPLATE_DIR + File.separator + "pdfTemplate_" + UUID.randomUUID().toString().replace("-", "") + exportExtension.getName();
+                Path path = Path.of(templateTempPath);
+                Files.deleteIfExists(path);
+                FileUtils.copyInputStreamToFile(inputStream, new File(templateTempPath));
+                return templateTempPath;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件数据拷贝异常");
+            }
+        }
 
     }
 
@@ -153,6 +265,121 @@ public class PdfUtils {
             pageList.add(page);
             // Page页码索引加一
             this.pageIndex++;
+            return this;
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param texts 水印文本数组，数组元素个数对应文本行数
+         */
+        public Writer addWatermark(String... texts) {
+            return addWatermark(null, Arrays.stream(texts).collect(Collectors.toList()), null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         */
+        public Writer addWatermark(List<String> texts) {
+            return addWatermark(null, texts, null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         */
+        public Writer addWatermark(String id, List<String> texts) {
+            return addWatermark(id, texts, null, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize) {
+            return addWatermark(id, texts, fontSize, null, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         * @param fontAlpha 水印文本透明度
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha) {
+            return addWatermark(id, texts, fontSize, fontAlpha, null, null, null);
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param id 水印ID
+         * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontSize 水印文本字号
+         * @param fontAlpha 水印文本透明度
+         * @param width 水印文本宽度
+         * @param height 水印文本高度
+         * @param showWidth 水印文本显示宽度
+         */
+        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha, Integer width, Integer height, Integer showWidth) {
+            return addWatermark(
+                    new PdfWatermark()
+                            .setId(id)
+                            .setTexts(texts)
+                            .setFontSize(fontSize)
+                            .setFontAlpha(fontAlpha)
+                            .setWidth(width)
+                            .setHeight(height)
+                            .setShowWidth(showWidth)
+            );
+        }
+
+        /**
+         * 添加水印
+         *
+         * @param pdfWatermark PDF水印构造类
+         */
+        public Writer addWatermark(PdfWatermark pdfWatermark) {
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (pageList.isEmpty()) {
+                addPage();
+            }
+            if (Objects.isNull(pdfWatermark)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfWatermark参数为空");
+            }
+            Watermark watermark = TemplateHandler.Watermark.build()
+                    // 设置水印ID，必须保持唯一性，默认UUID
+                    .setId(StringUtils.isBlank(pdfWatermark.getId()) ? UUID.randomUUID().toString().replace("-", "") : pdfWatermark.getId())
+                    // 设置水印水印文本列表
+                    .setText(CollectionUtils.isEmpty(pdfWatermark.getTexts()) ? null : pdfWatermark.getTexts())
+                    // 设置水印文本字号，默认25
+                    .setFontSize((Objects.isNull(pdfWatermark.getFontSize()) || pdfWatermark.getFontSize() <= 0 ? 25 : pdfWatermark.getFontSize()) + "px")
+                    // 设置水印文本透明度，范围是0-255，值越小越透明，默认50
+                    .setFontAlpha(String.valueOf(Objects.isNull(pdfWatermark.getFontAlpha()) || pdfWatermark.getFontAlpha() < 0 || pdfWatermark.getFontAlpha() > 255 ? 50 : pdfWatermark.getFontAlpha()))
+                    // 设置水印文本宽度，默认200px
+                    .setWidth((Objects.isNull(pdfWatermark.getWidth()) || pdfWatermark.getWidth() <= 0 ? 200 : pdfWatermark.getWidth()) + "px")
+                    // 设置水印文本高度，默认200px
+                    .setHeight((Objects.isNull(pdfWatermark.getHeight()) || pdfWatermark.getHeight() <= 0 ? 200 : pdfWatermark.getHeight()) + "px")
+                    // 设置水印文本显示宽度，默认180px
+                    .setShowWidth((Objects.isNull(pdfWatermark.getShowWidth()) || pdfWatermark.getShowWidth() <= 0 ? 180 : pdfWatermark.getShowWidth()) + "px")
+                    // 设置水印文本旋转45°
+                    .setRadians("45")
+                    // 设置水印文本粗体
+                    .setFontStyle("bold")
+                    // 设置水印文本图像临时文件夹
+                    .setTempDir(TEMP_IMAGE_DIR)
+                    // 设置覆盖原有水印
+                    .enableOverwrite();
+            pageList.get(pageIndex).setBodyWatermark(watermark);
             return this;
         }
 
@@ -837,7 +1064,60 @@ public class PdfUtils {
         }
 
         /**
-         * todo 添加条码
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType) {
+            return addBarcode(content, barcodeType, null, null, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal) {
+            return addBarcode(content, barcodeType, barcodeHorizontal, null, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         * @param words 条码描述文字
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal, String words) {
+            return addBarcode(content, barcodeType, barcodeHorizontal, words, null);
+        }
+
+        /**
+         * 添加条码
+         *
+         * @param content 条码内容
+         * @param barcodeType 条码类型
+         * @param barcodeHorizontal 条码对齐方式
+         * @param words 条码描述文字
+         * @param wordsSize 条码描述文字字号
+         */
+        public Writer addBarcode(String content, BarcodeType barcodeType, BarcodeHorizontal barcodeHorizontal, String words, Integer wordsSize) {
+            return addBarcode(
+                    new PdfBarcode()
+                            .setContent(content)
+                            .setBarcodeType(barcodeType)
+                            .setBarcodeHorizontal(barcodeHorizontal)
+                            .setWords(words)
+                            .setWordsSize(wordsSize)
+            );
+        }
+
+        /**
+         * 添加条码
          *
          * @param pdfBarcode PDF条码构造类
          */
@@ -850,21 +1130,31 @@ public class PdfUtils {
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfBarcode参数为空");
             }
             Barcode barcode = TemplateHandler.Barcode.build()
-                    .setType(BarcodeType.QR_CODE.getName())
-                    .setScaleRate("1")
-                    .setHeight("150px")
-                    .setWidth("150px")
-                    .setContent("https://github.com/AntonyCheng")
-                    .setWords("https://github.com/AntonyCheng")
-                    .setHorizontalStyle(BarcodeHorizontal.CENTER.getName())
-                    .setMarginTop("1")
-                    .setMarginBottom("1");
+                    // 设置条码类型，默认二维码
+                    .setType(Objects.isNull(pdfBarcode.getBarcodeType()) ? BarcodeType.QR_CODE.getName() : pdfBarcode.getBarcodeType().getName())
+                    // 设置条码高度，默认100
+                    .setHeight((Objects.isNull(pdfBarcode.getHeight()) || pdfBarcode.getHeight() <= 0 ? 100 : pdfBarcode.getHeight()) + "px")
+                    // 设置条码宽度，默认100
+                    .setWidth((Objects.isNull(pdfBarcode.getWidth()) || pdfBarcode.getWidth() <= 0 ? 100 : pdfBarcode.getWidth()) + "px")
+                    // 设置条码内容
+                    .setContent(StringUtils.isBlank(pdfBarcode.getContent()) ? null : pdfBarcode.getContent())
+                    // 设置条码描述文字
+                    .setWords(StringUtils.isBlank(pdfBarcode.getWords()) ? null : pdfBarcode.getWords())
+                    // 设置条码描述文字字体，默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setWordsFamily(Objects.isNull(pdfBarcode.getWordsFamily()) ? DEFAULT_FONT_FAMILY : pdfBarcode.getWordsFamily())
+                    // 设置条码描述文字字号，默认10
+                    .setWordsSize((Objects.isNull(pdfBarcode.getWordsSize()) || pdfBarcode.getWordsSize() <= 0 ? 10 : pdfBarcode.getWordsSize()) + "px")
+                    // 设置条码对齐方式，默认左对齐
+                    .setHorizontalStyle(Objects.isNull(pdfBarcode.getBarcodeHorizontal()) ? BarcodeHorizontal.LEFT.getName() : pdfBarcode.getBarcodeHorizontal().getName())
+                    // 设置条码上下边距，默认1
+                    .setMarginTop(String.valueOf(Objects.isNull(pdfBarcode.getMargin()) || pdfBarcode.getMargin() <= 0 ? 1 : pdfBarcode.getMargin()))
+                    .setMarginBottom(String.valueOf(Objects.isNull(pdfBarcode.getMargin()) || pdfBarcode.getMargin() <= 0 ? 1 : pdfBarcode.getMargin()));
             pageList.get(pageIndex).addBodyComponent(barcode);
             return this;
         }
 
         /**
-         * 将Word写入响应流
+         * 将PDF写入响应流
          *
          * @param fileName 响应文件名
          * @param response 响应流
@@ -923,11 +1213,6 @@ public class PdfUtils {
         }
 
         /**
-         * 设置PDF插入图像存放在系统临时文件夹中的子路径
-         */
-        private final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
-
-        /**
          * 将图像拷贝至临时文件夹中
          *
          * @param inputStream    图像数据流
@@ -938,7 +1223,7 @@ public class PdfUtils {
                 if (Objects.isNull(imageExtension)) {
                     throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像扩展名为空");
                 }
-                String imageTempPath = TEMP_IMAGE_DIR + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
+                String imageTempPath = TEMP_IMAGE_DIR + File.separator + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
                 Path path = Path.of(imageTempPath);
                 Files.deleteIfExists(path);
                 FileUtils.copyInputStreamToFile(inputStream, new File(imageTempPath));
@@ -1406,6 +1691,57 @@ public class PdfUtils {
     }
 
     /**
+     * PDF水印构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PdfWatermark {
+
+        /**
+         * 水印ID
+         */
+        private String id;
+
+        /**
+         * 水印文本列表，列表元素个数对应文本行数
+         */
+        private List<String> texts;
+
+        /**
+         * 水印文本字号
+         */
+        private Integer fontSize;
+
+        /**
+         * 水印文本透明度
+         */
+        private Integer fontAlpha;
+
+        /**
+         * 水印文本宽度
+         */
+        private Integer width;
+
+        /**
+         * 水印文本高度
+         */
+        private Integer height;
+
+        /**
+         * 水印文本显示宽度
+         */
+        private Integer showWidth;
+
+        public PdfWatermark setTextArray(String... texts) {
+            this.texts = Arrays.stream(texts).collect(Collectors.toList());
+            return this;
+        }
+
+    }
+
+    /**
      * PDF段落构造类
      */
     @Data
@@ -1709,11 +2045,6 @@ public class PdfUtils {
         private BarcodeType barcodeType;
 
         /**
-         * 条码缩放比例
-         */
-        private Integer scaleRate;
-
-        /**
          * 条码高度
          */
         private Integer height;
@@ -1729,17 +2060,17 @@ public class PdfUtils {
         private String content;
 
         /**
-         * 条码文字
+         * 条码描述文字
          */
         private String words;
 
         /**
-         * 条码文字字体
+         * 条码描述文字字体
          */
-        private String fontFamily;
+        private String wordsFamily;
 
         /**
-         * 条码文字字号
+         * 条码描述文字字号
          */
         private Integer wordsSize;
 

@@ -29,11 +29,11 @@ public class CustomizeDocumentException extends CustomizeException {
 
     public CustomizeDocumentException(ReturnCode returnCode, String msg) {
         if (Objects.equal(ReturnCode.EXCEL_FILE_ERROR.getCode(), returnCode.getCode())) {
-            log.error("{}，{}", ReturnCode.EXCEL_FILE_ERROR.getMsg(), returnCode.getMsg());
+            log.error("{}，{}", ReturnCode.EXCEL_FILE_ERROR.getMsg(), msg);
         } else if (Objects.equal(ReturnCode.WORD_FILE_ERROR.getCode(), returnCode.getCode())) {
-            log.error("{}，{}", ReturnCode.WORD_FILE_ERROR.getMsg(), returnCode.getMsg());
+            log.error("{}，{}", ReturnCode.WORD_FILE_ERROR.getMsg(), msg);
         } else if (Objects.equal(ReturnCode.PDF_FILE_ERROR.getCode(), returnCode.getCode())) {
-            log.error("{}，{}", ReturnCode.PDF_FILE_ERROR.getMsg(), returnCode.getMsg());
+            log.error("{}，{}", ReturnCode.PDF_FILE_ERROR.getMsg(), msg);
         }
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";

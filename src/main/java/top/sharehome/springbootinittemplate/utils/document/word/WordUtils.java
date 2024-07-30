@@ -53,14 +53,14 @@ public class WordUtils {
     public static class Template {
 
         /**
-         * 导出Word.docx模板目录下的模板文件到响应流，模板目录一定是resources文件夹下templates/word目录
+         * 导出Word模板目录下的模板文件到响应流，模板目录一定是resources文件夹下templates/word目录
          *
          * @param templateName 模板名称（需要带上扩展名）
          * @param tagMap       标签Map
          * @param filename     导出文件名称
          * @param response     响应流
          */
-        public static void export(String templateName, Map<String, Object> tagMap, String filename, HttpServletResponse response) {
+        public void export(String templateName, Map<String, Object> tagMap, String filename, HttpServletResponse response) {
             try (ServletOutputStream outputStream = response.getOutputStream()) {
                 handleWordResponse(filename, response);
                 export(templateName, tagMap, outputStream);
@@ -70,26 +70,31 @@ public class WordUtils {
         }
 
         /**
-         * 导出Word.docx模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/word目录
+         * 导出Word模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/word目录
          *
          * @param templateName 模板名称（需要带上扩展名）
          * @param tagMap       标签Map
          * @param outputStream 输出流
          */
-        public static void export(String templateName, Map<String, Object> tagMap, OutputStream outputStream) {
+        public void export(String templateName, Map<String, Object> tagMap, OutputStream outputStream) {
             try {
+                if (Objects.isNull(outputStream)) {
+                    throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "模板文件输出时，输出流为空");
+                }
+                if (Objects.isNull(tagMap)) {
+                    throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "模板文件输出时，标签Map为空");
+                }
                 String extension = FilenameUtils.getExtension(templateName);
                 if (!Objects.equals(extension, "docx") && !Objects.equals(extension, "doc")) {
                     throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "指定模板文件扩展名不正确");
                 }
                 ClassPathResource classPathResource = new ClassPathResource("templates/word/" + templateName);
-                if (!classPathResource.exists()) {
+                if (StringUtils.isBlank(templateName) || !classPathResource.exists()) {
                     throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "模板文件[" + templateName + "]未找到");
                 }
                 InputStream inputStream = classPathResource.getInputStream();
                 XWPFTemplate template = XWPFTemplate.compile(inputStream).render(tagMap);
                 template.writeAndClose(outputStream);
-                inputStream.close();
             } catch (IOException e) {
                 throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "模板导出时，数据流处理错误");
             }
@@ -101,7 +106,7 @@ public class WordUtils {
          * @param fileName 文件名
          * @param response 响应
          */
-        private static void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+        private void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             String baseName = FilenameUtils.getBaseName(fileName);
             String extension = FilenameUtils.getExtension(fileName);
@@ -592,7 +597,7 @@ public class WordUtils {
          * @param fileName 文件名
          * @param response 响应
          */
-        private static void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+        private void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
@@ -989,7 +994,7 @@ public class WordUtils {
          * @param fileName 文件名
          * @param response 响应
          */
-        private static void handleTxtResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+        private void handleTxtResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".txt";
@@ -1012,7 +1017,7 @@ public class WordUtils {
          * @param fileName 文件名
          * @param response 响应
          */
-        private static void handleZipResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+        private void handleZipResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
                 realName = UUID.randomUUID().toString().replace("-", "") + ".zip";

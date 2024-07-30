@@ -95,7 +95,9 @@
         <poi.version>5.2.5</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>
         <easy.excel.version>4.0.1</easy.excel.version>
-        <x.easypdf.version>3.0.0</x.easypdf.version>
+        <x.easypdf.version>3.1.0</x.easypdf.version>
+        <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
+        <jte.version>2.3.2</jte.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.1</xxl.job.version>
         <powerjob.version>4.3.9</powerjob.version>
@@ -417,6 +419,16 @@
             <groupId>org.dromara.x-easypdf</groupId>
             <artifactId>x-easypdf</artifactId>
             <version>${x.easypdf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>${thymeleaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte</artifactId>
+            <version>${jte.version}</version>
         </dependency>
 
         <!-- Knife4j 依赖配置 -->
