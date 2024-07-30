@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.util.NestedServletException;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.exception.customize.*;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -183,8 +183,9 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(ValidationException.class)
-    public R<Void> handleValidationException(ValidationException e) {
-        log.error(e.getMessage(), e);
+    public R<Void> handleValidationException(ValidationException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("校验失败'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -195,21 +196,10 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public R<Void> handleConstraintViolationException(ConstraintViolationException e) {
-        log.error(e.getMessage(), e);
+    public R<Void> handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("校验失败'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.BAD_REQUEST, e.getMessage());
-    }
-
-    /**
-     * 路径不存在异常
-     *
-     * @param e 异常
-     * @return 返回结果
-     */
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public R<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
-        log.error(e.getMessage(), e);
-        return R.fail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     /**
@@ -219,8 +209,9 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(DuplicateKeyException.class)
-    public R<Void> handleDuplicateKeyException(DuplicateKeyException e) {
-        log.error(e.getMessage(), e);
+    public R<Void> handleDuplicateKeyException(DuplicateKeyException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("数据重复'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -231,8 +222,9 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error(e.getMessage(), e);
+    public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("方法校验失败'{}',发生系统异常.", requestUri, e);
         String message = Objects.isNull(e.getBindingResult().getFieldError()) ? "No Message" : e.getBindingResult().getFieldError().getDefaultMessage();
         return R.fail(HttpStatus.BAD_REQUEST, message);
     }
@@ -244,23 +236,33 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(BindException.class)
-    public R<Void> handleBindException(BindException e) {
-        log.error(e.getMessage(), e);
+    public R<Void> handleBindException(BindException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("自定义验证失败'{}',发生系统异常.", requestUri, e);
         String message = e.getAllErrors().get(0).getDefaultMessage();
         return R.fail(HttpStatus.BAD_REQUEST, message);
     }
 
     /**
-     * 自定义未找到Bean异常
-     * todo Beta测试版本，为合理适配前端框架上传文件时找不到上传文件Bean时报错，一般是因为开发者没有开启OSS功能，这个不影响业务功能，一旦有合理方案就会做出修改
+     * 自定义未找到资源/路径或未开启服务异常
      */
-    @ExceptionHandler(NestedServletException.class)
-    public R<Void> handleNestedServletException(NestedServletException e) {
-        log.error(e.getMessage(), e);
-        return R.fail(HttpStatus.ERROR, "功能服务未开启");
+    @ExceptionHandler(ServletException.class)
+    public R<Void> handleServletException(ServletException e, HttpServletRequest request) {
+        Throwable cause = e.getCause();
+        String requestUri = request.getRequestURI();
+        if (cause instanceof NoClassDefFoundError || cause instanceof ExceptionInInitializerError) {
+            log.error("未启用服务'{}',发生系统异常.", requestUri, e);
+            return R.fail(HttpStatus.ERROR, "未启用服务");
+        }
+        if (e instanceof NoHandlerFoundException) {
+            log.error("未找到路径或资源'{}',发生系统异常.", requestUri, e);
+            return R.fail(HttpStatus.NOT_FOUND, "未找到路径或资源");
+        }
+        log.error("请求地址'{}',发生未知异常.", requestUri, e);
+        return R.fail(HttpStatus.ERROR, e.getMessage());
     }
 
-    // todo 第一个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
+    // todo 第二个todo中的异常均为自定义异常，抛出的错误码被包含在ReturnCode枚举类中
 
     /**
      * 自定义返回异常
@@ -319,13 +321,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 自定义Excel异常
+     * 自定义文档异常
      *
      * @param e 异常
      * @return 返回结果
      */
-    @ExceptionHandler(CustomizeExcelException.class)
-    public R<String> handleCustomizeExcelException(CustomizeExcelException e) {
+    @ExceptionHandler(CustomizeDocumentException.class)
+    public R<String> handleCustomizeExcelException(CustomizeDocumentException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

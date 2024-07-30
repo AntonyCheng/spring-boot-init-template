@@ -8,6 +8,8 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 /**
  * Spring Security配置文件
+ *
+ * @author AntonyCheng
  */
 @Configuration(proxyBeanMethods = false)
 public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {

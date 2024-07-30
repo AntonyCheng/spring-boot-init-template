@@ -6,25 +6,25 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
 /**
- * 自定义Excel异常
+ * 自定义文档异常
  *
  * @author AntonyCheng
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeExcelException extends CustomizeException {
+public class CustomizeDocumentException extends CustomizeException {
 
-    public CustomizeExcelException() {
+    public CustomizeDocumentException() {
         this.returnCode = ReturnCode.FAIL;
         this.msg = ReturnCode.FAIL.getMsg();
     }
 
-    public CustomizeExcelException(ReturnCode returnCode) {
+    public CustomizeDocumentException(ReturnCode returnCode) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg();
     }
 
-    public CustomizeExcelException(ReturnCode returnCode, String msg) {
+    public CustomizeDocumentException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
         this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
     }
