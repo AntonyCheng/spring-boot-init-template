@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<!-- fop版本 -->
+<fop version="1.0">
+
+    <!-- 当前路径（项目所在路径） -->
+    <base>.</base>
+
+    <!-- 默认源图像dpi（每英寸点数像素） -->
+    <source-resolution>72</source-resolution>
+    <!-- 默认目标图像dpi（每英寸点数像素），默认:72dpi -->
+    <target-resolution>72</target-resolution>
+
+    <!-- 默认页面宽度与高度（A4） -->
+    <default-page-settings width="21cm" height="29.7cm"/>
+
+    <!-- 渲染器 -->
+    <renderers>
+        <!-- PDF渲染器 -->
+        <renderer mime="application/pdf">
+            <!-- 文档版本 -->
+            <version>1.5</version>
+            <!-- 过滤器 -->
+            <filterList>
+                <!-- 默认使用flate依赖压缩 -->
+                <value>flate</value>
+            </filterList>
+            <!-- 字体 -->
+            <fonts>
+                <!-- 自动扫描系统全部字体 -->
+                <auto-detect/>
+                <!-- 自定义字体，在不清楚x-easypdf工具且没有更换字体需求的情况下，请不要修改以下内容，若涉及到修改，请仔细阅读PdfUtils工具类中的源码，否则可能会导致PdfUtils工具类失效 -->
+                <font kerning="yes"
+                      simulate-style="true"
+                      embed-url="ReplaceFontURL">
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="100"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="200"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="300"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="400"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="500"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="600"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="700"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="800"/>
+                    <font-triplet name="ReplaceFontFamily" style="normal" weight="900"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="100"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="200"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="300"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="400"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="500"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="600"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="700"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="800"/>
+                    <font-triplet name="ReplaceFontFamily" style="italic" weight="900"/>
+                </font>
+            </fonts>
+        </renderer>
+    </renderers>
+</fop>

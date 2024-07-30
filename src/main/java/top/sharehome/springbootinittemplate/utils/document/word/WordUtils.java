@@ -6,6 +6,7 @@ import com.deepoove.poi.XWPFTemplate;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -818,7 +819,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordParagraph {
 
         /**
@@ -874,7 +875,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordPicture {
 
         /**
@@ -915,7 +916,7 @@ public class WordUtils {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder(setterPrefix = "set")
+    @Accessors(chain = true)
     public static class WordTable {
 
         /**

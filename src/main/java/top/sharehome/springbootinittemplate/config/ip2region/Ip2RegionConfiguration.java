@@ -39,7 +39,7 @@ public class Ip2RegionConfiguration {
     @Bean(destroyMethod = "destroy")
     @Order(1)
     public Ip2RegionConfiguration initConfiguration() {
-        String fileName = "ip2region/ip2region.xdb";
+        String fileName = "ip2region" + File.separator + "ip2region.xdb";
         try (InputStream classPathFileStream = new ClassPathResource(fileName).getInputStream()) {
             LoadType loadType = ip2RegionProperties.getLoadType();
             String tempFile = FileUtils.getTempDirectoryPath() + fileName;
