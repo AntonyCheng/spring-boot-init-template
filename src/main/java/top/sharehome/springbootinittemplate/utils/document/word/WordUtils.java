@@ -5,9 +5,7 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.deepoove.poi.XWPFTemplate;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -146,23 +144,23 @@ public class WordUtils {
         /**
          * 添加段落
          *
-         * @param document         文档本体
-         * @param text             段落内容，为空即为""
-         * @param paragraphDetails 段落细节
+         * @param document      文档本体
+         * @param text          段落内容，为空即为""
+         * @param wordParagraph 段落构造类
          */
-        public static void addParagraph(XWPFDocument document, String text, ParagraphDetails paragraphDetails) {
+        public static void addParagraph(XWPFDocument document, String text, WordParagraph wordParagraph) {
             addParagraph(
                     document,
                     text,
-                    paragraphDetails.getFontSize(),
-                    paragraphDetails.getFontFamily(),
-                    paragraphDetails.getColor(),
-                    paragraphDetails.getIsItalic(),
-                    paragraphDetails.getIsBold(),
-                    paragraphDetails.getUnderlineType(),
-                    paragraphDetails.getAlignment(),
-                    paragraphDetails.getSpacingBetween(),
-                    paragraphDetails.getIsPageBreak()
+                    wordParagraph.getFontSize(),
+                    wordParagraph.getFontFamily(),
+                    wordParagraph.getColor(),
+                    wordParagraph.getIsItalic(),
+                    wordParagraph.getIsBold(),
+                    wordParagraph.getUnderlineType(),
+                    wordParagraph.getAlignment(),
+                    wordParagraph.getSpacingBetween(),
+                    wordParagraph.getIsPageBreak()
             );
         }
 
@@ -179,20 +177,20 @@ public class WordUtils {
         /**
          * 添加图片
          *
-         * @param document       文档本体
-         * @param inputStream    图片输入流
-         * @param pictureDetails 图片细节
+         * @param document    文档本体
+         * @param inputStream 图片输入流
+         * @param wordPicture 图片构造类
          */
-        public static void addPicture(XWPFDocument document, InputStream inputStream, PictureDetails pictureDetails) {
+        public static void addPicture(XWPFDocument document, InputStream inputStream, WordPicture wordPicture) {
             addPicture(
                     document,
                     inputStream,
-                    pictureDetails.getPictureType(),
-                    pictureDetails.getFilename(),
-                    pictureDetails.getWidth(),
-                    pictureDetails.getHeight(),
-                    pictureDetails.getAlignment(),
-                    pictureDetails.getSpacingBetween()
+                    wordPicture.getPictureType(),
+                    wordPicture.getFilename(),
+                    wordPicture.getWidth(),
+                    wordPicture.getHeight(),
+                    wordPicture.getAlignment(),
+                    wordPicture.getSpacingBetween()
             );
         }
 
@@ -211,16 +209,16 @@ public class WordUtils {
          *
          * @param document     文档本体
          * @param tableContent 表格内容
-         * @param tableDetails 表格细节
+         * @param wordTable    表格构造类
          */
-        public static void addTable(XWPFDocument document, TableMap tableContent, TableDetails tableDetails) {
+        public static void addTable(XWPFDocument document, TableMap tableContent, WordTable wordTable) {
             addTable(
                     document,
                     tableContent,
-                    tableDetails.getRowNum(),
-                    tableDetails.getColumnNum(),
-                    tableDetails.getWidth(),
-                    tableDetails.getAlignment()
+                    wordTable.getRowNum(),
+                    wordTable.getColumnNum(),
+                    wordTable.getWidth(),
+                    wordTable.getAlignment()
             );
         }
 
@@ -243,7 +241,7 @@ public class WordUtils {
          * @param document       文档本体
          * @param text           段落内容，为空即为""
          * @param fontSize       字体大小，为空或者小于等于零即为12（小四）
-         * @param fontFamily     字体名称，为空即为"Arial"（等线）
+         * @param fontFamily     字体名称，为空即为"SimHei"（黑体）
          * @param color          文字颜色，为空即为"000000"（黑色）
          * @param isItalic       是否斜体，为空即为false
          * @param isBold         是否加粗，为空即为false
@@ -266,7 +264,7 @@ public class WordUtils {
             int size = Objects.isNull(fontSize) || fontSize <= 0 ? 12 : fontSize;
             run.setFontSize(size);
             // 设置段落字体
-            run.setFontFamily(StringUtils.isEmpty(fontFamily) ? "Arial" : color);
+            run.setFontFamily(StringUtils.isEmpty(fontFamily) ? "SimHei" : fontFamily);
             // 设置段落颜色
             run.setColor(StringUtils.isEmpty(color) ? "000000" : color);
             // 设置段落是否斜体
@@ -818,8 +816,10 @@ public class WordUtils {
      * 段落细节构造类
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder(setterPrefix = "set")
-    public static class ParagraphDetails {
+    public static class WordParagraph {
 
         /**
          * 字体大小，为空或者小于等于零即为12（小四）
@@ -827,7 +827,7 @@ public class WordUtils {
         private Integer fontSize;
 
         /**
-         * 字体名称，为空即为"Arial"（等线）
+         * 字体名称，为空即为"SimHei"（黑体）
          */
         private String fontFamily;
 
@@ -869,11 +869,13 @@ public class WordUtils {
     }
 
     /**
-     * 图片细节构造类
+     * 图片构造类
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder(setterPrefix = "set")
-    public static class PictureDetails {
+    public static class WordPicture {
 
         /**
          * 图片类型
@@ -908,11 +910,13 @@ public class WordUtils {
     }
 
     /**
-     * 表格细节构造类
+     * 表格构造类
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder(setterPrefix = "set")
-    public static class TableDetails {
+    public static class WordTable {
 
         /**
          * 行数

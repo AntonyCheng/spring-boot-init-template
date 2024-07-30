@@ -95,7 +95,7 @@
         <poi.version>5.2.5</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>
         <easy.excel.version>4.0.1</easy.excel.version>
-        <itext.version>8.0.3</itext.version>
+        <x.easypdf.version>3.0.0</x.easypdf.version>
         <!-- 外部平台相关 -->
         <xxl.job.version>2.4.1</xxl.job.version>
         <powerjob.version>4.3.9</powerjob.version>
@@ -414,10 +414,9 @@
 
         <!-- PDF 操作依赖配置 -->
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itext-core</artifactId>
-            <version>${itext.version}</version>
-            <type>pom</type>
+            <groupId>org.dromara.x-easypdf</groupId>
+            <artifactId>x-easypdf</artifactId>
+            <version>${x.easypdf.version}</version>
         </dependency>
 
         <!-- Knife4j 依赖配置 -->
