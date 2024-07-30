@@ -16,9 +16,9 @@ import java.util.Map;
  */
 public class TestWordUtils {
 
-    private static final String READABLE_WORD_PATH_NAME = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/word/file/readable.docx";
+    private static final String READABLE_WORD_PATH_NAME = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/word/file/readable.docx";
 
-    private static final String WRITABLE_WORD_FILE_PATH_NAME = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/word/file/temp.docx";
+    private static final String WRITABLE_WORD_FILE_PATH_NAME = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/word/file/temp.docx";
 
     public static void main(String[] args) {
         try (FileOutputStream outputStream = new FileOutputStream(WRITABLE_WORD_FILE_PATH_NAME)) {

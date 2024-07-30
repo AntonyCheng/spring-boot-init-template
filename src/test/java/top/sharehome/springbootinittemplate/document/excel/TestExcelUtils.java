@@ -20,11 +20,11 @@ import java.util.List;
  */
 public class TestExcelUtils {
 
-    private static final String EXCEL1_PATH_NAME = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/excel/file/test.xlsx";
+    private static final String EXCEL1_PATH_NAME = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/excel/file/test.xlsx";
 
-    private static final String EXCEL2_PATH_NAME = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/excel/file/test_bak.xlsx";
+    private static final String EXCEL2_PATH_NAME = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/excel/file/test_bak.xlsx";
 
-    private static final String EXCEL_TEMPLATE_PATH_NAME = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/excel/file/template.xlsx";
+    private static final String EXCEL_TEMPLATE_PATH_NAME = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/excel/file/template.xlsx";
 
     private static final List<ExcelUser> USER_LIST = new ArrayList<ExcelUser>() {
         {

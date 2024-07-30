@@ -67,7 +67,12 @@ public class PdfUtils {
     /**
      * 设置PDF插入图像存放在系统临时文件夹中的子路径
      */
-    private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage" + File.separator;
+    private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage";
+
+    /**
+     * 设置PDF导出模板文件存放在系统临时文件夹中的子路径
+     */
+    private static final String TEMP_TEMPLATE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempTemplate";
 
     // 初始化配置文件和字体，即将配置文件和字体文件处理之后复制到系统临时文件夹中
     static {
@@ -98,6 +103,107 @@ public class PdfUtils {
      * 输出PDF模板内部类
      */
     public static class Template {
+
+        /**
+         * 导出PDF模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/pdf目录
+         *
+         * @param templateName 模板名称（需要带上扩展名），fo文件对应FREEMARKER数据源和THYMELEAF数据源，jte文件对应JTE数据源
+         * @param exportDataSource 导出数据源类型
+         * @param tagMap 标签Map
+         * @param outputStream 输出流
+         */
+        public void export(String templateName, ExportDataSource exportDataSource, Map<String, Object> tagMap, OutputStream outputStream) {
+            try {
+                if (Objects.isNull(outputStream)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件输出时，输出流为空");
+                }
+                if (Objects.isNull(tagMap)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件输出时，标签Map为空");
+                }
+                // 检查模板文件是否存在
+                ClassPathResource classPathResource = new ClassPathResource("templates/pdf/" + templateName);
+                if (StringUtils.isBlank(templateName) || !classPathResource.exists()) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件[" + templateName + "]未找到");
+                }
+                // 根据数据源和模板文件扩展名进行匹配判断
+                String extension = FilenameUtils.getExtension(templateName);
+                if (Objects.equals(exportDataSource, ExportDataSource.FREEMARKER) && Objects.equals(extension, "fo")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.FO);
+                    // 进行模板导出操作
+                    TemplateHandler.DataSource.Freemarker.setTemplatePath(TEMP_TEMPLATE_DIR);
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Freemarker.build().setTemplateName(FilenameUtils.getName(templatePath)).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else if (Objects.equals(exportDataSource, ExportDataSource.THYMELEAF) && Objects.equals(extension, "fo")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.FO);
+                    // 进行模板导出操作
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Thymeleaf.build().setTemplatePath(templatePath).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else if (Objects.equals(exportDataSource, ExportDataSource.JTE) && Objects.equals(extension, "jte")) {
+                    InputStream inputStream = classPathResource.getInputStream();
+                    // 将模板文件拷贝至系统临时文件夹中
+                    String templatePath = copyTemplateToTempDir(inputStream, ExportExtension.JTE);
+                    // 进行模板导出操作
+                    TemplateHandler.Template.build().setConfigPath(POF_CONF_PATH).setDataSource(
+                            TemplateHandler.DataSource.Jte.build().setTemplatePath(templatePath).setTemplateData(tagMap)
+                    ).transform(outputStream);
+                } else {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "指定模板文件扩展名和数据源不匹配");
+                }
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板导出时，数据流处理错误");
+            }
+        }
+
+        /**
+         * 处理ContentType是PDF格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/pdf;charset=UTF-8");
+        }
+
+        /**
+         * 将模板文件拷贝至临时文件夹中
+         *
+         * @param inputStream    模板文件按数据流
+         * @param exportExtension 模板文件扩展名
+         */
+        private String copyTemplateToTempDir(InputStream inputStream, ExportExtension exportExtension) {
+            try {
+                if (Objects.isNull(exportExtension)) {
+                    throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件扩展名为空");
+                }
+                String templateTempPath = TEMP_TEMPLATE_DIR + File.separator + "pdfTemplate_" + UUID.randomUUID().toString().replace("-", "") + exportExtension.getName();
+                Path path = Path.of(templateTempPath);
+                Files.deleteIfExists(path);
+                FileUtils.copyInputStreamToFile(inputStream, new File(templateTempPath));
+                return templateTempPath;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "模板文件数据拷贝异常");
+            }
+        }
 
     }
 
@@ -270,7 +376,9 @@ public class PdfUtils {
                     // 设置水印文本粗体
                     .setFontStyle("bold")
                     // 设置水印文本图像临时文件夹
-                    .setTempDir(TEMP_IMAGE_DIR);
+                    .setTempDir(TEMP_IMAGE_DIR)
+                    // 设置覆盖原有水印
+                    .enableOverwrite();
             pageList.get(pageIndex).setBodyWatermark(watermark);
             return this;
         }
@@ -1115,7 +1223,7 @@ public class PdfUtils {
                 if (Objects.isNull(imageExtension)) {
                     throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "图像扩展名为空");
                 }
-                String imageTempPath = TEMP_IMAGE_DIR + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
+                String imageTempPath = TEMP_IMAGE_DIR + File.separator + "pdfImage_" + UUID.randomUUID().toString().replace("-", "") + imageExtension.getName();
                 Path path = Path.of(imageTempPath);
                 Files.deleteIfExists(path);
                 FileUtils.copyInputStreamToFile(inputStream, new File(imageTempPath));
