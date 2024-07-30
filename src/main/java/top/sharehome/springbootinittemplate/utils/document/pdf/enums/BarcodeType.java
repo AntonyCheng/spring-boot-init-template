@@ -4,33 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF表格水平对齐方式
+ * PDF条码类型
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum TableHorizontal {
+public enum BarcodeType {
 
     /**
-     * 居左
+     * 库德巴码（一维码）
      */
-    LEFT("left"),
+    CODABAR("codabar"),
 
     /**
-     * 居中
+     * QR码（二维码）
      */
-    CENTER("center"),
-
-    /**
-     * 居右
-     */
-    RIGHT("right"),
-
-    /**
-     * 两端对齐
-     */
-    JUSTIFY("justify");
+    QR_CODE("qr_code");
 
     private final String name;
 

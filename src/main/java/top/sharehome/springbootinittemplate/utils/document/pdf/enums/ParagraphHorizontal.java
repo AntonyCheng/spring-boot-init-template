@@ -4,11 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF对齐方式
- * left：居左
- * center：居中
- * right：居右
- * justify：两端对齐
+ * PDF段落水平对齐方式
  *
  * @author AntonyCheng
  */

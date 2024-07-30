@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF分割线对齐方式
+ * PDF分割线水平对齐方式
  *
  * @author AntonyCheng
  */

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.document.pdf.enums;
+package top.sharehome.springbootinittemplate.utils.document.word.enums;
 
 import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * PDF图像文件扩展名
+ * Word图像文件扩展名
  *
  * @author AntonyCheng
  */
@@ -20,19 +20,16 @@ public enum ImageExtension {
     /**
      * .jpg格式
      */
-    JPG(".jpg"),
+    JPG(".jpg", 5),
 
     /**
      * .png格式
      */
-    PNG(".png"),
-
-    /**
-     * .svg格式
-     */
-    SVG(".svg");
+    PNG(".png", 6);
 
     private final String name;
+
+    private final int ooxmlId;
 
     public static ImageExtension getEnumByName(String name) {
         List<ImageExtension> list = Arrays.stream(ImageExtension.values()).filter(imageExtension -> Objects.equal(imageExtension.getName(), name)).collect(Collectors.toList());

@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * PDF表格水平对齐方式
+ * PDF条码水平对齐方式
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum TableHorizontal {
+public enum BarcodeHorizontal {
 
     /**
      * 居左
@@ -25,12 +25,7 @@ public enum TableHorizontal {
     /**
      * 居右
      */
-    RIGHT("right"),
-
-    /**
-     * 两端对齐
-     */
-    JUSTIFY("justify");
+    RIGHT("right");
 
     private final String name;
 

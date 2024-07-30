@@ -21,67 +21,21 @@ public class TestPdfUtils {
 
     public static void main(String[] args) {
         String path = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/test.pdf";
-        String logoPath1 = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/logo.png";
-        String logoPath2 = System.getProperty("user.dir") + "/src/main/java/top/sharehome/springbootinittemplate/document/pdf/file/logo(横版封面图).png";
-        try (
-                FileOutputStream fileOutputStream = new FileOutputStream(path);
-//                FileInputStream fileInputStream1 = new FileInputStream(logoPath1);
-                FileInputStream fileInputStream2 = new FileInputStream(logoPath2);
-//                FileInputStream fileInputStream3 = new FileInputStream(path);
-        ) {
+        try {
             new PdfUtils.Writer()
-                    .addPage()
-                    .addSplitLine()
-                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2).setFontWeight(FontWeight.BOLD))
-                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setTextIndent(2))
-                    .addSplitLine()
-                    .addParagraph(new PdfUtils.PdfParagraph().setTextContent("我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你我爱你").setFontSize(24).setTextIndent(2).setUnderLineColor(Color.orange).setDeleteLineColor(Color.blue))
-                    .addSplitLine()
-                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World")
-                    .addSplitLine()
-                    .addImage(new PdfUtils.PdfImage().setPath(logoPath1).setImageHorizontal(ImageHorizontal.CENTER).setHeight(300))
-                    .addSplitLine()
-                    .addParagraph("123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World123456你好世界 Hello World", 20, Color.red, FontWeight.BOLD, FontStyle.ITALIC)
-                    .addSplitLine()
-                    .addImage(fileInputStream2, ImageExtension.PNG, ImageHorizontal.CENTER, null, 130)
-                    .addSplitLine()
-                    .addTable(new String[][]{
-                            {
-                                    "小黑1", null, "小黑3"
-                            },
-                            {
-                                    "小黑4", "小黑5"
-                            },
-                            {
-                                    "小黑6"
-                            }
-                    }, true, false)
-                    .doWrite(fileOutputStream);
-//            new PdfUtils.Writer()
-//                    .addPage()
-//                    .addSplitLine()
-//                    .addTextarea("你好       世界")
-//                    .addSplitLine()
-//                    .addPage()
-//                    .addSplitLine()
-//                    .addTextarea("Hello World")
-//                    .addSplitLine()
-//                    .addPage()
-//                    .addSplitLine()
-//                    .addImage(fileInputStream1, HorizontalAlignment.CENTER, 0.5f)
-//                    .addSplitLine()
-//                    .addPage()
-//                    .addSplitLine()
-//                    .addImage(fileInputStream2, HorizontalAlignment.CENTER, 0.5f)
-//                    .addSplitLine()
-//                    .addPage()
-//                    .addSplitLine()
-//                    .addTextarea("Hello World")
-//                    .addSplitLine()
-//                    .doWrite(fileOutputStream);
-
-        } catch (IOException ignore) {
-
+                    .addParagraph("1234567890")
+                    .addParagraph("a我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123我爱你我爱你123")
+                    .addParagraph("b我爱你123我爱你")
+                    .addParagraph("c我爱你123我爱你")
+                    .addParagraph("d我爱你123我爱你")
+                    .addParagraph("e我爱你123我爱你")
+                    .addParagraph("f我爱你123我爱你")
+                    .doWrite(new FileOutputStream(path));
+//            FileInputStream inputStream1 = new FileInputStream(path);
+//            List<String> paragraphList = new PdfUtils.Reader(inputStream1).getParagraphList(1);
+//            System.out.println(paragraphList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
