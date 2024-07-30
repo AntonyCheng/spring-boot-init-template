@@ -807,7 +807,7 @@ public class ExcelUtils {
             realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ExcelTypeEnum.XLSX.getValue();
         }
         String encodeName = URLEncoder
-                .encode(realName, StandardCharsets.UTF_8.toString())
+                .encode(realName, StandardCharsets.UTF_8)
                 .replaceAll("\\+", "%20");
         String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
         response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");

@@ -327,7 +327,7 @@ public class GlobalExceptionHandler {
      * @return 返回结果
      */
     @ExceptionHandler(CustomizeDocumentException.class)
-    public R<String> handleCustomizeExcelException(CustomizeDocumentException e) {
+    public R<String> handleCustomizeDocumentException(CustomizeDocumentException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

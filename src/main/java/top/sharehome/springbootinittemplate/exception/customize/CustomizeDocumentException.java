@@ -1,11 +1,12 @@
 package top.sharehome.springbootinittemplate.exception.customize;
 
-import com.google.common.base.Objects;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.CustomizeException;
+
+import java.util.Objects;
 
 /**
  * 自定义文档异常
@@ -28,11 +29,11 @@ public class CustomizeDocumentException extends CustomizeException {
     }
 
     public CustomizeDocumentException(ReturnCode returnCode, String msg) {
-        if (Objects.equal(ReturnCode.EXCEL_FILE_ERROR.getCode(), returnCode.getCode())) {
+        if (Objects.equals(ReturnCode.EXCEL_FILE_ERROR.getCode(), returnCode.getCode())) {
             log.error("{}，{}", ReturnCode.EXCEL_FILE_ERROR.getMsg(), msg);
-        } else if (Objects.equal(ReturnCode.WORD_FILE_ERROR.getCode(), returnCode.getCode())) {
+        } else if (Objects.equals(ReturnCode.WORD_FILE_ERROR.getCode(), returnCode.getCode())) {
             log.error("{}，{}", ReturnCode.WORD_FILE_ERROR.getMsg(), msg);
-        } else if (Objects.equal(ReturnCode.PDF_FILE_ERROR.getCode(), returnCode.getCode())) {
+        } else if (Objects.equals(ReturnCode.PDF_FILE_ERROR.getCode(), returnCode.getCode())) {
             log.error("{}，{}", ReturnCode.PDF_FILE_ERROR.getMsg(), msg);
         }
         this.returnCode = returnCode;

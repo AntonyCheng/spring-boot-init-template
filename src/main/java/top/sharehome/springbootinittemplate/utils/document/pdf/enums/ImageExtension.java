@@ -1,11 +1,11 @@
 package top.sharehome.springbootinittemplate.utils.document.pdf.enums;
 
-import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +35,7 @@ public enum ImageExtension {
     private final String name;
 
     public static ImageExtension getEnumByName(String name) {
-        List<ImageExtension> list = Arrays.stream(ImageExtension.values()).filter(imageExtension -> Objects.equal(imageExtension.getName(), name)).collect(Collectors.toList());
+        List<ImageExtension> list = Arrays.stream(ImageExtension.values()).filter(imageExtension -> Objects.equals(imageExtension.getName(), name)).collect(Collectors.toList());
         if (list.isEmpty()) {
             return null;
         }

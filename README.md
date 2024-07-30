@@ -6,15 +6,17 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.7-jdk8&11**
+> **版本号：v2.1.8-jdk11**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
-> **注意事项：该README跟随版本号的更新而更新，所有Git分支其实都是Pre预览分支，其中最新的内容并不能及时展现在该README中，所以想要使用稳定且具有对应说明的版本，推荐从Releases中下载。但是想要时刻跟进模板开发进度，也可以直接从各个Git分支拉取，查看每次提交的对应说明！**
+> **注意事项①：该README跟随版本号的更新而更新，所有Git分支其实都是Pre预览分支，其中最新的内容并不能及时展现在该README中，所以想要使用稳定且具有对应说明的版本，推荐从Releases中下载。但是想要时刻跟进模板开发进度，也可以直接从各个Git分支拉取，查看每次提交的对应说明！**
+>
+> **注意事项②：由于代码中包含了大量JDK9+新特性，所以从v2.1.8版本开始，v2-jdk8&11分支不再兼容JDK8，版本号也从v2.1.8-jdk8&11改名为v2.1.8-jdk11，但分支名称依旧保持原名！**
 
 # SpringBoot初始化模板
 
-**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，广泛支持JDK11和JDK17，部分版本兼容JDK8，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 * [SpringBoot初始化模板](#springboot初始化模板)
   * [模板特点](#模板特点)
@@ -62,9 +64,9 @@
         * [Canal简介](#canal简介)
         * [搭建Deployer&Adapter系统](#搭建deployeradapter系统)
         * [搭建Deployer&Client系统](#搭建deployerclient系统)
-  * [兼容Java8](#兼容java8)
   * [前端预览](#前端预览)
   * [申明&联系我](#申明联系我)
+  * [项目历史](#项目历史)
   * [下一步开发计划](#下一步开发计划)
 
 ## 模板特点
@@ -86,7 +88,7 @@
 - **前端模板**
   - vue-admin-template 4.4.0 == 这是一个极简的 vue admin 管理后台，只包含了 Vue 2 & Element UI & axios & iconfont & permission control & lint
 - **Netty**
-  - netty-all 4.1.111.Final == Netty 框架
+  - netty-all 4.1.112.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
     - mybatis-plus-boot-starter 3.5.7 == MyBatis-Plus 框架
@@ -95,18 +97,18 @@
     - druid-spring-boot-starter 1.2.23 == Druid 连接池
 - **工具类**
   - lombok 1.18.34 == POJO 简化工具
-  - hutool-all 5.8.28 == Hutool 工具类
-  - commons-lang3 3.14.0 == Apache Commons Lang 工具类
+  - hutool-all 5.8.29 == Hutool 工具类
+  - commons-lang3 3.15.0 == Apache Commons Lang 工具类
   - commons-io 2.16.1 == Apache Commons IO 工具类
-  - commons-codec 1.17.0 == Apache Commons Codec 工具类
+  - commons-codec 1.17.1 == Apache Commons Codec 工具类
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
   - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
   - commons-compress 1.26.2 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
-  - fastjson2 2.0.51 == Fast JSON 工具类
-  - fastjson2-extension-spring6 2.0.51 == FastJSON 工具拓展类
+  - fastjson2 2.0.52 == Fast JSON 工具类
+  - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
   - sa-token-spring-boot-starter 1.38.0 == SaToken 认证鉴权框架
@@ -116,7 +118,7 @@
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.32.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.33.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -128,14 +130,16 @@
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.219 == 腾讯云 COS
-  - aliyun-sdk-oss 3.18.0 == 阿里云 OSS 
+  - cos_api 5.6.221 == 腾讯云 COS
+  - aliyun-sdk-oss 3.18.1 == 阿里云 OSS 
   - minio 8.5.11 == Minio 对象存储
 - **文件操作**
-  - poi 5.2.5 == 操作 Word
+  - poi 5.3.0 == 操作 Word
   - poi-tl 1.12.2 == 操作 Word 模板
   - easyexcel 4.0.1 == 操作 Excel
-  - itext-core 8.0.3 == 操作 PDF
+  - x-easypdf 3.1.0 == 操作 PDF
+  - thymeleaf 3.1.2.RELEASE == 操作 PDF Thymeleaf 模板
+  - jte 2.3.2 == 操作 PDF JTE 数据源模板
 - **接口文档 & API调试**
   - knife4j-openapi3-spring-boot-starter 4.5.0 == Knife4j 依赖
 - **外接平台（建议生产环境上使用 Docker 容器化技术自行部署一套平台，不要通过模板中的模块代码直接进行编译部署，主要原因是为了适配模板，外接平台中的某些代码被作者修改过）**
@@ -167,7 +171,7 @@
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word 等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF 等工具类
 
 ## 业务功能
 
@@ -184,6 +188,7 @@
 - 验证码逻辑代码示例
 - 操作 Elasticsearch 代码示例
 - 操作 MongoDB 代码示例
+- 操作 Excel、Word 以及 PDF 文件代码示例
 
 ### 单元测试
 
@@ -1441,22 +1446,6 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 该系统和 Deployer & Adapter 系统的区别就在于该系统需要开发者自己写客户端，模板中已经存在了一个客户端示例代码类： `top.sharehome.springbootinittemplate.config.canal.example.SimpleCanalClientExample` ，同样的，Deployer 的部署在 `module/canal-component` 文件夹中有具体介绍，开发者可以参考示例代码类进行相关功能的开发。
 
-## 兼容Java8
-
-模板 **2.x.x** 版本默认适配 Java11 版本，为了更好的兼容 Java8 版本，可以对依赖进行如下修改：
-
-- **java**：11 ==> 1.8
-
-  ```xml
-  <java.version>1.8</java.version>
-  ```
-
-- **caffeine**：3.1.8 ==> 2.9.3
-
-  ```xml
-  <caffeine.version>2.9.3</caffeine.version>
-  ```
-
 ## 前端预览
 
 **注意**：作者前端开发水平较为有限，整合前端模板为项目完整性做保障。
@@ -1499,11 +1488,9 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ![Star History Chart](https://api.star-history.com/svg?repos=AntonyCheng/spring-boot-init-template&type=Date)
 
-
 ## 下一步开发计划
 
-* 设计方便简单的操作 PDF 的工具类
 * 设计幂等模块
-* 集成 Prometheus 和 Grafana 监控报警平台（选做）
-* 集成 Apache SkyWalking 链路追踪（选做）
+* 设计相关工具类前端功能示例界面
+* 扩展新的前端模板
 * ......

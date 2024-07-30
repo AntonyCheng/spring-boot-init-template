@@ -1,10 +1,10 @@
 package top.sharehome.springbootinittemplate.config.log.enums;
 
-import com.google.common.base.Objects;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -38,9 +38,9 @@ public enum Operator {
         this.OperatorValue = operatorValue;
     }
 
-    public static String getLabelByValue(Integer operatorValue){
-        List<Operator> list = Arrays.stream(Operator.values()).filter(operatorEnum -> Objects.equal(operatorEnum.getOperatorValue(), operatorValue)).collect(Collectors.toList());
-        if (list.isEmpty()){
+    public static String getLabelByValue(Integer operatorValue) {
+        List<Operator> list = Arrays.stream(Operator.values()).filter(operatorEnum -> Objects.equals(operatorEnum.getOperatorValue(), operatorValue)).collect(Collectors.toList());
+        if (list.isEmpty()) {
             return "UNKNOWN";
         }
         return list.get(0).getOperatorLabel();
