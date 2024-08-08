@@ -56,9 +56,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
-        // todo 思考一下这个地方怎么做到限时登录+封禁这样的逻辑
         if (!Objects.equals(userInDatabase.getPassword(), authLoginDto.getPassword())) {
             LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            // 连续5次输入错误密码后封禁账号
             if (userInDatabase.getLoginNum() < 5) {
                 userLambdaUpdateWrapper
                         .set(User::getLoginNum, userInDatabase.getLoginNum() + 1)
@@ -71,7 +71,6 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             } else {
                 userLambdaUpdateWrapper
                         .set(User::getState, Constants.USER_DISABLE_STATE)
-                        .set(User::getLoginNum, 0)
                         .eq(User::getAccount, userInDatabase.getAccount());
                 int updateResult = userMapper.update(userLambdaUpdateWrapper);
                 if (updateResult == 0) {

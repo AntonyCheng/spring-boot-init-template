@@ -57,4 +57,9 @@ public interface KeyPrefixConstants {
      */
     String CAPTCHA_PREFIX = "CAPTCHA_";
 
+    /**
+     * 邮箱Key前缀
+     */
+    String EMAIL_PREFIX = "EMAIL_";
+
 }
