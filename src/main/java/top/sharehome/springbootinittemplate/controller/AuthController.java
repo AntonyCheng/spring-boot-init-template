@@ -12,9 +12,10 @@ import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCapt
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.model.dto.auth.AuthEmailCodeDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
-import top.sharehome.springbootinittemplate.model.dto.auth.AuthVerifyEmailDto;
+import top.sharehome.springbootinittemplate.model.dto.auth.AuthRetrievePasswordDto;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
@@ -73,11 +74,10 @@ public class AuthController {
      *
      * @return 返回找回结果
      */
-    @PostMapping("/find/password/email")
-    @EnableCaptcha
+    @PostMapping("/check/email/code")
     @ControllerLog(description = "用户通过邮箱验证找回密码", operator = Operator.OTHER)
-    public R<String> retrievePasswordByVerifyEmail(@RequestBody @Validated({PostGroup.class}) AuthVerifyEmailDto authVerifyEmailDto) {
-        // todo 待完善功能
+    public R<String> checkEmailCode(@RequestBody @Validated({PostGroup.class}) AuthRetrievePasswordDto authRetrievePasswordDto) {
+        authService.checkEmailCode(authRetrievePasswordDto);
         return R.ok("找回密码成功，请用新密码进行登录");
     }
 
@@ -87,13 +87,12 @@ public class AuthController {
      *
      * @return 返回找回结果
      */
-    @PostMapping("/code/email")
+    @PostMapping("/email/code")
     @EnableCaptcha
     @ControllerLog(description = "用户获取邮箱验证码", operator = Operator.QUERY)
-    public R<String> getEmailCode() {
-        // todo 待完善功能
-        String code = "";
-        return R.ok(code);
+    public R<String> getEmailCode(@RequestBody @Validated({PostGroup.class}) AuthEmailCodeDto authEmailCodeDto) {
+        authService.getEmailCode(authEmailCodeDto);
+        return R.ok("获取验证码成功，请前往邮箱查收");
     }
 
     /**

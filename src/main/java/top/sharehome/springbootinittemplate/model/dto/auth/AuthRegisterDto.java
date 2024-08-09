@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.dto.auth;
 
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,6 +48,13 @@ public class AuthRegisterDto implements Serializable {
      */
     @NotBlank(message = "二次密码不能为空", groups = {PostGroup.class})
     private String checkPassword;
+
+    /**
+     * 邮箱
+     */
+    @Email(message = "邮箱格式错误", groups = {PostGroup.class})
+    @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
+    private String email;
 
     /**
      * 验证码参数实体类

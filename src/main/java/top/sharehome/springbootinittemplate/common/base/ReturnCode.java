@@ -119,6 +119,11 @@ public enum ReturnCode {
     USER_SENT_INVALID_REQUEST(11016, "用户发出无效请求"),
 
     /**
+     * 用户账户和邮箱不匹配 11017
+     */
+    ACCOUNT_AND_EMAIL_DO_NOT_MATCH(11017, "用户账户和邮箱不匹配"),
+
+    /**
      * 手机格式校验失败 12000
      */
     PHONE_FORMAT_VERIFICATION_FAILED(12000, "手机格式校验失败"),

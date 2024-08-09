@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
+import top.sharehome.springbootinittemplate.model.dto.auth.AuthEmailCodeDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
+import top.sharehome.springbootinittemplate.model.dto.auth.AuthRetrievePasswordDto;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
@@ -20,6 +24,7 @@ import java.util.Objects;
 
 /**
  * 鉴权认证服务实现类
+ * todo 完善找回密码功能，同时补充添加人员时邮箱必要项
  *
  * @author AntonyCheng
  */
@@ -30,6 +35,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     private UserMapper userMapper;
 
     @Override
+    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public void register(AuthRegisterDto authRegisterDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, authRegisterDto.getAccount());
@@ -39,6 +45,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         User user = new User();
         user.setAccount(authRegisterDto.getAccount());
         user.setPassword(authRegisterDto.getPassword());
+        user.setEmail(authRegisterDto.getEmail());
         int insertResult = userMapper.insert(user);
         if (insertResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -46,6 +53,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     }
 
     @Override
+    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public AuthLoginVo login(AuthLoginDto authLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount());
@@ -82,6 +90,24 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         AuthLoginVo authLoginVo = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, authLoginVo);
         return authLoginVo;
+    }
+
+    @Override
+    public void checkEmailCode(AuthRetrievePasswordDto authRetrievePasswordDto) {
+
+    }
+
+    @Override
+    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
+    public void getEmailCode(AuthEmailCodeDto authEmailCodeDto) {
+        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        userLambdaQueryWrapper
+                .eq(User::getAccount, authEmailCodeDto.getAccount())
+                .eq(User::getEmail, authEmailCodeDto.getEmail());
+        User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
+        if (Objects.isNull(userInDatabase)) {
+            throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH);
+        }
     }
 
 }

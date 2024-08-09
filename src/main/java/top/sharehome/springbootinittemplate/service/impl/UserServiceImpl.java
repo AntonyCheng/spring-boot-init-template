@@ -181,7 +181,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
             userLambdaUpdateWrapper.set(User::getState, Constants.USER_DISABLE_STATE);
         } else {
-            userLambdaUpdateWrapper.set(User::getState, Constants.USER_ENABLE_STATE);
+            userLambdaUpdateWrapper
+                    .set(User::getState, Constants.USER_ENABLE_STATE)
+                    .set(User::getLoginNum, 0);
         }
         userLambdaUpdateWrapper.eq(User::getId, id);
         int updateResult = userMapper.update(userLambdaUpdateWrapper);

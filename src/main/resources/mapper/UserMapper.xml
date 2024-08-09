@@ -5,6 +5,7 @@
         <id column="user_id" jdbcType="BIGINT" property="id"/>
         <result column="user_account" jdbcType="VARCHAR" property="account"/>
         <result column="user_password" jdbcType="VARCHAR" property="password"/>
+        <result column="user_email" jdbcType="VARCHAR" property="email"/>
         <result column="user_login_num" jdbcType="INTEGER" property="loginNum"/>
         <result column="user_name" jdbcType="VARCHAR" property="name"/>
         <result column="user_avatar" jdbcType="VARCHAR" property="avatar"/>
@@ -18,6 +19,7 @@
         user_id,
         user_account,
         user_password,
+        user_email,
         user_login_num,
         user_name,
         user_avatar,
