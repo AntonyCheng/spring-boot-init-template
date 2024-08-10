@@ -144,7 +144,7 @@ public class RateLimitUtils {
             }
         };
         for (String uselessCacheKey : uselessCacheKeys) {
-            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rate * 3));
+            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rateInterval * 3));
         }
     }
 
@@ -168,7 +168,7 @@ public class RateLimitUtils {
             }
         };
         for (String uselessCacheKey : uselessCacheKeys) {
-            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rate * 3));
+            REDISSON_CLIENT.getBucket(uselessCacheKey).expire(Duration.ofSeconds(rateInterval * 3));
         }
     }
 

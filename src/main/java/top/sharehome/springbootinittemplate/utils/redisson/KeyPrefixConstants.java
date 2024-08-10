@@ -7,6 +7,8 @@ package top.sharehome.springbootinittemplate.utils.redisson;
  */
 public interface KeyPrefixConstants {
 
+    // todo 缓存相关键前缀
+
     /**
      * 不带有类型的缓存Key前缀
      */
@@ -37,6 +39,8 @@ public interface KeyPrefixConstants {
      */
     String MAP_PREFIX = CACHE_KEY_PREFIX + "MAP_";
 
+    // todo  限流相关键前缀
+
     /**
      * 系统限流Key前缀
      */
@@ -47,10 +51,14 @@ public interface KeyPrefixConstants {
      */
     String CUSTOMIZE_RATE_LIMIT_PREFIX = "CUSTOMIZE_RATE_";
 
+    // todo 分布式锁相关键前缀
+
     /**
      * 分布式锁Key前缀
      */
     String LOCK_PREFIX = "LOCK_";
+
+    // todo 其他相关键前缀
 
     /**
      * 验证码Key前缀

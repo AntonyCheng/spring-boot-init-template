@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.mail;
+package top.sharehome.springbootinittemplate.utils.email;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +11,7 @@ import top.sharehome.springbootinittemplate.config.mail.MailManager;
  * @author AntonyCheng
  */
 @Slf4j
-public class MailUtils {
+public class EmailUtils {
 
     /**
      * 被封装的邮件客户端对象

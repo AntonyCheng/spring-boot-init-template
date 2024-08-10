@@ -70,20 +70,23 @@ public class AuthController {
 
     /**
      * 通过邮箱验证找回密码
-     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员解禁用户/修改用户密码的方式，但业务层面上保留该接口，
+     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员修改用户密码的方式，但业务层面上保留该接口，
      *
      * @return 返回找回结果
      */
     @PostMapping("/check/email/code")
     @ControllerLog(description = "用户通过邮箱验证找回密码", operator = Operator.OTHER)
     public R<String> checkEmailCode(@RequestBody @Validated({PostGroup.class}) AuthRetrievePasswordDto authRetrievePasswordDto) {
+        if (!StringUtils.equals(authRetrievePasswordDto.getNewPassword(), authRetrievePasswordDto.getCheckNewPassword())) {
+            throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
+        }
         authService.checkEmailCode(authRetrievePasswordDto);
         return R.ok("找回密码成功，请用新密码进行登录");
     }
 
     /**
      * 获取邮箱验证码
-     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员解禁用户/修改用户密码的方式，但业务层面上保留该接口，
+     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员修改用户密码的方式，但业务层面上保留该接口，
      *
      * @return 返回找回结果
      */

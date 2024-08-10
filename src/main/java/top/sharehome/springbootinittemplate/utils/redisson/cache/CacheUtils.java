@@ -36,6 +36,18 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置缓存
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     * @param <T>   泛型T
+     */
+    public static <T> void putNoPrefix(String key, T value) {
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
+        bucket.set(value);
+    }
+
+    /**
      * 设置缓存，同时设置过期时间
      *
      * @param key     缓存键
@@ -45,6 +57,19 @@ public class CacheUtils {
      */
     public static <T> void put(String key, T value, long expired) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key);
+        bucket.set(value, Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置缓存，同时设置过期时间
+     *
+     * @param key     缓存键
+     * @param value   缓存值
+     * @param expired 过期时间
+     * @param <T>     泛型T
+     */
+    public static <T> void putNoPrefix(String key, T value, long expired) {
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
         bucket.set(value, Duration.ofSeconds(expired));
     }
 
@@ -120,10 +145,20 @@ public class CacheUtils {
      *
      * @param key 缓存键
      * @param <T> 泛型T
-     * @return 返回结果
      */
     public static <T> T get(String key) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key);
+        return bucket.get();
+    }
+
+    /**
+     * 不需要默认前缀，获取缓存
+     *
+     * @param key 缓存键
+     * @param <T> 泛型T
+     */
+    public static <T> T getNoPrefix(String key) {
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
         return bucket.get();
     }
 
@@ -133,12 +168,25 @@ public class CacheUtils {
      * @param key  缓存键
      * @param type 返回类型
      * @param <T>  泛型T
-     * @param <R>  泛型S
-     * @return 返回结果
+     * @param <R>  泛型R
      */
     @SuppressWarnings("unchecked")
     public static <T, R> R get(String key, Class<R> type) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key);
+        return (R) bucket.get();
+    }
+
+    /**
+     * 不需要默认前缀，根据类型获取缓存
+     *
+     * @param key  缓存键
+     * @param type 返回类型
+     * @param <T>  泛型T
+     * @param <R>  泛型R
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, R> R getNoPrefix(String key, Class<R> type) {
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
         return (R) bucket.get();
     }
 
@@ -178,13 +226,47 @@ public class CacheUtils {
     }
 
     /**
+     * 获取缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
      * 判断缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean exists(String key) {
         return REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsNoPrefix(String key) {
+        return REDISSON_CLIENT.getBucket(key).isExists();
     }
 
     /**
@@ -194,6 +276,15 @@ public class CacheUtils {
      */
     public static void delete(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_KEY_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteNoPrefix(String key) {
+        REDISSON_CLIENT.getBucket(key).delete();
     }
 
     /**
@@ -219,6 +310,17 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置String类型缓存
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
+    public static void putStringNoPrefix(String key, CharSequence value) {
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
+        bucket.set(value);
+    }
+
+    /**
      * 设置String类型缓存，同时设置过期时间
      *
      * @param key     缓存键
@@ -227,6 +329,18 @@ public class CacheUtils {
      */
     public static void putString(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key, StringCodec.INSTANCE);
+        bucket.set(value, Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置String类型缓存，同时设置过期时间
+     *
+     * @param key     缓存键
+     * @param value   缓存值
+     * @param expired 过期时间
+     */
+    public static void putStringNoPrefix(String key, CharSequence value, long expired) {
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
         bucket.set(value, Duration.ofSeconds(expired));
     }
 
@@ -280,10 +394,19 @@ public class CacheUtils {
      * 获取String类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static String getString(String key) {
         RBucket<String> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key, StringCodec.INSTANCE);
+        return bucket.get();
+    }
+
+    /**
+     * 不需要默认前缀，获取String类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static String getStringNoPrefix(String key) {
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(key);
         return bucket.get();
     }
 
@@ -322,13 +445,47 @@ public class CacheUtils {
     }
 
     /**
+     * 获取String类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getStringExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取String类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getStringExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
      * 判断String类型缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean existsString(String key) {
         return REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断String类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsStringNoPrefix(String key) {
+        return REDISSON_CLIENT.getBucket(key).isExists();
     }
 
     /**
@@ -338,6 +495,15 @@ public class CacheUtils {
      */
     public static void deleteString(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.STRING_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除String类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteStringNoPrefix(String key) {
+        REDISSON_CLIENT.getBucket(key).delete();
     }
 
     /**
@@ -363,6 +529,17 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置Number类型缓存
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     */
+    public static void putNumberNoPrefix(String key, Number value) {
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
+        bucket.set(value);
+    }
+
+    /**
      * 设置Number类型缓存，同时设置过期时间
      *
      * @param key     缓存键
@@ -371,6 +548,18 @@ public class CacheUtils {
      */
     public static void putNumber(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
+        bucket.set(value, Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置Number类型缓存，同时设置过期时间
+     *
+     * @param key     缓存键
+     * @param value   缓存值
+     * @param expired 过期时间
+     */
+    public static void putNumberNoPrefix(String key, CharSequence value, long expired) {
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
         bucket.set(value, Duration.ofSeconds(expired));
     }
 
@@ -424,7 +613,6 @@ public class CacheUtils {
      * 获取Number类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static Number getNumber(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -432,10 +620,19 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，获取Number类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static Number getNumberNoPrefix(String key) {
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
+        return bucket.get();
+    }
+
+    /**
      * 获取Number中byte类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static byte getNumberByteValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -446,7 +643,6 @@ public class CacheUtils {
      * 获取Number中int类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static int getNumberIntValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -457,7 +653,6 @@ public class CacheUtils {
      * 获取Number中short类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static int getNumberShortValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -468,7 +663,6 @@ public class CacheUtils {
      * 获取Number中long类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static long getNumberLongValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -479,7 +673,6 @@ public class CacheUtils {
      * 获取Number中float类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static float getNumberFloatValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -490,7 +683,6 @@ public class CacheUtils {
      * 获取Number中double类型缓存
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static double getNumberDoubleValue(String key) {
         RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key);
@@ -532,13 +724,47 @@ public class CacheUtils {
     }
 
     /**
+     * 获取Number类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getNumberExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取Number类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getNumberExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
      * 判断Number类型缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean existsNumber(String key) {
         return REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断Number类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsNumberNoPrefix(String key) {
+        return REDISSON_CLIENT.getBucket(key).isExists();
     }
 
     /**
@@ -548,6 +774,15 @@ public class CacheUtils {
      */
     public static void deleteNumber(String key) {
         REDISSON_CLIENT.getBucket(KeyPrefixConstants.NUMBER_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除Number类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteNumberNoPrefix(String key) {
+        REDISSON_CLIENT.getBucket(key).delete();
     }
 
     /**
@@ -574,6 +809,18 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置List类型缓存
+     *
+     * @param key       缓存键
+     * @param valueList 缓存值
+     * @param <T>       泛型T
+     */
+    public static <T> void putListNoPrefix(String key, List<T> valueList) {
+        RList<T> list = REDISSON_CLIENT.getList(key);
+        list.addAll(valueList);
+    }
+
+    /**
      * 设置List类型缓存，同时设置过期时间
      *
      * @param key       缓存键
@@ -582,6 +829,19 @@ public class CacheUtils {
      */
     public static <T> void putList(String key, List<T> valueList, long expired) {
         RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.LIST_PREFIX + key);
+        list.addAll(valueList);
+        list.expire(Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置List类型缓存，同时设置过期时间
+     *
+     * @param key       缓存键
+     * @param valueList 缓存值
+     * @param <T>       泛型T
+     */
+    public static <T> void putListNoPrefix(String key, List<T> valueList, long expired) {
+        RList<T> list = REDISSON_CLIENT.getList(key);
         list.addAll(valueList);
         list.expire(Duration.ofSeconds(expired));
     }
@@ -651,10 +911,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      * @param <T> 泛型T
-     * @return 返回结果
      */
     public static <T> List<T> getList(String key) {
         return REDISSON_CLIENT.getList(KeyPrefixConstants.LIST_PREFIX + key);
+    }
+
+    /**
+     * 不需要默认前缀，获取List类型缓存
+     *
+     * @param key 缓存键
+     * @param <T> 泛型T
+     */
+    public static <T> List<T> getListNoPrefix(String key) {
+        return REDISSON_CLIENT.getList(key);
     }
 
     /**
@@ -693,13 +962,47 @@ public class CacheUtils {
     }
 
     /**
+     * 获取List类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getListExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getList(KeyPrefixConstants.LIST_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取List类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getListExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getList(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
      * 判断List类型缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean existsList(String key) {
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.LIST_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getList(KeyPrefixConstants.LIST_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断List类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsListNoPrefix(String key) {
+        return REDISSON_CLIENT.getList(key).isExists();
     }
 
     /**
@@ -708,7 +1011,16 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteList(String key) {
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.LIST_PREFIX + key).delete();
+        REDISSON_CLIENT.getList(KeyPrefixConstants.LIST_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除List类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteListNoPrefix(String key) {
+        REDISSON_CLIENT.getList(key).delete();
     }
 
     /**
@@ -735,6 +1047,18 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置Set类型缓存
+     *
+     * @param key      缓存键
+     * @param valueSet 缓存值
+     * @param <T>      泛型T
+     */
+    public static <T> void putSetNoPrefix(String key, Set<T> valueSet) {
+        RSet<T> set = REDISSON_CLIENT.getSet(key);
+        set.addAll(valueSet);
+    }
+
+    /**
      * 设置Set类型缓存，同时设置过期时间
      *
      * @param key      缓存键
@@ -743,6 +1067,19 @@ public class CacheUtils {
      */
     public static <T> void putSet(String key, Set<T> valueSet, long expired) {
         RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.SET_PREFIX + key);
+        set.addAll(valueSet);
+        set.expire(Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置Set类型缓存，同时设置过期时间
+     *
+     * @param key      缓存键
+     * @param valueSet 缓存值
+     * @param <T>      泛型T
+     */
+    public static <T> void putSetNoPrefix(String key, Set<T> valueSet, long expired) {
+        RSet<T> set = REDISSON_CLIENT.getSet(key);
         set.addAll(valueSet);
         set.expire(Duration.ofSeconds(expired));
     }
@@ -812,10 +1149,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      * @param <T> 泛型T
-     * @return 返回结果
      */
     public static <T> Set<T> getSet(String key) {
         return REDISSON_CLIENT.getSet(KeyPrefixConstants.SET_PREFIX + key);
+    }
+
+    /**
+     * 不需要默认前缀，获取Set类型缓存
+     *
+     * @param key 缓存键
+     * @param <T> 泛型T
+     */
+    public static <T> Set<T> getSetNoPrefix(String key) {
+        return REDISSON_CLIENT.getSet(key);
     }
 
     /**
@@ -854,13 +1200,47 @@ public class CacheUtils {
     }
 
     /**
+     * 获取Set类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getSetExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getSet(KeyPrefixConstants.SET_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取Set类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getSetExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getSet(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
      * 判断Set类型缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean existsSet(String key) {
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.SET_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getSet(KeyPrefixConstants.SET_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断Set类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsSetNoPrefix(String key) {
+        return REDISSON_CLIENT.getSet(key).isExists();
     }
 
     /**
@@ -869,7 +1249,16 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteSet(String key) {
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.SET_PREFIX + key).delete();
+        REDISSON_CLIENT.getSet(KeyPrefixConstants.SET_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除Set类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteSetNoPrefix(String key) {
+        REDISSON_CLIENT.getSet(key).delete();
     }
 
     /**
@@ -897,6 +1286,19 @@ public class CacheUtils {
     }
 
     /**
+     * 不需要默认前缀，设置Map类型缓存
+     *
+     * @param key      缓存键
+     * @param valueMap 缓存值
+     * @param <K>      泛型K
+     * @param <V>      泛型V
+     */
+    public static <K, V> void putMapNoPrefix(String key, Map<K, V> valueMap) {
+        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
+        map.putAll(valueMap);
+    }
+
+    /**
      * 设置Map类型缓存，同时设置过期时间
      *
      * @param key      缓存键
@@ -906,6 +1308,20 @@ public class CacheUtils {
      */
     public static <K, V> void putMap(String key, Map<K, V> valueMap, long expired) {
         RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.MAP_PREFIX + key);
+        map.putAll(valueMap);
+        map.expire(Duration.ofSeconds(expired));
+    }
+
+    /**
+     * 不需要默认前缀，设置Map类型缓存，同时设置过期时间
+     *
+     * @param key      缓存键
+     * @param valueMap 缓存值
+     * @param <K>      泛型K
+     * @param <V>      泛型V
+     */
+    public static <K, V> void putMapNoPrefix(String key, Map<K, V> valueMap, long expired) {
+        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
         map.putAll(valueMap);
         map.expire(Duration.ofSeconds(expired));
     }
@@ -980,10 +1396,21 @@ public class CacheUtils {
      * @param key 缓存键
      * @param <K> 泛型K
      * @param <V> 泛型V
-     * @return 返回结果
      */
     public static <K, V> Map<K, V> getMap(String key) {
         RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.MAP_PREFIX + key);
+        return new HashMap<K, V>(map);
+    }
+
+    /**
+     * 不需要默认前缀，获取Map类型缓存
+     *
+     * @param key 缓存键
+     * @param <K> 泛型K
+     * @param <V> 泛型V
+     */
+    public static <K, V> Map<K, V> getMapNoPrefix(String key) {
+        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
         return new HashMap<K, V>(map);
     }
 
@@ -1013,23 +1440,57 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, Map<Object,Object>> getMapKeyValuesByPattern(String keyPattern) {
+    public static Map<String, Map<Object, Object>> getMapKeyValuesByPattern(String keyPattern) {
         return getMapKeysByPattern(keyPattern).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getMap(c));
             return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map<Object,Object>) map.get("value")));
+        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map<Object, Object>) map.get("value")));
+    }
+
+    /**
+     * 获取Map类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getMapExpired(String key) {
+        long expireTime = REDISSON_CLIENT.getMap(KeyPrefixConstants.MAP_PREFIX + key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
+    }
+
+    /**
+     * 不需要默认前缀，获取Map类型缓存剩余过期时间
+     *
+     * @param key 缓存键
+     */
+    public static Long getMapExpiredNoPrefix(String key) {
+        long expireTime = REDISSON_CLIENT.getMap(key).getExpireTime();
+        if (Objects.equals(expireTime, -2L)) {
+            return 0L;
+        }
+        return (expireTime - System.currentTimeMillis()) / 1000;
     }
 
     /**
      * 判断Map类型缓存是否存在
      *
      * @param key 缓存键
-     * @return 返回结果
      */
     public static boolean existsMap(String key) {
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.MAP_PREFIX + key).isExists();
+        return REDISSON_CLIENT.getMap(KeyPrefixConstants.MAP_PREFIX + key).isExists();
+    }
+
+    /**
+     * 不需要默认前缀，判断Map类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static boolean existsMapNoPrefix(String key) {
+        return REDISSON_CLIENT.getMap(key).isExists();
     }
 
     /**
@@ -1038,7 +1499,16 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static void deleteMap(String key) {
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.MAP_PREFIX + key).delete();
+        REDISSON_CLIENT.getMap(KeyPrefixConstants.MAP_PREFIX + key).delete();
+    }
+
+    /**
+     * 不需要默认前缀，删除Map类型缓存
+     *
+     * @param key 缓存键
+     */
+    public static void deleteMapNoPrefix(String key) {
+        REDISSON_CLIENT.getMap(key).delete();
     }
 
     /**

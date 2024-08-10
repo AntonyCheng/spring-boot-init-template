@@ -4,6 +4,7 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.util.SaResult;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -13,10 +14,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.HttpStatus;
 import top.sharehome.springbootinittemplate.config.security.condition.SaCondition;
 
-import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * SaToken认证配置
@@ -35,6 +34,8 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
         {
             add("/auth/register");
             add("/auth/login");
+            add("/auth/check/email/code");
+            add("/auth/email/code");
             add("/captcha");
         }
     };
