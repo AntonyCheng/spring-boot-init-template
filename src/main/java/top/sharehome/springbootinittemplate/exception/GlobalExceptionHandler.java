@@ -335,16 +335,4 @@ public class GlobalExceptionHandler {
         return R.fail(code, msg);
     }
 
-    /**
-     * 自定义数据库事务异常
-     *
-     * @param e 异常
-     * @return 返回结果
-     */
-    @ExceptionHandler(CustomizeTransactionException.class)
-    public R<String> handleCustomizeTransactionException(CustomizeTransactionException e) {
-        log.error(e.getMessage(), e);
-        return R.fail(e.getReturnCode());
-    }
-
 }

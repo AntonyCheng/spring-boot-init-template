@@ -80,9 +80,9 @@ public class RateLimitUtils {
      * 删除删除Redis中的系统限流键值对
      */
     private void deleteSystemRateLimitValues() {
-        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:permits");
-        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*}:value");
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + "*");
+        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + "*}:permits");
+        REDISSON_CLIENT.getKeys().deleteByPattern("{" + KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + "*}:value");
+        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + "*");
     }
 
     /**
@@ -93,7 +93,7 @@ public class RateLimitUtils {
      */
     public static void doRateLimit(String key) {
         // 创建一个限流器，默认每秒最多访问 2 次
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key);
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
         // 每当一个操作来了后，默认请求一个令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
@@ -112,7 +112,7 @@ public class RateLimitUtils {
      * @param permit       每个操作所要消耗的令牌数
      */
     public static void doRateLimit(String key, Long rateInterval, Long rate, Long permit) {
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key);
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_CUSTOMIZE_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
@@ -128,14 +128,14 @@ public class RateLimitUtils {
      */
     public static void doRateLimitAndExpire(String key) {
         // 创建一个名称为user_limiter的限流器，每秒最多访问 2 次
-        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key);
+        RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval, RateIntervalUnit.SECONDS);
         // 每当一个操作来了后，请求一个令牌
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS);
         }
-        String baseKey = KeyPrefixConstants.SYSTEM_RATE_LIMIT_PREFIX + key;
+        String baseKey = KeyPrefixConstants.RATE_LIMIT_SYSTEM_PREFIX + key;
         List<String> uselessCacheKeys = new ArrayList<String>() {
             {
                 add(baseKey);
@@ -159,7 +159,7 @@ public class RateLimitUtils {
      */
     public static void doRateLimitAndExpire(String key, Long rateInterval, Long rate, Long permit) {
         doRateLimit(key, rateInterval, rate, permit);
-        String baseKey = KeyPrefixConstants.CUSTOMIZE_RATE_LIMIT_PREFIX + key;
+        String baseKey = KeyPrefixConstants.RATE_LIMIT_CUSTOMIZE_PREFIX + key;
         List<String> uselessCacheKeys = new ArrayList<String>() {
             {
                 add(baseKey);

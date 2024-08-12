@@ -9,13 +9,11 @@ import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
@@ -49,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private LogMapper logMapper;
 
     @Override
-    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Page<AdminUserPageVo> adminPageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel) {
         Page<User> page = pageModel.build();
         Page<AdminUserPageVo> res = pageModel.build();
@@ -68,17 +66,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.selectPage(page, userLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> {
-            AdminUserPageVo adminUserPageVo = new AdminUserPageVo();
-            adminUserPageVo.setId(user.getId());
-            adminUserPageVo.setAccount(user.getAccount());
-            adminUserPageVo.setName(user.getName());
-            adminUserPageVo.setAvatar(user.getAvatar());
-            adminUserPageVo.setRole(user.getRole());
-            adminUserPageVo.setState(user.getState());
-            adminUserPageVo.setCreateTime(user.getCreateTime());
-            return adminUserPageVo;
-        }).toList();
+        List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> new AdminUserPageVo()
+                .setId(user.getId())
+                .setAccount(user.getAccount())
+                .setName(user.getName())
+                .setAvatar(user.getAvatar())
+                .setRole(user.getRole())
+                .setState(user.getState())
+                .setCreateTime(user.getCreateTime())).toList();
         BeanUtils.copyProperties(page, res, "records");
         res.setRecords(newRecords);
 
@@ -86,7 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminAddUser(AdminUserAddDto adminUserAddDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, adminUserAddDto.getAccount());
@@ -106,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminDeleteUser(Long id) {
         User userInDatabase = userMapper.selectById(id);
         // 无法对非存在或管理员账号进行操作
@@ -131,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminUpdateInfo(AdminUserUpdateInfoDto adminUserUpdateInfoDto) {
         User userInDatabase = userMapper.selectById(adminUserUpdateInfoDto.getId());
         // 无法对非存在或管理员账号进行操作
@@ -165,7 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminUpdateState(AdminUserUpdateStateDto adminUserUpdateStateDto) {
         Long id = adminUserUpdateStateDto.getId();
         User userInDatabase = userMapper.selectById(id);
@@ -195,7 +190,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminResetPassword(AdminUserResetPasswordDto adminUserResetPasswordDto) {
         User userInDatabase = userMapper.selectById(adminUserResetPasswordDto.getId());
         // 无法对非存在或管理员账号进行操作
@@ -236,7 +231,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CannotCreateTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateAccount(String newAccount) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, newAccount);
@@ -255,7 +250,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CannotCreateTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateName(String newName) {
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getName, newName);
@@ -268,6 +263,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updatePassword(String oldPassword, String newPassword) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         Long userId = LoginUtils.getLoginUserId();
@@ -286,7 +282,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Transactional(rollbackFor = CannotCreateTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateAvatar(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String avatarPath = "avatar/" + date;
