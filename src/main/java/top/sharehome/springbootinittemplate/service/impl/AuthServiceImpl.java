@@ -30,7 +30,7 @@ import java.util.Objects;
 
 /**
  * 鉴权认证服务实现类
- * todo 完善找回密码功能，同时补充添加人员时邮箱必要项，解决登录次数不增加BUG
+ * todo 重构所有服务实现类事物的设计，思考类似updateResult==0的必要性，同时补充添加人员时邮箱必要项
  *
  * @author AntonyCheng
  */
@@ -62,7 +62,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(noRollbackFor = CustomizeReturnException.class, rollbackFor = CustomizeTransactionException.class)
     public AuthLoginVo login(AuthLoginDto authLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount());
@@ -93,7 +93,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             } else {
                 userLambdaUpdateWrapper
                         .set(User::getState, Constants.USER_DISABLE_STATE)
-                        .eq(User::getLoginNum, 0)
+                        .set(User::getLoginNum, 0)
                         .eq(User::getAccount, userInDatabase.getAccount());
                 int updateResult = userMapper.update(userLambdaUpdateWrapper);
                 if (updateResult == 0) {
@@ -108,7 +108,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     }
 
     @Override
-    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = CustomizeTransactionException.class)
     public void checkEmailCode(AuthRetrievePasswordDto authRetrievePasswordDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper
@@ -156,7 +156,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         String emailKey = KeyPrefixConstants.EMAIL_PREFIX + userInDatabase.getId();
-        String code = RandomStringUtils.randomAlphanumeric(6);
+        String code = RandomStringUtils.randomNumeric(6);
         Long expired = CacheUtils.getStringExpired(emailKey);
         if (Objects.equals(expired, 0L)) {
             String subject = "找回密码";
