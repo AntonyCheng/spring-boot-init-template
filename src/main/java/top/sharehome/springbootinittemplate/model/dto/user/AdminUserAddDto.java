@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.dto.user;
 
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,13 @@ public class AdminUserAddDto implements Serializable {
     @Size(min = 5, max = 16, message = "密码长度介于5-16位之间", groups = {PostGroup.class})
     @NotBlank(message = "密码不能为空", groups = {PostGroup.class})
     private String password;
+
+    /**
+     * 邮箱
+     */
+    @Email(message = "邮箱格式错误", groups = {PostGroup.class})
+    @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
+    private String email;
 
     /**
      * 名称

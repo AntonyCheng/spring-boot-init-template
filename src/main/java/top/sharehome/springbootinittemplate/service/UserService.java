@@ -87,6 +87,12 @@ public interface UserService extends IService<User> {
     void updateName(String newName);
 
     /**
+     * 更新邮箱
+     * @param newEmail 新邮箱
+     */
+    void updateEmail(String newEmail);
+
+    /**
      * 更新密码
      *
      * @param oldPassword 旧密码
@@ -100,4 +106,5 @@ public interface UserService extends IService<User> {
      * @param file 新头像文件
      */
     void updateAvatar(MultipartFile file);
+
 }

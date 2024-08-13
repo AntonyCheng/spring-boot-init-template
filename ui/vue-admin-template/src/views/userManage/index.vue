@@ -23,6 +23,9 @@
                     <el-form-item label="名称">
                       <el-input v-model="queryForm.name" placeholder="请输入名称" style="width: 200px" />
                     </el-form-item>
+                    <el-form-item label="邮箱">
+                      <el-input v-model="queryForm.email" placeholder="请输入邮箱" style="width: 200px" />
+                    </el-form-item>
                     <el-form-item label="角色">
                       <el-select v-model="queryForm.role" placeholder="请选择角色" clearable>
                         <el-option
@@ -90,6 +93,10 @@
         <el-table-column
           prop="name"
           label="名称"
+        />
+        <el-table-column
+          prop="email"
+          label="邮箱"
         />
         <el-table-column
           prop="avatar"
@@ -191,6 +198,15 @@
           >
             <el-input v-model="addForm.name" autocomplete="off" />
           </el-form-item>
+          <el-form-item
+            label="用户邮箱"
+            prop="email"
+            :rules="[
+              {required:true,message:'邮箱不能为空',trigger: 'blur'},
+            ]"
+          >
+            <el-input v-model="addForm.email" autocomplete="off" />
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCancelAdd">取 消</el-button>
@@ -226,6 +242,15 @@
             ]"
           >
             <el-input v-model="updateForm.name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item
+            label="用户邮箱"
+            prop="email"
+            :rules="[
+              {required:true,message:'新邮箱不能为空',trigger: 'blur'},
+            ]"
+          >
+            <el-input v-model="updateForm.email" autocomplete="off" />
           </el-form-item>
         </el-form>
         <el-form v-else ref="updateForm" :model="updateForm" label-width="80px">
@@ -272,6 +297,7 @@ export default {
       queryForm: {
         account: undefined,
         name: undefined,
+        email: undefined,
         role: undefined,
         state: undefined,
         page: 1,
@@ -302,7 +328,8 @@ export default {
       addForm: {
         account: undefined,
         password: undefined,
-        name: undefined
+        name: undefined,
+        email: undefined
       },
       updateDialogVisible: false,
       updateType: undefined,
@@ -310,6 +337,7 @@ export default {
         id: undefined,
         account: undefined,
         name: undefined,
+        email: undefined,
         newPassword: undefined
       }
     }
@@ -332,6 +360,7 @@ export default {
         this.queryForm.account === undefined &&
         this.queryForm.state === undefined &&
         this.queryForm.name === undefined &&
+        this.queryForm.email === undefined &&
         this.queryForm.role === undefined
       ) {
         return
@@ -350,6 +379,7 @@ export default {
         this.queryForm.account === undefined &&
         this.queryForm.state === undefined &&
         this.queryForm.name === undefined &&
+        this.queryForm.email === undefined &&
         this.queryForm.role === undefined
       ) {
         return
@@ -397,7 +427,8 @@ export default {
           const data = {
             account: this.addForm.account,
             password: this.addForm.password,
-            name: this.addForm.name
+            name: this.addForm.name,
+            email: this.addForm.email
           }
           adminAddUser(data).then(response => {
             if (this.queryResult.total % this.queryResult.size === 0) {
@@ -427,6 +458,7 @@ export default {
       this.updateForm.id = data2.id
       this.updateForm.account = data2.account
       this.updateForm.name = data2.name
+      this.updateForm.email = data2.email
       this.updateDialogVisible = true
     },
     handleUpdate() {
@@ -437,7 +469,8 @@ export default {
             const data = {
               id: this.updateForm.id,
               account: this.updateForm.account,
-              name: this.updateForm.name
+              name: this.updateForm.name,
+              email: this.updateForm.email
             }
             adminUpdateInfo(data).then(response => {
               this.pageLoading = true
@@ -529,6 +562,7 @@ export default {
     async resetQueryForm() {
       this.queryForm.account = undefined
       this.queryForm.name = undefined
+      this.queryForm.email = undefined
       this.queryForm.role = undefined
       this.queryForm.state = undefined
       this.queryForm.page = 1
@@ -537,11 +571,13 @@ export default {
       this.addForm.account = undefined
       this.addForm.password = undefined
       this.addForm.name = undefined
+      this.addForm.email = undefined
     },
     async resetUpdateForm() {
       this.updateForm.id = undefined
       this.updateForm.account = undefined
       this.updateForm.name = undefined
+      this.updateForm.email = undefined
       this.updateForm.newPassword = undefined
     }
   }

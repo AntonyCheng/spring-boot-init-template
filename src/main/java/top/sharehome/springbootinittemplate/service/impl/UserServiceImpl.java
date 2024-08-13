@@ -58,7 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .eq(StringUtils.isNotBlank(adminUserPageDto.getRole()), User::getRole, adminUserPageDto.getRole())
                 .eq(Objects.nonNull(adminUserPageDto.getState()), User::getState, adminUserPageDto.getState())
                 .like(StringUtils.isNotBlank(adminUserPageDto.getAccount()), User::getAccount, adminUserPageDto.getAccount())
-                .like(StringUtils.isNotBlank(adminUserPageDto.getName()), User::getName, adminUserPageDto.getName());
+                .like(StringUtils.isNotBlank(adminUserPageDto.getName()), User::getName, adminUserPageDto.getName())
+                .like(StringUtils.isNotBlank(adminUserPageDto.getEmail()), User::getEmail, adminUserPageDto.getEmail());
         // 构造查询排序（默认按照创建时间升序排序）
         userLambdaQueryWrapper.orderByAsc(User::getCreateTime);
 
@@ -70,6 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .setId(user.getId())
                 .setAccount(user.getAccount())
                 .setName(user.getName())
+                .setEmail(user.getEmail())
                 .setAvatar(user.getAvatar())
                 .setRole(user.getRole())
                 .setState(user.getState())
@@ -90,10 +92,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS);
         }
         // 插入数据库
-        User user = new User();
-        user.setAccount(adminUserAddDto.getAccount());
-        user.setPassword(adminUserAddDto.getPassword());
-        user.setName(adminUserAddDto.getName());
+        User user = new User()
+                .setAccount(adminUserAddDto.getAccount())
+                .setPassword(adminUserAddDto.getPassword())
+                .setEmail(adminUserAddDto.getEmail())
+                .setName(adminUserAddDto.getName());
         int insertResult = userMapper.insert(user);
         if (insertResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -144,12 +147,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS);
         }
         // 数据只有发生更新之后才可以进行数据库操作
-        if (Objects.equals(adminUserUpdateInfoDto.getAccount(), userInDatabase.getAccount()) && Objects.equals(adminUserUpdateInfoDto.getName(), userInDatabase.getName())) {
+        if (Objects.equals(adminUserUpdateInfoDto.getAccount(), userInDatabase.getAccount())
+                && Objects.equals(adminUserUpdateInfoDto.getName(), userInDatabase.getName())
+                && Objects.equals(adminUserUpdateInfoDto.getEmail(), userInDatabase.getEmail())) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "信息未发生更改");
         }
         User user = new User()
                 .setId(adminUserUpdateInfoDto.getId())
                 .setAccount(adminUserUpdateInfoDto.getAccount())
+                .setEmail(adminUserUpdateInfoDto.getEmail())
                 .setName(adminUserUpdateInfoDto.getName());
         int updateResult = userMapper.updateById(user);
         if (updateResult == 0) {
@@ -220,6 +226,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             AdminUserExportVo adminUserExportVo = new AdminUserExportVo();
             adminUserExportVo.setId(user.getId());
             adminUserExportVo.setAccount(user.getAccount());
+            adminUserExportVo.setEmail(user.getEmail());
             adminUserExportVo.setName(user.getName());
             adminUserExportVo.setAvatar(user.getAvatar());
             adminUserExportVo.setRole(StringUtils.equals(user.getRole(), Constants.ROLE_ADMIN) ? "管理员" : "用户");
@@ -254,6 +261,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateName(String newName) {
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getName, newName);
+        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
+        int updateResult = userMapper.update(userLambdaUpdateWrapper);
+        if (updateResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+        LoginUtils.syncLoginUser();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateEmail(String newEmail) {
+        LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        userLambdaUpdateWrapper.set(User::getEmail, newEmail);
         userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {

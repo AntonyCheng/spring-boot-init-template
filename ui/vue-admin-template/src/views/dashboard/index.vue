@@ -81,6 +81,22 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
+                    <i class="el-icon-s-comment" />
+                    邮箱
+                  </template>
+                  <template>
+                    <el-row>
+                      <el-col :span="8" style="line-height: 200%">
+                        {{ email }}
+                      </el-col>
+                      <el-col :span="16" style="text-align: end">
+                        <el-button type="primary" size="mini" @click="openDialog('email')">修改邮箱</el-button>
+                      </el-col>
+                    </el-row>
+                  </template>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                  <template slot="label">
                     <i class="el-icon-s-opportunity" />
                     角色
                   </template>
@@ -101,7 +117,7 @@
     </template>
     <template>
       <el-dialog
-        :title="dialogType==='account'?'修改账号':dialogType==='password'?'修改密码':'修改名称'"
+        :title="dialogType==='account'?'修改账号':dialogType==='password'?'修改密码':dialogType==='name'?'修改名称':'修改邮箱'"
         :visible.sync="dialogVisible"
         :show-close="false"
         @close="handleCancel"
@@ -190,6 +206,20 @@
             <el-input v-model="updateNameForm.newName" autocomplete="off" />
           </el-form-item>
         </el-form>
+        <el-form v-if="dialogType==='email'" ref="updateEmailForm" :model="updateEmailForm" label-width="80px">
+          <el-form-item label="旧邮箱">
+            <el-input v-model="email" disabled="disabled" style="font-weight: bold" />
+          </el-form-item>
+          <el-form-item
+            label="新邮箱"
+            prop="newEmail"
+            :rules="[
+              {required:true,message:'新邮箱不能为空',trigger: 'blur'}
+            ]"
+          >
+            <el-input v-model="updateEmailForm.newEmail" autocomplete="off" />
+          </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCancel">取 消</el-button>
           <el-button type="primary" @click="handleUpdate">修 改</el-button>
@@ -201,7 +231,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { updateAccount, updateAvatar, updateName, updatePassword } from '@/api/user'
+import { updateAccount, updateAvatar, updateEmail, updateName, updatePassword } from '@/api/user'
 import { Message } from 'element-ui'
 
 export default {
@@ -222,6 +252,9 @@ export default {
       updateNameForm: {
         newName: undefined
       },
+      updateEmailForm: {
+        newEmail: undefined
+      },
       oldPasswordType: 'password',
       newPasswordType: 'password',
       checkNewPasswordType: 'password'
@@ -232,6 +265,7 @@ export default {
       'id',
       'account',
       'name',
+      'email',
       'avatar',
       'role'
     ])
@@ -323,6 +357,22 @@ export default {
           })
           break
         }
+        case 'email': {
+          this.$refs['updateEmailForm'].validate(valid => {
+            if (valid) {
+              const data = { newEmail: this.updateEmailForm.newEmail }
+              updateEmail(data).then(response => {
+                this.getUserInfo()
+                this.resetUpdateForm()
+                this.dialogVisible = false
+                Message.success(response.msg)
+              }).catch(error => {
+                return error
+              })
+            }
+          })
+          break
+        }
       }
     },
     handleCancel() {
@@ -330,6 +380,8 @@ export default {
         this.$refs['updateAccountForm'].resetFields()
       } else if (this.dialogType === 'password') {
         this.$refs['updatePasswordForm'].resetFields()
+      } else if (this.dialogType === 'email') {
+        this.$refs['updateEmailForm'].resetFields()
       } else {
         this.$refs['updateNameForm'].resetFields()
       }
@@ -379,6 +431,7 @@ export default {
     async resetUpdateForm() {
       this.updateAccountForm.newAccount = ''
       this.updateNameForm.newName = ''
+      this.updateEmailForm.newEmail = ''
       this.updatePasswordForm.newPassword = ''
       this.updatePasswordForm.oldPassword = ''
       this.updatePasswordForm.checkNewPassword = ''

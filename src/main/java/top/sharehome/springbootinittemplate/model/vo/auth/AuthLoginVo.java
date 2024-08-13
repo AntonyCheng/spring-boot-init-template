@@ -30,6 +30,11 @@ public class AuthLoginVo implements Serializable {
     private String account;
 
     /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
      * 昵称
      */
     private String name;

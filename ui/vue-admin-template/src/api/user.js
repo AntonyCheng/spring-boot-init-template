@@ -16,6 +16,14 @@ export function updateName(data) {
   })
 }
 
+export function updateEmail(data) {
+  return request({
+    url: '/user/update/email',
+    method: 'put',
+    data
+  })
+}
+
 export function updatePassword(data) {
   return request({
     url: '/user/update/password',

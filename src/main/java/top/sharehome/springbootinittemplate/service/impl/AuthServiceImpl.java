@@ -76,9 +76,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
+        LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         // 判断用户密码是否正确，在连续错误输入的情况下自动封禁
         if (!Objects.equals(userInDatabase.getPassword(), authLoginDto.getPassword())) {
-            LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             // 连续5次输入错误密码后封禁账号
             Integer maxLoginNum = 5;
             if (userInDatabase.getLoginNum() < maxLoginNum) {
@@ -104,6 +104,16 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
                     throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
                 }
                 throw new CustomizeReturnException(ReturnCode.PASSWORD_VERIFICATION_FAILED, "多次出错，账号已被封禁");
+            }
+        }
+        // 如果数据库中的连续登录错误次数不等于0，那么将其修改为0
+        if (!Objects.equals(userInDatabase.getLoginNum(), 0)) {
+            userLambdaUpdateWrapper
+                    .set(User::getLoginNum, 0)
+                    .eq(User::getAccount, userInDatabase.getAccount());
+            int updateResult = userMapper.update(userLambdaUpdateWrapper);
+            if (updateResult == 0) {
+                throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
             }
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();

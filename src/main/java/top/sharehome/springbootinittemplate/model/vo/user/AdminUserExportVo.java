@@ -32,6 +32,12 @@ public class AdminUserExportVo implements Serializable {
     private String account;
 
     /**
+     * 邮箱
+     */
+    @ExcelProperty(value = "用户邮箱")
+    private String email;
+
+    /**
      * 名称
      */
     @ExcelProperty(value = "用户名称")

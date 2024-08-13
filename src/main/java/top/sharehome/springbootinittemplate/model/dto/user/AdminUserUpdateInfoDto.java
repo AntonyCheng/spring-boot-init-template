@@ -1,15 +1,12 @@
 package top.sharehome.springbootinittemplate.model.dto.user;
 
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -40,6 +37,13 @@ public class AdminUserUpdateInfoDto implements Serializable {
     @NotBlank(message = "账号不能为空", groups = {PutGroup.class})
     @Pattern(regexp = REGEX_NUMBER_AND_LETTER, message = "账户名称包含特殊字符", groups = {PutGroup.class})
     private String account;
+
+    /**
+     * 邮箱
+     */
+    @Email(message = "邮箱格式错误", groups = {PostGroup.class})
+    @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
+    private String email;
 
     /**
      * 名称
