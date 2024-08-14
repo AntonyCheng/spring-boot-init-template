@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +45,27 @@ public class AuthController {
      */
     @PostMapping("/register")
     @EnableCaptcha
+    @ControllerLog(description = "用户注册", operator = Operator.OTHER)
     public R<String> register(@RequestBody @Validated({PostGroup.class}) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
         }
         authService.register(authRegisterDto);
-        return R.ok("注册成功");
+        return R.ok("注册成功，请前往邮箱激活账号");
+    }
+
+    /**
+     * 注册后激活账号
+     * todo 模板默认不使用该接口，因为该模板中真实增加用户的接口应该是管理员增加用户的方式，但业务层面上保留该接口，
+     *
+     * @param uuid 激活随机码
+     * @param response 响应
+     */
+    @GetMapping("/activate/{uuid}")
+    @ControllerLog(description = "用户激活账号", operator = Operator.OTHER)
+    public R<Void> activate(@PathVariable("uuid") String uuid, HttpServletResponse response) {
+        authService.activate(uuid, response);
+        return R.empty();
     }
 
     /**

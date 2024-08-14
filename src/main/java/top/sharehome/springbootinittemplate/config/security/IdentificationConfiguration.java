@@ -34,6 +34,7 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
         {
             add("/auth/register");
             add("/auth/login");
+            add("/auth/activate/**");
             add("/auth/check/email/code");
             add("/auth/email/code");
             add("/captcha");

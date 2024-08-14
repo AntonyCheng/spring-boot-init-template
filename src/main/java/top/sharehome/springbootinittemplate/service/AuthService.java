@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.servlet.http.HttpServletResponse;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthEmailCodeDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
@@ -23,6 +24,13 @@ public interface AuthService extends IService<User> {
     void register(AuthRegisterDto authRegisterDto);
 
     /**
+     * 注册后激活账号
+     *
+     * @param uuid 随机验证码
+     */
+    void activate(String uuid, HttpServletResponse response);
+
+    /**
      * 登录
      *
      * @param authLoginDto 用户登录Dto类
@@ -41,4 +49,5 @@ public interface AuthService extends IService<User> {
      * @param authEmailCodeDto 邮箱验证码Dto类
      */
     void getEmailCode(AuthEmailCodeDto authEmailCodeDto);
+
 }

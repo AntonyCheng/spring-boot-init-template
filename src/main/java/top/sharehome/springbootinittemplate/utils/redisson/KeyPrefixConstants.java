@@ -82,4 +82,9 @@ public interface KeyPrefixConstants {
      */
     String EMAIL_RETRIEVE_PASSWORD_PREFIX = EMAIL_PREFIX + "RETRIEVE_PASSWORD_";
 
+    /**
+     * 注册激活邮箱Key前缀
+     */
+    String EMAIL_REGISTER_ACTIVATE_PREFIX = EMAIL_PREFIX + "REGISTER_ACTIVATE_";
+
 }
