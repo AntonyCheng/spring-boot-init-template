@@ -298,20 +298,20 @@ public class ControllerLogAop {
     /**
      * 过滤掉不可用JSON表达的参数和一些Http访问参数
      *
-     * @param o 校验过滤对象
+     * @param obj 校验过滤对象
      */
     @SuppressWarnings("rawtypes")
-    private boolean isFilterObject(Object o) {
-        Class<?> clazz = o.getClass();
+    private boolean isFilterObject(Object obj) {
+        Class<?> clazz = obj.getClass();
         if (clazz.isArray()) {
             return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
         } else if (Collection.class.isAssignableFrom(clazz)) {
-            Collection collection = (Collection) o;
+            Collection collection = (Collection) obj;
             for (Object value : collection) {
                 return value instanceof MultipartFile;
             }
         } else if (Map.class.isAssignableFrom(clazz)) {
-            Map map = (Map) o;
+            Map map = (Map) obj;
             for (Object value : map.values()) {
                 return value instanceof MultipartFile;
             }
@@ -325,14 +325,14 @@ public class ControllerLogAop {
                         continue;
                     }
                     declaredField.setAccessible(true);
-                    Object obj = declaredField.get(o);
-                    return obj instanceof MultipartFile;
+                    Object object = declaredField.get(obj);
+                    return object instanceof MultipartFile;
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
-        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse || o instanceof BindingResult;
+        return obj instanceof MultipartFile || obj instanceof HttpServletRequest || obj instanceof HttpServletResponse || obj instanceof BindingResult;
     }
 
 }

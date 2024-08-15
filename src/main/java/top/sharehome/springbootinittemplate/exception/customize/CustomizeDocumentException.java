@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.exception.customize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
@@ -37,7 +38,7 @@ public class CustomizeDocumentException extends CustomizeException {
             log.error("{}，{}", ReturnCode.PDF_FILE_ERROR.getMsg(), msg);
         }
         this.returnCode = returnCode;
-        this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
+        this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : returnCode.getMsg() + " ==> [" + msg + "]";
     }
 
     @Override

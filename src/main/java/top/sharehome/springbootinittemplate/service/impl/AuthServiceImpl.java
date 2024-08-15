@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,6 @@ import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -83,7 +83,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         CacheUtils.putString(activateKey, authRegisterDto.getAccount(), 2 * 60 * 60);
         // 给新用户邮箱发送一条激活邮件
         String subject = "激活账号";
-        String href = domain + ":" + port + contextPath + "/auth/activate/" + uuid;
+        String href = domain + ":" + port + (StringUtils.endsWith(contextPath, "/") ? contextPath : contextPath + "/") + "auth/activate/" + uuid;
         String emailContent = "[" + applicationName + "]-点击<a href=\"" + href + "\" target=\"_blank\">链接</a>以激活账号，两小时内有效";
         EmailUtils.sendWithHtml(authRegisterDto.getEmail(), subject, emailContent);
     }

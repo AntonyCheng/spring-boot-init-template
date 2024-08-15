@@ -79,9 +79,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static <T> void putIfExists(String key, T value) {
+    public static <T> Boolean putIfExists(String key, T value) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.setIfExists(value);
+        return bucket.setIfExists(value);
     }
 
     /**
@@ -91,9 +91,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static <T> void putIfExists(String key, T value, long expired) {
+    public static <T> Boolean putIfExists(String key, T value, long expired) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.setIfExists(value, Duration.ofSeconds(expired));
+        return bucket.setIfExists(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -102,9 +102,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static <T> void putIfAbsent(String key, T value) {
+    public static <T> Boolean putIfAbsent(String key, T value) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.setIfAbsent(value);
+        return bucket.setIfAbsent(value);
     }
 
     /**
@@ -114,9 +114,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static <T> void putIfAbsent(String key, T value, long expired) {
+    public static <T> Boolean putIfAbsent(String key, T value, long expired) {
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.setIfAbsent(value, Duration.ofSeconds(expired));
+        return bucket.setIfAbsent(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -329,9 +329,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static void putStringIfExists(String key, CharSequence value) {
+    public static Boolean putStringIfExists(String key, CharSequence value) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.setIfExists(value);
+        return bucket.setIfExists(value);
     }
 
     /**
@@ -341,9 +341,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putStringIfExists(String key, CharSequence value, long expired) {
+    public static Boolean putStringIfExists(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.setIfExists(value, Duration.ofSeconds(expired));
+        return bucket.setIfExists(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -352,9 +352,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static void putStringIfAbsent(String key, CharSequence value) {
+    public static Boolean putStringIfAbsent(String key, CharSequence value) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.setIfAbsent(value);
+        return bucket.setIfAbsent(value);
     }
 
     /**
@@ -364,9 +364,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putStringIfAbsent(String key, CharSequence value, long expired) {
+    public static Boolean putStringIfAbsent(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.setIfAbsent(value, Duration.ofSeconds(expired));
+        return bucket.setIfAbsent(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -548,9 +548,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static void putNumberIfExists(String key, CharSequence value) {
+    public static Boolean putNumberIfExists(String key, CharSequence value) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.setIfExists(value);
+        return bucket.setIfExists(value);
     }
 
     /**
@@ -560,9 +560,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putNumberIfExists(String key, CharSequence value, long expired) {
+    public static Boolean putNumberIfExists(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.setIfExists(value, Duration.ofSeconds(expired));
+        return bucket.setIfExists(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -571,9 +571,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static void putNumberIfAbsent(String key, CharSequence value) {
+    public static Boolean putNumberIfAbsent(String key, CharSequence value) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.setIfAbsent(value);
+        return bucket.setIfAbsent(value);
     }
 
     /**
@@ -583,9 +583,9 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putNumberIfAbsent(String key, CharSequence value, long expired) {
+    public static Boolean putNumberIfAbsent(String key, CharSequence value, long expired) {
         RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.setIfAbsent(value, Duration.ofSeconds(expired));
+        return bucket.setIfAbsent(value, Duration.ofSeconds(expired));
     }
 
     /**
@@ -832,10 +832,12 @@ public class CacheUtils {
      * @param valueList 缓存值
      * @param <T>       泛型T
      */
-    public static <T> void putListIfExists(String key, List<T> valueList) {
+    public static <T> Boolean putListIfExists(String key, List<T> valueList) {
         if (existsList(key)) {
             RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            list.addAll(valueList);
+            return list.addAll(valueList);
+        } else {
+            return false;
         }
     }
 
@@ -847,11 +849,12 @@ public class CacheUtils {
      * @param expired   过期时间
      * @param <T>       泛型T
      */
-    public static <T> void putListIfExists(String key, List<T> valueList, long expired) {
+    public static <T> Boolean putListIfExists(String key, List<T> valueList, long expired) {
         if (existsList(key)) {
             RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            list.addAll(valueList);
-            list.expire(Duration.ofSeconds(expired));
+            return list.addAll(valueList) && list.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 
@@ -862,10 +865,12 @@ public class CacheUtils {
      * @param valueList 缓存值
      * @param <T>       泛型T
      */
-    public static <T> void putListIfAbsent(String key, List<T> valueList) {
+    public static <T> Boolean putListIfAbsent(String key, List<T> valueList) {
         if (!existsList(key)) {
             RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            list.addAll(valueList);
+            return list.addAll(valueList);
+        } else {
+            return false;
         }
     }
 
@@ -877,11 +882,12 @@ public class CacheUtils {
      * @param expired   过期时间
      * @param <T>       泛型T
      */
-    public static <T> void putListIfAbsent(String key, List<T> valueList, long expired) {
+    public static <T> Boolean putListIfAbsent(String key, List<T> valueList, long expired) {
         if (!existsList(key)) {
             RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            list.addAll(valueList);
-            list.expire(Duration.ofSeconds(expired));
+            return list.addAll(valueList) && list.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 
@@ -1070,10 +1076,12 @@ public class CacheUtils {
      * @param valueSet 缓存值
      * @param <T>      泛型T
      */
-    public static <T> void putSetIfExists(String key, Set<T> valueSet) {
+    public static <T> Boolean putSetIfExists(String key, Set<T> valueSet) {
         if (existsSet(key)) {
             RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            set.addAll(valueSet);
+            return set.addAll(valueSet);
+        } else {
+            return false;
         }
     }
 
@@ -1085,11 +1093,12 @@ public class CacheUtils {
      * @param expired  过期时间
      * @param <T>      泛型T
      */
-    public static <T> void putSetIfExists(String key, Set<T> valueSet, long expired) {
+    public static <T> Boolean putSetIfExists(String key, Set<T> valueSet, long expired) {
         if (existsSet(key)) {
             RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            set.addAll(valueSet);
-            set.expire(Duration.ofSeconds(expired));
+            return set.addAll(valueSet) && set.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 
@@ -1100,10 +1109,12 @@ public class CacheUtils {
      * @param valueSet 缓存值
      * @param <T>      泛型T
      */
-    public static <T> void putSetIfAbsent(String key, Set<T> valueSet) {
+    public static <T> Boolean putSetIfAbsent(String key, Set<T> valueSet) {
         if (!existsSet(key)) {
             RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            set.addAll(valueSet);
+            return set.addAll(valueSet);
+        } else {
+            return false;
         }
     }
 
@@ -1115,11 +1126,12 @@ public class CacheUtils {
      * @param expired  过期时间
      * @param <T>      泛型T
      */
-    public static <T> void putSetIfAbsent(String key, Set<T> valueSet, long expired) {
+    public static <T> Boolean putSetIfAbsent(String key, Set<T> valueSet, long expired) {
         if (!existsSet(key)) {
             RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            set.addAll(valueSet);
-            set.expire(Duration.ofSeconds(expired));
+            return set.addAll(valueSet) && set.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 
@@ -1313,10 +1325,13 @@ public class CacheUtils {
      * @param <K>      泛型K
      * @param <V>      泛型V
      */
-    public static <K, V> void putMapIfExists(String key, Map<K, V> valueMap) {
+    public static <K, V> Boolean putMapIfExists(String key, Map<K, V> valueMap) {
         if (existsMap(key)) {
             RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
             map.putAll(valueMap);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -1329,11 +1344,13 @@ public class CacheUtils {
      * @param <K>      泛型K
      * @param <V>      泛型V
      */
-    public static <K, V> void putMapIfExists(String key, Map<K, V> valueMap, long expired) {
+    public static <K, V> Boolean putMapIfExists(String key, Map<K, V> valueMap, long expired) {
         if (existsMap(key)) {
             RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
             map.putAll(valueMap);
-            map.expire(Duration.ofSeconds(expired));
+            return map.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 
@@ -1345,10 +1362,13 @@ public class CacheUtils {
      * @param <K>      泛型K
      * @param <V>      泛型V
      */
-    public static <K, V> void putMapIfAbsent(String key, Map<K, V> valueMap) {
+    public static <K, V> Boolean putMapIfAbsent(String key, Map<K, V> valueMap) {
         if (!existsMap(key)) {
             RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
             map.putAll(valueMap);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -1361,11 +1381,13 @@ public class CacheUtils {
      * @param <K>      泛型K
      * @param <V>      泛型V
      */
-    public static <K, V> void putMapIfAbsent(String key, Map<K, V> valueMap, long expired) {
+    public static <K, V> Boolean putMapIfAbsent(String key, Map<K, V> valueMap, long expired) {
         if (!existsMap(key)) {
             RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
             map.putAll(valueMap);
-            map.expire(Duration.ofSeconds(expired));
+            return map.expire(Duration.ofSeconds(expired));
+        } else {
+            return false;
         }
     }
 

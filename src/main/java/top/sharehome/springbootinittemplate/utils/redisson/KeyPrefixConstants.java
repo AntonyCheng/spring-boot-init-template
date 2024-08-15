@@ -39,7 +39,21 @@ public interface KeyPrefixConstants {
      */
     String CACHE_MAP_PREFIX = CACHE_PREFIX + "MAP_";
 
-    // todo  限流相关键前缀
+    // todo 幂等相关键前缀
+
+    /**
+     * 幂等Key前缀
+     */
+    String IDEMPOTENT_PREFIX = "IDEMPOTENT_";
+
+    // todo 防重相关键前缀
+
+    /**
+     * 防重Key前缀
+     */
+    String PREVENT_REPEAT = "PREVENT_REPEAT_";
+
+    // todo 限流相关键前缀
 
     /**
      * 限流Key前缀
