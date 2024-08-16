@@ -299,8 +299,8 @@ public class GlobalExceptionHandler {
      * @param e 异常
      * @return 返回结果
      */
-    @ExceptionHandler(CustomizeLockException.class)
-    public R<String> handleCustomizeLockException(CustomizeLockException e) {
+    @ExceptionHandler(CustomizeRedissonException.class)
+    public R<String> handleCustomizeLockException(CustomizeRedissonException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

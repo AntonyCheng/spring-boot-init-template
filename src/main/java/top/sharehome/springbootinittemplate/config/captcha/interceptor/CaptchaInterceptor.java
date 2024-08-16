@@ -1,12 +1,14 @@
 package top.sharehome.springbootinittemplate.config.captcha.interceptor;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.model.TimeModel;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码拦截器
@@ -25,7 +27,7 @@ public class CaptchaInterceptor implements HandlerInterceptor {
         String sessionId = request.getSession().getId();
         // 拼接形成限流的唯一ID
         String rateLimitKey = ipAddress + sessionId;
-        RateLimitUtils.doRateLimitAndExpire(rateLimitKey);
+        RateLimitUtils.doRateLimitAndExpire(rateLimitKey, new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L, new TimeModel(1L, TimeUnit.SECONDS));
         return true;
     }
 

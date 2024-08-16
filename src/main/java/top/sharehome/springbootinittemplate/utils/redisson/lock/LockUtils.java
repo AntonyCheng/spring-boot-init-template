@@ -5,11 +5,13 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeLockException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeRedissonException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.lock.model.TimeModel;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -66,13 +68,13 @@ public class LockUtils {
      * 无论获取锁成功与否均无返回值，自动释放型，同步等待分布式锁
      *
      * @param key       锁键值
-     * @param leaseTime 自动释放时间/ms
+     * @param leaseTime 自动释放时间
      * @param eventFunc 执行的操作
      */
-    public static void lockEvent(String key, long leaseTime, VoidFunction eventFunc) {
+    public static void lockEvent(String key, TimeModel leaseTime, VoidFunction eventFunc) {
         RLock lock = REDISSON_CLIENT.getLock(KeyPrefixConstants.LOCK_PREFIX + key);
         try {
-            lock.lock(leaseTime, TimeUnit.MILLISECONDS);
+            lock.lock(leaseTime.getTime(), leaseTime.getUnit());
             eventFunc.method();
         } finally {
             if (lock.isLocked()) {
@@ -110,20 +112,20 @@ public class LockUtils {
      * 无论获取锁成功与否均带有boolean类型返回值，看门狗释放型，自定义等待分布式锁
      *
      * @param key      锁键值
-     * @param waitTime 最大等待时间/ms
+     * @param waitTime 最大等待时间
      * @param success  获取锁成功的操作
      * @return 返回结果
      */
-    public static boolean lockEvent(String key, long waitTime, SuccessFunction success) {
+    public static boolean lockEvent(String key, TimeModel waitTime, SuccessFunction success) {
         RLock lock = REDISSON_CLIENT.getLock(KeyPrefixConstants.LOCK_PREFIX + key);
         boolean lockResult = false;
         try {
-            lockResult = lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
+            lockResult = lock.tryLock(waitTime.getTime(), waitTime.getUnit());
             if (lockResult) {
                 success.method();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
+            throw new CustomizeRedissonException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -138,21 +140,22 @@ public class LockUtils {
      * 无论获取锁成功与否均带有boolean类型返回值，自动释放型，自定义等待分布式锁
      *
      * @param key       锁键值
-     * @param waitTime  最大等待时间/ms
-     * @param leaseTime 自动释放时间/ms
+     * @param waitTime  最大等待时间
+     * @param leaseTime 自动释放时间
+     * @param timeUnit  时间单位
      * @param success   获取锁成功的操作
      * @return 返回结果
      */
-    public static boolean lockEvent(String key, long waitTime, long leaseTime, SuccessFunction success) {
+    public static boolean lockEvent(String key, long waitTime, long leaseTime, TimeUnit timeUnit, SuccessFunction success) {
         RLock lock = REDISSON_CLIENT.getLock(KeyPrefixConstants.LOCK_PREFIX + key);
         boolean lockResult = false;
         try {
-            lockResult = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+            lockResult = lock.tryLock(waitTime, leaseTime, Objects.isNull(timeUnit) ? TimeUnit.MILLISECONDS : timeUnit);
             if (lockResult) {
                 success.method();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
+            throw new CustomizeRedissonException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -195,24 +198,24 @@ public class LockUtils {
      * 无论获取锁成功与否均带有自定义类型返回值，看门狗释放型，自定义等待分布式锁
      *
      * @param key      锁键值
-     * @param waitTime 最大等待时间/ms
+     * @param waitTime 最大等待时间
      * @param getLock  获取锁成功的操作
      * @param getNone  获取锁失败的操作
      * @param <T>      返回的类型泛型
      * @return 返回结果
      */
-    public static <T> T lockEvent(String key, long waitTime, Supplier<T> getLock, Supplier<T> getNone) {
+    public static <T> T lockEvent(String key, TimeModel waitTime, Supplier<T> getLock, Supplier<T> getNone) {
         RLock lock = REDISSON_CLIENT.getLock(KeyPrefixConstants.LOCK_PREFIX + key);
         boolean lockResult = false;
         try {
-            lockResult = lock.tryLock(waitTime, TimeUnit.MILLISECONDS);
+            lockResult = lock.tryLock(waitTime.getTime(), waitTime.getUnit());
             if (lockResult) {
                 return getLock.get();
             } else {
                 return getNone.get();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
+            throw new CustomizeRedissonException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {
@@ -226,25 +229,26 @@ public class LockUtils {
      * 无论获取锁成功与否均带有自定义类型返回值，自动释放型，自定义等待分布式锁
      *
      * @param key       锁键值
-     * @param waitTime  最大等待时间/ms
-     * @param leaseTime 自动释放时间/ms
+     * @param waitTime  最大等待时间
+     * @param leaseTime 自动释放时间
+     * @param timeUnit  时间单位
      * @param getLock   获取锁成功的操作
      * @param getNone   获取锁失败的操作
      * @param <T>       返回的类型泛型
      * @return 返回结果
      */
-    public static <T> T lockEvent(String key, long waitTime, long leaseTime, Supplier<T> getLock, Supplier<T> getNone) {
+    public static <T> T lockEvent(String key, long waitTime, long leaseTime, TimeUnit timeUnit, Supplier<T> getLock, Supplier<T> getNone) {
         RLock lock = REDISSON_CLIENT.getLock(KeyPrefixConstants.LOCK_PREFIX + key);
         boolean lockResult = false;
         try {
-            lockResult = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+            lockResult = lock.tryLock(waitTime, leaseTime, Objects.isNull(timeUnit) ? TimeUnit.MILLISECONDS : timeUnit);
             if (lockResult) {
                 return getLock.get();
             } else {
                 return getNone.get();
             }
         } catch (InterruptedException e) {
-            throw new CustomizeLockException(ReturnCode.LOCK_SERVICE_ERROR);
+            throw new CustomizeRedissonException(ReturnCode.LOCK_SERVICE_ERROR);
         } finally {
             if (lockResult) {
                 if (lock.isLocked()) {

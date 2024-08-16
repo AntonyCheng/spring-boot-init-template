@@ -61,14 +61,14 @@ public interface KeyPrefixConstants {
     String RATE_LIMIT_PREFIX = "RATE_LIMIT_";
 
     /**
-     * 系统限流Key前缀
+     * 工具类限流Key前缀
      */
-    String RATE_LIMIT_SYSTEM_PREFIX = RATE_LIMIT_PREFIX + "SYSTEM_";
+    String RATE_LIMIT_UTILS_PREFIX = RATE_LIMIT_PREFIX + "UTILS_";
 
     /**
-     * 自定义限流Key前缀
+     * 注解限流Key前缀
      */
-    String RATE_LIMIT_CUSTOMIZE_PREFIX = RATE_LIMIT_PREFIX + "CUSTOMIZE_";
+    String RATE_LIMIT_ANNOTATION_PREFIX = RATE_LIMIT_PREFIX + "ANNOTATION_";
 
     // todo 分布式锁相关键前缀
 

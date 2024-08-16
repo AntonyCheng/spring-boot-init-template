@@ -108,7 +108,7 @@ public class FieldUtils {
                 log.error(e.getMessage());
             }
             if (fieldValue != null) {
-                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).isEmpty()) {
                     continue;
                 }
                 if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {
@@ -155,7 +155,7 @@ public class FieldUtils {
                 log.error(e.getMessage());
             }
             if (fieldValue != null) {
-                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).length() == 0) {
+                if (fieldValue instanceof CharSequence && ((CharSequence) fieldValue).isEmpty()) {
                     continue;
                 }
                 if (fieldValue instanceof Collection && ((Collection<?>) fieldValue).isEmpty()) {

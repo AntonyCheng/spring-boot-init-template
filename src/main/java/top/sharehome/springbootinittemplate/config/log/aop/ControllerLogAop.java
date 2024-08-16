@@ -106,7 +106,7 @@ public class ControllerLogAop {
             // 设置操作类型
             log.setOperator(controllerLog.operator().getOperatorValue());
             // 设置操作结果
-            log.setResult(Objects.isNull(returnResult) || ((R) returnResult).getCode() == 200 ? 0 : 1);
+            log.setResult(Objects.isNull(returnResult) || (returnResult instanceof R<?> r && r.getCode() == R.SUCCESS) ? 0 : 1);
             // 设置响应内容
             Map resMap = JSON.parseObject(JSON.toJSONString(returnResult), Map.class);
             if (Objects.isNull(resMap)) {

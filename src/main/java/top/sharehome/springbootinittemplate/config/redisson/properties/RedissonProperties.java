@@ -27,21 +27,6 @@ public class RedissonProperties {
     private Integer nettyThreads = 8;
 
     /**
-     * 限流单位时间，单位：秒
-     */
-    private Long limitRateInterval = 1L;
-
-    /**
-     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     */
-    private Long limitRate = 2L;
-
-    /**
-     * 每个操作所要消耗的令牌数
-     */
-    private Long limitPermits = 1L;
-
-    /**
      * 单机服务配置
      */
     private SingleServerConfig singleServerConfig;

@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.config.captcha.service.impl;
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.util.ReflectUtil;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
@@ -21,7 +22,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 
-import jakarta.annotation.Resource;
+import java.time.Duration;
 import java.util.UUID;
 
 /**
@@ -61,7 +62,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             Expression exp = parser.parseExpression(StringUtils.remove(code, "="));
             code = exp.getValue(String.class);
         }
-        CacheUtils.put(codeKeyInRedis, code, captchaProperties.getExpired());
+        CacheUtils.put(codeKeyInRedis, code, Duration.ofSeconds(captchaProperties.getExpired()));
         captchaCreateResponse
                 .setUuid(uuid)
                 .setImgBase64(captcha.getImageBase64());
