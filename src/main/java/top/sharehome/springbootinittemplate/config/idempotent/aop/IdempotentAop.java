@@ -94,7 +94,7 @@ public class IdempotentAop {
         }
         // 构造唯一值
         String onlyKey = DigestUtils.md5Hex(StringUtils.trimToEmpty(request.getHeader(SaManager.getConfig().getTokenName())) + ":" + param);
-        // 唯一标识（指定key + url + 消息头）
+        // 唯一标识（指定key + url + 唯一值）
         String idempotentKey = KeyPrefixConstants.IDEMPOTENT_PREFIX + requestMethod + "_" + uri + "_" + onlyKey;
         if (CacheUtils.putIfAbsent(idempotentKey, "", Duration.ofMillis(interval))) {
             CACHE_KEY_THREAD_LOCAL.set(idempotentKey);
@@ -122,11 +122,9 @@ public class IdempotentAop {
 
     /**
      * 异常通知
-     *
-     * @param e 异常
      */
-    @AfterThrowing(pointcut = "pointCutMethod()", throwing = "e")
-    public void doAfterThrowing(Exception e) {
+    @AfterThrowing(pointcut = "pointCutMethod()")
+    public void doAfterThrowing() {
         CacheUtils.delete(CACHE_KEY_THREAD_LOCAL.get());
         CACHE_KEY_THREAD_LOCAL.remove();
     }

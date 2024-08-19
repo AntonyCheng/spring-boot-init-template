@@ -277,11 +277,11 @@ spring:
     # Ollama AI
     ollama:
       # Ollama 服务地址
-      base-url: 127.0.0.1:11434
+      base-url: http://127.0.0.1:11434
       chat:
         options:
           # 模型名称
-          model: llama3:8b-instruct-q8_0
+          model: llama3.1:8b-instruct-q8_0
           # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
           temperature: 0.9
           # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
@@ -418,7 +418,7 @@ redisson:
     idle-connection-timeout: 10000
   # Redis集群版本
   cluster-servers-config:
-    # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+    # todo 是否启动集群Redis（Redisson）缓存（预先关闭）
     enable-cluster: false
     # Redis集群节点（一定要在Redis协议下）
     node-addresses:

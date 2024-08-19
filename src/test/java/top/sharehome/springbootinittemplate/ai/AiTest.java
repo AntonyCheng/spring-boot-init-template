@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.ai;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
@@ -26,17 +27,20 @@ public class AiTest {
 
     @Test
     public void testOpenAi() {
-        System.out.printf(openAiChatModel.call("你好"));
+        System.out.println(openAiChatModel.call("你好"));
     }
 
     @Test
     public void testZhiPuAi() {
-        System.out.printf(zhiPuAiChatModel.call("你好"));
+        System.out.println(zhiPuAiChatModel.call("你好"));
     }
 
     @Test
     public void testOllamaAi() {
-        System.out.println(ollamaChatModel.call("你好"));
+//        System.out.println(ollamaChatModel.call(new UserMessage("我的名字叫AntonyCheng，你能说出我的名字么？")));
+//        System.out.println(ollamaChatModel.call(new UserMessage("你能说出我的名字么？")));
+        System.out.println(ollamaChatModel.call(new UserMessage("我的名字叫AntonyCheng，你能说出我的名字么？")));
+        System.out.println(ollamaChatModel.call(new UserMessage("我的名字叫AntonyCheng，你能说出我的名字么？"), new UserMessage("我的名字叫什么？")));
     }
 
 }

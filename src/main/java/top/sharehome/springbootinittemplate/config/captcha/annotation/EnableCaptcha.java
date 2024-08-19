@@ -7,6 +7,7 @@ import java.lang.annotation.*;
  *
  * @author AntonyCheng
  */
+@Inherited
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

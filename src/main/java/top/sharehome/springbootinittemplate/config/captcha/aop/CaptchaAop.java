@@ -1,17 +1,20 @@
 package top.sharehome.springbootinittemplate.config.captcha.aop;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import jakarta.annotation.Resource;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
-import jakarta.annotation.Resource;
 import java.lang.reflect.Field;
 
 /**
@@ -37,17 +40,13 @@ public class CaptchaAop {
     }
 
     /**
-     * 对于登录的环绕通知
-     *
-     * @param proceedingJoinPoint 切面连接点
-     * @return 返回结果
-     * @throws Throwable 抛出异常
+     * 前置通知
      */
-    @Around(value = "pointCutMethod()")
-    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    @Before("pointCutMethod()")
+    public void doBefore(JoinPoint joinPoint) {
         String uuid = "";
         String code = "";
-        Object[] args = proceedingJoinPoint.getArgs();
+        Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             Class<?> argClass = arg.getClass();
             try {
@@ -56,11 +55,11 @@ public class CaptchaAop {
                 Captcha captcha = (Captcha) captchaField.get(arg);
                 uuid = captcha.getUuid();
                 code = captcha.getCode();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH,"缺少验证码");
             }
         }
         captchaService.checkCaptcha(code, uuid);
-        return proceedingJoinPoint.proceed();
     }
 
 }

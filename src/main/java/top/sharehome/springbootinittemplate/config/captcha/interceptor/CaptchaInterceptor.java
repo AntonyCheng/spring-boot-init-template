@@ -27,6 +27,7 @@ public class CaptchaInterceptor implements HandlerInterceptor {
         String sessionId = request.getSession().getId();
         // 拼接形成限流的唯一ID
         String rateLimitKey = ipAddress + sessionId;
+        // 限流，只允许单个会话一秒内获取两次验证码
         RateLimitUtils.doRateLimitAndExpire(rateLimitKey, new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L, new TimeModel(1L, TimeUnit.SECONDS));
         return true;
     }

@@ -1,10 +1,12 @@
 package top.sharehome.springbootinittemplate.config.idempotent.annotation;
 
+import top.sharehome.springbootinittemplate.config.idempotent.enums.ScopeType;
+
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 需要请求幂等的方法注解
+ * 需要限流的方法注解
  *
  * @author AntonyCheng
  */
@@ -12,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Idempotent {
+public @interface RateLimit {
 
     /**
-     * 接口幂等请求时间（默认1000毫秒）
+     * 接口限流单位时间（默认1000毫秒）
      */
     int time() default 1000;
 
@@ -23,6 +25,11 @@ public @interface Idempotent {
      * 时间单位（默认毫秒）
      */
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+
+    /**
+     * 作用范围
+     */
+    ScopeType scopeType() default ScopeType.PERSONAL;
 
     /**
      * 响应消息

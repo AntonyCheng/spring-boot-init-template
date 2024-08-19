@@ -8,9 +8,6 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.config.captcha.model.CaptchaCreate;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
-import top.sharehome.springbootinittemplate.config.idempotent.annotation.Idempotent;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码控制器
@@ -30,7 +27,6 @@ public class CaptchaController {
      * @return 返回注册结果
      */
     @PostMapping("/captcha")
-    @Idempotent(time = 1, timeUnit = TimeUnit.DAYS)
     public R<CaptchaCreate> captcha() {
         return R.ok(captchaService.createCaptcha());
     }
