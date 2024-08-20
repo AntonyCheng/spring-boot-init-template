@@ -40,7 +40,7 @@ public class RedissonTest {
 
         // 测试数字
         CacheUtils.putNumber("test", 9999999999L);
-        System.out.println(CacheUtils.getNumberDoubleValue("test"));
+        System.out.println(CacheUtils.getNumberDouble("test"));
         System.out.println(CacheUtils.existsNumber("test"));
         CacheUtils.deleteNumber("test");
 

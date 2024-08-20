@@ -67,9 +67,12 @@ public class RateLimitUtils {
      * @param key          区分不同的限流器，比如不同的用户 id 应该分别统计
      * @param rateInterval 限流单位时间
      * @param rate         限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     * @param permit       每个操作所要消耗的令牌数
+     * @param permit       每个操作所要消耗的令牌数，该参数值不能大于rate参数值
      */
     public static void doRateLimit(String key, TimeModel rateInterval, Long rate, Long permit) {
+        if (rate < permit) {
+            throw new CustomizeRedissonException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "令牌数不足");
+        }
         RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_UTILS_PREFIX + key);
         rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval.toMillis(), RateIntervalUnit.MILLISECONDS);
         boolean canOp = rateLimiter.tryAcquire(permit);
@@ -84,7 +87,7 @@ public class RateLimitUtils {
      * @param key          区分不同的限流器，比如不同的用户 id 应该分别统计
      * @param rateInterval 限流单位时间
      * @param rate         限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     * @param permit       每个操作所要消耗的令牌数
+     * @param permit       每个操作所要消耗的令牌数，该参数值不能大于rate参数值
      * @param expire       限流器键值过期时间，过期时间不能小于限流单位时间，否则默认使用限流单位时间作为过期时间
      */
     public static void doRateLimitAndExpire(String key, TimeModel rateInterval, Long rate, Long permit, TimeModel expire) {

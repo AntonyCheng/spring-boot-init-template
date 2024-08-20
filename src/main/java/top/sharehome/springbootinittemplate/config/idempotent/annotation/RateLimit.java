@@ -27,9 +27,19 @@ public @interface RateLimit {
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
 
     /**
+     * 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
+     */
+    long rate() default 2;
+
+    /**
+     * 每个操作所要消耗的令牌数，该参数值不能大于rate参数值
+     */
+    long permit() default 1;
+
+    /**
      * 作用范围
      */
-    ScopeType scopeType() default ScopeType.PERSONAL;
+    ScopeType scopeType() default ScopeType.ALL;
 
     /**
      * 响应消息
