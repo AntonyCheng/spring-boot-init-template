@@ -62,7 +62,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             Expression exp = parser.parseExpression(StringUtils.remove(code, "="));
             code = exp.getValue(String.class);
         }
-        CacheUtils.put(codeKeyInRedis, code, Duration.ofSeconds(captchaProperties.getExpired()));
+        CacheUtils.putNoPrefix(codeKeyInRedis, code, Duration.ofSeconds(captchaProperties.getExpired()));
         captchaCreateResponse
                 .setUuid(uuid)
                 .setImgBase64(captcha.getImageBase64());
@@ -78,11 +78,11 @@ public class CaptchaServiceImpl implements CaptchaService {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INVALID);
         }
         String codeKeyInRedis = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
-        String codeValue = CacheUtils.get(codeKeyInRedis);
+        String codeValue = CacheUtils.getNoPrefix(codeKeyInRedis, String.class);
         if (StringUtils.isBlank(codeValue)) {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_HAS_EXPIRED);
         }
-        CacheUtils.delete(codeKeyInRedis);
+        CacheUtils.deleteNoPrefix(codeKeyInRedis);
         if (!StringUtils.equals(code, codeValue)) {
             throw new CustomizeReturnException(ReturnCode.CAPTCHA_IS_INCORRECT);
         }

@@ -35,9 +35,7 @@ public class CacheUtils {
      * @param <T>   泛型T
      */
     public static <T> void put(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.set(value);
+        put0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -48,9 +46,8 @@ public class CacheUtils {
      * @param <T>   泛型T
      */
     public static <T> void putNoPrefix(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        bucket.set(value);
+        put0(key, Boolean.FALSE, value, null);
+
     }
 
     /**
@@ -62,23 +59,38 @@ public class CacheUtils {
      * @param <T>     泛型T
      */
     public static <T> void put(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.set(value, expired);
+        put0(key, Boolean.TRUE, value, expired);
     }
 
     /**
      * 不需要默认前缀，设置缓存，同时设置过期时间
      *
-     * @param key     缓存键
-     * @param value   缓存值
-     * @param expired 过期时间
-     * @param <T>     泛型T
+     * @param key       缓存键
+     * @param value     缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
      */
     public static <T> void putNoPrefix(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        bucket.set(value, expired);
+        put0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * put基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> void put0(String key, Boolean hasPrefix, T value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            bucket.set(value, expired);
+        } else {
+            bucket.set(value);
+        }
     }
 
     /**
@@ -88,9 +100,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static <T> Boolean putIfExists(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return bucket.setIfExists(value);
+        return putIfExists0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -100,9 +110,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static <T> Boolean putNoPrefixIfExists(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfExists(value);
+        return putIfExists0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -113,9 +121,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static <T> Boolean putIfExists(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return bucket.setIfExists(value, expired);
+        return putIfExists0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -126,9 +132,26 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static <T> Boolean putNoPrefixIfExists(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfExists(value, expired);
+        return putIfExists0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putIfExists0(String key, Boolean hasPrefix, T value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            return bucket.setIfExists(value, expired);
+        } else {
+            return bucket.setIfExists(value);
+        }
     }
 
     /**
@@ -138,9 +161,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static <T> Boolean putIfAbsent(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return bucket.setIfAbsent(value);
+        return putIfAbsent0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -150,9 +171,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static <T> Boolean putNoPrefixIfAbsent(String key, T value) {
-        verifyParameters(key, value);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfAbsent(value);
+        return putIfAbsent0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -163,9 +182,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static <T> Boolean putIfAbsent(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return bucket.setIfAbsent(value, expired);
+        return putIfAbsent0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -176,33 +193,44 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static <T> Boolean putNoPrefixIfAbsent(String key, T value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfAbsent(value, expired);
+        return putIfAbsent0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putIfAbsent0(String key, Boolean hasPrefix, T value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            return bucket.setIfAbsent(value, expired);
+        } else {
+            return bucket.setIfAbsent(value);
+        }
     }
 
     /**
      * 获取缓存
      *
      * @param key 缓存键
-     * @param <T> 泛型T
      */
-    public static <T> T get(String key) {
-        verifyParameters(key);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return bucket.get();
+    public static Object get(String key) {
+        return get0(key, Boolean.TRUE, null);
     }
 
     /**
      * 不需要默认前缀，获取缓存
      *
      * @param key 缓存键
-     * @param <T> 泛型T
      */
-    public static <T> T getNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get();
+    public static Object getNoPrefix(String key) {
+        return get0(key, Boolean.FALSE, null);
     }
 
     /**
@@ -211,13 +239,9 @@ public class CacheUtils {
      * @param key  缓存键
      * @param type 返回类型
      * @param <T>  泛型T
-     * @param <R>  泛型R
      */
-    @SuppressWarnings("unchecked")
-    public static <T, R> R get(String key, Class<R> type) {
-        verifyParameters(key, type);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        return (R) bucket.get();
+    public static <T> T get(String key, Class<T> type) {
+        return get0(key, Boolean.TRUE, type);
     }
 
     /**
@@ -226,13 +250,28 @@ public class CacheUtils {
      * @param key  缓存键
      * @param type 返回类型
      * @param <T>  泛型T
-     * @param <R>  泛型R
      */
-    @SuppressWarnings("unchecked")
-    public static <T, R> R getNoPrefix(String key, Class<R> type) {
-        verifyParameters(key, type);
-        RBucket<T> bucket = REDISSON_CLIENT.getBucket(key);
-        return (R) bucket.get();
+    public static <T> T getNoPrefix(String key, Class<T> type) {
+        return get0(key, Boolean.FALSE, type);
+    }
+
+    /**
+     * get基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param type      返回类型
+     * @param <T>       泛型T
+     */
+    private static <T> T get0(String key, Boolean hasPrefix, Class<T> type) {
+        verifyParameters(key);
+        RBucket<T> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key);
+        T t = bucket.get();
+        if (Objects.isNull(type) || type.isInstance(t)) {
+            return t;
+        } else {
+            throw new CustomizeRedissonException(ReturnCode.FAIL, "数据类型不一致");
+        }
     }
 
     /**
@@ -243,15 +282,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_PREFIX, ""));
-        });
-        return res;
+        return getKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -262,12 +293,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getKeysNoPrefixByPattern(String keyPattern) {
+        return getKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -278,15 +319,8 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static <T> Map<String, T> getKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", get(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (T) map.get("value")));
+        return getKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -296,13 +330,23 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static <T> Map<String, T> getKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, T> getKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getNoPrefix(c));
+            hashMap.put("value", get0(c, hasPrefix, null));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (T) map.get("value")));
     }
@@ -313,12 +357,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -327,8 +366,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getExpiredNoPrefix(String key) {
+        return getExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -340,9 +389,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean exists(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key).isExists();
+    public static Boolean exists(String key) {
+        return exists0(key, Boolean.TRUE);
     }
 
     /**
@@ -350,9 +398,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsNoPrefix(String key) {
+    public static Boolean existsNoPrefix(String key) {
+        return exists0(key, Boolean.FALSE);
+    }
+
+    /**
+     * exists基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean exists0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(key).isExists();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key).isExists();
     }
 
     /**
@@ -360,9 +418,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void delete(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key).delete();
+    public static Boolean delete(String key) {
+        return delete0(key, Boolean.TRUE);
     }
 
     /**
@@ -370,9 +427,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteNoPrefix(String key) {
+    public static Boolean deleteNoPrefix(String key) {
+        return delete0(key, Boolean.FALSE);
+    }
+
+    /**
+     * delete基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean delete0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getBucket(key).delete();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key).delete();
     }
 
     /**
@@ -383,8 +450,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_PREFIX + keyPattern);
+        deleteByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -395,8 +461,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteNoPrefixByPattern(String keyPattern) {
+        deleteByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + keyPattern : keyPattern);
     }
 
     /**
@@ -406,9 +482,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putString(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.set(value);
+        putString0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -418,9 +492,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putStringNoPrefix(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        bucket.set(value);
+        putString0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -431,9 +503,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static void putString(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        bucket.set(value, expired);
+        putString0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -444,9 +514,25 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static void putStringNoPrefix(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        bucket.set(value, expired);
+        putString0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putString基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static void putString0(String key, Boolean hasPrefix, CharSequence value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE);
+        if (Objects.nonNull(expired)) {
+            bucket.set(value, expired);
+        } else {
+            bucket.set(value);
+        }
     }
 
     /**
@@ -456,9 +542,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static Boolean putStringIfExists(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        return bucket.setIfExists(value);
+        return putStringIfExists0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -468,9 +552,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static Boolean putStringNoPrefixIfExists(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        return bucket.setIfExists(value);
+        return putStringIfExists0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -481,9 +563,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static Boolean putStringIfExists(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        return bucket.setIfExists(value, expired);
+        return putStringIfExists0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -494,9 +574,25 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static Boolean putStringNoPrefixIfExists(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        return bucket.setIfExists(value, expired);
+        return putStringIfExists0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putStringIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static Boolean putStringIfExists0(String key, Boolean hasPrefix, CharSequence value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE);
+        if (Objects.nonNull(expired)) {
+            return bucket.setIfExists(value, expired);
+        } else {
+            return bucket.setIfExists(value);
+        }
     }
 
     /**
@@ -506,9 +602,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static Boolean putStringIfAbsent(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        return bucket.setIfAbsent(value);
+        return putStringIfAbsent0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -518,9 +612,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static Boolean putStringNoPrefixIfAbsent(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        return bucket.setIfAbsent(value);
+        return putStringIfAbsent0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -531,9 +623,7 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static Boolean putStringIfAbsent(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        return bucket.setIfAbsent(value, expired);
+        return putStringIfAbsent0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -544,9 +634,25 @@ public class CacheUtils {
      * @param expired 过期时间
      */
     public static Boolean putStringNoPrefixIfAbsent(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key, StringCodec.INSTANCE);
-        return bucket.setIfAbsent(value, expired);
+        return putStringIfAbsent0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putStringIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static Boolean putStringIfAbsent0(String key, Boolean hasPrefix, CharSequence value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE);
+        if (Objects.isNull(expired)) {
+            return bucket.setIfAbsent(value);
+        } else {
+            return bucket.setIfAbsent(value, expired);
+        }
     }
 
     /**
@@ -555,9 +661,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static String getString(String key) {
-        verifyParameters(key);
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key, StringCodec.INSTANCE);
-        return bucket.get();
+        return getString0(key, Boolean.TRUE);
     }
 
     /**
@@ -566,8 +670,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static String getStringNoPrefix(String key) {
+        return getString0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getString基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     */
+    private static String getString0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        RBucket<String> bucket = REDISSON_CLIENT.getBucket(key);
+        RBucket<String> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE);
         return bucket.get();
     }
 
@@ -579,15 +693,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getStringKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_STRING_PREFIX, ""));
-        });
-        return res;
+        return getStringKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -598,12 +704,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getStringKeysNoPrefixByPattern(String keyPattern) {
+        return getStringKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getStringKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getStringKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_STRING_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -615,13 +731,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, String> getStringKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getStringKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", getString(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (String) map.get("value")));
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -632,11 +742,21 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, String> getStringKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getStringKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Map<String, String> getStringKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getStringKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getStringKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getStringNoPrefix(c));
+            hashMap.put("value", getString0(c, hasPrefix));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (String) map.get("value")));
     }
@@ -647,12 +767,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getStringExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getStringExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -661,8 +776,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getStringExpiredNoPrefix(String key) {
+        return getStringExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getStringExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getStringExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -674,9 +799,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsString(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key).isExists();
+    public static Boolean existsString(String key) {
+        return existsString0(key, Boolean.TRUE);
     }
 
     /**
@@ -684,9 +808,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsStringNoPrefix(String key) {
+    public static Boolean existsStringNoPrefix(String key) {
+        return existsString0(key, Boolean.FALSE);
+    }
+
+    /**
+     * existsString基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean existsString0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(key).isExists();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE).isExists();
     }
 
     /**
@@ -694,9 +828,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteString(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_STRING_PREFIX + key).delete();
+    public static Boolean deleteString(String key) {
+        return deleteString0(key, Boolean.TRUE);
     }
 
     /**
@@ -704,9 +837,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteStringNoPrefix(String key) {
+    public static Boolean deleteStringNoPrefix(String key) {
+        return deleteString0(key, Boolean.FALSE);
+    }
+
+    /**
+     * deleteString基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean deleteString0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getBucket(key).delete();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + key : key, StringCodec.INSTANCE).delete();
     }
 
     /**
@@ -717,8 +860,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteStringByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern);
+        deleteStringByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -729,8 +871,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteStringNoPrefixByPattern(String keyPattern) {
+        deleteStringByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteStringByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteStringByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern : keyPattern);
     }
 
     /**
@@ -740,9 +892,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putNumber(String key, Number value) {
-        verifyParameters(key, value);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.set(value);
+        putNumber0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -752,9 +902,7 @@ public class CacheUtils {
      * @param value 缓存值
      */
     public static void putNumberNoPrefix(String key, Number value) {
-        verifyParameters(key, value);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        bucket.set(value);
+        putNumber0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -764,10 +912,8 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putNumber(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        bucket.set(value, expired);
+    public static void putNumber(String key, Number value, Duration expired) {
+        putNumber0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -777,10 +923,26 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static void putNumberNoPrefix(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
-        bucket.set(value, expired);
+    public static void putNumberNoPrefix(String key, Number value, Duration expired) {
+        putNumber0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putNumber基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static void putNumber0(String key, Boolean hasPrefix, Number value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            bucket.set(value, expired);
+        } else {
+            bucket.set(value);
+        }
     }
 
     /**
@@ -789,10 +951,8 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static Boolean putNumberIfExists(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.setIfExists(value);
+    public static Boolean putNumberIfExists(String key, Number value) {
+        return putNumberIfExists0(key, Boolean.TRUE, value, null);
     }
 
     /**
@@ -801,10 +961,8 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static Boolean putNumberNoPrefixIfExists(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfExists(value);
+    public static Boolean putNumberNoPrefixIfExists(String key, Number value) {
+        return putNumberIfExists0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -814,10 +972,8 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static Boolean putNumberIfExists(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.setIfExists(value, expired);
+    public static Boolean putNumberIfExists(String key, Number value, Duration expired) {
+        return putNumberIfExists0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -827,10 +983,26 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static Boolean putNumberNoPrefixIfExists(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfExists(value, expired);
+    public static Boolean putNumberNoPrefixIfExists(String key, Number value, Duration expired) {
+        return putNumberIfExists0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putNumberIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static Boolean putNumberIfExists0(String key, Boolean hasPrefix, Number value, Duration expired) {
+        verifyParameters(key, value);
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            return bucket.setIfExists(value, expired);
+        } else {
+            return bucket.setIfExists(value);
+        }
     }
 
     /**
@@ -839,10 +1011,9 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static Boolean putNumberIfAbsent(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.setIfAbsent(value);
+    public static Boolean putNumberIfAbsent(String key, Number value) {
+        return putNumberIfAbsent0(key, Boolean.TRUE, value, null);
+
     }
 
     /**
@@ -851,10 +1022,8 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static Boolean putNumberNoPrefixIfAbsent(String key, CharSequence value) {
-        verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfAbsent(value);
+    public static Boolean putNumberNoPrefixIfAbsent(String key, Number value) {
+        return putNumberIfAbsent0(key, Boolean.FALSE, value, null);
     }
 
     /**
@@ -864,10 +1033,8 @@ public class CacheUtils {
      * @param value   缓存值
      * @param expired 过期时间
      */
-    public static Boolean putNumberIfAbsent(String key, CharSequence value, Duration expired) {
-        verifyParameters(key, value, expired);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.setIfAbsent(value, expired);
+    public static Boolean putNumberIfAbsent(String key, Number value, Duration expired) {
+        return putNumberIfAbsent0(key, Boolean.TRUE, value, expired);
     }
 
     /**
@@ -876,10 +1043,26 @@ public class CacheUtils {
      * @param key   缓存键
      * @param value 缓存值
      */
-    public static Boolean putNumberNoPrefixIfAbsent(String key, CharSequence value, Duration expired) {
+    public static Boolean putNumberNoPrefixIfAbsent(String key, Number value, Duration expired) {
+        return putNumberIfAbsent0(key, Boolean.FALSE, value, expired);
+    }
+
+    /**
+     * putNumberIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param value     缓存值
+     * @param expired   过期时间
+     */
+    private static Boolean putNumberIfAbsent0(String key, Boolean hasPrefix, Number value, Duration expired) {
         verifyParameters(key, value);
-        RBucket<CharSequence> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.setIfAbsent(value, expired);
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key);
+        if (Objects.nonNull(expired)) {
+            return bucket.setIfAbsent(value, expired);
+        } else {
+            return bucket.setIfAbsent(value);
+        }
     }
 
     /**
@@ -888,9 +1071,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Number getNumber(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get();
+        return getNumber0(key, Boolean.TRUE);
     }
 
     /**
@@ -899,9 +1080,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Number getNumberNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get();
+        return getNumber0(key, Boolean.FALSE);
     }
 
     /**
@@ -909,10 +1088,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static byte getNumberByte(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().byteValue();
+    public static Byte getNumberByte(String key) {
+        return getNumber0(key, Boolean.TRUE).byteValue();
     }
 
     /**
@@ -920,10 +1097,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static byte getNumberByteNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().byteValue();
+    public static Byte getNumberByteNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).byteValue();
     }
 
     /**
@@ -931,10 +1106,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static int getNumberInt(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().intValue();
+    public static Integer getNumberInt(String key) {
+        return getNumber0(key, Boolean.TRUE).intValue();
     }
 
     /**
@@ -942,10 +1115,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static int getNumberIntNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().intValue();
+    public static Integer getNumberIntNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).intValue();
     }
 
     /**
@@ -953,10 +1124,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static short getNumberShort(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().shortValue();
+    public static Short getNumberShort(String key) {
+        return getNumber0(key, Boolean.TRUE).shortValue();
     }
 
     /**
@@ -964,10 +1133,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static short getNumberShortNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().shortValue();
+    public static Short getNumberShortNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).shortValue();
     }
 
     /**
@@ -975,10 +1142,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static long getNumberLong(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().longValue();
+    public static Long getNumberLong(String key) {
+        return getNumber0(key, Boolean.TRUE).longValue();
     }
 
     /**
@@ -986,10 +1151,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static long getNumberLongNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().longValue();
+    public static Long getNumberLongNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).longValue();
     }
 
     /**
@@ -997,10 +1160,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static float getNumberFloat(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().floatValue();
+    public static Float getNumberFloat(String key) {
+        return getNumber0(key, Boolean.TRUE).floatValue();
     }
 
     /**
@@ -1008,10 +1169,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static float getNumberFloatNoPrefix(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().floatValue();
+    public static Float getNumberFloatNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).floatValue();
     }
 
     /**
@@ -1019,10 +1178,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static double getNumberDouble(String key) {
-        verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key);
-        return bucket.get().doubleValue();
+    public static Double getNumberDouble(String key) {
+        return getNumber0(key, Boolean.TRUE).doubleValue();
     }
 
     /**
@@ -1030,10 +1187,20 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static double getNumberDoubleNoPrefix(String key) {
+    public static Double getNumberDoubleNoPrefix(String key) {
+        return getNumber0(key, Boolean.FALSE).doubleValue();
+    }
+
+    /**
+     * getNumber基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     */
+    private static Number getNumber0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(key);
-        return bucket.get().doubleValue();
+        RBucket<Number> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key);
+        return bucket.get();
     }
 
     /**
@@ -1044,15 +1211,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getNumberKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_NUMBER_PREFIX, ""));
-        });
-        return res;
+        return getNumberKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1063,12 +1222,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getNumberKeysNoPrefixByPattern(String keyPattern) {
+        return getNumberKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getNumberKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getNumberKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_NUMBER_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -1080,13 +1249,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Number> getNumberKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getNumberKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", getNumber(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Number) map.get("value")));
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1097,11 +1260,21 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Number> getNumberKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getNumberKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Map<String, Number> getNumberKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getNumberKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getNumberKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getNumberNoPrefix(c));
+            hashMap.put("value", getNumber0(c, hasPrefix));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Number) map.get("value")));
     }
@@ -1112,12 +1285,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getNumberExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getNumberExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -1126,8 +1294,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getNumberExpiredNoPrefix(String key) {
+        return getNumberExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getNumberExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getNumberExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getBucket(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -1139,9 +1317,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsNumber(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key).isExists();
+    public static Boolean existsNumber(String key) {
+        return existsNumber0(key, Boolean.TRUE);
     }
 
     /**
@@ -1149,9 +1326,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsNumberNoPrefix(String key) {
+    public static Boolean existsNumberNoPrefix(String key) {
+        return existsNumber0(key, Boolean.FALSE);
+    }
+
+    /**
+     * existsNumber基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean existsNumber0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getBucket(key).isExists();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key).isExists();
     }
 
     /**
@@ -1159,9 +1346,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteNumber(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_NUMBER_PREFIX + key).delete();
+    public static Boolean deleteNumber(String key) {
+        return deleteNumber0(key, Boolean.TRUE);
     }
 
     /**
@@ -1169,9 +1355,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteNumberNoPrefix(String key) {
+    public static Boolean deleteNumberNoPrefix(String key) {
+        return deleteNumber0(key, Boolean.FALSE);
+    }
+
+    /**
+     * deleteNumber基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean deleteNumber0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getBucket(key).delete();
+        return REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + key : key).delete();
     }
 
     /**
@@ -1182,8 +1378,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteNumberByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern);
+        deleteNumberByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1194,8 +1389,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteNumberNoPrefixByPattern(String keyPattern) {
+        deleteNumberByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteNumberByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteNumberByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern : keyPattern);
     }
 
     /**
@@ -1206,9 +1411,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putList(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-        list.addAll(valueList);
+        putList0(key, Boolean.TRUE, valueList, null);
     }
 
     /**
@@ -1219,9 +1422,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putListNoPrefix(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        RList<T> list = REDISSON_CLIENT.getList(key);
-        list.addAll(valueList);
+        putList0(key, Boolean.FALSE, valueList, null);
     }
 
     /**
@@ -1232,10 +1433,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putList(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-        list.addAll(valueList);
-        list.expire(expired);
+        putList0(key, Boolean.TRUE, valueList, expired);
     }
 
     /**
@@ -1246,10 +1444,25 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> void putListNoPrefix(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        RList<T> list = REDISSON_CLIENT.getList(key);
+        putList0(key, Boolean.FALSE, valueList, expired);
+    }
+
+    /**
+     * putList基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueList 缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> void putList0(String key, Boolean hasPrefix, List<T> valueList, Duration expired) {
+        verifyParameters(key, valueList);
+        RList<T> list = REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key);
         list.addAll(valueList);
-        list.expire(expired);
+        if (Objects.nonNull(expired)) {
+            list.expire(expired);
+        }
     }
 
     /**
@@ -1260,13 +1473,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListIfExists(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        if (existsList(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            return list.addAll(valueList);
-        } else {
-            return false;
-        }
+        return putListIfExists0(key, Boolean.TRUE, valueList, null);
     }
 
     /**
@@ -1277,13 +1484,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListNoPrefixIfExists(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        if (existsListNoPrefix(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(key);
-            return list.addAll(valueList);
-        } else {
-            return false;
-        }
+        return putListIfExists0(key, Boolean.FALSE, valueList, null);
     }
 
     /**
@@ -1295,13 +1496,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListIfExists(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        if (existsList(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            return list.addAll(valueList) && list.expire(expired);
-        } else {
-            return false;
-        }
+        return putListIfExists0(key, Boolean.TRUE, valueList, expired);
     }
 
     /**
@@ -1313,10 +1508,23 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListNoPrefixIfExists(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        if (existsListNoPrefix(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(key);
-            return list.addAll(valueList) && list.expire(expired);
+        return putListIfExists0(key, Boolean.FALSE, valueList, expired);
+    }
+
+    /**
+     * putListIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueList 缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putListIfExists0(String key, Boolean hasPrefix, List<T> valueList, Duration expired) {
+        verifyParameters(key, valueList);
+        if (existsList0(key, hasPrefix)) {
+            RList<T> list = REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key);
+            return Objects.nonNull(expired) ? list.addAll(valueList) && list.expire(expired) : list.addAll(valueList);
         } else {
             return false;
         }
@@ -1330,13 +1538,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListIfAbsent(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        if (!existsList(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            return list.addAll(valueList);
-        } else {
-            return false;
-        }
+        return putListIfAbsent0(key, Boolean.TRUE, valueList, null);
     }
 
     /**
@@ -1347,13 +1549,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListNoPrefixIfAbsent(String key, List<T> valueList) {
-        verifyParameters(key, valueList);
-        if (!existsListNoPrefix(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(key);
-            return list.addAll(valueList);
-        } else {
-            return false;
-        }
+        return putListIfAbsent0(key, Boolean.FALSE, valueList, null);
     }
 
     /**
@@ -1365,13 +1561,7 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListIfAbsent(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        if (!existsList(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
-            return list.addAll(valueList) && list.expire(expired);
-        } else {
-            return false;
-        }
+        return putListIfAbsent0(key, Boolean.TRUE, valueList, expired);
     }
 
     /**
@@ -1383,10 +1573,23 @@ public class CacheUtils {
      * @param <T>       泛型T
      */
     public static <T> Boolean putListNoPrefixIfAbsent(String key, List<T> valueList, Duration expired) {
-        verifyParameters(key, valueList, expired);
-        if (!existsListNoPrefix(key)) {
-            RList<T> list = REDISSON_CLIENT.getList(key);
-            return list.addAll(valueList) && list.expire(expired);
+        return putListIfAbsent0(key, Boolean.FALSE, valueList, expired);
+    }
+
+    /**
+     * putListIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueList 缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putListIfAbsent0(String key, Boolean hasPrefix, List<T> valueList, Duration expired) {
+        verifyParameters(key, valueList);
+        if (!existsList0(key, hasPrefix)) {
+            RList<T> list = REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key);
+            return Objects.nonNull(expired) ? list.addAll(valueList) && list.expire(expired) : list.addAll(valueList);
         } else {
             return false;
         }
@@ -1399,8 +1602,7 @@ public class CacheUtils {
      * @param <T> 泛型T
      */
     public static <T> List<T> getList(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key);
+        return getList0(key, Boolean.TRUE);
     }
 
     /**
@@ -1410,8 +1612,19 @@ public class CacheUtils {
      * @param <T> 泛型T
      */
     public static <T> List<T> getListNoPrefix(String key) {
+        return getList0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getList基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param <T>       泛型T
+     */
+    private static <T> List<T> getList0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getList(key);
+        return REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key);
     }
 
     /**
@@ -1422,15 +1635,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getListKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_LIST_PREFIX, ""));
-        });
-        return res;
+        return getListKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1441,12 +1646,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getListKeysNoPrefixByPattern(String keyPattern) {
+        return getListKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getListKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getListKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_LIST_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -1457,15 +1672,8 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, List<Object>> getListKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getListKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", getList(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (List<Object>) map.get("value")));
+        return getListKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1475,13 +1683,23 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, List<Object>> getListKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getListKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getListKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<Object>> getListKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getListKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getListKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getListNoPrefix(c));
+            hashMap.put("value", getList0(c, hasPrefix));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (List<Object>) map.get("value")));
     }
@@ -1492,12 +1710,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getListExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getListExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -1506,8 +1719,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getListExpiredNoPrefix(String key) {
+        return getListExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getListExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getListExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getList(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -1519,9 +1742,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsList(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key).isExists();
+    public static Boolean existsList(String key) {
+        return existsList0(key, Boolean.TRUE);
     }
 
     /**
@@ -1529,9 +1751,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsListNoPrefix(String key) {
+    public static Boolean existsListNoPrefix(String key) {
+        return existsList0(key, Boolean.FALSE);
+    }
+
+    /**
+     * existsList基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix 是否默认前缀
+     */
+    private static Boolean existsList0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getList(key).isExists();
+        return REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key).isExists();
     }
 
     /**
@@ -1539,9 +1771,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteList(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getList(KeyPrefixConstants.CACHE_LIST_PREFIX + key).delete();
+    public static Boolean deleteList(String key) {
+        return deleteList0(key, Boolean.TRUE);
     }
 
     /**
@@ -1549,9 +1780,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteListNoPrefix(String key) {
+    public static Boolean deleteListNoPrefix(String key) {
+        return deleteList0(key, Boolean.FALSE);
+    }
+
+    /**
+     * deleteList基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean deleteList0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getList(key).delete();
+        return REDISSON_CLIENT.getList(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + key : key).delete();
     }
 
     /**
@@ -1562,8 +1803,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteListByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern);
+        deleteListByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1574,8 +1814,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteListNoPrefixByPattern(String keyPattern) {
+        deleteListByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteListByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteListByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern : keyPattern);
     }
 
     /**
@@ -1586,9 +1836,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSet(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-        set.addAll(valueSet);
+        putSet0(key, Boolean.TRUE, valueSet, null);
     }
 
     /**
@@ -1599,9 +1847,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSetNoPrefix(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        RSet<T> set = REDISSON_CLIENT.getSet(key);
-        set.addAll(valueSet);
+        putSet0(key, Boolean.FALSE, valueSet, null);
     }
 
     /**
@@ -1612,10 +1858,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSet(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-        set.addAll(valueSet);
-        set.expire(expired);
+        putSet0(key, Boolean.TRUE, valueSet, expired);
     }
 
     /**
@@ -1626,10 +1869,25 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> void putSetNoPrefix(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        RSet<T> set = REDISSON_CLIENT.getSet(key);
+        putSet0(key, Boolean.FALSE, valueSet, expired);
+    }
+
+    /**
+     * putSet基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueSet  缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> void putSet0(String key, Boolean hasPrefix, Set<T> valueSet, Duration expired) {
+        verifyParameters(key, valueSet);
+        RSet<T> set = REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key);
         set.addAll(valueSet);
-        set.expire(expired);
+        if (Objects.nonNull(expired)) {
+            set.expire(expired);
+        }
     }
 
     /**
@@ -1640,13 +1898,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetIfExists(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        if (existsSet(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            return set.addAll(valueSet);
-        } else {
-            return false;
-        }
+        return putSetIfExists0(key, Boolean.TRUE, valueSet, null);
     }
 
     /**
@@ -1657,13 +1909,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetNoPrefixIfExists(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        if (existsSetNoPrefix(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(key);
-            return set.addAll(valueSet);
-        } else {
-            return false;
-        }
+        return putSetIfExists0(key, Boolean.FALSE, valueSet, null);
     }
 
     /**
@@ -1675,13 +1921,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetIfExists(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        if (existsSet(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            return set.addAll(valueSet) && set.expire(expired);
-        } else {
-            return false;
-        }
+        return putSetIfExists0(key, Boolean.TRUE, valueSet, expired);
     }
 
     /**
@@ -1693,10 +1933,23 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetNoPrefixIfExists(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        if (existsSetNoPrefix(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(key);
-            return set.addAll(valueSet) && set.expire(expired);
+        return putSetIfExists0(key, Boolean.FALSE, valueSet, expired);
+    }
+
+    /**
+     * putSetIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueSet  缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putSetIfExists0(String key, Boolean hasPrefix, Set<T> valueSet, Duration expired) {
+        verifyParameters(key, valueSet);
+        if (existsSet0(key, hasPrefix)) {
+            RSet<T> set = REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key);
+            return Objects.nonNull(expired) ? set.addAll(valueSet) && set.expire(expired) : set.addAll(valueSet);
         } else {
             return false;
         }
@@ -1710,13 +1963,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetIfAbsent(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        if (!existsSet(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            return set.addAll(valueSet);
-        } else {
-            return false;
-        }
+        return putSetIfAbsent0(key, Boolean.TRUE, valueSet, null);
     }
 
     /**
@@ -1727,13 +1974,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetNoPrefixIfAbsent(String key, Set<T> valueSet) {
-        verifyParameters(key, valueSet);
-        if (!existsSetNoPrefix(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(key);
-            return set.addAll(valueSet);
-        } else {
-            return false;
-        }
+        return putSetIfAbsent0(key, Boolean.FALSE, valueSet, null);
     }
 
     /**
@@ -1745,13 +1986,7 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetIfAbsent(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        if (!existsSet(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
-            return set.addAll(valueSet) && set.expire(expired);
-        } else {
-            return false;
-        }
+        return putSetIfAbsent0(key, Boolean.TRUE, valueSet, expired);
     }
 
     /**
@@ -1763,10 +1998,23 @@ public class CacheUtils {
      * @param <T>      泛型T
      */
     public static <T> Boolean putSetNoPrefixIfAbsent(String key, Set<T> valueSet, Duration expired) {
-        verifyParameters(key, valueSet, expired);
-        if (!existsSetNoPrefix(key)) {
-            RSet<T> set = REDISSON_CLIENT.getSet(key);
-            return set.addAll(valueSet) && set.expire(expired);
+        return putSetIfAbsent0(key, Boolean.FALSE, valueSet, expired);
+    }
+
+    /**
+     * putSetIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueSet  缓存值
+     * @param expired   过期时间
+     * @param <T>       泛型T
+     */
+    private static <T> Boolean putSetIfAbsent0(String key, Boolean hasPrefix, Set<T> valueSet, Duration expired) {
+        verifyParameters(key, valueSet);
+        if (!existsSet0(key, hasPrefix)) {
+            RSet<T> set = REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key);
+            return Objects.nonNull(expired) ? set.addAll(valueSet) && set.expire(expired) : set.addAll(valueSet);
         } else {
             return false;
         }
@@ -1779,8 +2027,7 @@ public class CacheUtils {
      * @param <T> 泛型T
      */
     public static <T> Set<T> getSet(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key);
+        return getSet0(key, Boolean.TRUE);
     }
 
     /**
@@ -1790,8 +2037,19 @@ public class CacheUtils {
      * @param <T> 泛型T
      */
     public static <T> Set<T> getSetNoPrefix(String key) {
+        return getSet0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getSet基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param <T>       泛型T
+     */
+    private static <T> Set<T> getSet0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getSet(key);
+        return REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key);
     }
 
     /**
@@ -1802,15 +2060,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getSetKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_SET_PREFIX, ""));
-        });
-        return res;
+        return getSetKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1821,12 +2071,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getSetKeysNoPrefixByPattern(String keyPattern) {
+        return getSetKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getSetKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getSetKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_SET_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -1837,15 +2097,8 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Set<Object>> getSetKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getSetKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", getSet(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Set<Object>) map.get("value")));
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1855,13 +2108,23 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Set<Object>> getSetKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getSetKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Set<Object>> getSetKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getSetKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getSetKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getSetNoPrefix(c));
+            hashMap.put("value", getSet0(c, hasPrefix));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Set<Object>) map.get("value")));
     }
@@ -1872,12 +2135,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getSetExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getSetExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -1886,8 +2144,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getSetExpiredNoPrefix(String key) {
+        return getSetExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getSetExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getSetExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getSet(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -1899,9 +2167,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsSet(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key).isExists();
+    public static Boolean existsSet(String key) {
+        return existsSet0(key, Boolean.TRUE);
     }
 
     /**
@@ -1909,9 +2176,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsSetNoPrefix(String key) {
+    public static Boolean existsSetNoPrefix(String key) {
+        return existsSet0(key, Boolean.FALSE);
+    }
+
+    /**
+     * existsSet基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix 是否默认前缀
+     */
+    private static Boolean existsSet0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getSet(key).isExists();
+        return REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key).isExists();
     }
 
     /**
@@ -1919,9 +2196,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteSet(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getSet(KeyPrefixConstants.CACHE_SET_PREFIX + key).delete();
+    public static Boolean deleteSet(String key) {
+        return deleteSet0(key, Boolean.TRUE);
     }
 
     /**
@@ -1929,9 +2205,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteSetNoPrefix(String key) {
+    public static Boolean deleteSetNoPrefix(String key) {
+        return deleteSet0(key, Boolean.FALSE);
+    }
+
+    /**
+     * deleteList基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean deleteSet0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getSet(key).delete();
+        return REDISSON_CLIENT.getSet(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + key : key).delete();
     }
 
     /**
@@ -1942,8 +2228,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteSetByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern);
+        deleteSetByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -1954,8 +2239,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteSetNoPrefixByPattern(String keyPattern) {
+        deleteSetByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteSetByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteSetByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern : keyPattern);
     }
 
     /**
@@ -1967,9 +2262,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMap(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-        map.putAll(valueMap);
+        putMap0(key, Boolean.TRUE, valueMap, null);
     }
 
     /**
@@ -1981,9 +2274,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMapNoPrefix(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
-        map.putAll(valueMap);
+        putMap0(key, Boolean.FALSE, valueMap, null);
     }
 
     /**
@@ -1995,10 +2286,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMap(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-        map.putAll(valueMap);
-        map.expire(expired);
+        putMap0(key, Boolean.TRUE, valueMap, expired);
     }
 
     /**
@@ -2010,10 +2298,26 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> void putMapNoPrefix(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
+        putMap0(key, Boolean.FALSE, valueMap, expired);
+    }
+
+    /**
+     * putMap基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueMap  缓存值
+     * @param expired   过期时间
+     * @param <K>       泛型K
+     * @param <V>       泛型V
+     */
+    private static <K, V> void putMap0(String key, Boolean hasPrefix, Map<K, V> valueMap, Duration expired) {
+        verifyParameters(key, valueMap);
+        RMap<K, V> map = REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key);
         map.putAll(valueMap);
-        map.expire(expired);
+        if (Objects.nonNull(expired)) {
+            map.expire(expired);
+        }
     }
 
     /**
@@ -2025,14 +2329,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapIfExists(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        if (existsMap(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-            map.putAll(valueMap);
-            return true;
-        } else {
-            return false;
-        }
+        return putMapIfExists0(key, Boolean.TRUE, valueMap, null);
     }
 
     /**
@@ -2044,14 +2341,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapNoPrefixIfExists(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        if (existsMapNoPrefix(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(key);
-            map.putAll(valueMap);
-            return true;
-        } else {
-            return false;
-        }
+        return putMapIfExists0(key, Boolean.FALSE, valueMap, null);
     }
 
     /**
@@ -2064,14 +2354,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapIfExists(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        if (existsMap(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-            map.putAll(valueMap);
-            return map.expire(expired);
-        } else {
-            return false;
-        }
+        return putMapIfExists0(key, Boolean.TRUE, valueMap, expired);
     }
 
     /**
@@ -2084,11 +2367,25 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapNoPrefixIfExists(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        if (existsMapNoPrefix(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(key);
+        return putMapIfExists0(key, Boolean.FALSE, valueMap, expired);
+    }
+
+    /**
+     * putMapIfExists基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueMap  缓存值
+     * @param expired   过期时间
+     * @param <K>      泛型K
+     * @param <V>      泛型V
+     */
+    private static <K, V> Boolean putMapIfExists0(String key, Boolean hasPrefix, Map<K, V> valueMap, Duration expired) {
+        verifyParameters(key, valueMap);
+        if (existsMap0(key, hasPrefix)) {
+            RMap<K, V> map = REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key);
             map.putAll(valueMap);
-            return map.expire(expired);
+            return Objects.isNull(expired) || map.expire(expired);
         } else {
             return false;
         }
@@ -2103,14 +2400,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapIfAbsent(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        if (!existsMap(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-            map.putAll(valueMap);
-            return true;
-        } else {
-            return false;
-        }
+        return putMapIfAbsent0(key, Boolean.TRUE, valueMap, null);
     }
 
     /**
@@ -2122,14 +2412,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapNoPrefixIfAbsent(String key, Map<K, V> valueMap) {
-        verifyParameters(key, valueMap);
-        if (!existsMapNoPrefix(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(key);
-            map.putAll(valueMap);
-            return true;
-        } else {
-            return false;
-        }
+        return putMapIfAbsent0(key, Boolean.FALSE, valueMap, null);
     }
 
     /**
@@ -2142,14 +2425,7 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapIfAbsent(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        if (!existsMap(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-            map.putAll(valueMap);
-            return map.expire(expired);
-        } else {
-            return false;
-        }
+        return putMapIfAbsent0(key, Boolean.TRUE, valueMap, expired);
     }
 
     /**
@@ -2162,11 +2438,25 @@ public class CacheUtils {
      * @param <V>      泛型V
      */
     public static <K, V> Boolean putMapNoPrefixIfAbsent(String key, Map<K, V> valueMap, Duration expired) {
-        verifyParameters(key, valueMap, expired);
-        if (!existsMapNoPrefix(key)) {
-            RMap<K, V> map = REDISSON_CLIENT.getMap(key);
+        return putMapIfAbsent0(key, Boolean.FALSE, valueMap, expired);
+    }
+
+    /**
+     * putMapIfAbsent基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param valueMap  缓存值
+     * @param expired   过期时间
+     * @param <K>      泛型K
+     * @param <V>      泛型V
+     */
+    private static <K, V> Boolean putMapIfAbsent0(String key, Boolean hasPrefix, Map<K, V> valueMap, Duration expired) {
+        verifyParameters(key, valueMap);
+        if (!existsMap0(key, hasPrefix)) {
+            RMap<K, V> map = REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key);
             map.putAll(valueMap);
-            return map.expire(expired);
+            return Objects.isNull(expired) || map.expire(expired);
         } else {
             return false;
         }
@@ -2180,9 +2470,8 @@ public class CacheUtils {
      * @param <V> 泛型V
      */
     public static <K, V> Map<K, V> getMap(String key) {
-        verifyParameters(key);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key);
-        return new HashMap<K, V>(map);
+        return getMap0(key, Boolean.TRUE);
+
     }
 
     /**
@@ -2193,9 +2482,21 @@ public class CacheUtils {
      * @param <V> 泛型V
      */
     public static <K, V> Map<K, V> getMapNoPrefix(String key) {
+        return getMap0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getMap基础方法
+     *
+     * @param key       缓存键
+     * @param hasPrefix 是否默认前缀
+     * @param <K> 泛型K
+     * @param <V> 泛型V
+     */
+    private static <K, V> Map<K, V> getMap0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        RMap<K, V> map = REDISSON_CLIENT.getMap(key);
-        return new HashMap<K, V>(map);
+        RMap<K, V> map = REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key);
+        return new HashMap<>(map);
     }
 
     /**
@@ -2206,15 +2507,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getMapKeysByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
-        List<String> res = new LinkedList<>();
-        keysByPattern.forEach(key -> {
-            res.add(key.replaceFirst(KeyPrefixConstants.CACHE_MAP_PREFIX, ""));
-        });
-        return res;
+        return getMapKeysByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -2225,12 +2518,22 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getMapKeysNoPrefixByPattern(String keyPattern) {
+        return getMapKeysByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getMapKeysByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static List<String> getMapKeysByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(keyPattern);
+        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern : keyPattern);
         // 这里使用链表存储键，从理论上尽可能多的存储键
         List<String> res = new LinkedList<>();
-        keysByPattern.forEach(res::add);
+        keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_MAP_PREFIX, "")) : res::add);
         return res;
     }
 
@@ -2241,15 +2544,8 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Map<Object, Object>> getMapKeyValuesByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        return getMapKeysByPattern(keyPattern).stream().map(c -> {
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("key", c);
-            hashMap.put("value", getMap(c));
-            return hashMap;
-        }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map<Object, Object>) map.get("value")));
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -2259,13 +2555,23 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Map<Object, Object>> getMapKeyValuesNoPrefixByPattern(String keyPattern) {
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * getMapKeyValuesByPattern基础方法
+     *
+     * @param keyPattern key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Map<Object, Object>> getMapKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        return getMapKeysNoPrefixByPattern(keyPattern).stream().map(c -> {
+        return getMapKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
-            hashMap.put("value", getMapNoPrefix(c));
+            hashMap.put("value", getMap0(c, hasPrefix));
             return hashMap;
         }).collect(Collectors.toMap(map -> (String) map.get("key"), map -> (Map<Object, Object>) map.get("value")));
     }
@@ -2276,12 +2582,7 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getMapExpired(String key) {
-        verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key).getExpireTime();
-        if (expireTime <= 0) {
-            return 0L;
-        }
-        return (expireTime - System.currentTimeMillis()) / 1000;
+        return getMapExpired0(key, Boolean.TRUE);
     }
 
     /**
@@ -2290,8 +2591,18 @@ public class CacheUtils {
      * @param key 缓存键
      */
     public static Long getMapExpiredNoPrefix(String key) {
+        return getMapExpired0(key, Boolean.FALSE);
+    }
+
+    /**
+     * getMapExpired基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Long getMapExpired0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        long expireTime = REDISSON_CLIENT.getMap(key).getExpireTime();
+        long expireTime = REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key).getExpireTime();
         if (expireTime <= 0) {
             return 0L;
         }
@@ -2303,9 +2614,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsMap(String key) {
-        verifyParameters(key);
-        return REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key).isExists();
+    public static Boolean existsMap(String key) {
+        return existsMap0(key, Boolean.TRUE);
     }
 
     /**
@@ -2313,9 +2623,18 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static boolean existsMapNoPrefix(String key) {
+    public static Boolean existsMapNoPrefix(String key) {
+        return existsMap0(key, Boolean.FALSE);
+    }
+
+    /**
+     * 判断Map类型缓存是否存在
+     *
+     * @param key 缓存键
+     */
+    public static Boolean existsMap0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        return REDISSON_CLIENT.getMap(key).isExists();
+        return REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key).isExists();
     }
 
     /**
@@ -2323,9 +2642,8 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteMap(String key) {
-        verifyParameters(key);
-        REDISSON_CLIENT.getMap(KeyPrefixConstants.CACHE_MAP_PREFIX + key).delete();
+    public static Boolean deleteMap(String key) {
+        return deleteMap0(key, Boolean.TRUE);
     }
 
     /**
@@ -2333,9 +2651,19 @@ public class CacheUtils {
      *
      * @param key 缓存键
      */
-    public static void deleteMapNoPrefix(String key) {
+    public static Boolean deleteMapNoPrefix(String key) {
+        return deleteMap0(key, Boolean.FALSE);
+    }
+
+    /**
+     * deleteMap基础方法
+     *
+     * @param key        缓存键
+     * @param hasPrefix  是否默认前缀
+     */
+    private static Boolean deleteMap0(String key, Boolean hasPrefix) {
         verifyParameters(key);
-        REDISSON_CLIENT.getMap(key).delete();
+        return REDISSON_CLIENT.getMap(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + key : key).delete();
     }
 
     /**
@@ -2346,8 +2674,7 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteMapByPattern(String keyPattern) {
-        verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern);
+        deleteMapByPattern0(keyPattern, Boolean.TRUE);
     }
 
     /**
@@ -2358,8 +2685,18 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static void deleteMapNoPrefixByPattern(String keyPattern) {
+        deleteMapByPattern0(keyPattern, Boolean.FALSE);
+    }
+
+    /**
+     * deleteMapByPattern基础方法
+     *
+     * @param keyPattern  key通配符
+     * @param hasPrefix  是否默认前缀
+     */
+    private static void deleteMapByPattern0(String keyPattern, Boolean hasPrefix) {
         verifyParameters(keyPattern);
-        REDISSON_CLIENT.getKeys().deleteByPattern(keyPattern);
+        REDISSON_CLIENT.getKeys().deleteByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern : keyPattern);
     }
 
     /**
