@@ -8,6 +8,7 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import jakarta.validation.constraints.NotBlank;
+import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSAEncrypt;
 
 import java.io.Serial;
 import java.io.Serializable;

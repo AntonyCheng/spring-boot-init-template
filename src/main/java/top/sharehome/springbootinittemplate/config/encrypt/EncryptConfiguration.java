@@ -2,12 +2,15 @@ package top.sharehome.springbootinittemplate.config.encrypt;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.encrypt.condition.EncryptCondition;
 import top.sharehome.springbootinittemplate.utils.encrypt.AESUtils;
 import top.sharehome.springbootinittemplate.utils.encrypt.RSAUtils;
 
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 加密配置
@@ -15,6 +18,7 @@ import java.security.KeyPair;
  * @author AntonyCheng
  */
 @Configuration
+@Conditional({EncryptCondition.class})
 @Slf4j
 public class EncryptConfiguration {
 
@@ -25,11 +29,14 @@ public class EncryptConfiguration {
     public static String AESSecretKey = null;
 
     static {
-        KeyPair keyPair = RSAUtils.generateKeyPair(4096);
-        RSAPublicKey = RSAUtils.getStringFromPublicKey(keyPair.getPublic());
-        RSAPrivateKey = RSAUtils.getStringFromPrivateKey(keyPair.getPrivate());
-        SecretKey secretKey = AESUtils.generateKey(32);
-        AESSecretKey = AESUtils.getStringFromKey(secretKey);
+        CompletableFuture.runAsync(() -> {
+            KeyPair keyPair = RSAUtils.generateKeyPair(4096);
+            RSAPublicKey = RSAUtils.getStringFromPublicKey(keyPair.getPublic());
+            RSAPrivateKey = RSAUtils.getStringFromPrivateKey(keyPair.getPrivate());
+            SecretKey secretKey = AESUtils.generateKey(32);
+            AESSecretKey = AESUtils.getStringFromKey(secretKey);
+            log.info("############ Encryption Key is Generated");
+        });
     }
 
     /**

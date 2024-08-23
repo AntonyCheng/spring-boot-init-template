@@ -33,7 +33,7 @@ public class AESUtils {
                 throw new CustomizeEncryptException(ReturnCode.FAIL, "无效的AES密钥长度（需要16/24/32字节）");
             }
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(keySize);
+            keyGenerator.init(keySize * 8);
             return keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException e) {
             throw new CustomizeEncryptException(ReturnCode.FAIL, "生成AES密钥出错");

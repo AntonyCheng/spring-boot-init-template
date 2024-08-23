@@ -10,6 +10,7 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
+import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSADecrypt;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
@@ -77,6 +78,7 @@ public class AuthController {
     @PostMapping("/login")
     @EnableCaptcha
     @ControllerLog(description = "用户登录", operator = Operator.OTHER)
+    @RSADecrypt
     public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);

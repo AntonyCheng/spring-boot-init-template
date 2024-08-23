@@ -674,6 +674,11 @@ ip2region:
   # 数据加载方式
   load-type: memory
 
+# 请求参数加密校验配置
+encrypt:
+  # todo 是否使用参数加密校验
+  enable: false
+
 # 验证码配置
 captcha:
   # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
