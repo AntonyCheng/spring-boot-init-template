@@ -14,12 +14,7 @@ import top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleT
 public class I18nProperties {
 
     /**
-     * 是否开启国际化
-     */
-    private Boolean enable = false;
-
-    /**
-     * 默认语言
+     * 默认语言，默认简体中文
      */
     private LocaleType defaultLocale = LocaleType.ZH_CN;
 

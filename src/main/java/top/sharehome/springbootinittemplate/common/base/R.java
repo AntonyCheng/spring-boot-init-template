@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,10 +48,8 @@ public class R<T> implements Serializable {
      */
     public static final String WARN_MSG = ReturnCode.WARN.getMsg();
 
-    /**
-     * 序列化UID
-     */
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -4320868468561398175L;
 
     /**
      * 消息状态码
@@ -103,7 +102,7 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<Map<String, Object>> okWithToken(T data) {
-        Map<String, Object> res = new HashMap<String, Object>();
+        Map<String, Object> res = new HashMap<>();
         res.put("token", StpUtil.getTokenValue());
         res.put("res", data);
         return restResult(res, SUCCESS, SUCCESS_MSG);
@@ -114,7 +113,7 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<Map<String, Object>> okWithToken(String msg) {
-        Map<String, Object> res = new HashMap<String, Object>();
+        Map<String, Object> res = new HashMap<>();
         res.put("token", StpUtil.getTokenValue());
         res.put("res", null);
         return restResult(res, SUCCESS, msg);
@@ -125,7 +124,7 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<Map<String, Object>> okWithToken(String msg, T data) {
-        Map<String, Object> res = new HashMap<String, Object>();
+        Map<String, Object> res = new HashMap<>();
         res.put("token", StpUtil.getTokenValue());
         res.put("res", data);
         return restResult(res, SUCCESS, msg);
