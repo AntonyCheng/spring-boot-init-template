@@ -47,6 +47,7 @@ public class AuthController {
     @PostMapping("/register")
     @EnableCaptcha
     @ControllerLog(description = "用户注册", operator = Operator.OTHER)
+    @RSADecrypt
     public R<String> register(@RequestBody @Validated({PostGroup.class}) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
