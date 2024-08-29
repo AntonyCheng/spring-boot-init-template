@@ -1,10 +1,15 @@
 package top.sharehome.springbootinittemplate.config.encrypt;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.config.encrypt.condition.EncryptCondition;
+import top.sharehome.springbootinittemplate.config.encrypt.properties.EncryptProperties;
 import top.sharehome.springbootinittemplate.utils.encrypt.AESUtils;
 import top.sharehome.springbootinittemplate.utils.encrypt.RSAUtils;
 
@@ -19,31 +24,33 @@ import java.util.concurrent.CompletableFuture;
  */
 @Configuration
 @Conditional({EncryptCondition.class})
+@EnableConfigurationProperties(EncryptProperties.class)
 @Slf4j
+@Getter
 public class EncryptConfiguration {
 
-    public static String RSAPublicKey = null;
+    @Resource
+    private EncryptProperties encryptProperties;
 
-    public static String RSAPrivateKey = null;
+    private String rsaPublicKey = null;
 
-    public static String AESSecretKey = null;
+    private String rsaPrivateKey = null;
 
-    static {
-        CompletableFuture.runAsync(() -> {
-            KeyPair keyPair = RSAUtils.generateKeyPair(4096);
-            RSAPublicKey = RSAUtils.getStringFromPublicKey(keyPair.getPublic());
-            RSAPrivateKey = RSAUtils.getStringFromPrivateKey(keyPair.getPrivate());
-            SecretKey secretKey = AESUtils.generateKey(32);
-            AESSecretKey = AESUtils.getStringFromKey(secretKey);
-            log.info("############ Encryption Key is Generated");
-        });
-    }
+    private String aesSecretKey = null;
 
     /**
      * 依赖注入日志输出
      */
     @PostConstruct
     private void initDi() {
+        CompletableFuture.runAsync(() -> {
+            KeyPair keyPair = RSAUtils.generateKeyPair(encryptProperties.getRsaKeyLength().getKeyLength());
+            rsaPublicKey = RSAUtils.getStringFromPublicKey(keyPair.getPublic());
+            rsaPrivateKey = RSAUtils.getStringFromPrivateKey(keyPair.getPrivate());
+            SecretKey secretKey = AESUtils.generateKey(encryptProperties.getAesKeyLength().getKeyLength());
+            aesSecretKey = AESUtils.getStringFromKey(secretKey);
+            log.info("############ Encryption Key is Generated");
+        });
         log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
     }
 

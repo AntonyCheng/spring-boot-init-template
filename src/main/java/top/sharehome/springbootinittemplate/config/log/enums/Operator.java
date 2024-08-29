@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.log.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Objects;
  * @author AntonyCheng
  */
 @Getter
+@AllArgsConstructor
 public enum Operator {
 
     OTHER("其他操作", 0),
@@ -31,11 +33,6 @@ public enum Operator {
     private final String OperatorLabel;
 
     private final Integer OperatorValue;
-
-    Operator(String operatorLabel, Integer operatorValue) {
-        this.OperatorLabel = operatorLabel;
-        this.OperatorValue = operatorValue;
-    }
 
     public static String getLabelByValue(Integer operatorValue) {
         List<Operator> list = Arrays.stream(Operator.values()).filter(operatorEnum -> Objects.equals(operatorEnum.getOperatorValue(), operatorValue)).toList();

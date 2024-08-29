@@ -33,6 +33,12 @@ public class CustomizeReturnException extends CustomizeException {
         this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : msg;
     }
 
+    public CustomizeReturnException(ReturnCode returnCode, String msg, Throwable cause) {
+        log.error("{} ==> {} ==> {}", returnCode.getMsg(), "[" + msg + "]", cause.getMessage());
+        this.returnCode = returnCode;
+        this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : msg;
+    }
+
     @Override
     public String getMessage() {
         return this.msg;

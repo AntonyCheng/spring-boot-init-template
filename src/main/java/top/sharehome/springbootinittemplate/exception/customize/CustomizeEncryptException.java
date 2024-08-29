@@ -15,7 +15,7 @@ import top.sharehome.springbootinittemplate.exception.CustomizeException;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
-public class CustomizeEncryptException extends CustomizeException{
+public class CustomizeEncryptException extends CustomizeException {
 
     public CustomizeEncryptException() {
         this.returnCode = ReturnCode.FAIL;
@@ -29,6 +29,12 @@ public class CustomizeEncryptException extends CustomizeException{
 
     public CustomizeEncryptException(ReturnCode returnCode, String msg) {
         log.error("{} ==> {}", returnCode.getMsg(), "[" + msg + "]");
+        this.returnCode = returnCode;
+        this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : msg;
+    }
+
+    public CustomizeEncryptException(ReturnCode returnCode, String msg, Throwable cause) {
+        log.error("{} ==> {} ==> {}", returnCode.getMsg(), "[" + msg + "]", cause.getMessage());
         this.returnCode = returnCode;
         this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : msg;
     }

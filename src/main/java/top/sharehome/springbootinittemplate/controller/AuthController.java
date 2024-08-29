@@ -10,7 +10,6 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
-import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSADecrypt;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
@@ -47,7 +46,6 @@ public class AuthController {
     @PostMapping("/register")
     @EnableCaptcha
     @ControllerLog(description = "用户注册", operator = Operator.OTHER)
-    @RSADecrypt
     public R<String> register(@RequestBody @Validated({PostGroup.class}) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_AND_SECONDARY_PASSWORD_NOT_SAME);
@@ -79,13 +77,11 @@ public class AuthController {
     @PostMapping("/login")
     @EnableCaptcha
     @ControllerLog(description = "用户登录", operator = Operator.OTHER)
-    @RSADecrypt
     public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
         return R.okWithToken("登录成功", loginUser);
     }
-
 
     /**
      * 通过邮箱验证找回密码

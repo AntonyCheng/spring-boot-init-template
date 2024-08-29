@@ -93,7 +93,7 @@ public class SHA3Utils {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "摘要加密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "摘要加密出错", e);
         }
     }
 
