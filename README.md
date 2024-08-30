@@ -1515,27 +1515,27 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 **登陆界面**
 
-![loginPage.png](picture/project/loginPage.png)
+![loginPage.png](./picture/project/loginPage.png)
 
 **首页界面**
 
-![image-20240703194343499](picture/project/indexPage.png)
+![image-20240830155807749](./picture/project/indexPage.png)
 
 **用户管理界面**
 
-![image-20240703195225551](picture/project/userManage1.png)
+![image-20240830155929706](./picture/project/userManage1.png)
 
-![image-20240703194830096](picture/project/userManage2.png)
+![image-20240830160020281](./picture/project/userManage2.png)
 
-![image-20240703194841696](picture/project/userManage3.png)
+![image-20240830160109417](./picture/project/userManage3.png)
 
 **日志管理界面**
 
-![image-20240703194918458](picture/project/logManage1.png)
+![image-20240703194918458](./picture/project/logManage1.png)
 
-![image-20240703194927970](picture/project/logManage2.png)
+![image-20240703194927970](./picture/project/logManage2.png)
 
-![image-20240703194938997](picture/project/logManage3.png)
+![image-20240703194938997](./picture/project/logManage3.png)
 
 ## 申明&联系我
 
