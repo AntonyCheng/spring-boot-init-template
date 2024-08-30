@@ -71,6 +71,7 @@ springdoc:
         - top.sharehome.springbootinittemplate.controller
         - top.sharehome.springbootinittemplate.config.captcha.controller
         - top.sharehome.springbootinittemplate.config.i18n.controller
+        - top.sharehome.springbootinittemplate.config.encrypt.controller
 
 # 日志配置 ---- 可自定义
 logging:

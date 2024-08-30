@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 import top.sharehome.springbootinittemplate.config.encrypt.condition.EncryptCondition;
 import top.sharehome.springbootinittemplate.config.encrypt.properties.EncryptProperties;
 import top.sharehome.springbootinittemplate.utils.encrypt.AESUtils;
