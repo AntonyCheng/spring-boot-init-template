@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:17.0.2-oraclelinux8
 LABEL maintainer="AntonyCheng"
 
 ENV PARAMS=""
