@@ -40,6 +40,12 @@ public class User implements Serializable {
     private String password;
 
     /**
+     * 连续登录失败次数
+     */
+    @TableField(value = "user_login_num")
+    private Integer loginNum;
+
+    /**
      * 名称
      */
     @TableField(value = "user_name")

@@ -13,6 +13,7 @@ import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
+import top.sharehome.springbootinittemplate.model.dto.auth.AuthVerifyEmailDto;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
@@ -63,6 +64,36 @@ public class AuthController {
         AuthLoginVo loginUser = authService.login(authLoginDto);
         LoginUtils.login(loginUser);
         return R.okWithToken("登录成功", loginUser);
+    }
+
+
+    /**
+     * 通过邮箱验证找回密码
+     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员解禁用户/修改用户密码的方式，但业务层面上保留该接口，
+     *
+     * @return 返回找回结果
+     */
+    @PostMapping("/find/password/email")
+    @EnableCaptcha
+    @ControllerLog(description = "用户通过邮箱验证找回密码", operator = Operator.OTHER)
+    public R<String> retrievePasswordByVerifyEmail(@RequestBody @Validated({PostGroup.class}) AuthVerifyEmailDto authVerifyEmailDto) {
+        // todo 待完善功能
+        return R.ok("找回密码成功，请用新密码进行登录");
+    }
+
+    /**
+     * 获取邮箱验证码
+     * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员解禁用户/修改用户密码的方式，但业务层面上保留该接口，
+     *
+     * @return 返回找回结果
+     */
+    @PostMapping("/code/email")
+    @EnableCaptcha
+    @ControllerLog(description = "用户获取邮箱验证码", operator = Operator.QUERY)
+    public R<String> getEmailCode() {
+        // todo 待完善功能
+        String code = "";
+        return R.ok(code);
     }
 
     /**
