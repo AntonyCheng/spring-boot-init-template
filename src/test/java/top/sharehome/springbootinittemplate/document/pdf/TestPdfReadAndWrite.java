@@ -15,7 +15,7 @@ import java.io.IOException;
  *
  * @author AntonyCheng
  */
-public class TestPdfUtils {
+public class TestPdfReadAndWrite {
 
     public static void main(String[] args) {
         String readable = System.getProperty("user.dir") + "/src/test/java/top/sharehome/springbootinittemplate/document/pdf/file/readable.pdf";

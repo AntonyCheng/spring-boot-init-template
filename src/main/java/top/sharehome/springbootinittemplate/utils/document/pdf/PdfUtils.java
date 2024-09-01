@@ -105,6 +105,24 @@ public class PdfUtils {
     public static class Template {
 
         /**
+         * 导出PDF模板目录下的模板文件到响应流，模板目录一定是resources文件夹下templates/pdf目录
+         *
+         * @param templateName 模板名称（需要带上扩展名）
+         * @param exportDataSource 导出数据源类型
+         * @param tagMap       标签Map
+         * @param filename     导出文件名称
+         * @param response     响应流
+         */
+        public void export(String templateName, ExportDataSource exportDataSource, Map<String, Object> tagMap, String filename, HttpServletResponse response) {
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                handlePdfResponse(filename, response);
+                export(templateName, exportDataSource, tagMap, outputStream);
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
+            }
+        }
+
+        /**
          * 导出PDF模板目录下的模板文件到输出流，模板目录一定是resources文件夹下templates/pdf目录
          *
          * @param templateName 模板名称（需要带上扩展名），fo文件对应FREEMARKER数据源和THYMELEAF数据源，jte文件对应JTE数据源

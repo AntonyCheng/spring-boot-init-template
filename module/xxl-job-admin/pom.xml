@@ -9,7 +9,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>xxl-job-admin</artifactId>
-    <version>v2.1.8-jdk11</version>
+    <version>v2.1.9-jdk11-pre</version>
     <name>xxl-job-admin</name>
     <description>xxl-job-admin</description>
     <properties>
