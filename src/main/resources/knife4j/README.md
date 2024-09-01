@@ -1,6 +1,6 @@
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.9-jdk17-pre**
+> **版本号：v2.1.9-jdk17**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 >
@@ -8,9 +8,10 @@
 
 # SpringBoot初始化模板
 
-**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
+**基于 Java Web 项目的 SpringBoot 框架初始化模板**，该模板整合了常用的框架，广泛支持JDK11和JDK17，部分版本兼容JDK8，该模板适用于前后端分离项目启动开发，保证大家在此基础上能够快速开发自己的项目，同时也适合入门学习，本项目会由作者持续更新。
 
 * [SpringBoot初始化模板](#springboot初始化模板)
+    * [软件版本要求](#软件版本要求)
     * [模板特点](#模板特点)
         * [主流框架](#主流框架)
         * [业务特性](#业务特性)
@@ -61,6 +62,18 @@
     * [项目历史](#项目历史)
     * [下一步开发计划](#下一步开发计划)
 
+## 软件版本要求
+
+MySQL 8.0.X（推荐）
+
+Redis 7.X.X（强制）
+
+Elasticsearch 7.X.X（强制，特别推荐7.14.0）
+
+RaabbitMQ 3.X.X（推荐）
+
+说明：其他没有提及到的软件版本均广泛支持
+
 ## 模板特点
 
 ### 主流框架
@@ -86,35 +99,35 @@
     - netty-all 4.1.112.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
-    - mybatis-spring 3.0.3 == MyBatis Spring 依赖
+    - mybatis-spring 3.0.4 == MyBatis Spring 依赖
     - mybatis-plus-boot-starter 3.5.7 == MyBatis-Plus 框架
     - mybatis-plus-annotation 3.5.7 == MyBatis-Plus 注解依赖
     - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
     - druid-spring-boot-3-starter 1.2.23 == Druid 连接池
 - **工具类**
     - lombok 1.18.34 == POJO 简化工具
-    - hutool-all 5.8.29 == Hutool 工具类
-    - commons-lang3 3.15.0 == Apache Commons Lang 工具类
+    - hutool-all 5.8.31 == Hutool 工具类
+    - commons-lang3 3.16.0 == Apache Commons Lang 工具类
     - commons-io 2.16.1 == Apache Commons IO 工具类
     - commons-codec 1.17.1 == Apache Commons Codec 工具类
     - commons-pool2 2.12.0 == Apache Commons Pool 工具类
     - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
     - commons-math3 3.6.1 == Apache Commons Math 工具类
-    - commons-compress 1.26.2 == Apache Commons Compress 工具类
+    - commons-compress 1.27.1 == Apache Commons Compress 工具类
     - okhttp 4.12.0 == OK Http 工具类
     - okio 3.9.0 == OK IO 工具类
     - fastjson2 2.0.52 == FastJSON 工具类
     - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
     - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-    - sa-token-spring-boot3-starter 1.38.0 == SaToken 认证鉴权框架
-    - sa-token-core 1.38.0 == SaToken 认证鉴权框架核心依赖
-    - sa-token-jwt 1.38.0 == SaToken 认证鉴权框架 JWT 依赖
-    - sa-token-redis-jackson 1.38.0 == SaToken 认证鉴权框架 Redis 依赖
+    - sa-token-spring-boot3-starter 1.39.0 == SaToken 认证鉴权框架
+    - sa-token-core 1.39.0 == SaToken 认证鉴权框架核心依赖
+    - sa-token-jwt 1.39.0 == SaToken 认证鉴权框架 JWT 依赖
+    - sa-token-redis-jackson 1.39.0 == SaToken 认证鉴权框架 Redis 依赖
 - **缓存服务**
     - spring-boot-starter-data-redis == Spring Data Redis 依赖
     - spring-boot-starter-cache == Spring Cache 依赖
-    - redisson 3.33.0 == Redis 的基础上实现的 Java 驻内存数据网格
+    - redisson 3.35.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
     - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -126,13 +139,13 @@
     - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
     - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-    - cos_api 5.6.221 == 腾讯云 COS
+    - cos_api 5.6.229 == 腾讯云 COS
     - aliyun-sdk-oss 3.18.1 == 阿里云 OSS
-    - minio 8.5.11 == Minio 对象存储
+    - minio 8.5.12 == Minio 对象存储
 - **文件操作**
     - poi 5.3.0 == 操作 Word
     - poi-tl 1.12.2 == 操作 Word 模板
-    - easyexcel 4.0.1 == 操作 Excel
+    - easyexcel 4.0.2 == 操作 Excel
     - x-easypdf 3.1.0 == 操作 PDF
     - thymeleaf 3.1.2.RELEASE == 操作 PDF Thymeleaf 模板
     - jte 2.3.2 == 操作 PDF JTE 数据源模板
@@ -153,7 +166,9 @@
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
-- 无感注解式记录日志
+- 注解式记录日志
+- 注解式幂等/防重/限流
+- 注解式请求参数加密解密
 - 全局请求拦截器 & 过滤器
 - 全局异常处理器
 - 封装统一响应对象
@@ -167,8 +182,8 @@
 - Spring 上下文处理工具
 - JSON 长整型精度处理
 - 自动字段填充器
-- 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF 等工具类
+- 基于 Netty 的 WebSocket 全双工通信模块
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF、加密等工具类
 
 ## 业务功能
 
@@ -258,10 +273,12 @@ spring:
           top-p: 0.3
     # Ollama AI
     ollama:
+      # Ollama 服务地址
+      base-url: http://127.0.0.1:11434
       chat:
         options:
           # 模型名称
-          model: llama3:8b-instruct-q8_0
+          model: llama3.1:8b-instruct-q8_0
           # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
           temperature: 0.9
           # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
@@ -296,7 +313,7 @@ spring:
    ```yaml
    spring: 
      data:
-       # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+       # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
        redis:
          # 单机地址（单价模式配置和集群模式配置只能存在一个）
          host: 127.0.0.1
@@ -343,19 +360,13 @@ spring:
     - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
-   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # 线程池数量
      threads: 4
      # Netty线程池数量
      netty-threads: 8
-     # 限流单位时间，单位：秒
-     limit-rate-interval: 1
-     # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     limit-rate: 2
-     # 每个操作所要消耗的令牌数，系统分发的令牌数一定要大于等于操作消耗的令牌树，不然会报错
-     limit-permits: 1
      # Redis单机版本
      single-server-config:
        # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
@@ -378,7 +389,7 @@ spring:
        idle-connection-timeout: 10000
      # Redis集群版本
      cluster-servers-config:
-       # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+       # todo 是否启动集群Redis（Redisson）缓存（预先关闭）
        enable-cluster: false
        # Redis集群节点（一定要在Redis协议下）
        node-addresses:
@@ -676,7 +687,7 @@ oss:
     # todo 是否开启（预先关闭）
     enable: true
     # 域名（格式：【ip:port】）
-    endpoint: xxx.xxx.xxx.xxx:39000
+    endpoint: 127.0.0.1:9000
     # 是否开启TLS
     enable-tls: false
     # 用户的 SecretId
@@ -737,12 +748,6 @@ oss:
      cluster-servers-config:
        # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
        enable-cluster: true
-   # 离线IP库配置
-   ip2region:
-     # todo 是否启用离线IP
-     enable: true
-     # 数据加载方式
-     load-type: memory
    # 验证码配置
    captcha:
      # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
@@ -859,19 +864,17 @@ spring:
     protocol: smtp
 ```
 
-修改完之后即可使用模板中邮件工具类 `top.sharehome.springbootinittemplate.utils.email.EmailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
+修改完之后即可使用模板中邮件工具类 `top.sharehome.springbootinittemplate.utils.email.MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
 
 #### 整合离线IP库
 
 系统的安全问题并不能只靠系统自身被动防御，还需要对外界请求做出主动监控和日志检测，其中就离不开对用户的操作进行留痕操作，网络世界上最有力的留痕操作就是记录用户每一步都干了什么，至少得知道用户发出请求的客户端的信息是什么，所以离线 IP 就应运而生，模板中整合的离线 IP 库为 **ip2region** ，它是一个离线IP地址定位库和IP定位数据管理框架，10微秒级别的查询效率，提供了众多主流编程语言的 `xdb` 数据生成和查询客户端实现。
 
-1. 修改离线 IP 库的配置，启用离线 IP 库：
+1. 修改离线 IP 库的配置，选择数据加载方式即可：
 
    ```yaml
    # 离线IP库配置
    ip2region:
-     # todo 是否启用离线IP
-     enable: true
      # 数据加载方式
      load-type: memory
    ```
@@ -886,15 +889,15 @@ spring:
 
 建议使用该模板国际化功能之前先把源代码看一遍或者是先了解一下国际化的通常流程，然后再进行自定义化的配置和编码。
 
-1. 修改国际化相关配置，启动国际化功能：
+1. 首先检查 `resources/i18n/messagesXXX.properties` 国际化字典文件中是否有内容，如果没有，建议先执行 `src/test/java/top/sharehome/springbootinittemplate/MainApplicationTests.java` 类中的 `initI18n()` 方法，将系统中 `ReturnCode` 响应进行国际化，将最后得到的打印结果手动粘贴复制到 `resources/i18n/messagesXXX.properties` 文件中，这样做的原因是当需要`ReturnCode` 枚举中内容国际化时可以直接调用其类方法 `toI18n()` 。
+
+2. 修改国际化相关配置，主要根据项目要求修改默认语言：
 
    ```yaml
    # 公共配置文件
    spring:
      # 国际化配置
      messages:
-       # todo 是否启动国际化功能（预先关闭）
-       enable: true
        # 默认语言
        default-locale: zh_cn
        # 解释：I18n是存放多语言文件目录，messages是文件前缀
@@ -906,18 +909,19 @@ spring:
        # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置
        fallback-to-system-locale: true
        # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
-       use-code-as-default-message: false
+       use-code-as-default-message: true
    ```
 
-2. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
+3. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
 
    ```properties
-   opr_success=操作成功
-   opr_fail=操作失敗
-   msg_welcome=歡迎,{0}!
+   welcome=歡迎,{0}!
+   success=操作成功
+   fail=操作失敗
+   ......
    ```
 
-3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
+4. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
 
    ```java
    @Getter
@@ -941,21 +945,25 @@ spring:
    }
    ```
 
-4. 然后参考国际化示例控制器 `top.sharehome.springbootinittemplate.config.i18n.controller.I18nDemoController` 进行国际化的使用：
+5. 然后参考国际化示例控制器 `top.sharehome.springbootinittemplate.config.i18n.controller.I18nDemoController` 进行国际化的使用：
 
    ```java
    /**
-    * 国际化示例控制器
+    * 国际化示例控制器（仅测试使用，使用时取消注释RestController注解）
     *
     * @author AntonyCheng
     */
    @RestController
-   @Conditional(I18nCondition.class)
    public class I18nDemoController {
    
        @GetMapping("/i18n")
        public R<String> welcome(@RequestParam String name) {
-           return R.ok(I18nUtils.getMessage("msg_welcome", new String[]{name}));
+           int seed = new Random().nextInt();
+           if (seed % 2 == 0) {
+               throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH.toI18n());
+           }else {
+               return R.ok(I18nManager.getMessage("welcome", name));
+           }
        }
    
    }
@@ -1063,7 +1071,7 @@ spring:
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
   ......
   data:
-    # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+    # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
     redis:
       # 单机地址（单价模式配置和集群模式配置只能存在一个）
       host: 127.0.0.1
@@ -1510,7 +1518,8 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ## 下一步开发计划
 
-* 设计幂等模块
+* 优化AI模块，设计工具类
+* 设计文件管理模块，实现秒传等高级功能
 * 设计相关工具类前端功能示例界面
 * 扩展新的前端模板
 * ......
