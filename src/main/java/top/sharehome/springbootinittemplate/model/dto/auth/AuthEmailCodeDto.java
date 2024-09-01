@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 /**
  * 验证邮箱Dto类
@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthVerifyEmailDto {
+public class AuthEmailCodeDto {
 
     /**
      * 账号
@@ -28,23 +28,11 @@ public class AuthVerifyEmailDto {
     private String account;
 
     /**
-     * 密码
+     * 邮箱
      */
-    @Size(min = 5, max = 16, message = "密码长度介于5-16位之间", groups = {PostGroup.class})
-    @NotBlank(message = "密码不能为空", groups = {PostGroup.class})
-    private String password;
-
-    /**
-     * 二次输入的密码
-     */
-    @NotBlank(message = "二次密码不能为空", groups = {PostGroup.class})
-    private String checkPassword;
-
-    /**
-     * 邮箱验证码
-     */
-    @NotBlank(message = "邮箱验证码不能为空", groups = {PostGroup.class})
-    private String emailCode;
+    @Email(message = "邮箱格式错误", groups = {PostGroup.class})
+    @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
+    private String email;
 
     /**
      * 验证码参数实体类

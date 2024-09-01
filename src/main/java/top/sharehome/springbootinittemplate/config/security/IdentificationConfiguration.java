@@ -16,7 +16,6 @@ import top.sharehome.springbootinittemplate.config.security.condition.SaConditio
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * SaToken认证配置
@@ -35,6 +34,8 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
         {
             add("/auth/register");
             add("/auth/login");
+            add("/auth/check/email/code");
+            add("/auth/email/code");
             add("/captcha");
         }
     };

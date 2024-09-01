@@ -813,7 +813,7 @@ spring:
     protocol: smtp
 ```
 
-修改完之后即可使用模板中邮件工具类 `top.sharehome.springbootinittemplate.utils.mail.MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
+修改完之后即可使用模板中邮件工具类 `top.sharehome.springbootinittemplate.utils.email.MailUtils` ，这个类中提供多种邮件发送的操作，这里针对于带有文件的邮件进行一些阐述：如果发送 HTML 内联图片邮件，那么每张图片的大小不得超过 5 MB，如果发送附件，那么每个附件的大小不得超过 50 MB，一封邮件的总大小不得超过 50 MB。
 
 #### 整合离线IP库
 

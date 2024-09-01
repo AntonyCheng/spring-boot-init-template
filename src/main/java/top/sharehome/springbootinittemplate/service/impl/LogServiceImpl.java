@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeTransactionException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
@@ -41,7 +40,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     private UserMapper userMapper;
 
     @Override
-    @Transactional(readOnly = true, rollbackFor = CustomizeTransactionException.class)
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Page<AdminLogPageVo> adminPageLog(AdminLogPageDto adminLogPageDto, PageModel pageModel) {
         Page<Log> page = pageModel.build();
         Page<AdminLogPageVo> res = pageModel.build();
@@ -66,31 +65,28 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
                 logLambdaQueryWrapper.in(Log::getUserId, userIdList);
             }
         }
-        // 构造查询排序（默认按照创建时间升序排序）
+        // 构造查询排序（默认按照创建时间降序排序）
         logLambdaQueryWrapper.orderByDesc(Log::getCreateTime);
 
         // 分页查询
         logMapper.selectPage(page, logLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminLogPageVo> newRecords = page.getRecords().stream().map(log -> {
-            AdminLogPageVo adminLogPageVo = new AdminLogPageVo();
-            adminLogPageVo.setId(log.getId());
-            adminLogPageVo.setUri(log.getUri());
-            adminLogPageVo.setDescription(log.getDescription());
-            adminLogPageVo.setOperator(Operator.getLabelByValue(log.getOperator()));
-            adminLogPageVo.setRequestMethod(log.getRequestMethod());
-            adminLogPageVo.setMethod(log.getMethod());
-            adminLogPageVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");
-            adminLogPageVo.setIp(log.getIp());
-            adminLogPageVo.setLocation(log.getLocation());
-            adminLogPageVo.setParam(log.getParam());
-            adminLogPageVo.setResult(log.getResult());
-            adminLogPageVo.setJson(log.getJson());
-            adminLogPageVo.setTime(log.getTime());
-            adminLogPageVo.setCreateTime(log.getCreateTime());
-            return adminLogPageVo;
-        }).collect(Collectors.toList());
+        List<AdminLogPageVo> newRecords = page.getRecords().stream().map(log -> new AdminLogPageVo()
+                .setId(log.getId())
+                .setUri(log.getUri())
+                .setDescription(log.getDescription())
+                .setOperator(Operator.getLabelByValue(log.getOperator()))
+                .setRequestMethod(log.getRequestMethod())
+                .setMethod(log.getMethod())
+                .setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息")
+                .setIp(log.getIp())
+                .setLocation(log.getLocation())
+                .setParam(log.getParam())
+                .setResult(log.getResult())
+                .setJson(log.getJson())
+                .setTime(log.getTime())
+                .setCreateTime(log.getCreateTime())).collect(Collectors.toList());
         BeanUtils.copyProperties(page, res, "records");
         res.setRecords(newRecords);
 
@@ -98,7 +94,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminDeleteLog(Long id) {
         int deleteResult = logMapper.deleteById(id);
         if (deleteResult == 0) {
@@ -107,7 +103,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     }
 
     @Override
-    @Transactional(rollbackFor = CustomizeTransactionException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void adminClearLog() {
         LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
         logLambdaQueryWrapper.isNotNull(Log::getId);
@@ -139,7 +135,3 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     }
 
 }
-
-
-
-
