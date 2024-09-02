@@ -497,6 +497,7 @@ oss:
     secret-key: xxxxxxxx
     # 桶名称
     bucket-name: xxxxxxxx
+
 # WebSocket配置
 websocket:
   # todo 是否开启（预先关闭）
@@ -507,6 +508,7 @@ websocket:
   boss-thread: 4
   # WORKER线程组线程数
   worker-thread: 16
+
 # Easy-ES配置
 easy-es:
   # todo 是否启动（预先关闭）
