@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.1.9-jdk11-pre**
+> **版本号：v2.1.9-jdk11**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -110,28 +110,27 @@ RaabbitMQ 3.X.X（推荐）
     - druid-spring-boot-starter 1.2.23 == Druid 连接池
 - **工具类**
   - lombok 1.18.34 == POJO 简化工具
-  - hutool-all 5.8.29 == Hutool 工具类
-  - commons-lang3 3.15.0 == Apache Commons Lang 工具类
+  - hutool-all 5.8.31 == Hutool 工具类
+  - commons-lang3 3.16.0 == Apache Commons Lang 工具类
   - commons-io 2.16.1 == Apache Commons IO 工具类
   - commons-codec 1.17.1 == Apache Commons Codec 工具类
   - commons-pool2 2.12.0 == Apache Commons Pool 工具类
   - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
   - commons-math3 3.6.1 == Apache Commons Math 工具类
-  - commons-compress 1.26.2 == Apache Commons Compress 工具类
+  - commons-compress 1.27.1 == Apache Commons Compress 工具类
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
-  - fastjson2 2.0.52 == Fast JSON 工具类
-  - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
+  - fastjson2 2.0.52 == FastJSON2 工具类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
-  - sa-token-spring-boot-starter 1.38.0 == SaToken 认证鉴权框架
-  - sa-token-core 1.38.0 == SaToken 认证鉴权框架核心依赖
-  - sa-token-jwt 1.38.0 == SaToken 认证鉴权框架 JWT 依赖
-  - sa-token-redis-jackson 1.38.0 == SaToken 认证鉴权框架 Redis 依赖
+  - sa-token-spring-boot-starter 1.39.0 == SaToken 认证鉴权框架
+  - sa-token-core 1.39.0 == SaToken 认证鉴权框架核心依赖
+  - sa-token-jwt 1.39.0 == SaToken 认证鉴权框架 JWT 依赖
+  - sa-token-redis-jackson 1.39.0 == SaToken 认证鉴权框架 Redis 依赖
 - **缓存服务**
   - spring-boot-starter-data-redis == Spring Data Redis 依赖
   - spring-boot-starter-cache == Spring Cache 依赖
-  - redisson 3.33.0 == Redis 的基础上实现的 Java 驻内存数据网格
+  - redisson 3.35.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
   - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -143,13 +142,13 @@ RaabbitMQ 3.X.X（推荐）
   - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
   - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-  - cos_api 5.6.221 == 腾讯云 COS
+  - cos_api 5.6.229 == 腾讯云 COS
   - aliyun-sdk-oss 3.18.1 == 阿里云 OSS 
-  - minio 8.5.11 == Minio 对象存储
+  - minio 8.5.12 == Minio 对象存储
 - **文件操作**
   - poi 5.3.0 == 操作 Word
   - poi-tl 1.12.2 == 操作 Word 模板
-  - easyexcel 4.0.1 == 操作 Excel
+  - easyexcel 4.0.2 == 操作 Excel
   - x-easypdf 3.1.0 == 操作 PDF
   - thymeleaf 3.1.2.RELEASE == 操作 PDF Thymeleaf 模板
   - jte 2.3.2 == 操作 PDF JTE 数据源模板
@@ -169,7 +168,9 @@ RaabbitMQ 3.X.X（推荐）
 - AOP 逻辑处理示例
 - 自定义注解处理示例
 - 验证码分布式校验
-- 无感注解式记录日志
+- 注解式记录日志
+- 注解式幂等/防重/限流
+- 注解式请求参数加密解密
 - 全局请求拦截器 & 过滤器
 - 全局异常处理器
 - 封装统一响应对象
@@ -184,7 +185,7 @@ RaabbitMQ 3.X.X（推荐）
 - JSON 长整型精度处理
 - 自动字段填充器
 - 基于 Netty 的 WebSocket 全双工通信设计示例
-- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF 等工具类
+- 对象存储、消息队列、缓存、分布式锁、限流、国际化、网络、Excel、Word、PDF、加密等工具类
 
 ## 业务功能
 
@@ -263,7 +264,7 @@ RaabbitMQ 3.X.X（推荐）
 
    ```yaml
    spring: 
-     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
      redis:
        # 单机地址（单价模式配置和集群模式配置只能存在一个）
        host: 127.0.0.1
@@ -310,19 +311,13 @@ RaabbitMQ 3.X.X（推荐）
    - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
-   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+   # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # 线程池数量
      threads: 4
      # Netty线程池数量
      netty-threads: 8
-     # 限流单位时间，单位：秒
-     limit-rate-interval: 1
-     # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-     limit-rate: 2
-     # 每个操作所要消耗的令牌数，系统分发的令牌数一定要大于等于操作消耗的令牌树，不然会报错
-     limit-permits: 1
      # Redis单机版本
      single-server-config:
        # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
@@ -345,7 +340,7 @@ RaabbitMQ 3.X.X（推荐）
        idle-connection-timeout: 10000
      # Redis集群版本
      cluster-servers-config:
-       # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+       # todo 是否启动集群Redis（Redisson）缓存（预先关闭）
        enable-cluster: false
        # Redis集群节点（一定要在Redis协议下）
        node-addresses:
@@ -372,7 +367,7 @@ RaabbitMQ 3.X.X（推荐）
        # 发布和订阅连接池大小
        subscription-connection-pool-size: 25
    ```
-
+   
 2. 此时项目就能够直接启动， Redisson 相关配置就完成了，模板为了降低开发者的模板使用门槛，特意针对 Redisson 进行进一步封装，在 `top.sharehome.springbootinittemplate.utils.redisson` 包中设计了缓存工具类 CacheUtils 、限流工具类 RateLimitUtils 以及 LockUtils 分布式锁工具类供开发者使用，使用参考示例单元测试类。
 
 ##### 整合本地缓存（Caffeine）
@@ -643,7 +638,7 @@ oss:
     # todo 是否开启（预先关闭）
     enable: true
     # 域名（格式：【ip:port】）
-    endpoint: xxx.xxx.xxx.xxx:39000
+    endpoint: 127.0.0.1:9000
     # 是否开启TLS
     enable-tls: false
     # 用户的 SecretId
@@ -693,7 +688,7 @@ oss:
 1. 修改验证码相关配置，开发者可以自行配置验证码的风格以及参数：
 
    ```yaml
-   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+   # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # Redis单机版本
@@ -704,12 +699,6 @@ oss:
      cluster-servers-config:
        # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
        enable-cluster: true
-   # 离线IP库配置
-   ip2region:
-     # todo 是否启用离线IP
-     enable: true
-     # 数据加载方式
-     load-type: memory
    # 验证码配置
    captcha:
      # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
@@ -725,7 +714,7 @@ oss:
      # 验证码存活时间（单位：秒）
      expired: 180
    ```
-
+   
 2. 配置完成之后只需要以 GET 请求调用 `/api/captcha` 接口即可获取验证码图片的 Base64 编码值以及该验证码的 UUID ，前端拿到 Base64 编码值之后将其转换为图片即可；
 
 3. 该模板将 AOP 应用于验证码校验，使用自定义注解 `@EnableCaptcha` 即可做到校验，校验的前提就是被校验方法是一个 POST 请求，且在接受请求体参数实体类中需要存在一个名为 `captcha` 的 `Captcha` 类型（位置在 `top.sharehome.springbootinittemplate.config.captcha.model.Captcha` ）参数字段，下面以登录接口为例：
@@ -832,13 +821,11 @@ spring:
 
 系统的安全问题并不能只靠系统自身被动防御，还需要对外界请求做出主动监控和日志检测，其中就离不开对用户的操作进行留痕操作，网络世界上最有力的留痕操作就是记录用户每一步都干了什么，至少得知道用户发出请求的客户端的信息是什么，所以离线 IP 就应运而生，模板中整合的离线 IP 库为 **ip2region** ，它是一个离线IP地址定位库和IP定位数据管理框架，10微秒级别的查询效率，提供了众多主流编程语言的 `xdb` 数据生成和查询客户端实现。
 
-1. 修改离线 IP 库的配置，启用离线 IP 库：
+1. 修改离线 IP 库的配置，选择数据加载方式即可：
 
    ```yaml
    # 离线IP库配置
    ip2region:
-     # todo 是否启用离线IP
-     enable: true
      # 数据加载方式
      load-type: memory
    ```
@@ -879,9 +866,10 @@ spring:
 3. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
 
    ```properties
-   opr_success=操作成功
-   opr_fail=操作失敗
-   msg_welcome=歡迎,{0}!
+   welcome=歡迎,{0}!
+   success=操作成功
+   fail=操作失敗
+   ......
    ```
 
 4. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
@@ -912,22 +900,26 @@ spring:
 
    ```java
    /**
-    * 国际化示例控制器
+    * 国际化示例控制器（仅测试使用，使用时取消注释RestController注解）
     *
     * @author AntonyCheng
     */
    @RestController
-   @Conditional(I18nCondition.class)
    public class I18nDemoController {
    
        @GetMapping("/i18n")
        public R<String> welcome(@RequestParam String name) {
-           return R.ok(I18nUtils.getMessage("msg_welcome", new String[]{name}));
+           int seed = new Random().nextInt();
+           if (seed % 2 == 0) {
+               throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH.toI18n());
+           }else {
+               return R.ok(I18nManager.getMessage("welcome", name));
+           }
        }
    
    }
    ```
-
+   
    核心操作就是在请求 URL 之后添加参数名为 `lang` 的参数，并且将其赋值为 `zh_tw`（这里传入大写小写无所谓，但是要用"_"将语言和地区隔开） ，例如 `localhost:38080/i18n?lang=zh_tw`，控制器中返回和国际化词典文件相对应的键值即可。
 
 #### 配置SaToken
@@ -1028,7 +1020,7 @@ spring:
       #- org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       #- cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
   redis:
     # 单机地址（单价模式配置和集群模式配置只能存在一个）
     host: 127.0.0.1
@@ -1503,7 +1495,8 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 ## 下一步开发计划
 
-* 设计幂等模块
+* 优化AI模块，设计工具类
+* 设计文件管理模块，实现秒传等高级功能
 * 设计相关工具类前端功能示例界面
 * 扩展新的前端模板
 * ......

@@ -348,7 +348,7 @@ spring:
         # 最大等待时间/ms
         max-wait: 3000
 
-# Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
+# 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
 redisson:
   # 线程池数量

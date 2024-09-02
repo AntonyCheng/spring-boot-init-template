@@ -12,7 +12,7 @@
     </parent>
     <groupId>top.sharehome</groupId>
     <artifactId>spring-boot-init-template</artifactId>
-    <version>v2.1.9-jdk11-pre</version>
+    <version>v2.1.9-jdk11</version>
     <name>spring-boot-init-template</name>
     <description>spring-boot-init-template</description>
     <url>https://github.com/AntonyCheng/spring-boot-init-template</url>
@@ -63,38 +63,38 @@
         <druid.starter.version>1.2.23</druid.starter.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.34</lombok.version>
-        <hutool.version>5.8.29</hutool.version>
-        <commons.lang3.version>3.15.0</commons.lang3.version>
+        <hutool.version>5.8.31</hutool.version>
+        <commons.lang3.version>3.16.0</commons.lang3.version>
         <commons.io.version>2.16.1</commons.io.version>
         <commons.codec.version>1.17.1</commons.codec.version>
         <commons.pool2.version>2.12.0</commons.pool2.version>
         <commons.collections4.version>4.5.0-M2</commons.collections4.version>
         <commons.math3.version>3.6.1</commons.math3.version>
-        <commons.compress.version>1.26.2</commons.compress.version>
+        <commons.compress.version>1.27.1</commons.compress.version>
         <ok.http3.version>4.12.0</ok.http3.version>
         <ok.io.version>3.9.0</ok.io.version>
         <ip2region.version>2.7.0</ip2region.version>
         <knife4j.openapi3.starter.version>4.5.0</knife4j.openapi3.starter.version>
         <fastjson2.version>2.0.52</fastjson2.version>
         <!-- 权限校验相关 -->
-        <sa.token.version>1.38.0</sa.token.version>
+        <sa.token.version>1.39.0</sa.token.version>
         <!-- 缓存相关 -->
-        <redisson.version>3.33.0</redisson.version>
+        <redisson.version>3.35.0</redisson.version>
         <caffeine.version>3.1.8</caffeine.version>
         <!-- ElasticSearch相关 -->
         <elasticsearch.version>7.14.0</elasticsearch.version>
         <logstash.logback.version>7.3</logstash.logback.version>
         <easy.es.starter.version>2.0.0</easy.es.starter.version>
         <!-- 对象存储相关 -->
-        <tencent.cos.version>5.6.221</tencent.cos.version>
+        <tencent.cos.version>5.6.229</tencent.cos.version>
         <ali.oss.version>3.18.1</ali.oss.version>
         <ali.jaxb.version>2.3.1</ali.jaxb.version>
         <ali.activation.version>1.1.1</ali.activation.version>
-        <minio.version>8.5.11</minio.version>
+        <minio.version>8.5.12</minio.version>
         <!-- 文件操作相关 -->
         <poi.version>5.3.0</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>
-        <easy.excel.version>4.0.1</easy.excel.version>
+        <easy.excel.version>4.0.2</easy.excel.version>
         <x.easypdf.version>3.1.0</x.easypdf.version>
         <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
         <jte.version>2.3.2</jte.version>
@@ -107,6 +107,8 @@
         <snakeyaml.version>2.2</snakeyaml.version>
         <!-- 插件版本 -->
         <maven.compiler.plugin.verison>3.13.0</maven.compiler.plugin.verison>
+        <!-- 【其他】测试依赖 -->
+        <opencc4j.version>1.8.1</opencc4j.version>
     </properties>
 
     <!-- 依赖详情 -->
@@ -256,15 +258,10 @@
             <version>${ok.io.version}</version>
         </dependency>
 
-        <!-- Fast JSON 依赖配置 -->
+        <!-- FastJSON2 依赖配置 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
-            <version>${fastjson2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2-extension-spring5</artifactId>
             <version>${fastjson2.version}</version>
         </dependency>
 
@@ -492,7 +489,7 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>opencc4j</artifactId>
-            <version>1.8.1</version>
+            <version>${opencc4j.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

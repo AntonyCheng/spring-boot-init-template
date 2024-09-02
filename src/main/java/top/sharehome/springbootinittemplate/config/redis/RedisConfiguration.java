@@ -1,16 +1,17 @@
 package top.sharehome.springbootinittemplate.config.redis;
 
-import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import top.sharehome.springbootinittemplate.config.redis.condition.RedisCondition;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Redis配置类
@@ -20,14 +21,17 @@ import javax.annotation.PostConstruct;
 @Configuration
 @Slf4j
 @Conditional(RedisCondition.class)
-public class RedisConfiguration extends CachingConfigurerSupport {
+public class RedisConfiguration implements CachingConfigurer {
+
+    @Resource
+    private RedisConnectionFactory redisConnectionFactory;
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         // 没有改变序列化之前的默认的序列化规则是JdkSerializationRedisSerializer();
-        // 这里使用 FastJson 工具进行序列化
-        redisTemplate.setDefaultSerializer(new GenericFastJsonRedisSerializer());
+        // 这里使用 Jackson2 工具进行序列化
+        redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
