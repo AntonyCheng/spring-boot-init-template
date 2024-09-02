@@ -65,7 +65,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        log.info("所有数据解析完毕，一共{}条数据！",excelResult.getList().size());
+        log.info("所有数据解析完毕，一共{}条数据！", excelResult.getList().size());
     }
 
     /**

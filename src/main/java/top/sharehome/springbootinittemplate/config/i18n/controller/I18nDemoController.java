@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.config.i18n.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.i18n.I18nManager;
@@ -23,7 +22,7 @@ public class I18nDemoController {
         int seed = new Random().nextInt();
         if (seed % 2 == 0) {
             throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH.toI18n());
-        }else {
+        } else {
             return R.ok(I18nManager.getMessage("welcome", name));
         }
     }

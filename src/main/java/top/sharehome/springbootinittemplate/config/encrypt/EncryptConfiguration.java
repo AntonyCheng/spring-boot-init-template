@@ -1,7 +1,5 @@
 package top.sharehome.springbootinittemplate.config.encrypt;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,6 +10,8 @@ import top.sharehome.springbootinittemplate.config.encrypt.properties.EncryptPro
 import top.sharehome.springbootinittemplate.utils.encrypt.AESUtils;
 import top.sharehome.springbootinittemplate.utils.encrypt.RSAUtils;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.util.concurrent.CompletableFuture;

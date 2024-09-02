@@ -27,7 +27,7 @@ public class TestPdfExport {
         try (
                 FileOutputStream exportThymeleafStream = new FileOutputStream(EXPORT_THYMELEAF_WORD_FILE_PATH_NAME);
                 FileOutputStream exportFreemarkerStream = new FileOutputStream(EXPORT_FREEMARKER_WORD_FILE_PATH_NAME);
-                FileOutputStream exportJteStream = new FileOutputStream(EXPORT_JTE_WORD_FILE_PATH_NAME);
+                FileOutputStream exportJteStream = new FileOutputStream(EXPORT_JTE_WORD_FILE_PATH_NAME)
         ) {
             Map<String, Object> freemarkerData = new HashMap<>();
             List<String> freemarkerList = new ArrayList<>(2);

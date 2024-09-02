@@ -15,7 +15,7 @@ import top.sharehome.springbootinittemplate.exception.CustomizeException;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
-public class CustomizeEncryptException extends CustomizeException{
+public class CustomizeEncryptException extends CustomizeException {
 
     public CustomizeEncryptException() {
         this.returnCode = ReturnCode.FAIL;
