@@ -45,9 +45,7 @@ public class OssTest {
      */
     @Test
     void testTencentUtilsDelete() {
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/e62fe3589cd44957865a77da7b9f1db91725288883715.md");
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/334b33d3f6e448dfa48363e54ae32c641725288885957.md");
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/074fb57812b54740b9c11ac40044d0f81725288886966.md");
+        TencentUtils.delete("https://test-1306588126.cos.ap-chengdu.myqcloud.com/test/init/61f122e335934970be3f2b14eeef37c8_README.md");
     }
 
     /**
@@ -73,9 +71,7 @@ public class OssTest {
      */
     @Test
     void testAliUtilsDelete() {
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/6acdb8e0ba3547129c5f3a01e359e5fc1725289306886.md");
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/bbce61c48969415299b5ba30339a044d1725289307614.md");
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/3c0cd5a48c0e482e9c59e2309bd3c4a81725289307969.md");
+        AliUtils.delete("https://xxxxxx.oss-cn-beijing.aliyuncs.com/test/init/33ce4679377b48e9a733d95deaf43975_README.md");
     }
 
     /**
@@ -101,9 +97,7 @@ public class OssTest {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/2b88be9a7fa44e78ae0df33e9d7df3391725288694737.md");
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/d6a325c9df184bb4a2451c0733b8a1001725288695159.md");
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/1967793e9bb642a48815f62f72a55ddb1725288695188.md");
+        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/0b2d81aa44ec42aaad8aa7376d6868f81715065474845.md");
     }
 
 }
