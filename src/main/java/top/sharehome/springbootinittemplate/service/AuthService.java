@@ -8,6 +8,8 @@ import top.sharehome.springbootinittemplate.model.dto.auth.AuthRetrievePasswordD
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 鉴权认证服务接口
  *
@@ -21,6 +23,13 @@ public interface AuthService extends IService<User> {
      * @param authRegisterDto 用户注册Dto类
      */
     void register(AuthRegisterDto authRegisterDto);
+
+    /**
+     * 注册后激活账号
+     *
+     * @param uuid 随机验证码
+     */
+    void activate(String uuid, HttpServletResponse response);
 
     /**
      * 登录

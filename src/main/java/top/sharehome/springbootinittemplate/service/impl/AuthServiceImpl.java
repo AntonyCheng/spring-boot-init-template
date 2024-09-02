@@ -25,11 +25,14 @@ import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 鉴权认证服务实现类
- * todo 补充添加人员时邮箱必要项
  *
  * @author AntonyCheng
  */
@@ -41,6 +44,15 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
 
     @Value(value = "${spring.application.name}")
     private String applicationName;
+
+    @Value(value = "${server.domain}")
+    private String domain;
+
+    @Value(value = "${server.port}")
+    private Integer port;
+
+    @Value(value = "${server.servlet.context-path}")
+    private String contextPath;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -55,10 +67,58 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         User user = new User()
                 .setAccount(authRegisterDto.getAccount())
                 .setPassword(authRegisterDto.getPassword())
-                .setEmail(authRegisterDto.getEmail());
+                .setEmail(authRegisterDto.getEmail())
+                // 在没有激活账号的情况下禁用账号
+                .setState(1);
         int insertResult = userMapper.insert(user);
         if (insertResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+        // 生成一个随机UUID
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        // 生成激活邮件Key值
+        String activateKey = KeyPrefixConstants.EMAIL_REGISTER_ACTIVATE_PREFIX + uuid;
+        // 将激活邮件Key设置5分钟过期时间
+        CacheUtils.putString(activateKey, authRegisterDto.getAccount(), 2 * 60 * 60);
+        // 给新用户邮箱发送一条激活邮件
+        String subject = "激活账号";
+        String href = domain + ":" + port + contextPath + "/auth/activate/" + uuid;
+        String emailContent = "[" + applicationName + "]-点击<a href=\"" + href + "\" target=\"_blank\">链接</a>以激活账号，两小时内有效";
+        EmailUtils.sendWithHtml(authRegisterDto.getEmail(), subject, emailContent);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void activate(String uuid, HttpServletResponse response) {
+        response.setContentType("text/plain;charset=UTF-8");
+        try (PrintWriter writer = response.getWriter()) {
+            String activateKey = KeyPrefixConstants.EMAIL_REGISTER_ACTIVATE_PREFIX + uuid;
+            String account = CacheUtils.getString(activateKey);
+            if (Objects.isNull(account)) {
+                writer.flush();
+                writer.write("验证码已过期或者无效");
+                return;
+            }
+            LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            userLambdaQueryWrapper.eq(User::getAccount, account);
+            User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
+            if (Objects.isNull(userInDatabase)) {
+                writer.flush();
+                writer.write("用户账号不存在");
+                return;
+            }
+            userInDatabase.setState(0);
+            int updateResult = userMapper.updateById(userInDatabase);
+            if (updateResult == 0) {
+                writer.flush();
+                writer.write("数据库服务出错");
+                return;
+            }
+            CacheUtils.deleteString(activateKey);
+            writer.flush();
+            writer.write("激活账号成功，请登录");
+        } catch (IOException e) {
+            throw new CustomizeReturnException(ReturnCode.FAIL, "输出流异常");
         }
     }
 
@@ -76,9 +136,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
+        LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         // 判断用户密码是否正确，在连续错误输入的情况下自动封禁
         if (!Objects.equals(userInDatabase.getPassword(), authLoginDto.getPassword())) {
-            LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             // 连续5次输入错误密码后封禁账号
             Integer maxLoginNum = 5;
             if (userInDatabase.getLoginNum() < maxLoginNum) {
@@ -104,6 +164,16 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
                     throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
                 }
                 throw new CustomizeReturnException(ReturnCode.PASSWORD_VERIFICATION_FAILED, "多次出错，账号已被封禁");
+            }
+        }
+        // 如果数据库中的连续登录错误次数不等于0，那么将其修改为0
+        if (!Objects.equals(userInDatabase.getLoginNum(), 0)) {
+            userLambdaUpdateWrapper
+                    .set(User::getLoginNum, 0)
+                    .eq(User::getAccount, userInDatabase.getAccount());
+            int updateResult = userMapper.update(userLambdaUpdateWrapper);
+            if (updateResult == 0) {
+                throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
             }
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();

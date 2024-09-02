@@ -8,6 +8,7 @@ const getDefaultState = () => {
     id: '',
     account: '',
     name: '',
+    email: '',
     avatar: '',
     role: ''
   }
@@ -30,6 +31,9 @@ const mutations = {
   },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -65,11 +69,12 @@ const actions = {
           return reject('验证失败，请重新登录')
         }
 
-        const { id, account, name, avatar, role } = data
+        const { id, account, name, email, avatar, role } = data
 
         commit('SET_ID', id)
         commit('SET_ACCOUNT', account)
         commit('SET_NAME', name)
+        commit('SET_EMAIL', email)
         commit('SET_AVATAR', avatar)
         commit('SET_ROLE', role)
         resolve(data)

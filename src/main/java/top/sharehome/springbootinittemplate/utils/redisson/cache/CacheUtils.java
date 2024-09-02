@@ -74,27 +74,6 @@ public class CacheUtils {
     }
 
     /**
-     * 设置空缓存
-     *
-     * @param key 缓存键
-     */
-    public static void putNull(String key) {
-        RBucket<?> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.set(null);
-    }
-
-    /**
-     * 设置空缓存，同时设置过期时间
-     *
-     * @param key     缓存键
-     * @param expired 过期时间
-     */
-    public static void putNull(String key, long expired) {
-        RBucket<?> bucket = REDISSON_CLIENT.getBucket(KeyPrefixConstants.CACHE_PREFIX + key);
-        bucket.set(null, Duration.ofSeconds(expired));
-    }
-
-    /**
      * 如果存在则设置缓存
      *
      * @param key   缓存键

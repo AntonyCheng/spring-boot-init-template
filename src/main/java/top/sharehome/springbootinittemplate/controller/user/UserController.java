@@ -18,10 +18,7 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateAccountDto;
-import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateAvatarDto;
-import top.sharehome.springbootinittemplate.model.dto.user.UserUpdateNameDto;
-import top.sharehome.springbootinittemplate.model.dto.user.UserUpdatePasswordDto;
+import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
@@ -69,7 +66,7 @@ public class UserController {
     @ControllerLog(description = "用户更新自身账号", operator = Operator.UPDATE)
     public R<String> updateAccount(@RequestBody @Validated(PutGroup.class) UserUpdateAccountDto userUpdateAccountDto) {
         if (StringUtils.equals(LoginUtils.getLoginUserAccount(), userUpdateAccountDto.getNewAccount())) {
-            throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "不能和当前帐号重复");
+            throw new CustomizeReturnException(ReturnCode.NEW_ACCOUNT_AND_OLD_ACCOUNT_ARE_SAME);
         }
         userService.updateAccount(userUpdateAccountDto.getNewAccount());
         return R.ok("更新账号成功");
@@ -85,10 +82,26 @@ public class UserController {
     @ControllerLog(description = "用户更新自身名称", operator = Operator.UPDATE)
     public R<String> updateName(@RequestBody @Validated(PutGroup.class) UserUpdateNameDto userUpdateNameDto) {
         if (StringUtils.equals(LoginUtils.getLoginUser().getName(), userUpdateNameDto.getNewName())) {
-            throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "不能和当前名称重复");
+            throw new CustomizeReturnException(ReturnCode.NEW_USERNAME_AND_OLD_USERNAME_ARE_SAME);
         }
         userService.updateName(userUpdateNameDto.getNewName());
         return R.ok("更新账号成功");
+    }
+
+    /**
+     * 用户更新邮箱
+     *
+     * @param userUpdateEmailDto 用户更新邮箱Dto类
+     * @return 返回更新结果
+     */
+    @PutMapping("/update/email")
+    @ControllerLog(description = "用户更新自身邮箱", operator = Operator.UPDATE)
+    public R<String> updateEmail(@RequestBody @Validated(PutGroup.class) UserUpdateEmailDto userUpdateEmailDto) {
+        if (StringUtils.equals(LoginUtils.getLoginUser().getEmail(), userUpdateEmailDto.getNewEmail())) {
+            throw new CustomizeReturnException(ReturnCode.NEW_EMAIL_AND_OLD_EMAIL_ARE_SAME);
+        }
+        userService.updateEmail(userUpdateEmailDto.getNewEmail());
+        return R.ok("更新邮箱成功");
     }
 
     /**

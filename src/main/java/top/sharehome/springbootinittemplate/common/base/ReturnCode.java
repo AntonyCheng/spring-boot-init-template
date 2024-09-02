@@ -54,74 +54,89 @@ public enum ReturnCode {
     NEW_PASSWORD_AND_OLD_PASSWORD_ARE_SAME(11003, "新旧密码相同"),
 
     /**
-     * 密码校验失败 11004
+     * 新旧账号相同 11004
      */
-    PASSWORD_VERIFICATION_FAILED(11004, "密码校验失败"),
+    NEW_ACCOUNT_AND_OLD_ACCOUNT_ARE_SAME(11004, "新旧账号相同"),
 
     /**
-     * 用户基本信息校验失败 11005
+     * 新旧名称相同 11005
      */
-    USER_BASIC_INFORMATION_VERIFICATION_FAILED(11005, "用户基本信息校验失败"),
+    NEW_USERNAME_AND_OLD_USERNAME_ARE_SAME(11005, "新旧名称相同"),
 
     /**
-     * 用户账户不存在 11006
+     * 新旧邮箱相同 11006
      */
-    USER_ACCOUNT_DOES_NOT_EXIST(11006, "用户账户不存在"),
+    NEW_EMAIL_AND_OLD_EMAIL_ARE_SAME(11006, "新旧邮箱相同"),
 
     /**
-     * 用户账户被封禁 11007
+     * 密码校验失败 11007
      */
-    USER_ACCOUNT_BANNED(11007, "用户账户被封禁"),
+    PASSWORD_VERIFICATION_FAILED(11007, "密码校验失败"),
 
     /**
-     * 用户账号或密码错误 11008
+     * 用户基本信息校验失败 11008
      */
-    WRONG_USER_ACCOUNT_OR_PASSWORD(11008, "用户账号或密码错误"),
+    USER_BASIC_INFORMATION_VERIFICATION_FAILED(11008, "用户基本信息校验失败"),
 
     /**
-     * 用户登录已过期 11009
+     * 用户账户不存在 11009
      */
-    USER_LOGIN_HAS_EXPIRED(11009, "用户登录已过期"),
+    USER_ACCOUNT_DOES_NOT_EXIST(11009, "用户账户不存在"),
 
     /**
-     * 用户操作异常 11010
+     * 用户账户被封禁 11010
      */
-    ABNORMAL_USER_OPERATION(11010, "用户操作异常"),
+    USER_ACCOUNT_BANNED(11010, "用户账户被封禁"),
 
     /**
-     * 用户设备异常 11011
+     * 用户账号或密码错误 11011
      */
-    ABNORMAL_USER_EQUIPMENT(11011, "用户设备异常"),
+    WRONG_USER_ACCOUNT_OR_PASSWORD(11011, "用户账号或密码错误"),
 
     /**
-     * 用户登录验证码为空 11012
+     * 用户登录已过期 11012
      */
-    CAPTCHA_IS_EMPTY(11012, "验证码为空"),
+    USER_LOGIN_HAS_EXPIRED(11012, "用户登录已过期"),
 
     /**
-     * 用户登录验证码已过期 11013
+     * 用户操作异常 11013
      */
-    CAPTCHA_HAS_EXPIRED(11013, "验证码已过期"),
+    ABNORMAL_USER_OPERATION(11013, "用户操作异常"),
 
     /**
-     * 用户登录验证码无效 11014
+     * 用户设备异常 11014
      */
-    CAPTCHA_IS_INVALID(11014, "验证码无效"),
+    ABNORMAL_USER_EQUIPMENT(11014, "用户设备异常"),
 
     /**
-     * 用户登录验证码无效 11015
+     * 用户登录验证码为空 11015
      */
-    CAPTCHA_IS_INCORRECT(11015, "验证码错误"),
+    CAPTCHA_IS_EMPTY(11015, "验证码为空"),
 
     /**
-     * 用户发出无效请求 11016
+     * 用户登录验证码已过期 11016
      */
-    USER_SENT_INVALID_REQUEST(11016, "用户发出无效请求"),
+    CAPTCHA_HAS_EXPIRED(11016, "验证码已过期"),
 
     /**
-     * 用户账户和邮箱不匹配 11017
+     * 用户登录验证码无效 11017
      */
-    ACCOUNT_AND_EMAIL_DO_NOT_MATCH(11017, "用户账户和邮箱不匹配"),
+    CAPTCHA_IS_INVALID(11017, "验证码无效"),
+
+    /**
+     * 用户登录验证码无效 11018
+     */
+    CAPTCHA_IS_INCORRECT(11018, "验证码错误"),
+
+    /**
+     * 用户发出无效请求 11019
+     */
+    USER_SENT_INVALID_REQUEST(11019, "用户发出无效请求"),
+
+    /**
+     * 用户账户和邮箱不匹配 11020
+     */
+    ACCOUNT_AND_EMAIL_DO_NOT_MATCH(11020, "用户账户和邮箱不匹配"),
 
     /**
      * 手机格式校验失败 12000

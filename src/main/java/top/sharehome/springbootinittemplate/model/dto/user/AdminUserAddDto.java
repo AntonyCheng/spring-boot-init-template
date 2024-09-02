@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -39,6 +40,13 @@ public class AdminUserAddDto implements Serializable {
     @Size(min = 5, max = 16, message = "密码长度介于5-16位之间", groups = {PostGroup.class})
     @NotBlank(message = "密码不能为空", groups = {PostGroup.class})
     private String password;
+
+    /**
+     * 邮箱
+     */
+    @Email(message = "邮箱格式错误", groups = {PostGroup.class})
+    @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
+    private String email;
 
     /**
      * 名称

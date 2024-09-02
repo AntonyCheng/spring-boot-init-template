@@ -29,6 +29,11 @@ public class AdminUserPageDto implements Serializable {
     private String name;
 
     /**
+     * 用户邮箱（like）
+     */
+    private String email;
+
+    /**
      * 用户角色（eq）
      */
     private String role;
