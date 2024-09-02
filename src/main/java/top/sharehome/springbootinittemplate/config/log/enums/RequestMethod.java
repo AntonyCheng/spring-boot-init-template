@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.log.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Getter;
  * @author AntonyCheng
  */
 @Getter
+@AllArgsConstructor
 public enum RequestMethod {
 
     GET("GET"),
@@ -21,9 +23,5 @@ public enum RequestMethod {
     PATCH("PATCH");
 
     private final String methodName;
-
-    RequestMethod(String methodName) {
-        this.methodName = methodName;
-    }
 
 }

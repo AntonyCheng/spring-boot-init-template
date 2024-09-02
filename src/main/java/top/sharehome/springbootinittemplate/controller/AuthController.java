@@ -83,7 +83,6 @@ public class AuthController {
         return R.okWithToken("登录成功", loginUser);
     }
 
-
     /**
      * 通过邮箱验证找回密码
      * todo 模板默认不使用该接口，因为该模板中真实找回用户密码的接口应该是管理员修改用户密码的方式，但业务层面上保留该接口，

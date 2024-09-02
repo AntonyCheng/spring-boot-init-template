@@ -30,7 +30,7 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
     /**
      * 定义SaToken不需要拦截的URI
      */
-    private static final List<String> SA_TOKEN_NOT_NEED_INTERCEPT_URI = new ArrayList<String>() {
+    private static final List<String> SA_TOKEN_NOT_NEED_INTERCEPT_URI = new ArrayList<>() {
         {
             add("/auth/register");
             add("/auth/login");
@@ -38,6 +38,7 @@ public class IdentificationConfiguration implements WebMvcConfigurer {
             add("/auth/check/email/code");
             add("/auth/email/code");
             add("/captcha");
+            add("/encrypt/rsa/public/key");
         }
     };
 

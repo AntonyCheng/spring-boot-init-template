@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.i18n.properties.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Locale;
@@ -10,6 +11,7 @@ import java.util.Locale;
  * @author AntonyCheng
  */
 @Getter
+@AllArgsConstructor
 public enum LocaleType {
 
     // 注意格式：
@@ -22,9 +24,5 @@ public enum LocaleType {
     ZH_TW(new Locale("zh", "TW"));
 
     final private Locale locale;
-
-    LocaleType(Locale locale) {
-        this.locale = locale;
-    }
 
 }

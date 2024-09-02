@@ -71,6 +71,7 @@ springdoc:
         - top.sharehome.springbootinittemplate.controller
         - top.sharehome.springbootinittemplate.config.captcha.controller
         - top.sharehome.springbootinittemplate.config.i18n.controller
+        - top.sharehome.springbootinittemplate.config.encrypt.controller
 
 # 日志配置 ---- 可自定义
 logging:
@@ -638,6 +639,10 @@ ip2region:
 encrypt:
   # todo 是否使用参数加密校验
   enable: false
+  # RSA 密钥长度（默认4096，值越高，安全性越高，效率越低）
+  rsa-key-length: length4096
+  # AES 密钥长度（默认32，值越高，安全性越高，效率越低）
+  aes-key-length: length32
 
 # 验证码配置
 captcha:

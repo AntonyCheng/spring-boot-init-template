@@ -11,11 +11,11 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import java.util.Random;
 
 /**
- * 国际化示例控制器（测试时）
+ * 国际化示例控制器（仅测试使用，使用时取消注释RestController注解）
  *
  * @author AntonyCheng
  */
-@RestController
+//@RestController
 public class I18nDemoController {
 
     @GetMapping("/i18n")

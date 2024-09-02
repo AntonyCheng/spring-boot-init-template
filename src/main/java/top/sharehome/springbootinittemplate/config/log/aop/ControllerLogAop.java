@@ -217,7 +217,7 @@ public class ControllerLogAop {
                 CustomizeException customizeException = (CustomizeException) e;
                 jsonMap.put("code", customizeException.getReturnCode().getCode());
                 jsonMap.put("name", customizeException.getReturnCode().name());
-                jsonMap.put("msg", customizeException.getMsg());
+                jsonMap.put("msg", customizeException.getReturnCode().getMsg() + " ==> [" + customizeException.getMsg() + "]");
             } else {
                 StackTraceElement[] stackTrace = e.getStackTrace();
                 if (stackTrace.length != 0) {

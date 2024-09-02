@@ -80,7 +80,7 @@ public class AESUtils {
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥加密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥加密出错", e);
         }
     }
 
@@ -97,7 +97,7 @@ public class AESUtils {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥解密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥解密出错", e);
         }
     }
 
@@ -120,7 +120,7 @@ public class AESUtils {
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥加密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥加密出错", e);
         }
     }
 
@@ -143,7 +143,7 @@ public class AESUtils {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥解密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "密钥解密出错", e);
         }
     }
 

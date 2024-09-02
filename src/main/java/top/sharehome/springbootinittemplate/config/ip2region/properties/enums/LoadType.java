@@ -1,10 +1,15 @@
 package top.sharehome.springbootinittemplate.config.ip2region.properties.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * 加载IP离线文件方式枚举类
  *
  * @author AntonyCheng
  */
+@Getter
+@AllArgsConstructor
 public enum LoadType {
     /**
      * 文件加载：

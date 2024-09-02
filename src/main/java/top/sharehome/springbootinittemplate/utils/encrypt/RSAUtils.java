@@ -50,7 +50,7 @@ public class RSAUtils {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(spec);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "从字符串获取公钥出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "从字符串获取公钥出错", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class RSAUtils {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(spec);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "从字符串获取私钥出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "从字符串获取私钥出错", e);
         }
     }
 
@@ -79,7 +79,7 @@ public class RSAUtils {
         try {
             return Base64.getEncoder().encodeToString(publicKey.getEncoded());
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "将公钥转换为字符串出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "将公钥转换为字符串出错", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class RSAUtils {
         try {
             return Base64.getEncoder().encodeToString(privateKey.getEncoded());
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "将私钥转换为字符串出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "将私钥转换为字符串出错", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class RSAUtils {
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "公钥加密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "公钥加密出错", e);
         }
     }
 
@@ -126,7 +126,7 @@ public class RSAUtils {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "私钥解密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "私钥解密出错", e);
         }
     }
 
@@ -144,7 +144,7 @@ public class RSAUtils {
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "公钥加密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "公钥加密出错", e);
         }
     }
 
@@ -162,7 +162,7 @@ public class RSAUtils {
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
             return new String(decryptedBytes);
         } catch (Exception e) {
-            throw new CustomizeEncryptException(ReturnCode.FAIL, "私钥解密出错：" + e.getMessage());
+            throw new CustomizeEncryptException(ReturnCode.FAIL, "私钥解密出错", e);
         }
     }
 
