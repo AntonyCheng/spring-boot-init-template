@@ -4,6 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.ShearCaptcha;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
 
-import jakarta.annotation.PostConstruct;
 import java.awt.*;
 
 /**

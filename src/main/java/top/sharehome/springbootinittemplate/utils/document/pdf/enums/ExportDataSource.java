@@ -25,6 +25,6 @@ public enum ExportDataSource {
     /**
      * jte数据源
      */
-    JTE;
+    JTE
 
 }

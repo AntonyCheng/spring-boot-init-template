@@ -12,6 +12,7 @@ import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.StorageClass;
 import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.*;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -29,7 +30,6 @@ import top.sharehome.springbootinittemplate.config.oss.tencent.properties.Tencen
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
-import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

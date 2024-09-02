@@ -15,7 +15,7 @@ import top.sharehome.springbootinittemplate.exception.CustomizeException;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
-public class CustomizeMailException extends CustomizeException{
+public class CustomizeMailException extends CustomizeException {
 
     public CustomizeMailException() {
         this.returnCode = ReturnCode.FAIL;

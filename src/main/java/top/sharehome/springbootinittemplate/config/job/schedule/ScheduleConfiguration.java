@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.job.schedule;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,7 +11,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import top.sharehome.springbootinittemplate.config.job.schedule.condition.ScheduleCycleCondition;
 import top.sharehome.springbootinittemplate.config.job.schedule.properties.ScheduleProperties;
 
-import jakarta.annotation.PostConstruct;
 import java.util.concurrent.Executors;
 
 /**

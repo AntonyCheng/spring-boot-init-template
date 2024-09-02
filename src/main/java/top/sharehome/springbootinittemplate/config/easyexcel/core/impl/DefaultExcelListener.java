@@ -4,14 +4,14 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.fastjson2.JSON;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelListener;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelResult;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,7 +65,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
      */
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        log.info("所有数据解析完毕，一共{}条数据！",excelResult.getList().size());
+        log.info("所有数据解析完毕，一共{}条数据！", excelResult.getList().size());
     }
 
     /**
@@ -75,16 +75,14 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
     public void onException(Exception exception, AnalysisContext context) {
         String errorMsg = null;
         // 抓到ExcelDataConvertException进行相关日志记录
-        if (exception instanceof ExcelDataConvertException) {
-            ExcelDataConvertException excelDataConvertException = (ExcelDataConvertException) exception;
+        if (exception instanceof ExcelDataConvertException excelDataConvertException) {
             Integer rowIndex = excelDataConvertException.getRowIndex();
             Integer columnIndex = excelDataConvertException.getColumnIndex();
             errorMsg = String.format("第%d行-第%d列-表头[%s]：解析异常！", rowIndex + 1, columnIndex + 1, headMap.get(columnIndex));
             log.error(errorMsg);
         }
         // 抓住ConstraintViolationException进行相关日志记录
-        if (exception instanceof ConstraintViolationException) {
-            ConstraintViolationException constraintViolationException = (ConstraintViolationException) exception;
+        if (exception instanceof ConstraintViolationException constraintViolationException) {
             Set<ConstraintViolation<?>> constraintViolations = constraintViolationException.getConstraintViolations();
             errorMsg = constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", "));
             log.error(errorMsg);

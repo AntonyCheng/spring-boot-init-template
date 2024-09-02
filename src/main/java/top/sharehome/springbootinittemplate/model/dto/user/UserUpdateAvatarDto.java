@@ -1,13 +1,12 @@
 package top.sharehome.springbootinittemplate.model.dto.user;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
-
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.io.Serializable;

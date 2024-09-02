@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.config.redisson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
@@ -18,8 +19,6 @@ import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCl
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonSingleCondition;
 import top.sharehome.springbootinittemplate.config.redisson.properties.RedissonProperties;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * Redisson配置

@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.captcha.interceptor.config;
 
+import jakarta.annotation.Resource;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
@@ -10,7 +11,6 @@ import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCond
 import top.sharehome.springbootinittemplate.config.captcha.interceptor.CaptchaInterceptor;
 import top.sharehome.springbootinittemplate.config.captcha.properties.CaptchaProperties;
 
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

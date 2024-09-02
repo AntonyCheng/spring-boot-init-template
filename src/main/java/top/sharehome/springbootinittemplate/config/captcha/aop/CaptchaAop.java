@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.config.captcha.condition.CaptchaCondition;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 import top.sharehome.springbootinittemplate.config.captcha.service.CaptchaService;
@@ -56,7 +55,7 @@ public class CaptchaAop {
                 uuid = captcha.getUuid();
                 code = captcha.getCode();
             } catch (Exception e) {
-                throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH,"缺少验证码");
+                throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "缺少验证码");
             }
         }
         captchaService.checkCaptcha(code, uuid);

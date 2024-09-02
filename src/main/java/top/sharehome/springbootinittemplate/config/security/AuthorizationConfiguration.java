@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.config.security;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,6 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.config.security.condition.SaCondition;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 
-import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 

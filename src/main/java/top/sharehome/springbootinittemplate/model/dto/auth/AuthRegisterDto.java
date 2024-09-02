@@ -1,16 +1,15 @@
 package top.sharehome.springbootinittemplate.model.dto.auth;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.io.Serializable;

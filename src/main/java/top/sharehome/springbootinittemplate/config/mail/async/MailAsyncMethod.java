@@ -1,5 +1,8 @@
 package top.sharehome.springbootinittemplate.config.mail.async;
 
+import jakarta.annotation.Resource;
+import jakarta.mail.Message;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,9 +12,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.mail.condition.MailCondition;
 
-import jakarta.annotation.Resource;
-import jakarta.mail.Message;
-import jakarta.mail.internet.MimeMessage;
 import java.util.Arrays;
 
 /**

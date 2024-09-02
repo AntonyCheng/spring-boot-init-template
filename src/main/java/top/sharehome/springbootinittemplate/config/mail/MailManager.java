@@ -1,5 +1,9 @@
 package top.sharehome.springbootinittemplate.config.mail;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -20,10 +24,6 @@ import top.sharehome.springbootinittemplate.config.mail.async.MailAsyncMethod;
 import top.sharehome.springbootinittemplate.config.mail.condition.MailCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeMailException;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;

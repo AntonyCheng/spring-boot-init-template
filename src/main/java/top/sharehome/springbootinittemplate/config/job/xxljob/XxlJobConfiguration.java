@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.config.job.xxljob;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -9,8 +10,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.job.xxljob.condition.XxlJobCondition;
 import top.sharehome.springbootinittemplate.config.job.xxljob.properties.XxlJobProperties;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * XXL-JOB配置文件

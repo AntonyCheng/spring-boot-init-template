@@ -1,12 +1,12 @@
 package top.sharehome.springbootinittemplate.config.meta;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 
-import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 /**

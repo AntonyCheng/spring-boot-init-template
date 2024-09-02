@@ -2,13 +2,12 @@ package top.sharehome.springbootinittemplate.config.security;
 
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.stp.StpLogic;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.security.condition.JwtCondition;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * SaToken是否使用Jwt

@@ -1,14 +1,13 @@
 package top.sharehome.springbootinittemplate.model.dto.user;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.io.Serializable;

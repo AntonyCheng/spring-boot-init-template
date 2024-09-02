@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.utils.rabbitmq;
 
 import com.alibaba.fastjson2.JSON;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,6 @@ import top.sharehome.springbootinittemplate.config.rabbitmq.defaultMq.DefaultRab
 import top.sharehome.springbootinittemplate.config.rabbitmq.properties.RabbitMqProperties;
 import top.sharehome.springbootinittemplate.utils.rabbitmq.model.RabbitMessage;
 
-import jakarta.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.UUID;

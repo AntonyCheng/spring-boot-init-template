@@ -1,10 +1,9 @@
 package top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atTargetAop.service.impl;
 
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atTargetAop.annotation.AtTargetClass;
 import top.sharehome.springbootinittemplate.aop.studyDemo.annotation.atTargetAop.service.AtTargetService;
-
-import jakarta.annotation.Resource;
 
 /**
  * 针对切点参数为@target型的切面类的服务实现类

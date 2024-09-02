@@ -1,12 +1,12 @@
 package top.sharehome.springbootinittemplate.config.i18n.interceptor;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.HandlerInterceptor;
 import top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 /**

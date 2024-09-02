@@ -5,6 +5,7 @@ import com.aliyun.oss.common.auth.CredentialsProvider;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.common.comm.Protocol;
 import com.aliyun.oss.model.PutObjectRequest;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -21,7 +22,6 @@ import top.sharehome.springbootinittemplate.config.oss.ali.properties.AliPropert
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
-import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
