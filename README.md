@@ -124,7 +124,6 @@ RaabbitMQ 3.X.X（推荐）
   - okhttp 4.12.0 == OK Http 工具类
   - okio 3.9.0 == OK IO 工具类
   - fastjson2 2.0.52 == FastJSON 工具类
-  - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
   - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
   - sa-token-spring-boot3-starter 1.39.0 == SaToken 认证鉴权框架
