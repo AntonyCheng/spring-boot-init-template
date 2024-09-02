@@ -293,13 +293,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 自定义锁异常
+     * 自定义Redisson异常
      *
      * @param e 异常
      * @return 返回结果
      */
-    @ExceptionHandler(CustomizeLockException.class)
-    public R<String> handleCustomizeLockException(CustomizeLockException e) {
+    @ExceptionHandler(CustomizeRedissonException.class)
+    public R<String> handleCustomizeRedissonException(CustomizeRedissonException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

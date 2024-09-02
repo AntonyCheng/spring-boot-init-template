@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.exception.customize;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.CustomizeException;
 
@@ -12,7 +13,7 @@ import top.sharehome.springbootinittemplate.exception.CustomizeException;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomizeReturnException extends CustomizeException{
+public class CustomizeReturnException extends CustomizeException {
 
     public CustomizeReturnException() {
         this.returnCode = ReturnCode.FAIL;
@@ -26,7 +27,7 @@ public class CustomizeReturnException extends CustomizeException{
 
     public CustomizeReturnException(ReturnCode returnCode, String msg) {
         this.returnCode = returnCode;
-        this.msg = returnCode.getMsg() + " ==> [" + msg + "]";
+        this.msg = StringUtils.isBlank(msg) ? returnCode.getMsg() : returnCode.getMsg() + " ==> [" + msg + "]";
     }
 
     @Override

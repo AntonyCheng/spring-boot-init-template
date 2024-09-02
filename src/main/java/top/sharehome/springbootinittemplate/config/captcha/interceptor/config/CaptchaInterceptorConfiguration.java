@@ -30,7 +30,7 @@ public class CaptchaInterceptorConfiguration implements WebMvcConfigurer {
     /**
      * 定义Captcha需要拦截的URI
      */
-    private static final List<String> CAPTCHA_NEED_INTERCEPT_URI = new ArrayList<String>() {
+    private static final List<String> CAPTCHA_NEED_INTERCEPT_URI = new ArrayList<>() {
         {
             add("/captcha");
         }

@@ -316,7 +316,7 @@ spring:
       test-on-return: false
       web-stat-filter:
         enabled: true
-  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务）
+  # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
   redis:
     # 单机地址（单价模式配置和集群模式配置只能存在一个）
     host: 127.0.0.1
@@ -349,19 +349,13 @@ spring:
         # 最大等待时间/ms
         max-wait: 3000
 
-# Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+# Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
 redisson:
   # 线程池数量
   threads: 4
   # Netty线程池数量
   netty-threads: 8
-  # 限流单位时间，单位：秒
-  limit-rate-interval: 1
-  # 限流单位时间内访问次数，也能看做单位时间内系统分发的令牌数
-  limit-rate: 2
-  # 每个操作所要消耗的令牌数，系统分发的令牌数一定要大于等于操作消耗的令牌树，不然会报错
-  limit-permits: 1
   # Redis单机版本
   single-server-config:
     # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
@@ -384,7 +378,7 @@ redisson:
     idle-connection-timeout: 10000
   # Redis集群版本
   cluster-servers-config:
-    # todo 是否启动集群redisson（Redisson）缓存（预先关闭）
+    # todo 是否启动集群Redis（Redisson）缓存（预先关闭）
     enable-cluster: false
     # Redis集群节点（一定要在Redis协议下）
     node-addresses:

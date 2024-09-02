@@ -9,6 +9,7 @@ import java.lang.annotation.*;
  *
  * @author AntonyCheng
  */
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented

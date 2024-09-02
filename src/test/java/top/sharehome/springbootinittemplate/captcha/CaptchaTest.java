@@ -28,7 +28,7 @@ public class CaptchaTest {
         CaptchaCreate captcha = captchaService.createCaptcha();
         String uuid = captcha.getUuid();
         String key = KeyPrefixConstants.CAPTCHA_PREFIX + uuid;
-        String code = CacheUtils.get(key);
+        String code = CacheUtils.getNoPrefix(key, String.class);
         System.out.println("生成验证码成功: " + code);
         captchaService.checkCaptcha(code, uuid);
         System.out.println("验证码校验成功");

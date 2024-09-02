@@ -4,9 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.model.TimeModel;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码拦截器
@@ -24,8 +26,9 @@ public class CaptchaInterceptor implements HandlerInterceptor {
         // 获取请求SessionId
         String sessionId = request.getSession().getId();
         // 拼接形成限流的唯一ID
-        String rateLimitKey = ipAddress + sessionId;
-        RateLimitUtils.doRateLimitAndExpire(rateLimitKey);
+        String rateLimitKey = ipAddress + ":" + sessionId;
+        // 限流，只允许单个会话一秒内获取两次验证码
+        RateLimitUtils.doRateLimitAndExpire(rateLimitKey, new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L, new TimeModel(1L, TimeUnit.SECONDS));
         return true;
     }
 

@@ -9,6 +9,7 @@ import java.lang.annotation.*;
  *
  * @author AntonyCheng
  */
+@Inherited
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

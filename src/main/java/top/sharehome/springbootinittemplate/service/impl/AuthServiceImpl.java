@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -78,11 +80,11 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         String uuid = UUID.randomUUID().toString().replace("-", "");
         // 生成激活邮件Key值
         String activateKey = KeyPrefixConstants.EMAIL_REGISTER_ACTIVATE_PREFIX + uuid;
-        // 将激活邮件Key设置5分钟过期时间
-        CacheUtils.putString(activateKey, authRegisterDto.getAccount(), 2 * 60 * 60);
+        // 将激活邮件Key设置2小时过期时间
+        CacheUtils.putString(activateKey, authRegisterDto.getAccount(), Duration.ofHours(2));
         // 给新用户邮箱发送一条激活邮件
         String subject = "激活账号";
-        String href = domain + ":" + port + contextPath + "/auth/activate/" + uuid;
+        String href = domain + ":" + port + (StringUtils.endsWith(contextPath, "/") ? contextPath : contextPath + "/") + "auth/activate/" + uuid;
         String emailContent = "[" + applicationName + "]-点击<a href=\"" + href + "\" target=\"_blank\">链接</a>以激活账号，两小时内有效";
         EmailUtils.sendWithHtml(authRegisterDto.getEmail(), subject, emailContent);
     }
@@ -243,7 +245,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             String subject = "找回密码";
             String emailContent = "[" + applicationName + "]-找回密码验证码为 <b>" + code + "</b> ,五分钟后失效。";
             EmailUtils.sendWithHtml(userInDatabase.getEmail(), subject, emailContent);
-            CacheUtils.putString(emailKey, code, 300);
+            CacheUtils.putString(emailKey, code, Duration.ofMillis(5));
         } else {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS, "请在" + expired + "秒后重试");
         }

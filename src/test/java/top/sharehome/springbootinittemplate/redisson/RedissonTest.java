@@ -4,17 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeRedissonException;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.LockUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
+import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.model.TimeModel;
 
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 测试缓存类
@@ -38,12 +40,12 @@ public class RedissonTest {
 
         // 测试数字
         CacheUtils.putNumber("test", 9999999999L);
-        System.out.println(CacheUtils.getNumberDoubleValue("test"));
+        System.out.println(CacheUtils.getNumberDouble("test"));
         System.out.println(CacheUtils.existsNumber("test"));
         CacheUtils.deleteNumber("test");
 
         // 测试List
-        List<String> l = new ArrayList<String>() {
+        List<String> l = new ArrayList<>() {
             {
                 add("test1");
                 add("test2");
@@ -55,7 +57,7 @@ public class RedissonTest {
         CacheUtils.deleteList("test");
 
         // 测试Set
-        Set<String> s = new HashSet<String>() {
+        Set<String> s = new HashSet<>() {
             {
                 add("test1");
                 add("test2");
@@ -67,7 +69,7 @@ public class RedissonTest {
         CacheUtils.deleteSet("test");
 
         // 测试Map
-        Map<String, String> m = new HashMap<String, String>() {
+        Map<String, String> m = new HashMap<>() {
             {
                 put("test1", "test1");
                 put("test2", "test2");
@@ -84,8 +86,8 @@ public class RedissonTest {
             stringStringHashMap.put("test" + i, "test" + i);
             CacheUtils.put("test" + i, stringStringHashMap);
         }
-        List<String> keysByPattern = CacheUtils.getKeysByPattern("test*");
-        Map<String, Object> keyValuesByPattern = CacheUtils.getKeyValuesByPattern("test*");
+        System.out.println(CacheUtils.getKeysByPattern("test*"));
+        System.out.println(CacheUtils.getKeyValuesByPattern("test*"));
         CacheUtils.deleteByPattern("test*");
     }
 
@@ -96,18 +98,18 @@ public class RedissonTest {
     void testRateLimitUtils() throws InterruptedException {
         for (int i = 0; i < 5; i++) {
             try {
-                RateLimitUtils.doRateLimit("test");
+                RateLimitUtils.doRateLimit("test1", new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L);
                 System.out.println(i);
-            } catch (CustomizeReturnException e) {
+            } catch (CustomizeRedissonException e) {
                 System.out.println("请求太多，请稍后");
             }
         }
         ThreadUtils.sleep(Duration.ofSeconds(2));
         for (int i = 0; i < 10; i++) {
             try {
-                RateLimitUtils.doRateLimit("test");
+                RateLimitUtils.doRateLimitAndExpire("test2", new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L, new TimeModel(1L, TimeUnit.SECONDS));
                 System.out.println(i);
-            } catch (CustomizeReturnException e) {
+            } catch (CustomizeRedissonException e) {
                 System.out.println("请求太多，请稍后");
             }
         }

@@ -11,6 +11,7 @@ import java.lang.annotation.*;
  *
  * @author AntonyCheng
  */
+@Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
