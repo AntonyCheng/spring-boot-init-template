@@ -3,10 +3,8 @@ package top.sharehome.springbootinittemplate.config.i18n;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import top.sharehome.springbootinittemplate.config.i18n.condition.I18nCondition;
 
 import javax.annotation.PostConstruct;
 import java.util.Locale;
@@ -17,7 +15,6 @@ import java.util.Locale;
  * @author AntonyCheng
  */
 @Component
-@Conditional(I18nCondition.class)
 @Slf4j
 public class I18nManager {
 
@@ -29,10 +26,11 @@ public class I18nManager {
     }
 
     public static String getMessage(String key) {
-        return getMessage(key, null);
+        Locale locale = LocaleContextHolder.getLocale();
+        return messageSource.getMessage(key, null, locale);
     }
 
-    public static String getMessage(String key, Object[] args) {
+    public static String getMessage(String key, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(key, args, locale);
     }

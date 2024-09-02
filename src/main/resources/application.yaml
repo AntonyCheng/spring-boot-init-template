@@ -139,8 +139,6 @@ spring:
           service-base-url: http://127.0.0.1:38080
   # 国际化配置
   messages:
-    # todo 是否启动国际化功能（预先关闭）
-    enable: false
     # 默认语言
     default-locale: zh_cn
     # 解释：I18n是存放多语言文件目录，messages是文件前缀
@@ -152,7 +150,7 @@ spring:
     # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置
     fallback-to-system-locale: true
     # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
-    use-code-as-default-message: false
+    use-code-as-default-message: true
   # 模板工具配置
   freemarker:
     # todo 是否启动FreeMarker模板引擎
@@ -635,6 +633,11 @@ sa-token:
 ip2region:
   # 数据加载方式
   load-type: memory
+
+# 请求参数加密校验配置
+encrypt:
+  # todo 是否使用参数加密校验
+  enable: false
 
 # 验证码配置
 captcha:

@@ -272,7 +272,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomizeReturnException.class)
     public R<String> handleCustomizeReturnException(CustomizeReturnException e) {
-        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e.getMessage());
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
         return R.fail(code, msg);
@@ -328,6 +328,20 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomizeDocumentException.class)
     public R<String> handleCustomizeDocumentException(CustomizeDocumentException e) {
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
+    }
+
+    /**
+     * 自定义加密异常
+     *
+     * @param e 异常
+     * @return 返回结果
+     */
+    @ExceptionHandler(CustomizeEncryptException.class)
+    public R<String> handleCustomizeEncryptionException(CustomizeEncryptException e) {
         log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
         int code = e.getReturnCode().getCode();
         String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();

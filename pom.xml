@@ -487,6 +487,14 @@
             <artifactId>snakeyaml</artifactId>
             <version>${snakeyaml.version}</version>
         </dependency>
+
+        <!-- [测试所需依赖] 中文繁简体转换 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>opencc4j</artifactId>
+            <version>1.8.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- 项目构建概况 -->

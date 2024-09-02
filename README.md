@@ -853,15 +853,15 @@ spring:
 
 建议使用该模板国际化功能之前先把源代码看一遍或者是先了解一下国际化的通常流程，然后再进行自定义化的配置和编码。
 
-1. 修改国际化相关配置，启动国际化功能：
+1. 首先检查 `resources/i18n/messagesXXX.properties` 国际化字典文件中是否有内容，如果没有，建议先执行 `src/test/java/top/sharehome/springbootinittemplate/MainApplicationTests.java` 类中的 `initI18n()` 方法，将系统中 `ReturnCode` 响应进行国际化，将最后得到的打印结果手动粘贴复制到 `resources/i18n/messagesXXX.properties` 文件中，这样做的原因是当需要`ReturnCode` 枚举中内容国际化时可以直接调用其类方法 `toI18n()` 。
+
+2. 修改国际化相关配置，主要根据项目要求修改默认语言：
 
    ```yaml
    # 公共配置文件
    spring:
      # 国际化配置
      messages:
-       # todo 是否启动国际化功能（预先关闭）
-       enable: true
        # 默认语言
        default-locale: zh_cn
        # 解释：I18n是存放多语言文件目录，messages是文件前缀
@@ -873,10 +873,10 @@ spring:
        # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置
        fallback-to-system-locale: true
        # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
-       use-code-as-default-message: false
+       use-code-as-default-message: true
    ```
 
-2. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
+3. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
 
    ```properties
    opr_success=操作成功
@@ -884,7 +884,7 @@ spring:
    msg_welcome=歡迎,{0}!
    ```
 
-3. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
+4. 将国际化词典文件放入 `resource/i18n` 文件夹中，并且记住后缀，将其按照规律写入 `top.sharehome.springbootinittemplate.config.i18n.properties.enums.LocaleType` 枚举类中：
 
    ```java
    @Getter
@@ -908,7 +908,7 @@ spring:
    }
    ```
 
-4. 然后参考国际化示例控制器 `top.sharehome.springbootinittemplate.config.i18n.controller.I18nDemoController` 进行国际化的使用：
+5. 然后参考国际化示例控制器 `top.sharehome.springbootinittemplate.config.i18n.controller.I18nDemoController` 进行国际化的使用：
 
    ```java
    /**
