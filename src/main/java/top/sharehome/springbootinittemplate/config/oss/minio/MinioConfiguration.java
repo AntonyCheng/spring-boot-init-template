@@ -21,6 +21,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileExc
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
@@ -47,34 +48,34 @@ public class MinioConfiguration {
      * @return 文件所在路径
      */
     public String uploadToMinio(MultipartFile file, String rootPath) {
-        MinioClient minioClient = getMinioClient();
-        String key;
+        if (Objects.isNull(file)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+        }
+        String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+        String suffix = FilenameUtils.getExtension(originalName);
+        InputStream inputStream = null;
         try {
-            if (Objects.isNull(file)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            String suffix = FilenameUtils.getExtension(originalName);
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            InputStream inputStream = file.getInputStream();
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(minioProperties.getBucketName())
-                    .object(key)
-                    .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
-        } catch (Exception e) {
-            log.error(e.getMessage());
+            inputStream = file.getInputStream();
+        } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
-                + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
+        return uploadToMinio(inputStream, suffix, rootPath);
+    }
+
+    /**
+     * 上传文件到MinIO
+     *
+     * @param bytes    待上传的文件字节数组
+     * @param suffix   文件后缀
+     * @param rootPath 上传的路径
+     * @return 文件所在路径
+     */
+    public String uploadToMinio(byte[] bytes, String suffix, String rootPath) {
+        if (ObjectUtils.isEmpty(bytes)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+        }
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return uploadToMinio(inputStream, suffix, rootPath);
     }
 
     /**
@@ -86,41 +87,12 @@ public class MinioConfiguration {
      * @return 文件所在路径
      */
     public String uploadToMinio(InputStream inputStream, String suffix, String rootPath) {
-        MinioClient minioClient = getMinioClient();
-        String key;
-        try {
-            if (Objects.isNull(inputStream)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(minioProperties.getBucketName())
-                    .object(key)
-                    .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        if (Objects.isNull(inputStream)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
-        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
-                + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
-    }
-
-    public String uploadToMinio(byte[] bytes, String suffix, String rootPath) {
         MinioClient minioClient = getMinioClient();
         String key;
         try {
-            if (ObjectUtils.isEmpty(bytes)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            InputStream inputStream = new ByteArrayInputStream(bytes);
             if (StringUtils.isEmpty(suffix)) {
                 suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             } else {

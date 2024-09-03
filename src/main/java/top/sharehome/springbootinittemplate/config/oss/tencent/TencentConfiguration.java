@@ -59,55 +59,34 @@ public class TencentConfiguration {
      * @param rootPath 上传的路径
      */
     public String uploadToCos(MultipartFile file, String rootPath) {
-        String key = null;
+        if (Objects.isNull(file)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+        }
+        String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+        String suffix = FilenameUtils.getExtension(originalName);
+        InputStream inputStream = null;
         try {
-            if (file == null) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            String suffix = FilenameUtils.getExtension(originalName);
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
-            // 详细代码参见本页：高级接口 -> 创建 TransferManager
-            TransferManager transferManager = createTransferManager();
-            // 本地文件路径
-            // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
-            InputStream inputStream = file.getInputStream();
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(inputStream.available());
-
-            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
-
-            // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
-            // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
-            putObjectRequest.setStorageClass(StorageClass.Standard_IA);
-
-            try {
-                // 高级接口会返回一个异步结果Upload
-                // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回 UploadResult, 失败抛出异常
-                Upload upload = transferManager.upload(putObjectRequest);
-                if (!showTransferProgress(upload)) {
-                    throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-                }
-                // UploadResult uploadResult = upload.waitForUploadResult();
-            } catch (CosClientException e) {
-                throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-            }
-            // 确定本进程不再使用 transferManager 实例之后，关闭即可
-            // 详细代码参见本页：高级接口 -> 关闭 TransferManager
-            shutdownTransferManager(transferManager);
+            inputStream = file.getInputStream();
         } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
+        return uploadToCos(inputStream, suffix, rootPath);
+    }
+
+    /**
+     * 上传文件到COS
+     *
+     * @param bytes    待上传的文件字节数组
+     * @param suffix   文件后缀
+     * @param rootPath 上传的路径
+     * @return 文件所在路径
+     */
+    public String uploadToCos(byte[] bytes, String suffix, String rootPath) {
+        if (ObjectUtils.isEmpty(bytes)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+        }
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return uploadToCos(inputStream, suffix, rootPath);
     }
 
     /**
@@ -119,69 +98,11 @@ public class TencentConfiguration {
      * @return 文件所在路径
      */
     public String uploadToCos(InputStream inputStream, String suffix, String rootPath) {
-        String key = null;
-        try {
-            if (Objects.isNull(inputStream)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
-            // 详细代码参见本页：高级接口 -> 创建 TransferManager
-            TransferManager transferManager = createTransferManager();
-            // 本地文件路径
-            // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(inputStream.available());
-
-            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, inputStream, objectMetadata);
-
-            // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
-            // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
-            putObjectRequest.setStorageClass(StorageClass.Standard_IA);
-
-            try {
-                // 高级接口会返回一个异步结果Upload
-                // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回 UploadResult, 失败抛出异常
-                Upload upload = transferManager.upload(putObjectRequest);
-                if (!showTransferProgress(upload)) {
-                    throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-                }
-                // UploadResult uploadResult = upload.waitForUploadResult();
-            } catch (CosClientException e) {
-                throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-            }
-            // 确定本进程不再使用 transferManager 实例之后，关闭即可
-            // 详细代码参见本页：高级接口 -> 关闭 TransferManager
-            shutdownTransferManager(transferManager);
-        } catch (IOException e) {
-            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        if (Objects.isNull(inputStream)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
-        return Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
-    }
-
-    /**
-     * 上传文件
-     *
-     * @param bytes    待上传的文件字节数据
-     * @param suffix   文件后缀
-     * @param rootPath 上传的路径
-     * @return 文件所在路径
-     */
-    public String uploadToCos(byte[] bytes, String suffix, String rootPath) {
         String key = null;
         try {
-            if (ObjectUtils.isEmpty(bytes)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            InputStream inputStream = new ByteArrayInputStream(bytes);
             if (StringUtils.isEmpty(suffix)) {
                 suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             } else {

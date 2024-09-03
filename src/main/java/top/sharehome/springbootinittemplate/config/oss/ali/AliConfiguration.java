@@ -50,34 +50,34 @@ public class AliConfiguration {
      * @return 文件所在路径
      */
     public String uploadToOss(MultipartFile file, String rootPath) {
-        OSS ossClient = getOssClient();
-        String key;
-        try {
-            if (file == null) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-            String suffix = FilenameUtils.getExtension(originalName);
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            InputStream inputStream = file.getInputStream();
-            // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
-        } catch (OSSException | ClientException | IOException oe) {
-            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-        } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
+        if (Objects.isNull(file)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
-        return Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
+        String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+        String suffix = FilenameUtils.getExtension(originalName);
+        InputStream inputStream = null;
+        try {
+            inputStream = file.getInputStream();
+        } catch (IOException e) {
+            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        }
+        return uploadToOss(inputStream, suffix, rootPath);
+    }
+
+    /**
+     * 上传文件到OSS
+     *
+     * @param bytes    待上传的文件字节数组
+     * @param suffix   文件后缀
+     * @param rootPath 上传的路径
+     * @return 文件所在路径
+     */
+    public String uploadToOss(byte[] bytes, String suffix, String rootPath) {
+        if (ObjectUtils.isEmpty(bytes)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+        }
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return uploadToOss(inputStream, suffix, rootPath);
     }
 
     /**
@@ -89,41 +89,12 @@ public class AliConfiguration {
      * @return 文件所在路径
      */
     public String uploadToOss(InputStream inputStream, String suffix, String rootPath) {
-        OSS ossClient = getOssClient();
-        String key;
-        try {
-            if (Objects.isNull(inputStream)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
-            // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
-            // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
-        } catch (OSSException | ClientException e) {
-            throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
-        } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
+        if (Objects.isNull(inputStream)) {
+            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
-        return Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
-    }
-
-    public String uploadToOss(byte[] bytes, String suffix, String rootPath) {
         OSS ossClient = getOssClient();
         String key;
         try {
-            if (ObjectUtils.isEmpty(bytes)) {
-                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-            }
-            InputStream inputStream = new ByteArrayInputStream(bytes);
             if (StringUtils.isEmpty(suffix)) {
                 suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             } else {
@@ -136,6 +107,7 @@ public class AliConfiguration {
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
             ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, inputStream).withProgressListener(new PutObjectProgressListener()));
         } catch (OSSException | ClientException e) {
+            log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         } finally {
             if (ossClient != null) {
