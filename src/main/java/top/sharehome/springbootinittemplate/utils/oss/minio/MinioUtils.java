@@ -34,6 +34,18 @@ public class MinioUtils {
     /**
      * 上传文件
      *
+     * @param bytes    待上传的文件字节数组
+     * @param suffix   文件后缀
+     * @param rootPath 上传的路径
+     * @return 文件所在路径
+     */
+    public static String upload(byte[] bytes, String suffix, String rootPath) {
+        return MINIO_CONFIGURATION.uploadToMinio(bytes, suffix, rootPath);
+    }
+
+    /**
+     * 上传文件
+     *
      * @param inputStream 待上传的文件流
      * @param suffix      文件后缀
      * @param rootPath    上传的路径
@@ -41,18 +53,6 @@ public class MinioUtils {
      */
     public static String upload(InputStream inputStream, String suffix, String rootPath) {
         return MINIO_CONFIGURATION.uploadToMinio(inputStream, suffix, rootPath);
-    }
-
-    /**
-     * 上传文件
-     *
-     * @param bytes    待上传的文件字节数据
-     * @param suffix   文件后缀
-     * @param rootPath 上传的路径
-     * @return 文件所在路径
-     */
-    public static String upload(byte[] bytes, String suffix, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(bytes, suffix, rootPath);
     }
 
     /**

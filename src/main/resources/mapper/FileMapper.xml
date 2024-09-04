@@ -6,12 +6,12 @@
 
     <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.model.entity.File">
             <id column="file_id" jdbcType="BIGINT" property="id"/>
-            <result column="file_key" jdbcType="VARCHAR" property="key"/>
+            <result column="file_unique_key" jdbcType="VARCHAR" property="uniqueKey"/>
             <result column="file_name" jdbcType="VARCHAR" property="name"/>
             <result column="file_original_name" jdbcType="VARCHAR" property="originalName"/>
             <result column="file_suffix" jdbcType="VARCHAR" property="suffix"/>
             <result column="file_url" jdbcType="VARCHAR" property="url"/>
-            <result column="file_user_id" jdbcType="BIGINT" property="userId"/>
+            <result column="file_state" jdbcType="TINYINT" property="state"/>
             <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
             <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
             <result column="del_flag" jdbcType="TINYINT" property="delFlag"/>
@@ -19,12 +19,12 @@
 
     <sql id="Base_Column_List">
         file_id,
-        file_key,
+        file_unique_key,
         file_name,
         file_original_name,
         file_suffix,
         file_url,
-        file_user_id,
+        file_state,
         create_time,
         update_time,
         del_flag
