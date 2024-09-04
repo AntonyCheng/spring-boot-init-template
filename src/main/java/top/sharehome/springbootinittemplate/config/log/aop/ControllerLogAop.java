@@ -176,7 +176,7 @@ public class ControllerLogAop {
             // 设置接口访问耗时
             StopWatch stopWatch = COST_TIME_THREAD_LOCAL.get();
             stopWatch.stop();
-            long time = stopWatch.getTime();
+            long time = stopWatch.getDuration().toMillis();
             log.setTime(time);
             // 插入数据库
             LOG_MAPPER.insert(log);

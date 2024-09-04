@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * 找回密码Dto类
  *
@@ -18,7 +21,7 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthRetrievePasswordDto {
+public class AuthRetrievePasswordDto implements Serializable {
 
     /**
      * 账号
@@ -51,5 +54,8 @@ public class AuthRetrievePasswordDto {
      */
     @NotBlank(message = "找回密码验证码不能为空", groups = {PostGroup.class})
     private String passwordCode;
+
+    @Serial
+    private static final long serialVersionUID = -181657307913988621L;
 
 }

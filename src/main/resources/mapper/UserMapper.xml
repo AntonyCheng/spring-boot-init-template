@@ -13,7 +13,7 @@
         <result column="user_state" jdbcType="TINYINT" property="state"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="del_flag" jdbcType="TINYINT" property="delFlag"/>
     </resultMap>
     <sql id="Base_Column_List">
         user_id,
@@ -27,6 +27,6 @@
         user_state,
         create_time,
         update_time,
-        is_deleted
+        del_flag
     </sql>
 </mapper>

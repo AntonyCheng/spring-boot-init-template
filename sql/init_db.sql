@@ -6,26 +6,44 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for t_file
+-- ----------------------------
+DROP TABLE IF EXISTS `t_file`;
+CREATE TABLE `t_file`  (
+  `file_id` bigint NOT NULL COMMENT '文件ID',
+  `file_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件唯一摘要值',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件存储名称',
+  `file_original_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件原名称',
+  `file_suffix` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件扩展名',
+  `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件地址',
+  `file_user_id` bigint NULL DEFAULT NULL COMMENT '文件所属用户ID',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+  PRIMARY KEY (`file_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
 -- Table structure for t_log
 -- ----------------------------
 DROP TABLE IF EXISTS `t_log`;
 CREATE TABLE `t_log`  (
   `log_id` bigint NOT NULL COMMENT '日志ID',
-  `log_uri` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志接口URI',
-  `log_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志操作描述',
-  `log_operator` int NULL DEFAULT NULL COMMENT '日志操作类型（0其他1增2删3查4改5导入6导出）',
-  `log_request_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志请求方法（RESTFul风格）',
-  `log_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志方法名称',
+  `log_uri` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志接口URI',
+  `log_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志操作描述',
+  `log_operator` int NOT NULL COMMENT '日志操作类型（0其他1增2删3查4改5导入6导出）',
+  `log_request_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志请求方法（RESTFul风格）',
+  `log_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志方法名称',
   `log_user_id` bigint NULL DEFAULT NULL COMMENT '日志操作用户ID',
   `log_ip` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志操作用户IP',
   `log_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志操作用户地点',
-  `log_param` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志操作参数',
-  `log_result` int NULL DEFAULT NULL COMMENT '日志操作结果（0正常1异常）',
-  `log_json` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日志响应内容',
-  `log_time` bigint NULL DEFAULT NULL COMMENT '日志接口访问耗时',
+  `log_param` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志操作参数',
+  `log_result` int NOT NULL COMMENT '日志操作结果（0正常1异常）',
+  `log_json` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '日志响应内容',
+  `log_time` bigint NOT NULL COMMENT '日志接口访问耗时',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `is_deleted` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+  `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
   PRIMARY KEY (`log_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
@@ -62,15 +80,15 @@ CREATE TABLE `t_user`  (
   `user_state` tinyint NOT NULL DEFAULT 0 COMMENT '用户状态（0表示启用，1表示禁用）',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `is_deleted` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+  `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_user
 -- ----------------------------
-INSERT INTO `t_user` VALUES (1900, 'admin', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCheng', NULL, 'admin', 0, '2024-03-27 22:01:16', '2024-08-10 12:38:09', 0);
-INSERT INTO `t_user` VALUES (1901, 'user', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCoding', NULL, 'user', 0, '2024-03-27 22:01:17', '2024-08-10 12:38:09', 0);
+INSERT INTO `t_user` VALUES (1900, 'admin', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCheng', NULL, 'admin', 0, '2024-03-27 22:01:16', '2024-09-03 13:57:35', 0);
+INSERT INTO `t_user` VALUES (1901, 'user', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCoding', NULL, 'user', 0, '2024-03-27 22:01:17', '2024-09-02 10:06:57', 0);
 INSERT INTO `t_user` VALUES (1902, 'user1', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony1', NULL, 'user', 0, '2024-04-01 23:40:55', '2024-08-10 12:38:09', 0);
 INSERT INTO `t_user` VALUES (1903, 'user2', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony2', NULL, 'user', 0, '2024-04-01 23:40:55', '2024-08-10 12:38:09', 0);
 INSERT INTO `t_user` VALUES (1904, 'user3', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony3', NULL, 'user', 0, '2024-04-01 23:40:55', '2024-08-10 12:38:09', 0);
@@ -102,6 +120,6 @@ INSERT INTO `t_user` VALUES (1775366808783007746, 'user28', 'FBWzA2jdoO9tjpiK3rK
 INSERT INTO `t_user` VALUES (1775366952316284930, 'user29', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony29', NULL, 'user', 0, '2024-04-03 11:37:21', '2024-08-10 12:38:09', 0);
 INSERT INTO `t_user` VALUES (1775393764199084034, 'user30', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony30', NULL, 'user', 0, '2024-04-03 13:23:53', '2024-08-10 12:38:09', 0);
 INSERT INTO `t_user` VALUES (1792074787028615169, 'user31', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony31', NULL, 'user', 0, '2024-05-19 14:08:19', '2024-08-10 12:38:09', 0);
-INSERT INTO `t_user` VALUES (1800929601992507394, 'user32', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony32', NULL, 'user', 0, '2024-06-13 00:34:11', '2024-08-10 12:38:09', 1);
+INSERT INTO `t_user` VALUES (1800929601992507394, 'user32', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'Antony32', NULL, 'user', 0, '2024-06-13 00:34:11', '2024-09-04 08:59:46', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

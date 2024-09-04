@@ -11,70 +11,58 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 用户类
+ * 文件类
  *
  * @author AntonyCheng
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "t_user")
+@TableName(value = "t_file")
 @Accessors(chain = true)
-public class User implements Serializable {
+public class File implements Serializable {
 
     /**
      * ID
      */
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "file_id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 账号
+     * 唯一摘要值
      */
-    @TableField(value = "user_account")
-    private String account;
+    @TableField(value = "file_key")
+    private String key;
 
     /**
-     * 密码
+     * 存储名称
      */
-    @TableField(value = "user_password")
-    private String password;
-
-    /**
-     * 邮箱
-     */
-    @TableField(value = "user_email")
-    private String email;
-
-    /**
-     * 连续登录失败次数
-     */
-    @TableField(value = "user_login_num")
-    private Integer loginNum;
-
-    /**
-     * 名称
-     */
-    @TableField(value = "user_name")
+    @TableField(value = "file_name")
     private String name;
 
     /**
-     * 头像
+     * 原名称
      */
-    @TableField(value = "user_avatar")
-    private String avatar;
+    @TableField(value = "file_original_name")
+    private String originalName;
 
     /**
-     * 角色（admin/user）
+     * 扩展名
      */
-    @TableField(value = "user_role", fill = FieldFill.INSERT)
-    private String role;
+    @TableField(value = "file_suffix")
+    private String suffix;
 
     /**
-     * 状态（0表示启用，1表示禁用）
+     * 地址
      */
-    @TableField(value = "user_state", fill = FieldFill.INSERT)
-    private Integer state;
+    @TableField(value = "file_url")
+    private String url;
+
+    /**
+     * 所属用户ID
+     */
+    @TableField(value = "file_user_id")
+    private Long userId;
 
     /**
      * 创建时间
@@ -96,6 +84,6 @@ public class User implements Serializable {
     private Integer delFlag;
 
     @Serial
-    private static final long serialVersionUID = -5943787044496569074L;
+    private static final long serialVersionUID = 5521534696303901712L;
 
 }

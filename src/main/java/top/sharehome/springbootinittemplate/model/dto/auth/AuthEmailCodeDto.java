@@ -9,6 +9,9 @@ import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * 验证邮箱Dto类
  *
@@ -18,7 +21,7 @@ import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthEmailCodeDto {
+public class AuthEmailCodeDto implements Serializable {
 
     /**
      * 账号
@@ -37,5 +40,8 @@ public class AuthEmailCodeDto {
      * 验证码参数实体类
      */
     private Captcha captcha;
+
+    @Serial
+    private static final long serialVersionUID = -6780315895322389464L;
 
 }

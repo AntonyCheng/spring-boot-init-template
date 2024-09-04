@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -17,8 +18,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class CaptchaCreate implements Serializable {
-
-    private static final long serialVersionUID = -2384156304879302998L;
 
     /**
      * 是否开启验证码
@@ -34,5 +33,8 @@ public class CaptchaCreate implements Serializable {
      * 验证码图片Base64字符串
      */
     private String imgBase64;
+
+    @Serial
+    private static final long serialVersionUID = -2384156304879302998L;
 
 }
