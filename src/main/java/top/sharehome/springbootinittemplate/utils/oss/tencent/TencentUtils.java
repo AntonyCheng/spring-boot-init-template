@@ -26,7 +26,6 @@ public class TencentUtils {
      *
      * @param file     上传的文件数据
      * @param rootPath 文件根目录（注意不需要首尾斜杠，即如果保存文件到"/root/a/"文件夹中，只需要传入"root/a"字符串即可）
-     * @return 返回结果
      */
     public static File upload(MultipartFile file, String rootPath) {
         return TENCENT_CONFIGURATION.uploadToCos(file, rootPath);
@@ -38,7 +37,6 @@ public class TencentUtils {
      * @param bytes    待上传的文件字节数组
      * @param suffix   文件后缀
      * @param rootPath 上传的路径
-     * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String suffix, String rootPath) {
         return TENCENT_CONFIGURATION.uploadToCos(bytes, null, suffix, rootPath);
@@ -51,7 +49,6 @@ public class TencentUtils {
      * @param originalName 文件原名称
      * @param suffix       文件后缀
      * @param rootPath     上传的路径
-     * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String originalName, String suffix, String rootPath) {
         return TENCENT_CONFIGURATION.uploadToCos(bytes, originalName, suffix, rootPath);
@@ -63,7 +60,6 @@ public class TencentUtils {
      * @param inputStream 待上传的文件流
      * @param suffix      文件后缀
      * @param rootPath    上传的路径
-     * @return 文件所在路径
      */
     public static File upload(InputStream inputStream, String suffix, String rootPath) {
         return TENCENT_CONFIGURATION.uploadToCos(inputStream, null, suffix, rootPath);
@@ -76,7 +72,6 @@ public class TencentUtils {
      * @param originalName 文件原名称
      * @param suffix       文件后缀
      * @param rootPath     上传的路径
-     * @return 文件所在路径
      */
     public static File upload(InputStream inputStream, String originalName, String suffix, String rootPath) {
         return TENCENT_CONFIGURATION.uploadToCos(inputStream, originalName, suffix, rootPath);

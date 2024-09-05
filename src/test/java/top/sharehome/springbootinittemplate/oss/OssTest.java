@@ -27,7 +27,7 @@ public class OssTest {
      */
     @Test
     void testTencentUtilsUpload() throws IOException {
-        File file = new File("pom.xml");
+        File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
         System.out.println(TencentUtils.upload(multipartFile, "test/init"));

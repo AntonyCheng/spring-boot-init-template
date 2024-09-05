@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.config.oss.minio;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
@@ -18,7 +19,10 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.minio.condition.OssMinioCondition;
 import top.sharehome.springbootinittemplate.config.oss.minio.properties.MinioProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
+import top.sharehome.springbootinittemplate.model.entity.File;
+import top.sharehome.springbootinittemplate.service.FileService;
+import top.sharehome.springbootinittemplate.utils.encrypt.SHA3Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,78 +44,105 @@ public class MinioConfiguration {
 
     private final MinioProperties minioProperties;
 
+    private final FileService fileService;
+
     /**
      * 上传文件到MinIO
      *
      * @param file     待上传的文件
      * @param rootPath 上传的路径
-     * @return 文件所在路径
      */
-    public String uploadToMinio(MultipartFile file, String rootPath) {
+    public File uploadToMinio(MultipartFile file, String rootPath) {
         if (Objects.isNull(file)) {
             throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
         String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
         String suffix = FilenameUtils.getExtension(originalName);
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             inputStream = file.getInputStream();
         } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return uploadToMinio(inputStream, suffix, rootPath);
+        return uploadToMinio(inputStream, originalName, suffix, rootPath);
     }
 
     /**
      * 上传文件到MinIO
      *
-     * @param bytes    待上传的文件字节数组
-     * @param suffix   文件后缀
-     * @param rootPath 上传的路径
-     * @return 文件所在路径
+     * @param bytes        待上传的文件字节数组
+     * @param originalName 文件原名称
+     * @param suffix       文件后缀
+     * @param rootPath     上传的路径
      */
-    public String uploadToMinio(byte[] bytes, String suffix, String rootPath) {
+    public File uploadToMinio(byte[] bytes, String originalName, String suffix, String rootPath) {
         if (ObjectUtils.isEmpty(bytes)) {
             throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
-        return uploadToMinio(inputStream, suffix, rootPath);
+        return uploadToMinio(inputStream, originalName, suffix, rootPath);
     }
 
     /**
      * 上传文件到MinIO
      *
-     * @param inputStream 待上传的文件流
-     * @param suffix      文件后缀
-     * @param rootPath    上传的路径
-     * @return 文件所在路径
+     * @param inputStream  待上传的文件流
+     * @param originalName 文件原名称
+     * @param suffix       文件后缀
+     * @param rootPath     上传的路径
      */
-    public String uploadToMinio(InputStream inputStream, String suffix, String rootPath) {
-        if (Objects.isNull(inputStream)) {
-            throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
-        }
-        MinioClient minioClient = getMinioClient();
-        String key;
-        try {
+    public File uploadToMinio(InputStream inputStream, String originalName, String suffix, String rootPath) {
+        try (MinioClient minioClient = getMinioClient()) {
+            if (Objects.isNull(inputStream)) {
+                throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
+            }
+            // 封装输出流为ByteArrayInputStream，防止加密之后，某些类型的输入流不可reset/mark的情况
+            byte[] dataBytes = inputStream.readAllBytes();
+            ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
+            // 检查是否能进行秒传，如果能就直接返回秒传结果，否则进行普通上传
+            String uniqueKey = SHA3Utils.encrypt(tempInputStream);
+            File fastUploadResult = existAndFastUpload(uniqueKey);
+            if (Objects.nonNull(fastUploadResult)) {
+                return fastUploadResult;
+            }
+            // 加密之后重置数据流，保证流的可重读性
+            tempInputStream.reset();
+            // 接下来进行普通上传
             if (StringUtils.isEmpty(suffix)) {
                 suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
             } else {
                 suffix = "." + suffix;
             }
+            if (StringUtils.isBlank(originalName)) {
+                originalName = "none" + suffix;
+            }
             // 创建一个随机文件名称
             String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
-            key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            String key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(minioProperties.getBucketName())
                     .object(key)
-                    .stream(inputStream, inputStream.available(), 5 * 1024 * 1024).build());
+                    .stream(tempInputStream, tempInputStream.available(), 5 * 1024 * 1024).build());
+            // 添加新文件
+            String url = (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
+                    + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
+            File newFile = new File()
+                    .setUniqueKey(uniqueKey)
+                    .setName(key)
+                    .setOriginalName(originalName)
+                    .setSuffix(suffix)
+                    .setUrl(url)
+                    .setState(0);
+            if (fileService.save(newFile)) {
+                return newFile;
+            } else {
+                throw new CustomizeFileException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
-                + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
     }
 
     /**
@@ -121,12 +152,12 @@ public class MinioConfiguration {
      */
     public void deleteInMinio(String url) {
         if (StringUtils.isEmpty(url)) {
-            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
+            throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
         MinioClient minioClient = getMinioClient();
         String[] split = url.split(minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/");
         if (split.length != 2) {
-            throw new CustomizeReturnException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
+            throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
         }
         String key = split[1];
         try {
@@ -153,6 +184,30 @@ public class MinioConfiguration {
         } catch (Exception e) {
             log.error("MinIO服务器构建异常：{}", e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
+        }
+    }
+
+    /**
+     * 判断文件是否存在，存在则进行秒传操作
+     *
+     * @param  uniqueKey  唯一摘要值
+     * @return 如果能进行秒传，就直接返回秒传结果，否则返回null
+     */
+    private File existAndFastUpload(String uniqueKey) {
+        LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        fileLambdaQueryWrapper
+                .eq(File::getUniqueKey, uniqueKey)
+                .eq(File::getState, 0)
+                .last("limit 1");
+        File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);
+        if (Objects.nonNull(fileInDatabase)) {
+            if (fileService.save(fileInDatabase.setId(null))) {
+                return fileInDatabase;
+            } else {
+                throw new CustomizeFileException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+            }
+        } else {
+            return null;
         }
     }
 
