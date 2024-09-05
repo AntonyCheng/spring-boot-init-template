@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.minio;
+package top.sharehome.springbootinittemplate.config.oss.service.minio;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.minio.MinioClient;
@@ -16,9 +16,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.oss.minio.condition.OssMinioCondition;
-import top.sharehome.springbootinittemplate.config.oss.minio.properties.MinioProperties;
-import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
+import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
+import top.sharehome.springbootinittemplate.config.oss.service.minio.condition.OssMinioCondition;
+import top.sharehome.springbootinittemplate.config.oss.service.minio.properties.MinioProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -133,6 +133,7 @@ public class MinioConfiguration {
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
                     .setUrl(url)
+                    .setOssType(OssType.TENCENT.getTypeName())
                     .setState(0);
             if (fileService.save(newFile)) {
                 return newFile;
@@ -198,6 +199,7 @@ public class MinioConfiguration {
         fileLambdaQueryWrapper
                 .eq(File::getUniqueKey, uniqueKey)
                 .eq(File::getState, 0)
+                .eq(File::getOssType, OssType.MINIO.getTypeName())
                 .last("limit 1");
         File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);
         if (Objects.nonNull(fileInDatabase)) {

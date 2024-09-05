@@ -3,7 +3,7 @@ package top.sharehome.springbootinittemplate.utils.oss.minio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.minio.MinioConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.service.minio.MinioConfiguration;
 import top.sharehome.springbootinittemplate.model.entity.File;
 
 import java.io.InputStream;

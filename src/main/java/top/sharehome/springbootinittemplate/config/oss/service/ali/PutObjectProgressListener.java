@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.ali;
+package top.sharehome.springbootinittemplate.config.oss.service.ali;
 
 import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.ali;
+package top.sharehome.springbootinittemplate.config.oss.service.ali;
 
 import com.aliyun.oss.*;
 import com.aliyun.oss.common.auth.CredentialsProvider;
@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +19,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.oss.ali.condition.OssAliCondition;
-import top.sharehome.springbootinittemplate.config.oss.ali.properties.AliProperties;
+import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
+import top.sharehome.springbootinittemplate.config.oss.service.ali.condition.OssAliCondition;
+import top.sharehome.springbootinittemplate.config.oss.service.ali.properties.AliProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -132,6 +134,7 @@ public class AliConfiguration {
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
                     .setUrl(url)
+                    .setOssType(OssType.ALI.getTypeName())
                     .setState(0);
             if (fileService.save(newFile)) {
                 return newFile;
@@ -197,6 +200,7 @@ public class AliConfiguration {
         fileLambdaQueryWrapper
                 .eq(File::getUniqueKey, uniqueKey)
                 .eq(File::getState, 0)
+                .eq(File::getOssType, OssType.ALI.getTypeName())
                 .last("limit 1");
         File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);
         if (Objects.nonNull(fileInDatabase)) {

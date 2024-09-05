@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.ali.condition;
+package top.sharehome.springbootinittemplate.config.oss.service.ali.condition;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Condition;

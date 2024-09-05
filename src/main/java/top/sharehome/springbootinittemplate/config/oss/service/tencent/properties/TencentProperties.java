@@ -1,16 +1,16 @@
-package top.sharehome.springbootinittemplate.config.oss.minio.properties;
+package top.sharehome.springbootinittemplate.config.oss.service.tencent.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Minio配置属性
+ * 腾讯云COS配置属性
  *
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "oss.minio")
-public class MinioProperties {
+@ConfigurationProperties(prefix = "oss.tencent")
+public class TencentProperties {
 
     /**
      * 是否开启
@@ -18,22 +18,17 @@ public class MinioProperties {
     private Boolean enable = false;
 
     /**
-     * 域名（一定是协议前缀+ip+port）
+     * 地域
      */
-    private String endpoint;
+    private String region;
 
     /**
-     * 是否开启TLS
-     */
-    private Boolean enableTls = false;
-
-    /**
-     * 用户的 SecretId
+     * 密钥ID
      */
     private String secretId;
 
     /**
-     * 用户的 SecretKey
+     * 密钥KEY
      */
     private String secretKey;
 

@@ -59,6 +59,12 @@ public class File implements Serializable {
     private String url;
 
     /**
+     * OSS类型
+     */
+    @TableField(value = "file_oss_type")
+    private String ossType;
+
+    /**
      * 状态（0表示正常，1表示软删除）
      */
     @TableField(value = "file_state")

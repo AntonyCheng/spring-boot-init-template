@@ -3,7 +3,7 @@ package top.sharehome.springbootinittemplate.utils.oss.tencent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.tencent.TencentConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.service.tencent.TencentConfiguration;
 import top.sharehome.springbootinittemplate.model.entity.File;
 
 import java.io.InputStream;

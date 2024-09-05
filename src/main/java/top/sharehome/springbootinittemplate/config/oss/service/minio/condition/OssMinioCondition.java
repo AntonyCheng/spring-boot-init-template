@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.minio.condition;
+package top.sharehome.springbootinittemplate.config.oss.service.minio.condition;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Condition;

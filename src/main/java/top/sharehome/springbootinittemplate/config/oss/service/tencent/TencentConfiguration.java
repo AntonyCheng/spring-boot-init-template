@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.tencent;
+package top.sharehome.springbootinittemplate.config.oss.service.tencent;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -26,8 +26,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.oss.tencent.condition.OssTencentCondition;
-import top.sharehome.springbootinittemplate.config.oss.tencent.properties.TencentProperties;
+import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
+import top.sharehome.springbootinittemplate.config.oss.service.tencent.condition.OssTencentCondition;
+import top.sharehome.springbootinittemplate.config.oss.service.tencent.properties.TencentProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -164,6 +165,7 @@ public class TencentConfiguration {
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
                     .setUrl(url)
+                    .setOssType(OssType.TENCENT.getTypeName())
                     .setState(0);
             if (fileService.save(newFile)) {
                 return newFile;
@@ -296,6 +298,7 @@ public class TencentConfiguration {
         fileLambdaQueryWrapper
                 .eq(File::getUniqueKey, uniqueKey)
                 .eq(File::getState, 0)
+                .eq(File::getOssType, OssType.TENCENT.getTypeName())
                 .last("limit 1");
         File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);
         if (Objects.nonNull(fileInDatabase)) {
