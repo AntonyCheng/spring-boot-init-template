@@ -10,6 +10,7 @@
             <result column="file_name" jdbcType="VARCHAR" property="name"/>
             <result column="file_original_name" jdbcType="VARCHAR" property="originalName"/>
             <result column="file_suffix" jdbcType="VARCHAR" property="suffix"/>
+            <result column="file_size" jdbcType="VARCHAR" property="size"/>
             <result column="file_url" jdbcType="VARCHAR" property="url"/>
             <result column="file_oss_type" jdbcType="VARCHAR" property="ossType"/>
             <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -23,6 +24,7 @@
         file_name,
         file_original_name,
         file_suffix,
+        file_size,
         file_url,
         file_oss_type,
         create_time,

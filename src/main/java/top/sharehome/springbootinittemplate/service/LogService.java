@@ -28,6 +28,8 @@ public interface LogService extends IService<Log> {
 
     /**
      * 管理员删除日志信息
+     *
+     * @param id 日志ID
      */
     void adminDeleteLog(Long id);
 

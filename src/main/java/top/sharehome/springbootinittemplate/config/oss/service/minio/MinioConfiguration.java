@@ -102,6 +102,14 @@ public class MinioConfiguration {
             if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
+            if (StringUtils.isBlank(suffix)) {
+                suffix = Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = suffix.toLowerCase();
+            }
+            if (StringUtils.isBlank(originalName)) {
+                originalName = "none" + "." + suffix;
+            }
             byte[] dataBytes = inputStream.readAllBytes();
             String plainKey = new String(dataBytes) + originalName + suffix;
             // 检查是否能进行秒传，如果能就直接返回秒传结果，否则进行普通上传
@@ -110,17 +118,8 @@ public class MinioConfiguration {
             if (Objects.nonNull(fastUploadResult)) {
                 return fastUploadResult;
             }
-            // 接下来进行普通上传
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            if (StringUtils.isBlank(originalName)) {
-                originalName = "none" + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
+            // 接下来进行普通上传，创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + "." + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             String key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
             // 封装输出流为ByteArrayInputStream
@@ -137,6 +136,7 @@ public class MinioConfiguration {
                     .setName(key)
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
+                    .setSize(dataBytes.length)
                     .setUrl(url)
                     .setOssType(OssType.MINIO.getTypeName());
             if (fileService.save(newFile)) {

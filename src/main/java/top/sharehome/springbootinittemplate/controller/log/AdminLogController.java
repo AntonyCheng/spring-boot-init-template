@@ -47,6 +47,7 @@ public class AdminLogController {
     /**
      * 管理员删除日志信息
      *
+     * @param id 日志ID
      * @return 删除结果
      */
     @DeleteMapping("/delete/{id}")
@@ -72,7 +73,7 @@ public class AdminLogController {
      * @return 导出表格
      */
     @GetMapping("/export")
-    public R<Void> exportExcel(HttpServletResponse response) {
+    public R<Void> exportLog(HttpServletResponse response) {
         List<AdminLogExportVo> list = logService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "日志表", AdminLogExportVo.class, response);
         return R.empty();

@@ -53,6 +53,12 @@ public class File implements Serializable {
     private String suffix;
 
     /**
+     * 大小
+     */
+    @TableField(value = "file_size")
+    private Integer size;
+
+    /**
      * 地址
      */
     @TableField(value = "file_url")

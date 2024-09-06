@@ -122,7 +122,7 @@ public class AdminUserController {
      */
     @GetMapping("/export")
     @ControllerLog(description = "管理员导出用户表格", operator = Operator.EXPORT)
-    public R<Void> exportExcel(HttpServletResponse response) {
+    public R<Void> exportUser(HttpServletResponse response) {
         List<AdminUserExportVo> list = userService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "用户表", AdminUserExportVo.class, response);
         return R.empty();
