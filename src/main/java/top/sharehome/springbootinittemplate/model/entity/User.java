@@ -61,8 +61,8 @@ public class User implements Serializable {
     /**
      * 头像
      */
-    @TableField(value = "user_avatar")
-    private String avatar;
+    @TableField(value = "user_avatar_id")
+    private Long avatarId;
 
     /**
      * 角色（admin/user）

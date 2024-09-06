@@ -8,7 +8,7 @@
         <result column="user_email" jdbcType="VARCHAR" property="email"/>
         <result column="user_login_num" jdbcType="INTEGER" property="loginNum"/>
         <result column="user_name" jdbcType="VARCHAR" property="name"/>
-        <result column="user_avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="user_avatar_id" jdbcType="VARCHAR" property="avatarId"/>
         <result column="user_role" jdbcType="VARCHAR" property="role"/>
         <result column="user_state" jdbcType="TINYINT" property="state"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -22,7 +22,7 @@
         user_email,
         user_login_num,
         user_name,
-        user_avatar,
+        user_avatar_id,
         user_role,
         user_state,
         create_time,

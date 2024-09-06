@@ -9,9 +9,12 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.mapper.FileMapper;
+import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
+import top.sharehome.springbootinittemplate.service.FileService;
 
 import java.util.Objects;
 
@@ -23,7 +26,9 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginUtils {
 
-    private static final AuthService authService = SpringContextHolder.getBean(AuthService.class);
+    private static final AuthService AUTH_SERVICE = SpringContextHolder.getBean(AuthService.class);
+
+    private static final FileService FILE_SERVICE = SpringContextHolder.getBean(FileService.class);
 
     /**
      * 用户登录
@@ -55,7 +60,7 @@ public class LoginUtils {
      */
     public static void syncLoginUser() {
         Long loginUserId = Long.valueOf((String) StpUtil.getLoginId());
-        User userInDatabase = authService.getById(loginUserId);
+        User userInDatabase = AUTH_SERVICE.getById(loginUserId);
         if (Objects.isNull(userInDatabase)) {
             StpUtil.logout(loginUserId);
             throw new CustomizeReturnException(ReturnCode.ACCESS_UNAUTHORIZED);
@@ -65,6 +70,8 @@ public class LoginUtils {
         }
         AuthLoginVo loginUser = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, loginUser);
+        File avatarFile = FILE_SERVICE.getById(loginUser.getAvatarId());
+        loginUser.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
         SaHolder.getStorage()
                 .set(Constants.LOGIN_USER_KEY, loginUser);
         StpUtil.getSession().set(Constants.LOGIN_USER_KEY, loginUser);

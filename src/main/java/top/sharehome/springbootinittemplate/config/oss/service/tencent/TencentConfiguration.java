@@ -20,9 +20,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ThreadUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -38,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -76,7 +79,8 @@ public class TencentConfiguration {
         } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return uploadToCos(inputStream, originalName, suffix, rootPath);
+        // 使用Aop代理类进行上传操作，保证事物生效
+        return ((TencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -92,7 +96,8 @@ public class TencentConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
-        return uploadToCos(inputStream, originalName, suffix, rootPath);
+        // 使用Aop代理类进行上传操作，保证事物生效
+        return ((TencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -103,22 +108,20 @@ public class TencentConfiguration {
      * @param suffix       文件后缀
      * @param rootPath     上传的路径
      */
+    @Transactional(rollbackFor = Exception.class)
     public File uploadToCos(InputStream inputStream, String originalName, String suffix, String rootPath) {
-        try {
+        try (inputStream) {
             if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
-            // 封装输出流为ByteArrayInputStream，防止加密之后，某些类型的输入流不可reset/mark的情况
             byte[] dataBytes = inputStream.readAllBytes();
-            ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
+            String plainKey = new String(dataBytes) + originalName + suffix;
             // 检查是否能进行秒传，如果能就直接返回秒传结果，否则进行普通上传
-            String uniqueKey = SHA3Utils.encrypt(tempInputStream);
+            String uniqueKey = SHA3Utils.encrypt(plainKey);
             File fastUploadResult = existAndFastUpload(uniqueKey);
             if (Objects.nonNull(fastUploadResult)) {
                 return fastUploadResult;
             }
-            // 加密之后重置数据流，保证流的可重读性
-            tempInputStream.reset();
             // 接下来进行普通上传
             if (StringUtils.isEmpty(suffix)) {
                 suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
@@ -132,10 +135,11 @@ public class TencentConfiguration {
             String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             String key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            // 封装输出流为ByteArrayInputStream
+            ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
             // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
             // 详细代码参见本页：高级接口 -> 创建 TransferManager
             TransferManager transferManager = createTransferManager();
-            // 本地文件路径
             // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(tempInputStream.available());
@@ -165,8 +169,7 @@ public class TencentConfiguration {
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
                     .setUrl(url)
-                    .setOssType(OssType.TENCENT.getTypeName())
-                    .setState(0);
+                    .setOssType(OssType.TENCENT.getTypeName());
             if (fileService.save(newFile)) {
                 return newFile;
             } else {
@@ -181,9 +184,39 @@ public class TencentConfiguration {
     /**
      * 从COS中删除文件
      *
+     * @param id 文件ID
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteInCos(Long id) {
+        File fileInDatabase = fileService.getOne(
+                new LambdaQueryWrapper<File>()
+                        .eq(File::getId,id)
+                        .eq(File::getOssType, OssType.TENCENT.getTypeName())
+        );
+        if (Objects.isNull(fileInDatabase)) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL, "文件不存在");
+        }
+        LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        fileLambdaQueryWrapper
+                .eq(File::getUniqueKey, fileInDatabase.getUniqueKey())
+                .eq(File::getOssType, OssType.TENCENT.getTypeName())
+                // 搭配事务给数据库被读行数据加行锁
+                .last("FOR UPDATE");
+        List<File> filesInDatabase = fileService.list(fileLambdaQueryWrapper);
+        if (!fileService.removeById(fileInDatabase.getId())) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
+        }
+        if (Objects.equals(filesInDatabase.size(), 1)) {
+            deleteInCosDirect(fileInDatabase.getUrl());
+        }
+    }
+
+    /**
+     * 从COS中删除文件
+     *
      * @param url 文件URL
      */
-    public void deleteInCos(String url) {
+    private void deleteInCosDirect(String url) {
         if (StringUtils.isEmpty(url)) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
@@ -297,7 +330,6 @@ public class TencentConfiguration {
         LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
         fileLambdaQueryWrapper
                 .eq(File::getUniqueKey, uniqueKey)
-                .eq(File::getState, 0)
                 .eq(File::getOssType, OssType.TENCENT.getTypeName())
                 .last("limit 1");
         File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);

@@ -14,9 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
+import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
@@ -46,6 +48,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private LogMapper logMapper;
 
+    @Resource
+    private FileMapper fileMapper;
+
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Page<AdminUserPageVo> adminPageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel) {
@@ -67,15 +72,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.selectPage(page, userLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> new AdminUserPageVo()
-                .setId(user.getId())
-                .setAccount(user.getAccount())
-                .setName(user.getName())
-                .setEmail(user.getEmail())
-                .setAvatar(user.getAvatar())
-                .setRole(user.getRole())
-                .setState(user.getState())
-                .setCreateTime(user.getCreateTime())).toList();
+        List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> {
+            File avatarFile = fileMapper.selectById(user.getAvatarId());
+            return new AdminUserPageVo()
+                    .setId(user.getId())
+                    .setAccount(user.getAccount())
+                    .setName(user.getName())
+                    .setEmail(user.getEmail())
+                    .setAvatarId(user.getAvatarId())
+                    .setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl())
+                    .setRole(user.getRole())
+                    .setState(user.getState())
+                    .setCreateTime(user.getCreateTime());
+        }).toList();
         BeanUtils.copyProperties(page, res, "records");
         res.setRecords(newRecords);
 
@@ -228,7 +237,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             adminUserExportVo.setAccount(user.getAccount());
             adminUserExportVo.setEmail(user.getEmail());
             adminUserExportVo.setName(user.getName());
-            adminUserExportVo.setAvatar(user.getAvatar());
+            File avatarFile = fileMapper.selectById(user.getAvatarId());
+            adminUserExportVo.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
             adminUserExportVo.setRole(StringUtils.equals(user.getRole(), Constants.ROLE_ADMIN) ? "管理员" : "用户");
             adminUserExportVo.setState(!Objects.equals(user.getState(), Constants.USER_DISABLE_STATE) ? "启用" : "禁用");
             adminUserExportVo.setCreateTime(user.getCreateTime());
@@ -306,17 +316,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateAvatar(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String avatarPath = "avatar/" + date;
-        String url = MinioUtils.upload(file, avatarPath).getUrl();
+        File avatarFile = MinioUtils.upload(file, avatarPath);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        userLambdaUpdateWrapper.set(StringUtils.isNotEmpty(url), User::getAvatar, url);
+        userLambdaUpdateWrapper.set(User::getAvatarId, avatarFile.getId());
         userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
         AuthLoginVo loginUser = (AuthLoginVo) SaHolder.getStorage().get(Constants.LOGIN_USER_KEY);
-        if (StringUtils.isNotEmpty(loginUser.getAvatar())) {
-            MinioUtils.delete(loginUser.getAvatar());
+        if (fileMapper.exists(new LambdaQueryWrapper<File>().eq(File::getId, loginUser.getAvatarId()))) {
+            MinioUtils.delete(loginUser.getAvatarId());
         }
         LoginUtils.syncLoginUser();
     }

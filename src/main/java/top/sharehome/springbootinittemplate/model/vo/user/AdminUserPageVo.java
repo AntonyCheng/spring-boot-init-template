@@ -41,6 +41,11 @@ public class AdminUserPageVo implements Serializable {
     private String email;
 
     /**
+     * 用户头像ID
+     */
+    private Long avatarId;
+
+    /**
      * 用户头像
      */
     private String avatar;

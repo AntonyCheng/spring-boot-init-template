@@ -78,10 +78,10 @@ public class MinioUtils {
     /**
      * 删除文件
      *
-     * @param url 文件所在地址
+     * @param id 文件ID
      */
-    public static void delete(String url) {
-        MINIO_CONFIGURATION.deleteInMinio(url);
+    public static void delete(Long id) {
+        MINIO_CONFIGURATION.deleteInMinio(id);
     }
 
 }

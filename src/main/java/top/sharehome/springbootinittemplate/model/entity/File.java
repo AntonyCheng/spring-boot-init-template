@@ -65,12 +65,6 @@ public class File implements Serializable {
     private String ossType;
 
     /**
-     * 状态（0表示正常，1表示软删除）
-     */
-    @TableField(value = "file_state")
-    private Integer state;
-
-    /**
      * 创建时间
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)

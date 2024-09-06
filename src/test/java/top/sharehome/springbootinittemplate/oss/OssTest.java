@@ -1,11 +1,13 @@
 package top.sharehome.springbootinittemplate.oss;
 
+import jakarta.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import top.sharehome.springbootinittemplate.service.FileService;
 import top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
@@ -21,6 +23,9 @@ import java.io.IOException;
  */
 @SpringBootTest
 public class OssTest {
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 测试腾讯云COS工具类——上传
@@ -45,9 +50,9 @@ public class OssTest {
      */
     @Test
     void testTencentUtilsDelete() {
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/e62fe3589cd44957865a77da7b9f1db91725288883715.md");
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/334b33d3f6e448dfa48363e54ae32c641725288885957.md");
-        TencentUtils.delete("https://xxxxxxxx.cos.xx-xxx.myqcloud.com/test/init/074fb57812b54740b9c11ac40044d0f81725288886966.md");
+        TencentUtils.delete(1831860566961299458L);
+        TencentUtils.delete(1831860567590445057L);
+        TencentUtils.delete(1831860567653359617L);
     }
 
     /**
@@ -73,9 +78,9 @@ public class OssTest {
      */
     @Test
     void testAliUtilsDelete() {
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/6acdb8e0ba3547129c5f3a01e359e5fc1725289306886.md");
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/bbce61c48969415299b5ba30339a044d1725289307614.md");
-        AliUtils.delete("https://xxxxxxxx.oss-cn-beijing.aliyuncs.com/test/init/3c0cd5a48c0e482e9c59e2309bd3c4a81725289307969.md");
+        AliUtils.delete(1831862560094642177L);
+        AliUtils.delete(1831862560686039041L);
+        AliUtils.delete(1831862560820256770L);
     }
 
     /**
@@ -101,9 +106,9 @@ public class OssTest {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/2b88be9a7fa44e78ae0df33e9d7df3391725288694737.md");
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/d6a325c9df184bb4a2451c0733b8a1001725288695159.md");
-        MinioUtils.delete("http://127.0.0.1:9000/xxxxxxxx/test/init/1967793e9bb642a48815f62f72a55ddb1725288695188.md");
+        MinioUtils.delete(1831893437080133633L);
+        MinioUtils.delete(1831893438057406466L);
+        MinioUtils.delete(1831893438258733058L);
     }
 
 }
