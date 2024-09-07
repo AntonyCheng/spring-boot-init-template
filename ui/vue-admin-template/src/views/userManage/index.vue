@@ -69,7 +69,7 @@
               <el-button type="primary" size="small" style="width: 100px" @click="openAddDialog">添加用户</el-button>
             </template>
             <template>
-              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户</el-button>
+              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户信息</el-button>
             </template>
           </template>
         </el-collapse-item>

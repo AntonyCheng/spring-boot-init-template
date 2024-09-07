@@ -51,7 +51,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         // 返回值处理（Entity ==> Vo）
         List<AdminFilePageVo> newRecords = page.getRecords().stream().map(file -> new AdminFilePageVo()
                 .setId(file.getId())
-                .setName(file.getName())
                 .setOriginalName(file.getOriginalName())
                 .setSuffix(file.getSuffix())
                 .setSize(getFileSizeStr(file.getSize()))

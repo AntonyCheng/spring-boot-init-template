@@ -5,8 +5,8 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.standard.expression.EachUtils;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
@@ -44,6 +44,10 @@ public class AdminFileController {
     @GetMapping("/page")
     @ControllerLog(description = "管理员查询文件信息", operator = Operator.QUERY)
     public R<Page<AdminFilePageVo>> pageFile(AdminFilePageDto adminFilePageDto, PageModel pageModel) {
+        // 处理一下文件后缀名查询条件，如果存在则转为小写
+        if (StringUtils.isNotBlank(adminFilePageDto.getOssType())) {
+            adminFilePageDto.setOssType(adminFilePageDto.getOssType().toLowerCase());
+        }
         Page<AdminFilePageVo> file = fileService.adminPageFile(adminFilePageDto, pageModel);
         return R.ok(file);
     }
@@ -70,7 +74,7 @@ public class AdminFileController {
     @ControllerLog(description = "管理员导出文件表格", operator = Operator.QUERY)
     public R<Void> exportFile(HttpServletResponse response) {
         List<AdminFileExportVo> list = fileService.adminExportExcelList();
-        ExcelUtils.exportHttpServletResponse(list,"文件表",AdminFileExportVo.class,response);
+        ExcelUtils.exportHttpServletResponse(list, "文件表", AdminFileExportVo.class, response);
         return R.empty();
     }
 

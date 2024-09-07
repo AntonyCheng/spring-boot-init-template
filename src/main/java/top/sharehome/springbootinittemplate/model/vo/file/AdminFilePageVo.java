@@ -26,16 +26,6 @@ public class AdminFilePageVo implements Serializable {
     private Long id;
 
     /**
-     * 唯一摘要值
-     */
-    private String uniqueKey;
-
-    /**
-     * 存储名称
-     */
-    private String name;
-
-    /**
      * 原名称
      */
     private String originalName;
