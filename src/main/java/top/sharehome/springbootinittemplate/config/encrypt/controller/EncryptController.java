@@ -3,10 +3,7 @@ package top.sharehome.springbootinittemplate.config.encrypt.controller;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.encrypt.EncryptConfiguration;
@@ -22,7 +19,8 @@ import java.util.Map;
  *
  * @author AntonyCheng
  */
-@RestController("/encrypt")
+@RestController
+@RequestMapping("/encrypt")
 @Conditional(EncryptCondition.class)
 public class EncryptController {
 
