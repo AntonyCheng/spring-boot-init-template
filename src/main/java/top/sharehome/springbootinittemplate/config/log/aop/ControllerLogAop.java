@@ -119,8 +119,8 @@ public class ControllerLogAop {
                 }
                 resMap.put("data", dataMap);
                 String json = JSON.toJSONString(resMap);
-                if (json.length() > 2000 && json.charAt(2000) != '}') {
-                    json = StringUtils.substring(json, 0, 2000) + "...}";
+                if (json.length() > 2000) {
+                    json = StringUtils.substring(json, 0, 2000) + "...";
                 }
                 log.setJson(json);
             }
@@ -165,8 +165,8 @@ public class ControllerLogAop {
                 Arrays.stream(controllerLog.maskParams()).forEach(parameterMap::remove);
                 param = JSON.toJSONString(parameterMap);
             }
-            if (param.length() > 2000 && param.charAt(2000) != '}') {
-                param = StringUtils.substring(param, 0, 2000) + "...}";
+            if (param.length() > 2000) {
+                param = StringUtils.substring(param, 0, 2000) + "...";
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP

@@ -34,6 +34,11 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
     public static final String DEL_FLAG = "delFlag";
 
     /**
+     * 需要处理的字段名——state
+     */
+    public static final String STATE = "state";
+
+    /**
      * todo 如果有自己的一套鉴权系统，请去掉这个自动填充项
      * 需要处理的字段名——role
      */
@@ -54,6 +59,10 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
 
         if (metaObject.hasSetter(DEL_FLAG)) {
             metaObject.setValue(DEL_FLAG, 0);
+        }
+
+        if (metaObject.hasSetter(STATE)) {
+            metaObject.setValue(STATE, 0);
         }
 
         if (metaObject.hasSetter(ROLE)) {

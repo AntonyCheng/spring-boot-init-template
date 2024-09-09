@@ -35,10 +35,16 @@ class MainApplicationTests {
     @Test
     void initAdmin() {
         User user = new User();
-        // 设置用户账号
+        // 设置管理员账号
         user.setAccount("admin");
-        // 设置用户密码
+        // 设置管理员密码
         user.setPassword("123456");
+        // 设置管理员名称
+        user.setName("AntonyCheng");
+        // 设置管理员状态
+        user.setState(0);
+        // 设置管理员邮箱
+        user.setEmail("temp@163.com");
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getRole, "admin");
         if (!authService.exists(userLambdaQueryWrapper)) {
@@ -64,7 +70,13 @@ class MainApplicationTests {
                 // 修改管理员账号
                 .set(User::getAccount, "admin")
                 // 修改管理员密码
-                .set(User::getPassword, "123456");
+                .set(User::getPassword, "123456")
+                // 修改管理员名称
+                .set(User::getName, "AntonyCheng")
+                // 修改管理员状态
+                .set(User::getState, 0)
+                // 修改管理员邮箱
+                .set(User::getEmail, "temp@163.com");
         authService.update(userLambdaUpdateWrapper);
         admin = authService.getOne(userLambdaQueryWrapper);
         System.out.println(admin);
