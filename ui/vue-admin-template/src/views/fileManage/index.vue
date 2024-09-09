@@ -86,15 +86,27 @@
         <el-table-column
           prop="suffix"
           label="扩展名"
+          align="center"
         />
         <el-table-column
           prop="size"
           label="文件大小"
+          align="center"
         />
         <el-table-column
           prop="url"
           label="文件地址"
-        />
+          align="center"
+        >
+          <template v-slot="scope">
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="scope.row.url"
+              :preview-src-list="[scope.row.url]"
+              :lazy="true">
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="ossType"
           label="OSS类型"
