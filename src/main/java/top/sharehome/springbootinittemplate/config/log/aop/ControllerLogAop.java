@@ -112,17 +112,23 @@ public class ControllerLogAop {
             if (Objects.isNull(resMap)) {
                 log.setJson("{}");
             } else {
-                Map dataMap = (Map) resMap.get("data");
-                if (Objects.nonNull(dataMap)) {
+                Object data = resMap.get("data");
+                if (Objects.nonNull(data) && data instanceof Map dataMap) {
                     Arrays.stream(MASK_PARAMS).forEach(dataMap::remove);
                     Arrays.stream(controllerLog.maskParams()).forEach(dataMap::remove);
+                    resMap.put("data", dataMap);
+                    String json = JSON.toJSONString(resMap);
+                    if (json.length() > 2000) {
+                        json = StringUtils.substring(json, 0, 2000) + "...";
+                    }
+                    log.setJson(json);
+                }else {
+                    String json = JSON.toJSONString(resMap);
+                    if (json.length() > 2000) {
+                        json = StringUtils.substring(json, 0, 2000) + "...";
+                    }
+                    log.setJson(json);
                 }
-                resMap.put("data", dataMap);
-                String json = JSON.toJSONString(resMap);
-                if (json.length() > 2000) {
-                    json = StringUtils.substring(json, 0, 2000) + "...";
-                }
-                log.setJson(json);
             }
             // 设置操作用户ID
             Long userId = null;
