@@ -431,7 +431,7 @@ export default {
             email: this.addForm.email
           }
           adminAddUser(data).then(response => {
-            if (this.queryResult.total % this.queryResult.size === 0) {
+            if (this.queryResult.total !== 0 && this.queryResult.total % this.queryResult.size === 0) {
               this.queryForm.page++
             }
             this.pageLoading = true
