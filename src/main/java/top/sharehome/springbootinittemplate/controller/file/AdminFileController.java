@@ -6,11 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.common.validate.PostGroup;
+import top.sharehome.springbootinittemplate.config.idempotent.annotation.Idempotent;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.mapper.FileMapper;
+import top.sharehome.springbootinittemplate.model.dto.file.AdminFileAddDto;
 import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.file.AdminFileExportVo;
@@ -31,6 +40,11 @@ import java.util.List;
 @SaCheckRole(value = {Constants.ROLE_ADMIN})
 public class AdminFileController {
 
+    /**
+     * 文件最大大小
+     */
+    private static final int FILE_MAX_SIZE = 10 * 1024 * 1024;
+
     @Resource
     private FileService fileService;
 
@@ -50,6 +64,23 @@ public class AdminFileController {
         }
         Page<AdminFilePageVo> file = fileService.adminPageFile(adminFilePageDto, pageModel);
         return R.ok(file);
+    }
+
+    /**
+     * 管理员添加文件信息
+     *
+     * @param adminFileAddDto 被添加文件信息
+     * @return 添加结果
+     */
+    @PostMapping("/add")
+    @ControllerLog(description = "管理员添加文件信息", operator = Operator.INSERT)
+    public R<String> addFile(@Validated({PostGroup.class}) AdminFileAddDto adminFileAddDto) {
+        MultipartFile file = adminFileAddDto.getFile();
+        if (file.getSize() == 0 || file.getSize() > FILE_MAX_SIZE) {
+            throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_IS_TOO_LARGE, "文件不得大于10MB");
+        }
+        fileService.adminAddFile(file);
+        return R.ok("添加成功");
     }
 
     /**

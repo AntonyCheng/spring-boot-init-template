@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -34,6 +36,10 @@ import java.util.Objects;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
 
     // todo 第一个todo中的异常均为系统自带异常，抛出的错误码被包含在HttpStatus接口中
 
@@ -150,34 +156,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 拦截未知的运行时异常
-     *
-     * @param e       异常
-     * @param request 请求
-     * @return 返回结果
-     */
-    @ExceptionHandler(RuntimeException.class)
-    public R<Void> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        log.error("请求地址'{}',发生未知异常.", requestUri, e);
-        return R.fail(HttpStatus.ERROR, e.getMessage());
-    }
-
-    /**
-     * 系统异常
-     *
-     * @param e       异常
-     * @param request 请求
-     * @return 返回结果
-     */
-    @ExceptionHandler(Exception.class)
-    public R<Void> handleException(Exception e, HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        log.error("请求地址'{}',发生系统异常.", requestUri, e);
-        return R.fail(HttpStatus.ERROR, e.getMessage());
-    }
-
-    /**
      * Validation校验注解校验异常
      *
      * @param e 异常
@@ -260,6 +238,44 @@ public class GlobalExceptionHandler {
             return R.fail(HttpStatus.NOT_FOUND, "未找到路径或资源");
         }
         log.error("请求地址'{}',发生未知异常.", requestUri, e);
+        return R.fail(HttpStatus.ERROR, e.getMessage());
+    }
+
+    /**
+     * 拦截上传文件体积过大异常
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public R<Void> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("上传文件体积过大'{}',发生系统异常.", requestUri, e);
+        return R.fail(HttpStatus.BAD_REQUEST, "上传文件不超过" + maxFileSize);
+    }
+
+    /**
+     * 拦截未知的运行时异常
+     *
+     * @param e       异常
+     * @param request 请求
+     * @return 返回结果
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public R<Void> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',发生未知异常.", requestUri, e);
+        return R.fail(HttpStatus.ERROR, e.getMessage());
+    }
+
+    /**
+     * 系统异常
+     *
+     * @param e       异常
+     * @param request 请求
+     * @return 返回结果
+     */
+    @ExceptionHandler(Exception.class)
+    public R<Void> handleException(Exception e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',发生系统异常.", requestUri, e);
         return R.fail(HttpStatus.ERROR, e.getMessage());
     }
 

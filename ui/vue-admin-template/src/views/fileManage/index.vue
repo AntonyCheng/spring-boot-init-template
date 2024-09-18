@@ -61,6 +61,9 @@
           </template>
           <template>
             <template>
+              <el-button type="primary" size="small" style="width: 100px" @click="openAddDialog">添加文件</el-button>
+            </template>
+            <template>
               <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出文件信息</el-button>
             </template>
           </template>
@@ -99,12 +102,32 @@
           align="center"
         >
           <template v-slot="scope">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="scope.row.url"
-              :preview-src-list="[scope.row.url]"
-              :lazy="true">
-            </el-image>
+            <template v-if="getFileType(scope.row.url) === 'image'" style="vertical-align: center">
+              <el-image
+                style="width: 150px; height: 150px"
+                :src="scope.row.url"
+                :preview-src-list="[scope.row.url]"
+                :lazy="true">
+              </el-image>
+            </template>
+            <template v-else-if="getFileType(scope.row.url) === 'video'" style="vertical-align: center">
+              <video style="width: 250px; height: 150px" controls>
+                <source :src="scope.row.url" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </template>
+            <template v-else-if="getFileType(scope.row.url) === 'audio'" style="vertical-align: center">
+              <audio controls style="width: 250px">
+                <source :src="scope.row.url" type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </template>
+            <template v-else-if="getFileType(scope.row.url) === 'text'" style="vertical-align: center">
+              <el-button type="text" @click="viewText(scope.row.url)">预览文本</el-button>
+            </template>
+            <template v-else>
+              <el-tag type="warning">不支持预览</el-tag>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -122,6 +145,7 @@
           width="150"
         >
           <template #default="scope">
+            <el-button type="primary" size="mini" @click="handleDownload(scope.row.url)">下载</el-button>
             <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -139,19 +163,42 @@
         @current-change="handleCurrentChange"
       />
     </template>
+    <template>
+      <el-dialog :show-close="false" title="添加文件" :visible.sync="addDialogVisible" @close="handleCancelAdd">
+        <el-upload
+          v-loading="addLoading"
+          drag
+          action=""
+          :limit="1"
+          :show-file-list="false"
+          :file-list="fileList"
+          :before-upload="handleBefore"
+          :http-request="handleSubmit"
+          :on-success="handleSuccess"
+        >
+          <i class="el-icon-upload" />
+          <div class="el-upload__text"><em>点击上传</em>（文件不超过10MB）</div>
+        </el-upload>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleCancelAdd">取 消</el-button>
+        </div>
+      </el-dialog>
+    </template>
   </div>
 </template>
 
 <script>
-import { adminDeleteFile, adminExportExcel, adminPageFile } from '@/api/file'
+import {adminAddFile, adminDeleteFile, adminExportExcel, adminPageFile} from '@/api/file'
 import { Loading, Message } from 'element-ui'
 
 export default {
   name: 'FileManage',
   data() {
     return {
+      fileList: [],
       queryLoading: false,
       pageLoading: false,
+      addLoading: false,
       queryResult: [],
       queryForm: {
         originalName: undefined,
@@ -184,7 +231,8 @@ export default {
           label: '阿里云OSS',
           value: 'ali'
         }
-      ]
+      ],
+      addDialogVisible: false
     }
   },
   created() {
@@ -253,8 +301,47 @@ export default {
         downloadLoadingInstance.close()
       })
     },
+    openAddDialog(){
+      this.addDialogVisible = true
+    },
+    handleBefore(file) {
+      const isLt20M = file.size / 1024 / 1024 < 10
+      if (!isLt20M) {
+        this.$message.error('上传文件大小不能超过10MB!')
+      }
+      return isLt20M
+    },
+    async handleSubmit(options) {
+      const { file } = options
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        this.addDialogVisible = false
+        this.addLoading = true
+        Message.warning('文件上传中，请勿重复上传，请稍后...')
+        const response = await adminAddFile(formData)
+        this.fileList = []
+        this.pageLoading = true
+        adminPageFile(this.queryForm).then(response => {
+          this.queryResult = response.data
+          this.addLoading = false
+          this.pageLoading = false
+        })
+        Message.success(response.msg)
+      } catch (error) {
+        this.fileList = []
+        this.addLoading = false
+        return error
+      }
+    },
+    handleSuccess(response) {
+      console.log('response:', response)
+    },
+    handleCancelAdd() {
+      this.addDialogVisible = false
+    },
     handleDelete(data) {
-      this.$confirm('此操作将删除该日志, 是否继续?', '确认删除', {
+      this.$confirm('此操作将删除该文件, 是否继续?', '确认删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -271,6 +358,40 @@ export default {
           Message.success(response.msg)
         })
       })
+    },
+    getFileType(url){
+      if (/\.(jpeg|jpg|gif|png|bmp|webp|jfif)$/i.test(url)){
+        return "image"
+      } else if(/\.(mp4|webm|ogg)$/i.test(url)){
+        return "video"
+      }else if(/\.(mp3|wav|ogg)$/i.test(url)){
+        return "audio"
+      }else if(/\.(txt|md|json|conf)$/i.test(url)){
+        return "text"
+      }
+    },
+    viewText(url) {
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          this.$alert(text, '文本预览', {
+            confirmButtonText: '确定',
+            showClose: true
+          });
+        });
+    },
+    handleDownload(url) {
+      const link = document.createElement('a');
+      link.href = url; // 文件的下载地址
+      link.download = this.getFileNameFromUrl(url); // 从 URL 中提取文件名
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    getFileNameFromUrl(url) {
+      // 使用正则表达式从 url 中提取文件名
+      return url.substring(url.lastIndexOf('/') + 1);
     },
     handleSizeChange(val) {
       this.queryForm.size = val

@@ -95,3 +95,20 @@ export function adminExportExcel() {
     responseType: 'blob'
   })
 }
+
+export function adminExportUserTemplate() {
+  return request({
+    url: '/admin/user/template',
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
+  })
+}
+
+export function adminImportUser(data) {
+  return request({
+    url: '/admin/user/import',
+    method: 'post',
+    data
+  })
+}

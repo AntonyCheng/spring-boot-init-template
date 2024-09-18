@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
 import top.sharehome.springbootinittemplate.model.entity.File;
@@ -17,6 +18,8 @@ import top.sharehome.springbootinittemplate.model.vo.file.AdminFilePageVo;
 import top.sharehome.springbootinittemplate.service.FileService;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -87,6 +90,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             adminFileExportVo.setUpdateTime(file.getUpdateTime());
             return adminFileExportVo;
         }).toList();
+    }
+
+    @Override
+    public void adminAddFile(MultipartFile file) {
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        String filePath = "file/" + date;
+        MinioUtils.upload(file, filePath);
     }
 
     /**

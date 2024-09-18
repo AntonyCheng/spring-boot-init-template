@@ -5,14 +5,19 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
@@ -20,6 +25,7 @@ import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +38,21 @@ import java.util.List;
 @SaCheckLogin
 @SaCheckRole(value = {Constants.ROLE_ADMIN})
 public class AdminUserController {
+
+    /**
+     * 用户信息表体积最大值
+     */
+    private static final int IMPORT_MAX_SIZE = 200 * 1024;
+
+    /**
+     * 用户信息表扩展名集合
+     */
+    private static final List<String> IMPORT_SUFFIX_LIST = new ArrayList<>() {
+        {
+            add("xls");
+            add("xlsx");
+        }
+    };
 
     @Resource
     private UserService userService;
@@ -126,6 +147,40 @@ public class AdminUserController {
         List<AdminUserExportVo> list = userService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "用户表", AdminUserExportVo.class, response);
         return R.empty();
+    }
+
+    /**
+     * 导出用户信息表模板
+     *
+     * @param response 响应
+     */
+    @GetMapping("/template")
+    @ControllerLog(description = "管理员导出用户表格模板", operator = Operator.EXPORT)
+    public R<Void> exportUserTemplate(HttpServletResponse response) {
+        ExcelUtils.exportTemplateHttpServletResponse("用户信息表", AdminUserTemplateDto.class, response);
+        return R.empty();
+    }
+
+    /**
+     * 导入用户信息表
+     *
+     * @param adminUserExcelDto 导入用户信息表Dto类
+     * @return 导入结果
+     */
+    @PostMapping("/import")
+    @ControllerLog(description = "管理员导入用户信息表", operator = Operator.INSERT)
+    public R<String> importUser(@Validated({PostGroup.class}) AdminUserExcelDto adminUserExcelDto){
+        MultipartFile file = adminUserExcelDto.getFile();
+        if (file.getSize() == 0 || file.getSize() > IMPORT_MAX_SIZE) {
+            throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_IS_TOO_LARGE, "用户信息表不得大于200KB");
+        }
+        String originalName = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+        String suffix = FilenameUtils.getExtension(originalName).toLowerCase();
+        if (!IMPORT_SUFFIX_LIST.contains(suffix)) {
+            throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_TYPE_MISMATCH, "用户信息表仅支持xls和xlsx格式");
+        }
+        userService.adminImportUser(file);
+        return R.ok("导入成功，默认密码为123456");
     }
 
 }

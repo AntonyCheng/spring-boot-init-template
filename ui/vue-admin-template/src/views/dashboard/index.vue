@@ -134,7 +134,7 @@
               {min:2,max:16,message: '新账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateAccountForm.newAccount" autocomplete="off" />
+            <el-input v-model="updateAccountForm.newAccount" autocomplete="off" placeholder="请输入新账号" />
           </el-form-item>
         </el-form>
         <el-form v-if="dialogType==='password'" ref="updatePasswordForm" :model="updatePasswordForm" label-width="80px">
@@ -149,6 +149,7 @@
               ref="oldPassword"
               v-model="updatePasswordForm.oldPassword"
               :type="oldPasswordType"
+              placeholder="请输入旧密码"
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('old')">
@@ -167,6 +168,7 @@
               ref="newPassword"
               v-model="updatePasswordForm.newPassword"
               :type="newPasswordType"
+              placeholder="请输入新密码"
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('new')">
@@ -184,6 +186,7 @@
               ref="checkNewPassword"
               v-model="updatePasswordForm.checkNewPassword"
               :type="checkNewPasswordType"
+              placeholder="请再次输入新密码"
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('check')">
@@ -203,12 +206,12 @@
               {min:1,max:16,message: '新名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateNameForm.newName" autocomplete="off" />
+            <el-input v-model="updateNameForm.newName" placeholder="请输入新名称" autocomplete="off" />
           </el-form-item>
         </el-form>
         <el-form v-if="dialogType==='email'" ref="updateEmailForm" :model="updateEmailForm" label-width="80px">
           <el-form-item label="旧邮箱">
-            <el-input v-model="email" disabled="disabled" style="font-weight: bold" />
+            <el-input v-model="email" disabled="disabled" placeholder="请输入旧邮箱" style="font-weight: bold" />
           </el-form-item>
           <el-form-item
             label="新邮箱"
@@ -217,7 +220,7 @@
               {required:true,message:'新邮箱不能为空',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateEmailForm.newEmail" autocomplete="off" />
+            <el-input v-model="updateEmailForm.newEmail" placeholder="请输入新邮箱" autocomplete="off" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

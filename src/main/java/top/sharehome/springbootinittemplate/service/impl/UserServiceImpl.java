@@ -26,9 +26,11 @@ import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;
+import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -329,5 +331,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             MinioUtils.delete(loginUser.getAvatarId());
         }
         LoginUtils.syncLoginUser();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void adminImportUser(MultipartFile file) {
+        try {
+            List<AdminUserImportDto> userImportDtoList = ExcelUtils.importStreamSyncAndClose(file.getInputStream(), AdminUserImportDto.class);
+            List<User> list = userImportDtoList.stream().map(user -> {
+                if (StringUtils.isBlank(user.getAccount())) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在账号[账号：" + user.getAccount() + " 邮箱：" + user.getEmail() + " 名称：" + user.getName() + "]不完整");
+                }
+                if (!user.getAccount().matches("^[A-Za-z0-9]{2,16}$")) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在账号[" + user.getAccount() + "]格式错误，要求介于2-16位且不包含特殊字符");
+                }
+                if (StringUtils.isBlank(user.getEmail())) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在邮箱[账号：" + user.getAccount() + " 邮箱：" + user.getEmail() + " 名称：" + user.getName() + "]不完整");
+                }
+                if (!user.getEmail().matches(Constants.REGEX_MAIL)) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在邮箱[" + user.getEmail() + "]格式错误");
+                }
+                if (StringUtils.isBlank(user.getName())) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在名称[账号：" + user.getAccount() + " 邮箱：" + user.getEmail() + " 名称：" + user.getName() + "]不完整");
+                }
+                if (!user.getName().matches("^.{1,16}$")) {
+                    throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在名称[" + user.getName() + "]格式错误，要求介于1-16位");
+                }
+                LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                userLambdaQueryWrapper
+                        .eq(User::getAccount, user.getAccount());
+                if (userMapper.exists(userLambdaQueryWrapper)) {
+                    throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "账号或工号已经存在[账号：" + user.getAccount() + " 名称：" + user.getName() + "]");
+                }
+                return new User()
+                        .setAccount(user.getAccount())
+                        .setPassword("123456")
+                        .setName(user.getName())
+                        .setEmail(user.getEmail());
+            }).distinct().toList();
+            if (Objects.equals(list.size(), 0)) {
+                throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "用户信息表数据为空");
+            }
+            if (!Objects.equals(userImportDtoList.size(), list.size())) {
+                throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "存在" + (userImportDtoList.size() - list.size()) + "条重复数据");
+            }
+            userMapper.insert(list, 2000);
+        } catch (IOException e) {
+            throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "读取用户信息文件出错");
+        }
     }
 }

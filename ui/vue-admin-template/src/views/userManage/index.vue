@@ -69,6 +69,9 @@
               <el-button type="primary" size="small" style="width: 100px" @click="openAddDialog">添加用户</el-button>
             </template>
             <template>
+              <el-button type="primary" size="small" style="width: 150px" @click="openImportDialog">导入用户信息</el-button>
+            </template>
+            <template>
               <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户信息</el-button>
             </template>
           </template>
@@ -83,6 +86,7 @@
         style="width: 100%"
       >
         <el-table-column
+          v-if="false"
           prop="id"
           label="ID"
         />
@@ -176,7 +180,7 @@
               {min:2,max:16,message: '账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="addForm.account" autocomplete="off" />
+            <el-input v-model="addForm.account" autocomplete="off" placeholder="请输入用户账号" />
           </el-form-item>
           <el-form-item
             label="用户密码"
@@ -186,7 +190,16 @@
               {min:5,max:16,message: '密码长度介于5-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="addForm.password" autocomplete="off" />
+            <el-input
+              ref="password"
+              v-model="addForm.password"
+              :type="addPasswordType"
+              placeholder="请输入用户密码"
+              autocomplete="off"
+            />
+            <span class="show-pwd" @click="showPwd('add')">
+              <svg-icon :icon-class="addPasswordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
           </el-form-item>
           <el-form-item
             label="用户名称"
@@ -196,7 +209,7 @@
               {min:1,max:16,message: '名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="addForm.name" autocomplete="off" />
+            <el-input v-model="addForm.name" autocomplete="off" placeholder="请输入用户名称" />
           </el-form-item>
           <el-form-item
             label="用户邮箱"
@@ -205,12 +218,34 @@
               {required:true,message:'邮箱不能为空',trigger: 'blur'},
             ]"
           >
-            <el-input v-model="addForm.email" autocomplete="off" />
+            <el-input v-model="addForm.email" autocomplete="off" placeholder="请输入用户邮箱" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCancelAdd">取 消</el-button>
           <el-button type="primary" :loading="addLoading" @click="handleAdd">添 加</el-button>
+        </div>
+      </el-dialog>
+    </template>
+    <template>
+      <el-dialog :show-close="false" title="导入用户" :visible.sync="importDialogVisible" @close="handleCancelImport">
+        <el-upload
+          v-loading="importLoading"
+          drag
+          action=""
+          :limit="1"
+          :show-file-list="false"
+          :file-list="fileList"
+          :before-upload="handleBefore"
+          :http-request="handleSubmit"
+          :on-success="handleSuccess"
+        >
+          <i class="el-icon-upload" />
+          <div class="el-upload__text"><em>点击上传</em>（仅支持xls/xlsx文件，且不超过200KB）</div>
+        </el-upload>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleExportTemplate">下载模板</el-button>
+          <el-button @click="handleCancelImport">取 消</el-button>
         </div>
       </el-dialog>
     </template>
@@ -231,7 +266,7 @@
               {min:2,max:16,message: '新账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateForm.account" autocomplete="off" />
+            <el-input v-model="updateForm.account" autocomplete="off" placeholder="请输入用户账号" />
           </el-form-item>
           <el-form-item
             label="用户名称"
@@ -241,7 +276,7 @@
               {min:1,max:16,message: '新名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateForm.name" autocomplete="off" />
+            <el-input v-model="updateForm.name" autocomplete="off" placeholder="请输入用户名称" />
           </el-form-item>
           <el-form-item
             label="用户邮箱"
@@ -250,7 +285,7 @@
               {required:true,message:'新邮箱不能为空',trigger: 'blur'},
             ]"
           >
-            <el-input v-model="updateForm.email" autocomplete="off" />
+            <el-input v-model="updateForm.email" autocomplete="off" placeholder="请输入用户邮箱" />
           </el-form-item>
         </el-form>
         <el-form v-else ref="updateForm" :model="updateForm" label-width="80px">
@@ -268,7 +303,16 @@
               {min:5,max:16,message: '新密码长度介于5-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateForm.newPassword" autocomplete="off" />
+            <el-input
+              ref="newPassword"
+              v-model="updateForm.newPassword"
+              :type="newPasswordType"
+              placeholder="请输入用户新密码"
+              autocomplete="off"
+            />
+            <span class="show-pwd" @click="showPwd('update')">
+              <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -282,17 +326,28 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { adminAddUser, adminDeleteUser, adminExportExcel, adminPageUser, adminResetPassword, adminUpdateInfo, adminUpdateState } from '@/api/user'
+import {
+  adminAddUser,
+  adminDeleteUser,
+  adminExportExcel,
+  adminExportUserTemplate, adminImportUser,
+  adminPageUser,
+  adminResetPassword,
+  adminUpdateInfo,
+  adminUpdateState
+} from '@/api/user'
 import { Loading, Message } from 'element-ui'
 
 export default {
   name: 'UserManage',
   data() {
     return {
+      fileList: [],
       addLoading: false,
       queryLoading: false,
       updateLoading: false,
       pageLoading: false,
+      importLoading: false,
       queryResult: [],
       queryForm: {
         account: undefined,
@@ -331,6 +386,10 @@ export default {
         name: undefined,
         email: undefined
       },
+      importDialogVisible: false,
+      importForm: {
+        file: undefined
+      },
       updateDialogVisible: false,
       updateType: undefined,
       updateForm: {
@@ -339,7 +398,9 @@ export default {
         name: undefined,
         email: undefined,
         newPassword: undefined
-      }
+      },
+      newPasswordType: 'password',
+      addPasswordType: 'password'
     }
   },
   computed: {
@@ -453,6 +514,77 @@ export default {
       this.resetAddForm()
       this.addLoading = false
     },
+
+    openImportDialog() {
+      this.importDialogVisible = true
+    },
+    handleBefore(file) {
+      const isXLS = file.name.endsWith('.xls')
+      const isXLSX = file.name.endsWith('.xlsx')
+      const isLt20K = file.size / 1024 < 200
+      if (!isXLS && !isXLSX) {
+        this.$message.error('上传文件只能是 XLS 或 XLSX 格式!')
+      }
+      if (!isLt20K) {
+        this.$message.error('上传文件大小不能超过 200KB!')
+      }
+      return (isXLS || isXLSX) && isLt20K
+    },
+    async handleSubmit(options) {
+      const { file } = options
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        this.importDialogVisible = false
+        this.importLoading = true
+        Message.warning('文件上传中，请勿重复上传，请稍后...')
+        const response = await adminImportUser(formData)
+        this.fileList = []
+        this.pageLoading = true
+        adminPageUser(this.queryForm).then(response => {
+          this.queryResult = response.data
+          this.importLoading = false
+          this.pageLoading = false
+        })
+        Message.success(response.msg)
+      } catch (error) {
+        this.fileList = []
+        this.importLoading = false
+        return error
+      }
+    },
+    handleSuccess(response) {
+      console.log('response:', response)
+    },
+    handleCancelImport() {
+      this.importDialogVisible = false
+    },
+    handleExportTemplate() {
+      const downloadLoadingInstance = Loading.service({
+        text: '正在下载数据，请稍候',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      adminExportUserTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        downloadLoadingInstance.close()
+      }).catch(() => {
+        Message.error('下载失败')
+        downloadLoadingInstance.close()
+      })
+    },
     openUpdateDialog(data1, data2) {
       this.updateType = data1
       this.updateForm.id = data2.id
@@ -523,6 +655,30 @@ export default {
         })
         Message.success(response.msg)
       })
+    },
+    showPwd(passwordType) {
+      switch (passwordType){
+        case 'add':
+          if (this.addPasswordType === 'password') {
+            this.addPasswordType = ''
+          } else {
+            this.addPasswordType = 'password'
+          }
+          this.$nextTick(() => {
+            this.$refs.password.focus()
+          })
+          break
+        case 'update':
+          if (this.newPasswordType === 'password') {
+            this.newPasswordType = ''
+          } else {
+            this.newPasswordType = 'password'
+          }
+          this.$nextTick(() => {
+            this.$refs.newPassword.focus()
+          })
+          break
+      }
     },
     handleDelete(data) {
       this.$confirm('此操作将删除该用户, 是否继续?', '确认删除', {
@@ -601,5 +757,15 @@ export default {
     width: 100%;
     background-size: cover;
   }
+}
+
+.show-pwd{
+  position: absolute;
+  right: 10px;
+  top: 2px;
+  font-size: 16px;
+  color: #889aa4;
+  cursor: pointer;
+  user-select: none;
 }
 </style>

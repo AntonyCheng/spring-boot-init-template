@@ -8,6 +8,14 @@ export function adminPageFile(data) {
   })
 }
 
+export function adminAddFile(data) {
+  return request({
+    url: '/admin/file/add',
+    method: 'post',
+    data
+  })
+}
+
 export function adminDeleteFile(data) {
   return request({
     url: '/admin/file/delete/' + data,
