@@ -1,0 +1,1 @@
+### 执行 `chmod 777 ./rabbitmq/data`

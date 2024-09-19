@@ -544,6 +544,7 @@
 
     <!-- 项目构建概况 -->
     <build>
+        <finalName>${project.artifactId}-${project.version}-${spring.profiles.active}</finalName>
         <!-- 构建插件 -->
         <plugins>
             <!-- maven 打包 -->
@@ -584,12 +585,48 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <includes>
+                    <include>mysql/mysql-${spring.profiles.active}.yaml</include>
+                    <include>application-${spring.profiles.active}.yaml</include>
+                    <include>application.yaml</include>
+                </includes>
+                <filtering>true</filtering>
             </resource>
             <resource>
-                <directory>src/main/webapp/</directory>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>i18n/**</include>
+                    <include>ip2region/**</include>
+                    <include>knife4j/**</include>
+                    <include>mapper/**</include>
+                    <include>templates/**</include>
+                    <include>banner.txt</include>
+                </includes>
+                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
+
+    <!-- 多环境打包 -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <!-- 指定依赖仓库 -->
     <repositories>
