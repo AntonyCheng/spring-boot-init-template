@@ -506,7 +506,7 @@ websocket:
 # Easy-ES配置
 easy-es:
   # todo 是否启动（预先关闭）
-  enable: true
+  enable: false
   # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
   address: 127.0.0.1:9200
     # 如果无账号密码则可不配置此行
