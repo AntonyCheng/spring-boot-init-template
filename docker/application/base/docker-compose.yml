@@ -38,163 +38,163 @@ services:
   #######################################################################
   ##########################以下是选择启动容器##############################
   #######################################################################
-  redis:
-    image: redis:7.4.0
-    container_name: redis
-    ports:
-      - "6379:6379"
-    environment:
-      # 时区上海
-      TZ: Asia/Shanghai
-    volumes:
-      # 配置文件
-      - ./data/redis/conf/:/redis/config/
-      # 挂载目录
-      - ./data/redis/data/:/redis/data/
-    command: "redis-server /redis/config/redis.conf"
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.102
-
-  minio:
-    image: minio/minio:RELEASE.2024-09-13T20-26-02Z
-    container_name: minio
-    ports:
-      # api 端口
-      - "9000:9000"
-      # 控制台端口
-      - "9090:9090"
-    environment:
-      # 时区上海
-      TZ: Asia/Shanghai
-      # 管理后台用户名
-      MINIO_ROOT_USER: minioadmin
-      # 管理后台密码，最小8个字符
-      MINIO_ROOT_PASSWORD: minioadmin
-      # https需要指定域名
-      #MINIO_SERVER_URL: "https://xxx.com:9000"
-      #MINIO_BROWSER_REDIRECT_URL: "https://xxx.com:9090"
-      # 开启压缩 on 开启 off 关闭
-      MINIO_COMPRESS: "off"
-      # 扩展名 .pdf,.doc 为空 所有类型均压缩
-      MINIO_COMPRESS_EXTENSIONS: ""
-      # mime 类型 application/pdf 为空 所有类型均压缩
-      MINIO_COMPRESS_MIME_TYPES: ""
-    volumes:
-      # 映射当前目录下的data目录至容器内/data目录
-      - ./data/minio/data/:/data/
-      # 映射配置目录
-      - ./data/minio/config/:/root/.minio/
-    command: server --address ':9000' --console-address ':9090' /data  # 指定容器中的目录 /data
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.103
-
-  rabbitmq:
-    image: rabbitmq:3.13.7-management
-    container_name: rabbitmq
-    # 指定docker build时Dockerfile的路径
-    build:
-      context: ./rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin123
-    ports:
-      - "15672:15672" # 管理界面端口
-      - "5672:5672"   # api 端口
-    volumes:
-      - ./data/rabbitmq/log/:/var/log/rabbitmq/
-      - ./data/rabbitmq/data/:/var/lib/rabbitmq/
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.104
-
-  elasticsearch:
-    image: elasticsearch:7.14.0
-    container_name: elasticsearch
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      # 设置集群名称
-      cluster.name: elasticsearch
-      # 以单一节点模式启动
-      discovery.type: single-node
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-    volumes:
-      - ./data/elk/elasticsearch/plugins:/usr/share/elasticsearch/plugins
-      - ./data/elk/elasticsearch/data:/usr/share/elasticsearch/data
-      - ./data/elk/elasticsearch/logs:/usr/share/elasticsearch/logs
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.105
-
-  logstash:
-    image: logstash:7.14.0
-    container_name: logstash
-    ports:
-      - "4560:4560"
-    volumes:
-      - ./data/elk/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./data/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
-    depends_on:
-      # logstash在elasticsearch启动之后再启动
-      - elasticsearch
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.106
-
-  kibana:
-    image: kibana:7.14.0
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    depends_on:
-      # kibana在elasticsearch启动之后再启动
-      - elasticsearch
-    environment:
-      #设置系统语言文中文
-      I18N_LOCALE: zh-CN
-      # 访问域名
-      # SERVER_PUBLICBASEURL: https://kibana.cloud.com
-    volumes:
-      - ./data/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.107
-
-  mongodb:
-    image: mongodb/mongodb-community-server:7.0.12-ubi8
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data/mongodb/data/:/data/db/
-    environment:
-      - MONGODB_INITDB_ROOT_USERNAME=root
-      - MONGODB_INITDB_ROOT_PASSWORD=123456
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.108
-
-  ollama:
-    image: ollama/ollama:0.3.11
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ./data/ollama/data:/root/.ollama
-    privileged: true
-    networks:
-      docker_net:
-        ipv4_address: 177.177.177.109
+#  redis:
+#    image: redis:7.4.0
+#    container_name: redis
+#    ports:
+#      - "6379:6379"
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#    volumes:
+#      # 配置文件
+#      - ./data/redis/conf/:/redis/config/
+#      # 挂载目录
+#      - ./data/redis/data/:/redis/data/
+#    command: "redis-server /redis/config/redis.conf"
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.102
+#
+#  minio:
+#    image: minio/minio:RELEASE.2024-09-13T20-26-02Z
+#    container_name: minio
+#    ports:
+#      # api 端口
+#      - "9000:9000"
+#      # 控制台端口
+#      - "9090:9090"
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#      # 管理后台用户名
+#      MINIO_ROOT_USER: minioadmin
+#      # 管理后台密码，最小8个字符
+#      MINIO_ROOT_PASSWORD: minioadmin
+#      # https需要指定域名
+#      #MINIO_SERVER_URL: "https://xxx.com:9000"
+#      #MINIO_BROWSER_REDIRECT_URL: "https://xxx.com:9090"
+#      # 开启压缩 on 开启 off 关闭
+#      MINIO_COMPRESS: "off"
+#      # 扩展名 .pdf,.doc 为空 所有类型均压缩
+#      MINIO_COMPRESS_EXTENSIONS: ""
+#      # mime 类型 application/pdf 为空 所有类型均压缩
+#      MINIO_COMPRESS_MIME_TYPES: ""
+#    volumes:
+#      # 映射当前目录下的data目录至容器内/data目录
+#      - ./data/minio/data/:/data/
+#      # 映射配置目录
+#      - ./data/minio/config/:/root/.minio/
+#    command: server --address ':9000' --console-address ':9090' /data  # 指定容器中的目录 /data
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.103
+#
+#  rabbitmq:
+#    image: rabbitmq:3.13.7-management
+#    container_name: rabbitmq
+#    # 指定docker build时Dockerfile的路径
+#    build:
+#      context: ./rabbitmq
+#    environment:
+#      RABBITMQ_DEFAULT_USER: admin
+#      RABBITMQ_DEFAULT_PASS: admin123
+#    ports:
+#      - "15672:15672" # 管理界面端口
+#      - "5672:5672"   # api 端口
+#    volumes:
+#      - ./data/rabbitmq/log/:/var/log/rabbitmq/
+#      - ./data/rabbitmq/data/:/var/lib/rabbitmq/
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.104
+#
+#  elasticsearch:
+#    image: elasticsearch:7.14.0
+#    container_name: elasticsearch
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+#    environment:
+#      # 设置集群名称
+#      cluster.name: elasticsearch
+#      # 以单一节点模式启动
+#      discovery.type: single-node
+#      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+#    volumes:
+#      - ./data/elk/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+#      - ./data/elk/elasticsearch/data:/usr/share/elasticsearch/data
+#      - ./data/elk/elasticsearch/logs:/usr/share/elasticsearch/logs
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.105
+#
+#  logstash:
+#    image: logstash:7.14.0
+#    container_name: logstash
+#    ports:
+#      - "4560:4560"
+#    volumes:
+#      - ./data/elk/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#      - ./data/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+#    depends_on:
+#      # logstash在elasticsearch启动之后再启动
+#      - elasticsearch
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.106
+#
+#  kibana:
+#    image: kibana:7.14.0
+#    container_name: kibana
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      # kibana在elasticsearch启动之后再启动
+#      - elasticsearch
+#    environment:
+#      #设置系统语言文中文
+#      I18N_LOCALE: zh-CN
+#      # 访问域名
+#      # SERVER_PUBLICBASEURL: https://kibana.cloud.com
+#    volumes:
+#      - ./data/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.107
+#
+#  mongodb:
+#    image: mongodb/mongodb-community-server:7.0.12-ubi8
+#    container_name: mongodb
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - ./data/mongodb/data/:/data/db/
+#    environment:
+#      - MONGODB_INITDB_ROOT_USERNAME=root
+#      - MONGODB_INITDB_ROOT_PASSWORD=123456
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.108
+#
+#  ollama:
+#    image: ollama/ollama:0.3.11
+#    container_name: ollama
+#    ports:
+#      - "11434:11434"
+#    volumes:
+#      - ./data/ollama/data:/root/.ollama
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.109
 
 networks:
   docker_net:
