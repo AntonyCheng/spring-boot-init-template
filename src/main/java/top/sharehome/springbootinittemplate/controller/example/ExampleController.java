@@ -59,6 +59,7 @@ public class ExampleController {
      */
     @PostMapping("/encrypt")
     @RSADecrypt
+    @ControllerLog(description = "用户调用请求参数解密示例接口", operator = Operator.OTHER)
     public R<Map<String, Object>> decryptionRequestParameters(@RequestBody @Validated({PostGroup.class}) ExampleEncryptBody exampleEncryptBody, @RequestParam @RSAEncrypt String exampleEncryptParam) {
         return R.ok(new HashMap<>() {
             {
