@@ -84,6 +84,12 @@ public class Ip2RegionConfiguration {
             if (searcher != null) {
                 searcher.close();
             }
+            String fileName = "ip2region" + File.separator + "ip2region.xdb";
+            String tempFile = (StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator) + fileName;
+            File existFile = new File(tempFile);
+            if (existFile.exists()) {
+                FileUtils.delete(existFile);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.encrypt.controller.model;
+package top.sharehome.springbootinittemplate.controller.example.entity;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class TestEncryptDto implements Serializable {
+public class ExampleEncryptBody implements Serializable {
 
     @Size(min = 5, max = 10, message = "账号长度介于5-10之间", groups = {PostGroup.class})
     private String account;

@@ -680,7 +680,7 @@ encrypt:
 
 # 验证码配置
 captcha:
-  # todo 是否使用验证码（启用的前提是redisson配置完成和启用离线IP库ip2region，预先关闭）
+  # todo 是否使用验证码（启用的前提是redisson配置完成，预先关闭）
   enable: false
   # 验证码类型：char 字符类型；math 数字类型。
   type: char
