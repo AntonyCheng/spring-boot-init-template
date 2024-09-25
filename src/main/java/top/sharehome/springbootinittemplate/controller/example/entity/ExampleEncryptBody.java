@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 测试加密Dto类
+ * 示例-请求参数解密
  *
  * @author AntonyCheng
  */

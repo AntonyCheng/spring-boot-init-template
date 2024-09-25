@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 处理需要验证码接口的切面类
+ * 示例-验证码注解
  *
  * @author AntonyCheng
  */
