@@ -1,10 +1,12 @@
 package top.sharehome.springbootinittemplate.controller.example;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
@@ -18,6 +20,8 @@ import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ExportDataSource;
 import top.sharehome.springbootinittemplate.utils.document.word.WordUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +85,7 @@ public class ExampleController {
      *
      * @return 返回Word
      */
-    @GetMapping("/template/word")
+    @GetMapping("/word/template")
     @ControllerLog(description = "用户调用通过模板导出Word接口", operator = Operator.OTHER)
     public R<Void> exportWordByTemplate(@RequestParam String title, @RequestParam String name, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, HttpServletResponse response) {
         HashMap<String, Object> hashMap = new HashMap<>() {
@@ -96,11 +100,56 @@ public class ExampleController {
     }
 
     /**
+     * 获取Word中所有段落TXT文件
+     *
+     * @return 返回Word
+     */
+    @PostMapping("/word/txt/paragraphs")
+    @ControllerLog(description = "用户调用获取Word中所有段落TXT文件接口", operator = Operator.OTHER)
+    public R<Void> getParagraphsTxtInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
+        try (InputStream inputStream = file.getInputStream()) {
+            new WordUtils.Reader(inputStream).getTxtParagraphsResponse(response);
+        } catch (IOException ignored) {
+        }
+        return R.empty();
+    }
+
+    /**
+     * 获取Word中所有表格压缩包
+     *
+     * @return 返回Word
+     */
+    @PostMapping("/word/zip/tables")
+    @ControllerLog(description = "用户调用获取Word中所有表格压缩包接口", operator = Operator.OTHER)
+    public R<Void> getTablesZipInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
+        try (InputStream inputStream = file.getInputStream()) {
+            new WordUtils.Reader(inputStream).getTablesResponse(response);
+        } catch (IOException ignored) {
+        }
+        return R.empty();
+    }
+
+    /**
+     * 获取Word中所有图片压缩包
+     *
+     * @return 返回Word
+     */
+    @PostMapping("/word/zip/images")
+    @ControllerLog(description = "用户调用获取Word中所有图片压缩包接口", operator = Operator.OTHER)
+    public R<Void> getImagesZipInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
+        try (InputStream inputStream = file.getInputStream()) {
+            new WordUtils.Reader(inputStream).getImagesResponse(response);
+        } catch (IOException ignored) {
+        }
+        return R.empty();
+    }
+
+    /**
      * 通过Freemarker模板导出PDF
      *
      * @return 返回Word
      */
-    @GetMapping("/template/pdf/freemarker")
+    @GetMapping("/pdf/template/freemarker")
     @ControllerLog(description = "用户调用通过Freemarker模板导出PDF接口", operator = Operator.OTHER)
     public R<Void> exportPdfByFreemarkerTemplate(HttpServletResponse response) {
         Map<String, Object> freemarkerData = new HashMap<>();
@@ -118,7 +167,7 @@ public class ExampleController {
      *
      * @return 返回Word
      */
-    @GetMapping("/template/pdf/Thymeleaf")
+    @GetMapping("/pdf/template/thymeleaf")
     @ControllerLog(description = "用户调用通过Thymeleaf模板导出PDF接口", operator = Operator.OTHER)
     public R<Void> exportPdfByThymeleafTemplate(HttpServletResponse response) {
         Map<String, Object> thymeleafData = new HashMap<>();
@@ -132,7 +181,7 @@ public class ExampleController {
      *
      * @return 返回Word
      */
-    @GetMapping("/template/pdf/Jte")
+    @GetMapping("/pdf/template/jte")
     @ControllerLog(description = "用户调用通过Jte模板导出PDF接口", operator = Operator.OTHER)
     public R<Void> exportPdfByJteTemplate(HttpServletResponse response) {
         Map<String, Object> jteData = new HashMap<>();

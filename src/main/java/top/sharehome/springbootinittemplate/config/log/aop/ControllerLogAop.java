@@ -122,7 +122,7 @@ public class ControllerLogAop {
                         json = StringUtils.substring(json, 0, 2000) + "...";
                     }
                     log.setJson(json);
-                }else {
+                } else {
                     String json = JSON.toJSONString(resMap);
                     if (json.length() > 2000) {
                         json = StringUtils.substring(json, 0, 2000) + "...";
@@ -332,13 +332,21 @@ public class ControllerLogAop {
                     }
                     declaredField.setAccessible(true);
                     Object object = declaredField.get(obj);
-                    return object instanceof MultipartFile;
+                    if (object instanceof MultipartFile
+                            || object instanceof HttpServletRequest
+                            || object instanceof HttpServletResponse
+                            || object instanceof BindingResult) {
+                        return true;
+                    }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
-        return obj instanceof MultipartFile || obj instanceof HttpServletRequest || obj instanceof HttpServletResponse || obj instanceof BindingResult;
+        return obj instanceof MultipartFile
+                || obj instanceof HttpServletRequest
+                || obj instanceof HttpServletResponse
+                || obj instanceof BindingResult;
     }
 
 }
