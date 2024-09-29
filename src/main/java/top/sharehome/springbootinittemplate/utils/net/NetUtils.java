@@ -28,7 +28,7 @@ public class NetUtils {
      * @param request 请求
      * @return 返回IP地址
      */
-    public static String getIpAddressByRequest(HttpServletRequest request) {
+    public static String getIpByRequest(HttpServletRequest request) {
         String ipAddress = request.getHeader("x-forwarded-for");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
@@ -87,7 +87,7 @@ public class NetUtils {
      * @param ip IP地址
      * @return 返回地区
      */
-    public static String getRegionByIpAddress(String ip) {
+    public static String getRegionByIp(String ip) {
         try {
             return SEARCHER.search(ip);
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class NetUtils {
      * @return 返回地区
      */
     public static String getRegionByRequest(HttpServletRequest request) {
-        return getRegionByIpAddress(getIpAddressByRequest(request));
+        return getRegionByIp(getIpByRequest(request));
     }
 
 }

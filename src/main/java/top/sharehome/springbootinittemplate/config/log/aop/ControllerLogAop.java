@@ -176,7 +176,7 @@ public class ControllerLogAop {
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP
-            log.setIp(NetUtils.getIpAddressByRequest(request));
+            log.setIp(NetUtils.getIpByRequest(request));
             // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时
@@ -282,7 +282,7 @@ public class ControllerLogAop {
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP
-            log.setIp(NetUtils.getIpAddressByRequest(request));
+            log.setIp(NetUtils.getIpByRequest(request));
             // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时

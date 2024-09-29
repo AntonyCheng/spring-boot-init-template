@@ -654,8 +654,8 @@ public class WordUtils {
          *
          * @param response    响应流
          */
-        public void getTxtParagraphsResponse(HttpServletResponse response) {
-            getTxtParagraphsResponse(null, response);
+        public void getParagraphsResponse(HttpServletResponse response) {
+            getParagraphsResponse(null, response);
         }
 
         /**
@@ -664,7 +664,7 @@ public class WordUtils {
          * @param txtFileName    TXT文件名
          * @param response    响应流
          */
-        public void getTxtParagraphsResponse(String txtFileName, HttpServletResponse response) {
+        public void getParagraphsResponse(String txtFileName, HttpServletResponse response) {
             if (Objects.isNull(response)) {
                 throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "响应为空");
             }
@@ -1040,7 +1040,7 @@ public class WordUtils {
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8)
                     .replaceAll("\\+", "%20");
-            String contentDispositionValue = "attachment; filename*=utf-8''" + encodeName;
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
             response.setHeader("Content-disposition", contentDispositionValue);
             response.setHeader("download-filename", encodeName);

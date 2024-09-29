@@ -1554,5 +1554,6 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 * 优化AI模块，设计工具类
 * 设计相关工具类前端功能示例界面
+* 调研Spring Boot WebSocket
 * 扩展新的前端模板
 * ......

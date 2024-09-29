@@ -20,7 +20,7 @@ public class CaptchaInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
         // 获取请求中可能存在的IP地址
-        String ipAddress = NetUtils.getIpAddressByRequest(request);
+        String ipAddress = NetUtils.getIpByRequest(request);
         // 除去ip地址中的所有符号
         ipAddress = ipAddress.replaceAll("\\p{P}", "");
         // 获取请求SessionId

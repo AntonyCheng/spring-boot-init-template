@@ -14,8 +14,8 @@ public class NetTest {
 
     @Test
     public void testGetRegionByIp() {
-        String ipStr = "1.2.3.4";
-        String regionByIp = NetUtils.getRegionByIpAddress(ipStr);
+        String ipStr = "1.2.3.4-";
+        String regionByIp = NetUtils.getRegionByIp(ipStr);
         System.out.println(regionByIp);
     }
 
