@@ -1,7 +1,7 @@
 <template>
   <div class="user-manage-container">
     <template>
-      <el-collapse accordion>
+      <el-collapse>
         <el-collapse-item>
           <template slot="title">
             <span style="font-size: 16px"><b>查询条件</b></span>
@@ -107,18 +107,18 @@
                 style="width: 150px; height: 150px"
                 :src="scope.row.url"
                 :preview-src-list="[scope.row.url]"
-                :lazy="true">
-              </el-image>
+                :lazy="true"
+              />
             </template>
             <template v-else-if="getFileType(scope.row.url) === 'video'" style="vertical-align: center">
               <video style="width: 250px; height: 150px" controls>
-                <source :src="scope.row.url" type="video/mp4" />
+                <source :src="scope.row.url" type="video/mp4">
                 Your browser does not support the video tag.
               </video>
             </template>
             <template v-else-if="getFileType(scope.row.url) === 'audio'" style="vertical-align: center">
               <audio controls style="width: 250px">
-                <source :src="scope.row.url" type="audio/mpeg" />
+                <source :src="scope.row.url" type="audio/mpeg">
                 Your browser does not support the audio element.
               </audio>
             </template>
@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import {adminAddFile, adminDeleteFile, adminExportExcel, adminPageFile} from '@/api/file'
+import { adminAddFile, adminDeleteFile, adminExportExcel, adminPageFile } from '@/api/file'
 import { Loading, Message } from 'element-ui'
 
 export default {
@@ -301,7 +301,7 @@ export default {
         downloadLoadingInstance.close()
       })
     },
-    openAddDialog(){
+    openAddDialog() {
       this.addDialogVisible = true
     },
     handleBefore(file) {
@@ -359,15 +359,15 @@ export default {
         })
       })
     },
-    getFileType(url){
-      if (/\.(jpeg|jpg|gif|png|bmp|webp|jfif)$/i.test(url)){
-        return "image"
-      } else if(/\.(mp4|webm|ogg)$/i.test(url)){
-        return "video"
-      }else if(/\.(mp3|wav|ogg)$/i.test(url)){
-        return "audio"
-      }else if(/\.(txt|md|json|conf)$/i.test(url)){
-        return "text"
+    getFileType(url) {
+      if (/\.(jpeg|jpg|gif|png|bmp|webp|jfif)$/i.test(url)) {
+        return 'image'
+      } else if (/\.(mp4|webm|ogg)$/i.test(url)) {
+        return 'video'
+      } else if (/\.(mp3|wav|ogg)$/i.test(url)) {
+        return 'audio'
+      } else if (/\.(txt|md|json|conf)$/i.test(url)) {
+        return 'text'
       }
     },
     viewText(url) {
@@ -377,21 +377,21 @@ export default {
           this.$alert(text, '文本预览', {
             confirmButtonText: '确定',
             showClose: true
-          });
-        });
+          })
+        })
     },
     handleDownload(url) {
-      const link = document.createElement('a');
-      link.href = url; // 文件的下载地址
-      link.download = this.getFileNameFromUrl(url); // 从 URL 中提取文件名
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const link = document.createElement('a')
+      link.href = url // 文件的下载地址
+      link.download = this.getFileNameFromUrl(url) // 从 URL 中提取文件名
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     },
     getFileNameFromUrl(url) {
       // 使用正则表达式从 url 中提取文件名
-      return url.substring(url.lastIndexOf('/') + 1);
+      return url.substring(url.lastIndexOf('/') + 1)
     },
     handleSizeChange(val) {
       this.queryForm.size = val

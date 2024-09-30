@@ -1,12 +1,14 @@
 package top.sharehome.springbootinittemplate.controller.example;
 
-import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
@@ -38,9 +40,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/example")
-//@SaCheckLogin
-//@SaCheckRole(value = {Constants.ROLE_ADMIN})
-@SaIgnore
+@SaCheckLogin
+@SaCheckRole(value = {Constants.ROLE_ADMIN})
 public class ExampleController {
 
     /**
@@ -53,7 +54,7 @@ public class ExampleController {
      *
      * @return 验证结果
      */
-    @PostMapping("/captcha")
+    @PostMapping("/check/captcha")
     @EnableCaptcha
     @ControllerLog(description = "用户调用验证码示例接口", operator = Operator.OTHER)
     public R<String> checkCaptcha(@RequestBody ExampleCaptcha exampleCaptcha) {
@@ -253,6 +254,5 @@ public class ExampleController {
         String ip = NetUtils.getIpByRequest(request);
         return R.ok("ip：" + ip + " 地址：" + NetUtils.getRegionByIp(ip));
     }
-
 
 }
