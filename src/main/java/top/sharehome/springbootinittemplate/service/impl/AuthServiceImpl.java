@@ -73,6 +73,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         // 插入新用户数据
         User user = new User()
                 .setAccount(authRegisterDto.getAccount())
+                // 注册之后，默认名称是账号
+                .setName(authRegisterDto.getAccount())
                 .setPassword(authRegisterDto.getPassword())
                 .setEmail(authRegisterDto.getEmail())
                 // 在没有激活账号的情况下禁用账号

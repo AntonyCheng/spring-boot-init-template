@@ -99,6 +99,19 @@ export const constantRoutes = [
     role: ['admin']
   },
   {
+    path: '/example',
+    component: Layout,
+    children: [
+      {
+        path: 'example',
+        name: 'Example',
+        component: () => import('@/views/example/index'),
+        meta: { title: '示例演示', icon: 'el-icon-s-grid' }
+      }
+    ],
+    role: ['admin']
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [

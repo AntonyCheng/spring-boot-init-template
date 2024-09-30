@@ -55,11 +55,6 @@ public class AuthRegisterDto implements Serializable {
     @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
     private String email;
 
-    /**
-     * 验证码参数实体类
-     */
-    private Captcha captcha;
-
     @Serial
     private static final long serialVersionUID = -535414393059407250L;
 

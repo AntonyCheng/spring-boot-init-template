@@ -44,7 +44,6 @@ public class AuthController {
      * @return 返回注册结果
      */
     @PostMapping("/register")
-    @EnableCaptcha
     @ControllerLog(description = "用户注册", operator = Operator.OTHER)
     public R<String> register(@RequestBody @Validated({PostGroup.class}) AuthRegisterDto authRegisterDto) {
         if (!StringUtils.equals(authRegisterDto.getPassword(), authRegisterDto.getCheckPassword())) {
@@ -106,7 +105,6 @@ public class AuthController {
      * @return 返回找回结果
      */
     @PostMapping("/email/code")
-    @EnableCaptcha
     @ControllerLog(description = "用户获取邮箱验证码", operator = Operator.QUERY)
     public R<String> getEmailCode(@RequestBody @Validated({PostGroup.class}) AuthEmailCodeDto authEmailCodeDto) {
         authService.getEmailCode(authEmailCodeDto);
