@@ -91,7 +91,97 @@
             </el-col>
             <el-col :span="12">
               <el-card style="max-width: 100%">
-                <template #default />
+                <template #default>
+                  <el-form ref="retrievePasswordForm" :model="retrievePasswordForm" label-width="100px">
+                    <el-form-item
+                      label="用户账号"
+                      prop="account"
+                      :rules="[
+                        {required:true,message:'账号不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="account"
+                        v-model="retrievePasswordForm.account"
+                        placeholder="请输入用户账号"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="用户邮箱"
+                      prop="email"
+                      :rules="[
+                        {required:true,message:'邮箱不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="email"
+                        v-model="retrievePasswordForm.email"
+                        placeholder="请输入用户邮箱"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="用户新密码"
+                      prop="newPassword"
+                      :rules="[
+                        {required:true,message:'密码不能为空',trigger: 'blur'},
+                        {min:5,max:16,message: '密码长度介于5-16位之间',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="newPassword"
+                        v-model="retrievePasswordForm.newPassword"
+                        :type="newPasswordType"
+                        placeholder="请输入用户新密码"
+                        autocomplete="off"
+                      />
+                      <span class="show-pwd" @click="showPwd('newPasswordType')">
+                        <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                      </span>
+                    </el-form-item>
+                    <el-form-item
+                      label="确认新密码"
+                      prop="checkNewPassword"
+                      :rules="[
+                        {required:true,message:'密码不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="checkNewPassword"
+                        v-model="retrievePasswordForm.checkNewPassword"
+                        :type="checkNewPasswordType"
+                        placeholder="请输入确认新密码"
+                        autocomplete="off"
+                      />
+                      <span class="show-pwd" @click="showPwd('checkNewPasswordType')">
+                        <svg-icon :icon-class="checkNewPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                      </span>
+                    </el-form-item>
+                    <el-form-item
+                      label="找回验证码"
+                      prop="passwordCode"
+                      :rules="[
+                        {required:true,message:'找回密码验证码不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="email"
+                        v-model="retrievePasswordForm.passwordCode"
+                        placeholder="请输入找回验证码"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                  </el-form>
+                  <el-button
+                    :loading="retrievePasswordLoading"
+                    type="primary"
+                    size="medium"
+                    style="width: 80px"
+                    @click="handleRegister"
+                  >注册
+                  </el-button>
+                </template>
               </el-card>
             </el-col>
           </el-row>
@@ -142,7 +232,17 @@ export default {
         email: undefined
       },
       passwordType: 'password',
-      checkPasswordType: 'password'
+      checkPasswordType: 'password',
+      retrievePasswordLoading: false,
+      retrievePasswordForm: {
+        account: undefined,
+        email: undefined,
+        newPassword: undefined,
+        checkNewPassword: undefined,
+        passwordCode: undefined
+      },
+      newPasswordType: 'password',
+      checkNewPasswordType: 'password'
     }
   },
   methods: {
@@ -166,6 +266,26 @@ export default {
           }
           this.$nextTick(() => {
             this.$refs.checkPassword.focus()
+          })
+          break
+        case 'newPasswordType':
+          if (this.newPasswordType === 'password') {
+            this.newPasswordType = ''
+          } else {
+            this.newPasswordType = 'password'
+          }
+          this.$nextTick(() => {
+            this.$refs.newPasswordType.focus()
+          })
+          break
+        case 'checkNewPasswordType':
+          if (this.checkNewPasswordType === 'password') {
+            this.checkNewPasswordType = ''
+          } else {
+            this.checkNewPasswordType = 'password'
+          }
+          this.$nextTick(() => {
+            this.$refs.checkNewPasswordType.focus()
           })
           break
       }
