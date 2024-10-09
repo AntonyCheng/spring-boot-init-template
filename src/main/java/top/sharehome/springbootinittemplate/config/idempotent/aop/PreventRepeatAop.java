@@ -16,6 +16,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.idempotent.annotation.PreventRepeat;
 import top.sharehome.springbootinittemplate.config.idempotent.enums.ScopeType;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeRedissonException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
@@ -78,7 +79,7 @@ public class PreventRepeatAop {
         if (CacheUtils.putNoPrefixIfAbsent(preventRepeatKey, "", Duration.ofMillis(interval))) {
             CACHE_KEY_THREAD_LOCAL.set(preventRepeatKey);
         } else {
-            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS, preventRepeat.message());
+            throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS, preventRepeat.message());
         }
     }
 

@@ -254,7 +254,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             String subject = "找回密码";
             String emailContent = "[" + applicationName + "]-找回密码验证码为 <b>" + code + "</b> ,五分钟后失效。";
             EmailUtils.sendWithHtml(userInDatabase.getEmail(), subject, emailContent);
-            CacheUtils.putString(emailKey, code, Duration.ofMillis(5));
+            CacheUtils.putString(emailKey, code, Duration.ofMinutes(5));
         } else {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS, "请在" + expired + "秒后重试");
         }

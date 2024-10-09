@@ -50,7 +50,7 @@ public class ControllerLogAop {
      * 系统默认屏蔽的请求/响应字段
      * User：password、checkPassword、oldPassword、newPassword、checkNewPassword
      */
-    private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token"};
+    private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token", "email", "passwordCode"};
 
     /**
      * 记录日志操作用户ID，TransmittableThreadLocal是Alibaba继承ThreadLocal的一个类，它适用于适用于复杂的线程池、异步任务等场景，由于该日志记录过程中可能会存在这些场景，所以能够保证线程本地变量的传递性。

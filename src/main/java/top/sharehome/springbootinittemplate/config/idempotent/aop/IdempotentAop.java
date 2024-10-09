@@ -22,6 +22,7 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.idempotent.annotation.Idempotent;
 import top.sharehome.springbootinittemplate.config.redisson.condition.RedissonCondition;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeRedissonException;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.redisson.KeyPrefixConstants;
 import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
@@ -99,7 +100,7 @@ public class IdempotentAop {
         if (CacheUtils.putNoPrefixIfAbsent(idempotentKey, "", Duration.ofMillis(interval))) {
             CACHE_KEY_THREAD_LOCAL.set(idempotentKey);
         } else {
-            throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS, idempotent.message());
+            throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS, idempotent.message());
         }
     }
 
@@ -160,7 +161,12 @@ public class IdempotentAop {
                     }
                     declaredField.setAccessible(true);
                     Object object = declaredField.get(obj);
-                    return object instanceof MultipartFile;
+                    if (object instanceof MultipartFile
+                            || object instanceof HttpServletRequest
+                            || object instanceof HttpServletResponse
+                            || object instanceof BindingResult) {
+                        return true;
+                    }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }

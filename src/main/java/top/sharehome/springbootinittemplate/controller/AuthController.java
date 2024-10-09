@@ -10,6 +10,8 @@ import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
+import top.sharehome.springbootinittemplate.config.idempotent.annotation.RateLimit;
+import top.sharehome.springbootinittemplate.config.idempotent.enums.ScopeType;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
@@ -22,6 +24,7 @@ import top.sharehome.springbootinittemplate.service.AuthService;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 鉴权认证控制器
@@ -106,6 +109,7 @@ public class AuthController {
      */
     @PostMapping("/email/code")
     @ControllerLog(description = "用户获取邮箱验证码", operator = Operator.QUERY)
+    @RateLimit(time = 5, timeUnit = TimeUnit.MINUTES, rate = 1, permit = 1, scopeType = ScopeType.PERSONAL, message = "5分钟内不能重复获取邮箱验证码")
     public R<String> getEmailCode(@RequestBody @Validated({PostGroup.class}) AuthEmailCodeDto authEmailCodeDto) {
         authService.getEmailCode(authEmailCodeDto);
         return R.ok("获取验证码成功，请前往邮箱查收");

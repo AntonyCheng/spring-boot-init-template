@@ -20,7 +20,7 @@
                       ]"
                     >
                       <el-input
-                        ref="account"
+                        ref="registerAccount"
                         v-model="registerForm.account"
                         placeholder="请输入用户账号"
                         autocomplete="off"
@@ -71,7 +71,7 @@
                       ]"
                     >
                       <el-input
-                        ref="email"
+                        ref="registerEmail"
                         v-model="registerForm.email"
                         placeholder="请输入用户邮箱"
                         autocomplete="off"
@@ -81,8 +81,7 @@
                   <el-button
                     :loading="registerLoading"
                     type="primary"
-                    size="medium"
-                    style="width: 80px"
+                    style="width: 120px"
                     @click="handleRegister"
                   >注册
                   </el-button>
@@ -101,7 +100,7 @@
                       ]"
                     >
                       <el-input
-                        ref="account"
+                        ref="retrieveAccount"
                         v-model="retrievePasswordForm.account"
                         placeholder="请输入用户账号"
                         autocomplete="off"
@@ -115,7 +114,7 @@
                       ]"
                     >
                       <el-input
-                        ref="email"
+                        ref="retrieveEmail"
                         v-model="retrievePasswordForm.email"
                         placeholder="请输入用户邮箱"
                         autocomplete="off"
@@ -165,21 +164,32 @@
                         {required:true,message:'找回密码验证码不能为空',trigger: 'blur'}
                       ]"
                     >
-                      <el-input
-                        ref="email"
-                        v-model="retrievePasswordForm.passwordCode"
-                        placeholder="请输入找回验证码"
-                        autocomplete="off"
-                      />
+                      <el-row>
+                        <el-col :span="20">
+                          <el-input
+                            ref="passwordCode"
+                            v-model="retrievePasswordForm.passwordCode"
+                            placeholder="请输入找回验证码"
+                            autocomplete="off"
+                          />
+                        </el-col>
+                        <el-col :span="4" style="text-align: right">
+                          <el-button
+                            :loading="retrievePasswordLoading"
+                            type="success"
+                            @click="getPasswordCode"
+                          >获取验证码
+                          </el-button>
+                        </el-col>
+                      </el-row>
                     </el-form-item>
                   </el-form>
                   <el-button
                     :loading="retrievePasswordLoading"
                     type="primary"
-                    size="medium"
-                    style="width: 80px"
-                    @click="handleRegister"
-                  >注册
+                    style="width: 120px"
+                    @click="checkPasswordCode"
+                  >找回密码
                   </el-button>
                 </template>
               </el-card>
@@ -217,7 +227,7 @@
 
 <script>
 
-import { register } from '@/api/auth'
+import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
 
 export default {
@@ -275,7 +285,7 @@ export default {
             this.newPasswordType = 'password'
           }
           this.$nextTick(() => {
-            this.$refs.newPasswordType.focus()
+            this.$refs.newPassword.focus()
           })
           break
         case 'checkNewPasswordType':
@@ -285,7 +295,7 @@ export default {
             this.checkNewPasswordType = 'password'
           }
           this.$nextTick(() => {
-            this.$refs.checkNewPasswordType.focus()
+            this.$refs.checkNewPassword.focus()
           })
           break
       }
@@ -314,6 +324,38 @@ export default {
       this.registerForm.password = undefined
       this.registerForm.checkPassword = undefined
       this.registerForm.email = undefined
+    },
+    getPasswordCode() {
+      this.retrievePasswordLoading = true
+      const data = {
+        account: this.retrievePasswordForm.account,
+        email: this.retrievePasswordForm.email
+      }
+      getEmailCode(data).then(response => {
+        Message.success(response.msg)
+      }).finally(() => {
+        this.retrievePasswordLoading = false
+      })
+    },
+    checkPasswordCode() {
+      this.$refs['retrievePasswordForm'].validate(valid => {
+        if (valid) {
+          this.retrievePasswordLoading = true
+          const data = {
+            account: this.retrievePasswordForm.account,
+            email: this.retrievePasswordForm.email,
+            newPassword: this.retrievePasswordForm.newPassword,
+            checkNewPassword: this.retrievePasswordForm.checkNewPassword,
+            passwordCode: this.retrievePasswordForm.passwordCode
+          }
+          checkEmailCode(data).then(response => {
+            this.resetUpdateForm()
+            Message.success(response.msg)
+          }).finally(() => {
+            this.retrievePasswordLoading = false
+          })
+        }
+      })
     }
   }
 }
