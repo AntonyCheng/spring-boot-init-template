@@ -201,12 +201,96 @@
             <span style="font-size: 16px"><b>示例二：验证码校验</b></span>
           </template>
           <el-card style="max-width: 100%">
-            <template #default />
+            <template #default>
+              <el-form ref="captchaForm" :model="captchaForm" label-width="100px">
+                <el-form-item
+                  label="图片验证码"
+                  prop="captcha.code"
+                  class="captcha-code-form"
+                  :rules="[
+                    {required:true,message:'验证码不能为空',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="captcha.code"
+                    v-model="captchaForm.captcha.code"
+                    placeholder="请输入验证码结果"
+                    name="captcha.code"
+                    type="text"
+                    tabindex="3"
+                    auto-complete="on"
+                  >
+                    <template slot="append">
+                      <span class="code-container">
+                        <img alt="服务未开启" :src="captchaImgBase64" @click="getCaptchaBase64">
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <el-button
+                :loading="registerLoading"
+                type="primary"
+                style="width: 120px"
+                @click="checkCaptchaCode"
+              >验证码校验
+              </el-button>
+            </template>
           </el-card>
         </el-collapse-item>
         <el-collapse-item>
           <template slot="title">
-            <span style="font-size: 16px"><b>示例三：Word工具类</b></span>
+            <span style="font-size: 16px"><b>示例三：请求加密</b></span>
+          </template>
+          <el-card style="max-width: 100%">
+            <template #default>
+              <el-form ref="registerForm" :model="registerForm" label-width="80px">
+                <el-form-item
+                  label="用户账号"
+                  prop="account"
+                  :rules="[
+                    {min:5,max:10,message: '账号长度介于5-10位之间',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="registerAccount"
+                    v-model="registerForm.account"
+                    placeholder="请输入用户账号"
+                    autocomplete="off"
+                  />
+                </el-form-item>
+                <el-form-item
+                  label="用户密码"
+                  prop="password"
+                  :rules="[
+                    {min:5,max:10,message: '密码长度介于5-10位之间',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="password"
+                    v-model="registerForm.password"
+                    :type="passwordType"
+                    placeholder="请输入用户密码"
+                    autocomplete="off"
+                  />
+                  <span class="show-pwd" @click="showPwd('passwordType')">
+                    <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                  </span>
+                </el-form-item>
+              </el-form>
+              <el-button
+                :loading="registerLoading"
+                type="primary"
+                style="width: 120px"
+                @click="handleRegister"
+              >发送加密请求
+              </el-button>
+            </template>
+          </el-card>
+        </el-collapse-item>
+        <el-collapse-item>
+          <template slot="title">
+            <span style="font-size: 16px"><b>示例四：Word工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
             <template #default />
@@ -214,7 +298,15 @@
         </el-collapse-item>
         <el-collapse-item>
           <template slot="title">
-            <span style="font-size: 16px"><b>示例四：PDF工具类</b></span>
+            <span style="font-size: 16px"><b>示例五：PDF工具类</b></span>
+          </template>
+          <el-card style="max-width: 100%">
+            <template #default />
+          </el-card>
+        </el-collapse-item>
+        <el-collapse-item>
+          <template slot="title">
+            <span style="font-size: 16px"><b>示例六：IP工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
             <template #default />
@@ -229,11 +321,13 @@
 
 import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
+import { captcha, checkCaptcha, getRsaPublicKey } from '@/api/example'
 
 export default {
   name: 'Example',
   data() {
     return {
+      // 注册/找回密码
       registerLoading: false,
       registerForm: {
         account: undefined,
@@ -252,8 +346,30 @@ export default {
         passwordCode: undefined
       },
       newPasswordType: 'password',
-      checkNewPasswordType: 'password'
+      checkNewPasswordType: 'password',
+      // 验证码校验
+      captchaLoading: false,
+      captchaForm: {
+        captcha: {
+          code: undefined,
+          uuid: undefined
+        }
+      },
+      captchaImgBase64: undefined,
+      // 请求加密
+      encryptLoading: false,
+      encryptForm: {
+        account: undefined,
+        password: undefined
+      },
+      encryptPasswordType: 'password'
+      // Word工具类
+      // PDF工具类
+      // IP工具类
     }
+  },
+  mounted() {
+    this.getCaptchaBase64()
   },
   methods: {
     showPwd(type) {
@@ -311,7 +427,7 @@ export default {
             email: this.registerForm.email
           }
           register(data).then(response => {
-            this.resetUpdateForm()
+            this.resetRegisterForm()
             Message.success(response.msg)
           }).finally(() => {
             this.registerLoading = false
@@ -319,7 +435,7 @@ export default {
         }
       })
     },
-    resetUpdateForm() {
+    resetRegisterForm() {
       this.registerForm.account = undefined
       this.registerForm.password = undefined
       this.registerForm.checkPassword = undefined
@@ -349,13 +465,54 @@ export default {
             passwordCode: this.retrievePasswordForm.passwordCode
           }
           checkEmailCode(data).then(response => {
-            this.resetUpdateForm()
+            this.resetRetrievePasswordForm()
             Message.success(response.msg)
           }).finally(() => {
             this.retrievePasswordLoading = false
           })
         }
       })
+    },
+    resetRetrievePasswordForm() {
+      this.retrievePasswordForm.account = undefined
+      this.retrievePasswordForm.email = undefined
+      this.retrievePasswordForm.newPassword = undefined
+      this.retrievePasswordForm.checkNewPassword = undefined
+      this.retrievePasswordForm.passwordCode = undefined
+    },
+    getCaptchaBase64() {
+      captcha().then(response => {
+        this.captchaForm.captcha.uuid = response.data.uuid
+        this.captchaImgBase64 = 'data:image/gif;base64,' + response.data.imgBase64
+      })
+    },
+    checkCaptchaCode() {
+      this.$refs['captchaForm'].validate(valid => {
+        if (valid) {
+          this.captchaLoading = true
+          const data = {
+            captcha: {
+              uuid: this.captchaForm.captcha.uuid,
+              code: this.captchaForm.captcha.code
+            }
+          }
+          checkCaptcha(data).then(response => {
+            this.resetCaptchaForm()
+            Message.success(response.msg)
+          }).finally(() => {
+            this.captchaLoading = false
+            this.getCaptchaBase64()
+          })
+        }
+      })
+    },
+    resetCaptchaForm() {
+      this.captchaForm.captcha.code = undefined
+      this.captchaForm.captcha.uuid = undefined
+    },
+    async getEncryptKey() {
+      const response = await getRsaPublicKey()
+      return response.msg
     }
   }
 }
@@ -382,4 +539,17 @@ export default {
   cursor: pointer;
   user-select: none;
 }
+
+.captcha-code-form {
+  .code-container {
+    padding-top: 5px;
+    display: inline-block;
+    img {
+      height: 30px;
+      width: 100px;
+      display: inline-block;
+    }
+  }
+}
+
 </style>

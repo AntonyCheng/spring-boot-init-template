@@ -78,8 +78,8 @@ public class ExampleController {
     public R<Map<String, Object>> decryptionRequestParameters(@RequestBody @Validated({PostGroup.class}) ExampleEncryptBody exampleEncryptBody, @RequestParam @RSAEncrypt String exampleEncryptParam) {
         return R.ok(new HashMap<>() {
             {
-                put("exampleEncryptBody", exampleEncryptBody);
-                put("exampleEncryptParam", exampleEncryptParam);
+                put("示例加密请求体", exampleEncryptBody);
+                put("示例加密请求参数", exampleEncryptParam);
             }
         });
     }
