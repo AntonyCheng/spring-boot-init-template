@@ -204,8 +204,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH);
         }
-        // 判断该用户是否被禁用
-        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
+        // 判断该用户是否被禁用（保证管理员能不受限制找回密码）
+        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE) && !Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         String emailKey = KeyPrefixConstants.EMAIL_RETRIEVE_PASSWORD_PREFIX + userInDatabase.getId();
@@ -218,6 +218,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
                 userLambdaUpdateWrapper
                         .set(User::getPassword, authRetrievePasswordDto.getNewPassword())
                         .set(User::getLoginNum, 0)
+                        // 如果是管理员找回密码，还需要将状态改为正常
+                        .set(Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN), User::getState, Constants.USER_ENABLE_STATE)
                         .eq(User::getId, userInDatabase.getId());
                 userMapper.update(userLambdaUpdateWrapper);
                 CacheUtils.deleteString(emailKey);
@@ -241,8 +243,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH);
         }
-        // 判断该用户是否被禁用
-        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
+        // 判断该用户是否被禁用（保证管理员能不受限制找回密码）
+        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE) && !Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         String emailKey = KeyPrefixConstants.EMAIL_RETRIEVE_PASSWORD_PREFIX + userInDatabase.getId();
