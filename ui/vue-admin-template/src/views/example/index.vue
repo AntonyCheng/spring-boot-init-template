@@ -35,7 +35,7 @@
                       ]"
                     >
                       <el-input
-                        ref="password"
+                        ref="registerPassword"
                         v-model="registerForm.password"
                         :type="passwordType"
                         placeholder="请输入用户密码"
@@ -222,7 +222,8 @@
                   >
                     <template slot="append">
                       <span class="code-container">
-                        <img alt="服务未开启" :src="captchaImgBase64" @click="getCaptchaBase64">
+                        <el-button v-if="imgFlag === 0" @click="getCaptchaBase64">获取验证码</el-button>
+                        <img v-else alt="服务未开启" :src="captchaImgBase64" @click="getCaptchaBase64">
                       </span>
                     </template>
                   </el-input>
@@ -244,17 +245,18 @@
           </template>
           <el-card style="max-width: 100%">
             <template #default>
-              <el-form ref="registerForm" :model="registerForm" label-width="80px">
+              <el-form ref="encryptForm" :model="encryptForm" label-width="80px">
                 <el-form-item
                   label="用户账号"
                   prop="account"
                   :rules="[
+                    {required:true,message:'用户账号不能为空',trigger: 'blur'},
                     {min:5,max:10,message: '账号长度介于5-10位之间',trigger: 'blur'}
                   ]"
                 >
                   <el-input
-                    ref="registerAccount"
-                    v-model="registerForm.account"
+                    ref="encryptAccount"
+                    v-model="encryptForm.account"
                     placeholder="请输入用户账号"
                     autocomplete="off"
                   />
@@ -263,26 +265,41 @@
                   label="用户密码"
                   prop="password"
                   :rules="[
+                    {required:true,message:'用户密码不能为空',trigger: 'blur'},
                     {min:5,max:10,message: '密码长度介于5-10位之间',trigger: 'blur'}
                   ]"
                 >
                   <el-input
-                    ref="password"
-                    v-model="registerForm.password"
-                    :type="passwordType"
+                    ref="encryptPassword"
+                    v-model="encryptForm.password"
+                    :type="encryptPasswordType"
                     placeholder="请输入用户密码"
                     autocomplete="off"
                   />
-                  <span class="show-pwd" @click="showPwd('passwordType')">
-                    <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                  <span class="show-pwd" @click="showPwd('encryptPasswordType')">
+                    <svg-icon :icon-class="encryptPasswordType === 'password' ? 'eye' : 'eye-open'" />
                   </span>
+                </el-form-item>
+                <el-form-item
+                  label="加密参数"
+                  prop="param"
+                  :rules="[
+                    {required:true,message:'加密参数不能为空',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="encryptParam"
+                    v-model="encryptForm.param"
+                    placeholder="请输入加密请求参数"
+                    autocomplete="off"
+                  />
                 </el-form-item>
               </el-form>
               <el-button
-                :loading="registerLoading"
+                :loading="encryptLoading"
                 type="primary"
-                style="width: 120px"
-                @click="handleRegister"
+                style="width: 150px"
+                @click="handleEncryptRequest"
               >发送加密请求
               </el-button>
             </template>
@@ -321,7 +338,8 @@
 
 import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
-import { captcha, checkCaptcha, getRsaPublicKey } from '@/api/example'
+import { captcha, checkCaptcha, decryptionRequestParameters, getRsaPublicKey } from '@/api/example'
+import { JSEncrypt } from 'jsencrypt'
 
 export default {
   name: 'Example',
@@ -355,21 +373,20 @@ export default {
           uuid: undefined
         }
       },
+      imgFlag: 0,
       captchaImgBase64: undefined,
       // 请求加密
       encryptLoading: false,
       encryptForm: {
         account: undefined,
-        password: undefined
+        password: undefined,
+        param: undefined
       },
       encryptPasswordType: 'password'
       // Word工具类
       // PDF工具类
       // IP工具类
     }
-  },
-  mounted() {
-    this.getCaptchaBase64()
   },
   methods: {
     showPwd(type) {
@@ -412,6 +429,16 @@ export default {
           }
           this.$nextTick(() => {
             this.$refs.checkNewPassword.focus()
+          })
+          break
+        case 'encryptPasswordType':
+          if (this.encryptPasswordType === 'password') {
+            this.encryptPasswordType = ''
+          } else {
+            this.encryptPasswordType = 'password'
+          }
+          this.$nextTick(() => {
+            this.$refs.encryptPassword.focus()
           })
           break
       }
@@ -484,6 +511,8 @@ export default {
       captcha().then(response => {
         this.captchaForm.captcha.uuid = response.data.uuid
         this.captchaImgBase64 = 'data:image/gif;base64,' + response.data.imgBase64
+      }).finally(() => {
+        this.imgFlag = 1
       })
     },
     checkCaptchaCode() {
@@ -510,9 +539,41 @@ export default {
       this.captchaForm.captcha.code = undefined
       this.captchaForm.captcha.uuid = undefined
     },
+    handleEncryptRequest() {
+      this.$refs['encryptForm'].validate(async valid => {
+        if (valid) {
+          this.encryptLoading = true
+          const encryptor = new JSEncrypt()
+          const encryptKey = await this.getEncryptKey()
+          encryptor.setPublicKey(encryptKey)
+          this.encryptForm.password = encryptor.encrypt(this.encryptForm.password)
+          this.encryptForm.param = encryptor.encrypt(this.encryptForm.param)
+          const data = {
+            account: this.encryptForm.account,
+            password: this.encryptForm.password
+          }
+          const param = this.encryptForm.param
+          decryptionRequestParameters(data, param).then(response => {
+            this.resetEncryptForm()
+            this.$message({
+              type: 'success',
+              dangerouslyUseHTMLString: true,
+              message: '请求体：' + JSON.stringify(response.data.exampleEncryptBody) + '<br>请求参数：' + response.data.exampleEncryptParam
+            })
+          }).finally(() => {
+            this.encryptLoading = false
+          })
+        }
+      })
+    },
     async getEncryptKey() {
       const response = await getRsaPublicKey()
       return response.msg
+    },
+    resetEncryptForm() {
+      this.encryptForm.account = undefined
+      this.encryptForm.password = undefined
+      this.encryptForm.param = undefined
     }
   }
 }
