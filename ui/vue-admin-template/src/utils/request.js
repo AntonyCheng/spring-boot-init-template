@@ -34,7 +34,8 @@ const RESPONSE_URI_WHITE_LIST = [
   '/admin/user/export',
   '/admin/user/template',
   '/admin/log/export',
-  '/admin/file/export'
+  '/admin/file/export',
+  '/example/word/template'
 ]
 
 // response interceptor
@@ -52,7 +53,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     // if the uri in whitelist, it is judged as a success.
-    if (RESPONSE_URI_WHITE_LIST.includes(response.request.responseURL.split(service.defaults.baseURL)[1])) {
+    if (RESPONSE_URI_WHITE_LIST.includes(response.request.responseURL.split(service.defaults.baseURL)[1].split('?')[0])) {
       return response
     }
     // if the custom code is not 200, it is judged as an error.

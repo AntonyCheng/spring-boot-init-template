@@ -230,7 +230,7 @@
                 </el-form-item>
               </el-form>
               <el-button
-                :loading="registerLoading"
+                :loading="captchaLoading"
                 type="primary"
                 style="width: 120px"
                 @click="checkCaptchaCode"
@@ -309,9 +309,86 @@
           <template slot="title">
             <span style="font-size: 16px"><b>示例四：Word工具类</b></span>
           </template>
-          <el-card style="max-width: 100%">
-            <template #default />
-          </el-card>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-card style="max-width: 100%">
+                <template #default>
+                  <el-form ref="wordForm" :model="wordForm" label-width="80px">
+                    <el-form-item
+                      label="模板标题"
+                      prop="title"
+                      :rules="[
+                        {required:true,message:'模板标题不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="wordTitle"
+                        v-model="wordForm.title"
+                        placeholder="请输入模板标题"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="用户名称"
+                      prop="name"
+                      :rules="[
+                        {required:true,message:'用户名称不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="wordName"
+                        v-model="wordForm.name"
+                        placeholder="请输入用户名称"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="导出日期"
+                      prop="date"
+                      :rules="[
+                        {required:true,message:'导出日期不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-date-picker
+                        v-model="wordForm.date"
+                        type="date"
+                        placeholder="请选择日期"
+                        value-format="yyyy-MM-dd"
+                        style="width: 100%"
+                        clearable
+                      />
+                    </el-form-item>
+                  </el-form>
+                  <el-button
+                    :loading="wordLoading"
+                    type="primary"
+                    style="width: 150px"
+                    @click="getWordTemplate"
+                  >导出Word模板
+                  </el-button>
+                </template>
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <el-card style="max-width: 100%">
+                <template #default>
+                  <el-upload
+                    ref="wordUpload"
+                    class="upload-demo"
+                    drag
+                    action=""
+                    :file-list="wordFileList"
+                    :auto-upload="false"
+                    :limit="1"
+                  >
+                    <i class="el-icon-upload" />
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div slot="tip" class="el-upload__tip">只能上传doc/docx文件，且不超过500kb</div>
+                  </el-upload>
+                </template>
+              </el-card>
+            </el-col>
+          </el-row>
         </el-collapse-item>
         <el-collapse-item>
           <template slot="title">
@@ -338,7 +415,7 @@
 
 import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
-import { captcha, checkCaptcha, decryptionRequestParameters, getRsaPublicKey } from '@/api/example'
+import { captcha, checkCaptcha, decryptionRequestParameters, exportWordByTemplate, getRsaPublicKey } from '@/api/example'
 import { JSEncrypt } from 'jsencrypt'
 
 export default {
@@ -382,8 +459,15 @@ export default {
         password: undefined,
         param: undefined
       },
-      encryptPasswordType: 'password'
+      encryptPasswordType: 'password',
       // Word工具类
+      wordLoading: false,
+      wordForm: {
+        title: undefined,
+        name: undefined,
+        date: undefined
+      },
+      wordFileList: []
       // PDF工具类
       // IP工具类
     }
@@ -574,6 +658,38 @@ export default {
       this.encryptForm.account = undefined
       this.encryptForm.password = undefined
       this.encryptForm.param = undefined
+    },
+    getWordTemplate() {
+      this.$refs['wordForm'].validate(valid => {
+        if (valid) {
+          this.wordLoading = true
+          exportWordByTemplate(this.wordForm.title, this.wordForm.name, this.wordForm.date).then(async data => {
+            if (data) {
+              const blob = new Blob([data.data])
+              const url = URL.createObjectURL(blob)
+              const link = document.createElement('a')
+              link.href = url
+              link.download = decodeURIComponent(data.headers['download-filename'])
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+              URL.revokeObjectURL(url)
+            } else {
+              Message.error('下载失败')
+            }
+            this.resetWordForm()
+          }).catch(() => {
+            Message.error('下载失败')
+          }).finally(() => {
+            this.wordLoading = false
+          })
+        }
+      })
+    },
+    resetWordForm() {
+      this.wordForm.title = undefined
+      this.wordForm.name = undefined
+      this.wordForm.date = undefined
     }
   }
 }

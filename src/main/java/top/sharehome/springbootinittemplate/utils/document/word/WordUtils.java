@@ -107,12 +107,10 @@ public class WordUtils {
          */
         private void handleWordResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
-            String baseName = FilenameUtils.getBaseName(fileName);
-            String extension = FilenameUtils.getExtension(fileName);
-            if (StringUtils.isBlank(baseName)) {
-                realName = UUID.randomUUID().toString().replace("-", "") + extension;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
             } else {
-                realName = baseName + "_" + UUID.randomUUID().toString().replace("-", "") + extension;
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8)

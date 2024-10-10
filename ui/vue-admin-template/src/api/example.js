@@ -44,7 +44,9 @@ export function exportWordByTemplate(title, name, date) {
       title: title,
       name: name,
       date: date
-    }
+    },
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
@@ -121,10 +123,13 @@ export function getTablesZipInPdf(file) {
 }
 
 // IP工具类
-export function getRegionByIp() {
+export function getRegionByIp(ip) {
   return request({
     url: '/example/ip2region/region/by/ip',
-    method: 'get'
+    method: 'get',
+    params: {
+      ip: ip
+    }
   })
 }
 
