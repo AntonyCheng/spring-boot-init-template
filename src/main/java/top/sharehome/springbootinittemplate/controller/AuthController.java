@@ -77,7 +77,7 @@ public class AuthController {
      * @return 返回登录用户信息
      */
     @PostMapping("/login")
-//    @EnableCaptcha
+    @EnableCaptcha
     @ControllerLog(description = "用户登录", operator = Operator.OTHER)
     public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);

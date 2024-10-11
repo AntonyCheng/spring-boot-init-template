@@ -373,18 +373,56 @@
               <el-card style="max-width: 100%">
                 <template #default>
                   <el-upload
-                    ref="wordUpload"
-                    class="upload-demo"
-                    drag
                     action=""
-                    :file-list="wordFileList"
-                    :auto-upload="false"
                     :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordParagraphs"
                   >
-                    <i class="el-icon-upload" />
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div slot="tip" class="el-upload__tip">只能上传doc/docx文件，且不超过500kb</div>
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 120px"
+                    >获取Word段落
+                    </el-button>
                   </el-upload>
+                  <el-divider />
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordTables"
+                  >
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 120px"
+                    >获取Word表格
+                    </el-button>
+                  </el-upload>
+                  <el-divider />
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordImages"
+                  >
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 120px"
+                    >获取Word图像
+                    </el-button>
+                  </el-upload>
+                  <div slot="tip" class="el-upload__tip">只能上传doc/docx文件，且不超过500kb</div>
                 </template>
               </el-card>
             </el-col>
@@ -415,7 +453,13 @@
 
 import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
-import { captcha, checkCaptcha, decryptionRequestParameters, exportWordByTemplate, getRsaPublicKey } from '@/api/example'
+import {
+  captcha,
+  checkCaptcha,
+  decryptionRequestParameters,
+  exportWordByTemplate, getImagesZipInWord, getParagraphsTxtInWord,
+  getRsaPublicKey, getTablesZipInWord
+} from '@/api/example'
 import { JSEncrypt } from 'jsencrypt'
 
 export default {
@@ -467,7 +511,7 @@ export default {
         name: undefined,
         date: undefined
       },
-      wordFileList: []
+      wordFiles: []
       // PDF工具类
       // IP工具类
     }
@@ -690,6 +734,101 @@ export default {
       this.wordForm.title = undefined
       this.wordForm.name = undefined
       this.wordForm.date = undefined
+    },
+    beforeUploadWord(file) {
+      const isDOC = file.name.endsWith('.doc')
+      const isDOCX = file.name.endsWith('.docx')
+      const isLt500K = file.size / 1024 < 500
+      if (!isDOC && !isDOCX) {
+        this.$message.error('上传文件只能是 DOC 或 DOCX 格式!')
+      }
+      if (!isLt500K) {
+        this.$message.error('上传文件大小不能超过 500KB!')
+      }
+      return (isDOC || isDOCX) && isLt500K
+    },
+    getWordParagraphs(wordFile) {
+      this.wordLoading = true
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getParagraphsTxtInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
+    },
+    getWordTables(wordFile) {
+      this.wordLoading = true
+      console.log(wordFile)
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getTablesZipInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
+    },
+    getWordImages(wordFile) {
+      this.wordLoading = true
+      console.log(wordFile)
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getImagesZipInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
     }
   }
 }

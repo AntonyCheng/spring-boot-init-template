@@ -50,31 +50,31 @@ export function exportWordByTemplate(title, name, date) {
   })
 }
 
-export function getParagraphsTxtInWord(file) {
+export function getParagraphsTxtInWord(data) {
   return request({
     url: '/example/word/txt/paragraphs',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getTablesZipInWord(file) {
+export function getTablesZipInWord(data) {
   return request({
     url: '/example/word/zip/tables',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getImagesZipInWord(file) {
+export function getImagesZipInWord(data) {
   return request({
     url: '/example/word/zip/images',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
@@ -102,21 +102,21 @@ export function exportPdfByJteTemplate() {
   })
 }
 
-export function getParagraphsTxtInPdf(file) {
+export function getParagraphsTxtInPdf(data) {
   return request({
     url: '/example/pdf/txt/paragraphs',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getTablesZipInPdf(file) {
+export function getTablesZipInPdf(data) {
   return request({
     url: '/example/pdf/zip/images',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
