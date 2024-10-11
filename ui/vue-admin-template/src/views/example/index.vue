@@ -422,7 +422,7 @@
                     >获取Word图像
                     </el-button>
                   </el-upload>
-                  <div slot="tip" class="el-upload__tip">只能上传doc/docx文件，且不超过500kb</div>
+                  <div slot="tip" class="el-upload__tip">只能上传docx文件，且不超过500kb</div>
                 </template>
               </el-card>
             </el-col>
@@ -736,16 +736,15 @@ export default {
       this.wordForm.date = undefined
     },
     beforeUploadWord(file) {
-      const isDOC = file.name.endsWith('.doc')
       const isDOCX = file.name.endsWith('.docx')
       const isLt500K = file.size / 1024 < 500
-      if (!isDOC && !isDOCX) {
-        this.$message.error('上传文件只能是 DOC 或 DOCX 格式!')
+      if (!isDOCX) {
+        this.$message.error('上传文件只能是 DOCX 格式!')
       }
       if (!isLt500K) {
         this.$message.error('上传文件大小不能超过 500KB!')
       }
-      return (isDOC || isDOCX) && isLt500K
+      return isDOCX && isLt500K
     },
     getWordParagraphs(wordFile) {
       this.wordLoading = true
