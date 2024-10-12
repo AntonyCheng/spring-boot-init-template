@@ -84,21 +84,27 @@ export function getImagesZipInWord(data) {
 export function exportPdfByFreemarkerTemplate() {
   return request({
     url: '/example/pdf/template/freemarker',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
 export function exportPdfByThymeleafTemplate() {
   return request({
     url: '/example/pdf/template/thymeleaf',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
 export function exportPdfByJteTemplate() {
   return request({
     url: '/example/pdf/template/jte',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
@@ -112,7 +118,7 @@ export function getParagraphsTxtInPdf(data) {
   })
 }
 
-export function getTablesZipInPdf(data) {
+export function getImagesZipInPdf(data) {
   return request({
     url: '/example/pdf/zip/images',
     method: 'post',

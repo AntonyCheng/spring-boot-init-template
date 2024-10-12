@@ -38,7 +38,12 @@ const RESPONSE_URI_WHITE_LIST = [
   '/example/word/template',
   '/example/word/txt/paragraphs',
   '/example/word/zip/tables',
-  '/example/word/zip/images'
+  '/example/word/zip/images',
+  '/example/pdf/template/freemarker',
+  '/example/pdf/template/thymeleaf',
+  '/example/pdf/template/jte',
+  '/example/pdf/txt/paragraphs',
+  '/example/pdf/zip/images'
 ]
 
 // response interceptor

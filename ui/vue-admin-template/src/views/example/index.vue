@@ -384,7 +384,7 @@
                       :loading="wordLoading"
                       type="primary"
                       size="small"
-                      style="width: 120px"
+                      style="width: 240px"
                     >获取Word段落
                     </el-button>
                   </el-upload>
@@ -401,7 +401,7 @@
                       :loading="wordLoading"
                       type="primary"
                       size="small"
-                      style="width: 120px"
+                      style="width: 240px"
                     >获取Word表格
                     </el-button>
                   </el-upload>
@@ -418,7 +418,7 @@
                       :loading="wordLoading"
                       type="primary"
                       size="small"
-                      style="width: 120px"
+                      style="width: 240px"
                     >获取Word图像
                     </el-button>
                   </el-upload>
@@ -433,7 +433,75 @@
             <span style="font-size: 16px"><b>示例五：PDF工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
-            <template #default />
+            <template #default>
+              <el-row>
+                <el-col align="center">
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByFreemarker"
+                  >通过Freemarker引擎导出PDF
+                  </el-button>
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByThymeleaf"
+                  >通过Thymeleaf引擎导出PDF
+                  </el-button>
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByJte"
+                  >通过Jte引擎导出PDF
+                  </el-button>
+                </el-col>
+              </el-row>
+              <el-divider />
+              <el-row :gutter="20">
+                <el-col :span="12" align="right">
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="pdfFiles"
+                    :before-upload="beforeUploadPdf"
+                    :http-request="getPdfParagraphs"
+                  >
+                    <el-button
+                      :loading="pdfLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取PDF段落
+                    </el-button>
+                  </el-upload>
+                </el-col>
+                <el-col :span="12" align="left">
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="pdfFiles"
+                    :before-upload="beforeUploadPdf"
+                    :http-request="getPdfImages"
+                  >
+                    <el-button
+                      :loading="pdfLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取PDF图像
+                    </el-button>
+                  </el-upload>
+                </el-col>
+              </el-row>
+            </template>
           </el-card>
         </el-collapse-item>
         <el-collapse-item>
@@ -441,7 +509,43 @@
             <span style="font-size: 16px"><b>示例六：IP工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
-            <template #default />
+            <template #default>
+              <el-form ref="ipForm" :model="ipForm" label-width="120px">
+                <el-form-item
+                  label="手动输入IP地址"
+                  prop="ip"
+                  class="ip-form"
+                  :rules="[
+                    {required:true,message:'IP地址不能为空',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="ip"
+                    v-model="ipForm.ip"
+                    placeholder="请输入IP地址"
+                    name="ip"
+                    type="text"
+                    tabindex="3"
+                    auto-complete="on"
+                  >
+                    <template slot="append">
+                      <span class="ip-container">
+                        <el-button @click="getRegion">获取IP所在地区</el-button>
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <el-divider />
+              <el-button
+                :loading="ipLoading"
+                type="primary"
+                size="small"
+                style="width: 260px"
+                @click="getIpAndRegion"
+              >获取当前请求所带IP和对应地区
+              </el-button>
+            </template>
           </el-card>
         </el-collapse-item>
       </el-collapse>
@@ -457,8 +561,17 @@ import {
   captcha,
   checkCaptcha,
   decryptionRequestParameters,
-  exportWordByTemplate, getImagesZipInWord, getParagraphsTxtInWord,
-  getRsaPublicKey, getTablesZipInWord
+  exportPdfByFreemarkerTemplate,
+  exportPdfByJteTemplate,
+  exportPdfByThymeleafTemplate,
+  exportWordByTemplate,
+  getImagesZipInPdf,
+  getImagesZipInWord, getIpAndRegionByRequest,
+  getParagraphsTxtInPdf,
+  getParagraphsTxtInWord,
+  getRegionByIp,
+  getRsaPublicKey,
+  getTablesZipInWord
 } from '@/api/example'
 import { JSEncrypt } from 'jsencrypt'
 
@@ -511,9 +624,15 @@ export default {
         name: undefined,
         date: undefined
       },
-      wordFiles: []
+      wordFiles: [],
       // PDF工具类
+      pdfLoading: false,
+      pdfFiles: [],
       // IP工具类
+      ipLoading: false,
+      ipForm: {
+        ip: undefined
+      }
     }
   },
   methods: {
@@ -765,7 +884,6 @@ export default {
         } else {
           Message.error('下载失败')
         }
-        this.resetWordForm()
       }).catch(() => {
         Message.error('下载失败')
       }).finally(() => {
@@ -793,7 +911,6 @@ export default {
         } else {
           Message.error('下载失败')
         }
-        this.resetWordForm()
       }).catch(() => {
         Message.error('下载失败')
       }).finally(() => {
@@ -803,7 +920,6 @@ export default {
     },
     getWordImages(wordFile) {
       this.wordLoading = true
-      console.log(wordFile)
       const { file } = wordFile
       const formData = new FormData()
       formData.append('file', file)
@@ -821,12 +937,167 @@ export default {
         } else {
           Message.error('下载失败')
         }
-        this.resetWordForm()
       }).catch(() => {
         Message.error('下载失败')
       }).finally(() => {
         this.wordFiles = []
         this.wordLoading = false
+      })
+    },
+    beforeUploadPdf(file) {
+      const isPDF = file.name.endsWith('.pdf')
+      const isLt500K = file.size / 1024 < 500
+      if (!isPDF) {
+        this.$message.error('上传文件只能是 PDF 格式!')
+      }
+      if (!isLt500K) {
+        this.$message.error('上传文件大小不能超过 500KB!')
+      }
+      return isPDF && isLt500K
+    },
+    getPdfByFreemarker() {
+      this.pdfLoading = true
+      exportPdfByFreemarkerTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfByThymeleaf() {
+      this.pdfLoading = true
+      exportPdfByThymeleafTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfByJte() {
+      this.pdfLoading = true
+      exportPdfByJteTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfParagraphs(pdfFile) {
+      this.pdfLoading = true
+      const { file } = pdfFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getParagraphsTxtInPdf(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfFiles = []
+        this.pdfLoading = false
+      })
+    },
+    getPdfImages(pdfFile) {
+      this.pdfLoading = true
+      const { file } = pdfFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getImagesZipInPdf(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfFiles = []
+        this.pdfLoading = false
+      })
+    },
+    getRegion() {
+      this.$refs['ipForm'].validate(valid => {
+        if (valid) {
+          this.ipLoading = true
+          getRegionByIp(this.ipForm.ip).then(response => {
+            Message.success(response.msg)
+            this.resetIpForm()
+          }).finally(() => {
+            this.ipLoading = false
+          })
+        }
+      })
+    },
+    resetIpForm() {
+      this.ipForm.ip = undefined
+    },
+    getIpAndRegion() {
+      this.ipLoading = true
+      getIpAndRegionByRequest().then(response => {
+        Message.success(response.msg)
+      }).finally(() => {
+        this.ipLoading = false
       })
     }
   }
@@ -864,6 +1135,13 @@ export default {
       width: 100px;
       display: inline-block;
     }
+  }
+}
+
+.ip-form {
+  .ip-container {
+    padding-top: 5px;
+    display: inline-block;
   }
 }
 
