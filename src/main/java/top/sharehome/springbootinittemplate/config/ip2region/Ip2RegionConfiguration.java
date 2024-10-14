@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.ip2region;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class Ip2RegionConfiguration {
         String fileName = "ip2region" + File.separator + "ip2region.xdb";
         try (InputStream classPathFileStream = new ClassPathResource(fileName).getInputStream()) {
             LoadType loadType = ip2RegionProperties.getLoadType();
-            String tempFile = FileUtils.getTempDirectoryPath() + fileName;
+            String tempFile = (StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator) + fileName;
             File existFile = new File(tempFile);
             if (!existFile.exists()) {
                 FileUtils.copyInputStreamToFile(classPathFileStream, existFile);

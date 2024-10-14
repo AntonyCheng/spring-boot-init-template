@@ -12,6 +12,12 @@ COPY target/spring-boot-init-template-*.jar /opt/spring-boot-init-template/app.j
 
 VOLUME ["/opt/spring-boot-init-template"]
 
-EXPOSE 38080,38081,38082,39999
+EXPOSE 38080
+
+EXPOSE 38081
+
+EXPOSE 38082
+
+EXPOSE 39999
 
 CMD ["sh","-c","java -jar $JAVA_OPTS /opt/spring-boot-init-template/app.jar $PARAMS"]

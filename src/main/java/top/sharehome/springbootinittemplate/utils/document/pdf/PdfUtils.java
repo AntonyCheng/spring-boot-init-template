@@ -2,6 +2,8 @@ package top.sharehome.springbootinittemplate.utils.document.pdf;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,8 +35,6 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumen
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.*;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
@@ -67,25 +67,26 @@ public class PdfUtils {
     /**
      * 设置PDF插入图像存放在系统临时文件夹中的子路径
      */
-    private static final String TEMP_IMAGE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempImage";
+    private static final String TEMP_IMAGE_DIR = (StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator) + "templates" + File.separator + "pdf" + File.separator + "tempImage";
 
     /**
      * 设置PDF导出模板文件存放在系统临时文件夹中的子路径
      */
-    private static final String TEMP_TEMPLATE_DIR = FileUtils.getTempDirectoryPath() + "templates" + File.separator + "pdf" + File.separator + "tempTemplate";
+    private static final String TEMP_TEMPLATE_DIR = (StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator) + "templates" + File.separator + "pdf" + File.separator + "tempTemplate";
 
     // 初始化配置文件和字体，即将配置文件和字体文件处理之后复制到系统临时文件夹中
     static {
         String confResourcePath = "templates" + File.separator + "pdf" + File.separator + "fop.xconf";
         String fontResourcePath = "templates" + File.separator + "pdf" + File.separator + DEFAULT_FONT_FAMILY + ".ttf";
         try (InputStream readConfStream = new ClassPathResource(confResourcePath).getInputStream()) {
-            String tempConf = FileUtils.getTempDirectoryPath() + confResourcePath;
-            String tempFont = FileUtils.getTempDirectoryPath() + fontResourcePath;
+            String tempDirectoryPath = StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator;
+            String tempConf = tempDirectoryPath + confResourcePath;
+            String tempFont = tempDirectoryPath + fontResourcePath;
             File existConf = new File(tempConf);
             File existFont = new File(tempFont);
-            String fontPathname = FileUtils.getTempDirectoryPath() + fontResourcePath;
+            String fontPathname = tempDirectoryPath + fontResourcePath;
             File fontFile = new File(fontPathname);
-            String replacement = "/" + fontPathname;
+            String replacement = StringUtils.startsWith(fontPathname, "/") ? fontPathname : "/" + fontPathname;
             String confContent = new String(readConfStream.readAllBytes())
                     .replace("ReplaceFontURL", replacement)
                     .replaceAll("ReplaceFontFamily", FilenameUtils.getBaseName(fontResourcePath));
@@ -188,9 +189,9 @@ public class PdfUtils {
         private void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
-                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = UUID.randomUUID().toString().replace("-", "") + ".pdf";
             } else {
-                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".pdf";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8)
@@ -287,72 +288,76 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param texts 水印文本数组，数组元素个数对应文本行数
          */
         public Writer addWatermark(String... texts) {
-            return addWatermark(null, Arrays.stream(texts).collect(Collectors.toList()), null, null, null, null, null);
+            return addWatermark(null, Arrays.stream(texts).collect(Collectors.toList()), null, null, null, null, null, null);
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param texts 水印文本列表，列表元素个数对应文本行数
          */
         public Writer addWatermark(List<String> texts) {
-            return addWatermark(null, texts, null, null, null, null, null);
+            return addWatermark(null, texts, null, null, null, null, null, null);
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
          */
         public Writer addWatermark(String id, List<String> texts) {
-            return addWatermark(id, texts, null, null, null, null, null);
+            return addWatermark(id, texts, null, null, null, null, null, null);
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontFamily 水印文本字体
          * @param fontSize 水印文本字号
          */
-        public Writer addWatermark(String id, List<String> texts, Integer fontSize) {
-            return addWatermark(id, texts, fontSize, null, null, null, null);
+        public Writer addWatermark(String id, List<String> texts, String fontFamily, Integer fontSize) {
+            return addWatermark(id, texts, fontFamily, fontSize, null, null, null, null);
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontFamily 水印文本字体
          * @param fontSize 水印文本字号
          * @param fontAlpha 水印文本透明度
          */
-        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha) {
-            return addWatermark(id, texts, fontSize, fontAlpha, null, null, null);
+        public Writer addWatermark(String id, List<String> texts, String fontFamily, Integer fontSize, Integer fontAlpha) {
+            return addWatermark(id, texts, fontFamily, fontSize, fontAlpha, null, null, null);
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
+         * @param fontFamily 水印文本字体
          * @param fontSize 水印文本字号
          * @param fontAlpha 水印文本透明度
          * @param width 水印文本宽度
          * @param height 水印文本高度
          * @param showWidth 水印文本显示宽度
          */
-        public Writer addWatermark(String id, List<String> texts, Integer fontSize, Integer fontAlpha, Integer width, Integer height, Integer showWidth) {
+        public Writer addWatermark(String id, List<String> texts, String fontFamily, Integer fontSize, Integer fontAlpha, Integer width, Integer height, Integer showWidth) {
             return addWatermark(
                     new PdfWatermark()
                             .setId(id)
                             .setTexts(texts)
+                            .setFontFamily(fontFamily)
                             .setFontSize(fontSize)
                             .setFontAlpha(fontAlpha)
                             .setWidth(width)
@@ -362,7 +367,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印
+         * 添加水印（若在Linux中使用，水印暂不支持中文）
          *
          * @param pdfWatermark PDF水印构造类
          */
@@ -377,8 +382,10 @@ public class PdfUtils {
             Watermark watermark = TemplateHandler.Watermark.build()
                     // 设置水印ID，必须保持唯一性，默认UUID
                     .setId(StringUtils.isBlank(pdfWatermark.getId()) ? UUID.randomUUID().toString().replace("-", "") : pdfWatermark.getId())
-                    // 设置水印水印文本列表
+                    // 设置水印文本列表
                     .setText(CollectionUtils.isEmpty(pdfWatermark.getTexts()) ? null : pdfWatermark.getTexts())
+                    // 设置水印文本字体，字体默认SourceHanSansCN，即思源黑体，如果需要自定义默认字体，请连同PdfUtils.java文件静态代码块以及fop.xconf相关内容一起更改
+                    .setFontFamily(StringUtils.isBlank(pdfWatermark.getFontFamily()) ? DEFAULT_FONT_FAMILY : pdfWatermark.getFontFamily())
                     // 设置水印文本字号，默认25
                     .setFontSize((Objects.isNull(pdfWatermark.getFontSize()) || pdfWatermark.getFontSize() <= 0 ? 25 : pdfWatermark.getFontSize()) + "px")
                     // 设置水印文本透明度，范围是0-255，值越小越透明，默认50
@@ -1206,9 +1213,9 @@ public class PdfUtils {
         private void handlePdfResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
             String realName = null;
             if (StringUtils.isBlank(fileName)) {
-                realName = UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = UUID.randomUUID().toString().replace("-", "") + ".pdf";
             } else {
-                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".docx";
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".pdf";
             }
             String encodeName = URLEncoder
                     .encode(realName, StandardCharsets.UTF_8)
@@ -1726,6 +1733,11 @@ public class PdfUtils {
          * 水印文本列表，列表元素个数对应文本行数
          */
         private List<String> texts;
+
+        /**
+         * 水印文本字体
+         */
+        private String fontFamily;
 
         /**
          * 水印文本字号
