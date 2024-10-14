@@ -30,8 +30,8 @@ public class File implements Serializable {
     /**
      * 唯一摘要值
      */
-    @TableField(value = "file_key")
-    private String key;
+    @TableField(value = "file_unique_key")
+    private String uniqueKey;
 
     /**
      * 存储名称
@@ -58,10 +58,16 @@ public class File implements Serializable {
     private String url;
 
     /**
-     * 所属用户ID
+     * OSS类型
      */
-    @TableField(value = "file_user_id")
-    private Long userId;
+    @TableField(value = "file_oss_type")
+    private String ossType;
+
+    /**
+     * 状态（0表示正常，1表示软删除）
+     */
+    @TableField(value = "file_state")
+    private Integer state;
 
     /**
      * 创建时间

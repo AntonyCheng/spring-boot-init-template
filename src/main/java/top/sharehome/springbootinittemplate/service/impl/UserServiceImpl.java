@@ -307,7 +307,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateAvatar(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String avatarPath = "avatar/" + date;
-        String url = MinioUtils.upload(file, avatarPath);
+        String url = MinioUtils.upload(file, avatarPath).getUrl();
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(StringUtils.isNotEmpty(url), User::getAvatar, url);
         userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());

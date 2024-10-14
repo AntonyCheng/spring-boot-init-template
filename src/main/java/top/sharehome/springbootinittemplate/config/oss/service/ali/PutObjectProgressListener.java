@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.ali;
+package top.sharehome.springbootinittemplate.config.oss.service.ali;
 
 import com.aliyun.oss.event.ProgressEvent;
 import com.aliyun.oss.event.ProgressEventType;
@@ -25,17 +25,17 @@ public class PutObjectProgressListener implements ProgressListener {
         ProgressEventType eventType = progressEvent.getEventType();
         switch (eventType) {
             case TRANSFER_STARTED_EVENT:
-                System.out.println("Start to upload......");
+                log.info("Start to upload......");
                 break;
             case REQUEST_BYTE_TRANSFER_EVENT:
                 this.bytesWritten += bytes;
                 break;
             case TRANSFER_COMPLETED_EVENT:
                 this.succeed = true;
-                System.out.println("Succeed to upload, " + this.bytesWritten + " bytes have been transferred in total");
+                log.info("Succeed to upload, {} bytes have been transferred in total", this.bytesWritten);
                 break;
             case TRANSFER_FAILED_EVENT:
-                System.out.println("Failed to upload, " + this.bytesWritten + " bytes have been transferred");
+                log.error("Failed to upload, {} bytes have been transferred", this.bytesWritten);
                 break;
             default:
                 break;

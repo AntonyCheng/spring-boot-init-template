@@ -34,10 +34,10 @@ public class OssTest {
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(TencentUtils.upload(fileInputStream1, suffix, "test/init"));
+        System.out.println(TencentUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(TencentUtils.upload(bytes, suffix, "test/init"));
+        System.out.println(TencentUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**
@@ -62,10 +62,10 @@ public class OssTest {
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(AliUtils.upload(fileInputStream1, suffix, "test/init"));
+        System.out.println(AliUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(AliUtils.upload(bytes, suffix, "test/init"));
+        System.out.println(AliUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**
@@ -90,10 +90,10 @@ public class OssTest {
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(MinioUtils.upload(fileInputStream1, suffix, "test/init"));
+        System.out.println(MinioUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(MinioUtils.upload(bytes, suffix, "test/init"));
+        System.out.println(MinioUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**

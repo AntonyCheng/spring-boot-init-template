@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.oss.tencent.condition;
+package top.sharehome.springbootinittemplate.config.oss.service.tencent.condition;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Condition;

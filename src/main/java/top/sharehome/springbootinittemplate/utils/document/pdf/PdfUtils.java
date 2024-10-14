@@ -2,8 +2,6 @@ package top.sharehome.springbootinittemplate.utils.document.pdf;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +33,8 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumen
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.*;
 import java.net.URLEncoder;
@@ -288,7 +288,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param texts 水印文本数组，数组元素个数对应文本行数
          */
@@ -297,7 +297,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param texts 水印文本列表，列表元素个数对应文本行数
          */
@@ -306,7 +306,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
@@ -316,7 +316,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
@@ -328,7 +328,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
@@ -341,7 +341,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param id 水印ID
          * @param texts 水印文本列表，列表元素个数对应文本行数
@@ -367,7 +367,7 @@ public class PdfUtils {
         }
 
         /**
-         * 添加水印（若在Linux中使用，水印暂不支持中文）
+         * 添加水印（若在Docker中使用，水印暂不支持中文）
          *
          * @param pdfWatermark PDF水印构造类
          */
