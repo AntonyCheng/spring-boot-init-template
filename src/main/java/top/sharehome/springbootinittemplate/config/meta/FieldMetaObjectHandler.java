@@ -29,9 +29,9 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
     public static final String CREATE_TIME = "createTime";
 
     /**
-     * 需要处理的字段名——isDeleted
+     * 需要处理的字段名——delFlag
      */
-    public static final String IS_DELETED = "isDeleted";
+    public static final String DEL_FLAG = "delFlag";
 
     /**
      * todo 如果有自己的一套鉴权系统，请去掉这个自动填充项
@@ -52,8 +52,8 @@ public class FieldMetaObjectHandler implements MetaObjectHandler {
             metaObject.setValue(CREATE_TIME, LocalDateTime.now());
         }
 
-        if (metaObject.hasSetter(IS_DELETED)) {
-            metaObject.setValue(IS_DELETED, 0);
+        if (metaObject.hasSetter(DEL_FLAG)) {
+            metaObject.setValue(DEL_FLAG, 0);
         }
 
         if (metaObject.hasSetter(ROLE)) {

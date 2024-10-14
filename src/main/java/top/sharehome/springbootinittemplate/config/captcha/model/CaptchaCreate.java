@@ -18,8 +18,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class CaptchaCreate implements Serializable {
 
-    private static final long serialVersionUID = -2384156304879302998L;
-
     /**
      * 是否开启验证码
      */
@@ -34,5 +32,7 @@ public class CaptchaCreate implements Serializable {
      * 验证码图片Base64字符串
      */
     private String imgBase64;
+
+    private static final long serialVersionUID = -2384156304879302998L;
 
 }

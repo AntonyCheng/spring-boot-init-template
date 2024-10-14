@@ -9,6 +9,7 @@ import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 验证邮箱Dto类
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthEmailCodeDto {
+public class AuthEmailCodeDto implements Serializable {
 
     /**
      * 账号
@@ -38,5 +39,7 @@ public class AuthEmailCodeDto {
      * 验证码参数实体类
      */
     private Captcha captcha;
+
+    private static final long serialVersionUID = -6780315895322389464L;
 
 }

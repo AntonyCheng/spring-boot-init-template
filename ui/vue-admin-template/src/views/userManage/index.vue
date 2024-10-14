@@ -156,7 +156,7 @@
     <template>
       <el-pagination
         :current-page="Number.parseInt(queryResult.current)"
-        :page-sizes="[10, 30, 50, 100, 150, 300, 500]"
+        :page-sizes="[10, 30, 50, 100]"
         :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
         :total="Number.parseInt(queryResult.total)"

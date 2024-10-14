@@ -9,6 +9,7 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * 找回密码Dto类
@@ -19,7 +20,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AuthRetrievePasswordDto {
+public class AuthRetrievePasswordDto implements Serializable {
 
     /**
      * 账号
@@ -52,5 +53,7 @@ public class AuthRetrievePasswordDto {
      */
     @NotBlank(message = "找回密码验证码不能为空", groups = {PostGroup.class})
     private String passwordCode;
+
+    private static final long serialVersionUID = -181657307913988621L;
 
 }

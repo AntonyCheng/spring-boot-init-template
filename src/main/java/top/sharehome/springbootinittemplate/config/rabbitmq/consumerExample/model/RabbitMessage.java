@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * 消息队列消息基类
  *
@@ -14,7 +16,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class RabbitMessage {
+public class RabbitMessage implements Serializable {
 
     /**
      * 消息id
@@ -25,5 +27,7 @@ public class RabbitMessage {
      * 消息内容
      */
     private String msgText;
+
+    private static final long serialVersionUID = -5714803262626105938L;
 
 }
