@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+
+  spring-boot-init-template:
+    image: spring-boot-init-template:v2.2.0-jdk17-pre
+    container_name: spring-boot-init-template
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    ports:
+      - "38080:38080"
+    volumes:
+      # 配置文件
+      - ./data/spring-boot-init-template/logs/:/antony/springbootinittemplate/logs
+    privileged: true
+    networks:
+      docker_net:
+        ipv4_address: 177.177.177.111
+
+#  xxl-job-admin:
+#    image: xxl-job-admin:v2.2.0-jdk17-pre
+#    container_name: xxl-job-admin
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#    ports:
+#      - "38079:38079"
+#    volumes:
+#      # 配置文件
+#      - ./data/xxl-job-admin/logs/:/antony/xxljobadmin/logs
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.112
+
+#  power-job-admin:
+#    image: power-job-admin:v2.2.0-jdk17-pre
+#    container_name: power-job-admin
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#    ports:
+#      - "38078:38078"
+#    volumes:
+#      # 配置文件
+#      - ./data/power-job-admin/logs/:/antony/powerjobadmin/logs
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.113
+
+#  spring-boot-admin:
+#    image: spring-boot-admin:v2.2.0-jdk17-pre
+#    container_name: spring-boot-admin
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#    ports:
+#      - "38077:38077"
+#    volumes:
+#      # 配置文件
+#      - ./data/spring-boot-admin/logs/:/antony/springbootadmin/logs
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.114
+
+networks:
+  docker_net:
+    external: true

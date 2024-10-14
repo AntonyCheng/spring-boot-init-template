@@ -1,1 +1,1 @@
-# 模板内部自带的String Boot Admin模块，仅用于测试环境，不建议打包部署在生产环境
+# 模板内部自带的String Boot Admin模块

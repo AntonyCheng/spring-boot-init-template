@@ -1,0 +1,97 @@
+# 服务概况 ---- 可自定义
+server:
+  port: 38079
+  servlet:
+    context-path: /xxl-job-admin
+
+# 纳入SpringBootAdmin监控体系
+management:
+  # 排除一些组建的健康检查
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /manage
+      exposure:
+        include: '*'
+
+# 公共配置文件
+spring:
+  application:
+    name: xxl-job-admin
+  mvc:
+    servlet:
+      load-on-startup: 0
+    static-path-pattern: /static/**
+  # 配置SpringBootAdmin项目所在地址
+  boot:
+    admin:
+      client:
+        # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
+        enabled: false
+        url: http://177.177.177.114:38077/spring-boot-admin/
+        username: admin
+        password: admin123456
+        instance:
+          service-host-type: ip
+          name: ${spring.application.name}
+          service-base-url: http://127.0.0.1:38079
+  # 模板工具配置
+  freemarker:
+    check-template-location: false
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    request-context-attribute: request
+    settings:
+      number_format: 0.##########
+  # todo 配置XxlJob的MySQL数据库
+  datasource:
+    url: jdbc:mysql://177.177.177.101:3306/init_xxl_job?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 30
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: HikariCP
+      max-lifetime: 300000
+      connection-timeout: 10000
+      connection-test-query: SELECT 1
+      validation-timeout: 1000
+  # 邮件配置
+  mail:
+    host: smtp.qq.com
+    port: 25
+    username: xxx@qq.com
+    from: xxx@qq.com
+    password: xxx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+            socketFactory:
+              class: javax.net.ssl.SSLSocketFactory
+  web:
+    resources:
+      static-locations: classpath:/static/
+mybatis:
+  mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
+xxl:
+  job:
+    accessToken: xxl-job
+    i18n: zh_CN
+    triggerpool:
+      fast:
+        max: 200
+      slow:
+        max: 100
+    logretentiondays: 30

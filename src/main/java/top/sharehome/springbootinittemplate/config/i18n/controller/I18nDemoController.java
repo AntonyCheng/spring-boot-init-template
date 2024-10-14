@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.i18n.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.i18n.I18nManager;
@@ -14,7 +15,7 @@ import java.util.Random;
  *
  * @author AntonyCheng
  */
-//@RestController
+@RestController
 public class I18nDemoController {
 
     @GetMapping("/i18n")
