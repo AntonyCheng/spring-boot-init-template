@@ -267,7 +267,7 @@ public class CacheUtils {
         verifyParameters(key);
         RBucket<T> bucket = REDISSON_CLIENT.getBucket(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + key : key);
         T t = bucket.get();
-        if (Objects.isNull(type) || type.isInstance(t)) {
+        if (Objects.isNull(t) || Objects.isNull(type) || type.isInstance(t)) {
             return t;
         } else {
             throw new CustomizeRedissonException(ReturnCode.FAIL, "数据类型不一致");

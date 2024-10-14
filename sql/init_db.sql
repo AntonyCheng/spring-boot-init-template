@@ -16,8 +16,9 @@ CREATE TABLE `t_file`
     `file_name`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件存储名称',
     `file_original_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件原名称',
     `file_suffix`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件扩展名',
+    `file_size`          bigint                                                        NOT NULL COMMENT '文件大小',
     `file_url`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件地址',
-    `file_state`         tinyint                                                       NOT NULL DEFAULT 0 COMMENT '文件状态（0表示正常，1表示软删除）',
+    `file_oss_type`      varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '文件OSS类型',
     `create_time`        timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time`        timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `del_flag`           tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
@@ -151,7 +152,7 @@ CREATE TABLE `t_user`
     `user_email`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户邮箱',
     `user_login_num` int                                                           NOT NULL DEFAULT 0 COMMENT '用户连续登录失败次数',
     `user_name`      varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '用户昵称',
-    `user_avatar`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT NULL COMMENT '用户头像',
+    `user_avatar_id` bigint                                                        NULL     DEFAULT NULL COMMENT '用户头像ID',
     `user_role`      varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '用户角色（admin/user）',
     `user_state`     tinyint                                                       NOT NULL DEFAULT 0 COMMENT '用户状态（0表示启用，1表示禁用）',
     `create_time`    timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -168,7 +169,7 @@ CREATE TABLE `t_user`
 -- ----------------------------
 INSERT INTO `t_user`
 VALUES (1900, 'admin', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCheng', NULL, 'admin', 0,
-        '2024-03-27 22:01:16', '2024-09-03 13:57:35', 0);
+        '2024-03-27 22:01:16', '2024-09-06 11:17:08', 0);
 INSERT INTO `t_user`
 VALUES (1901, 'user', 'FBWzA2jdoO9tjpiK3rKTbw==', '1911261716@qq.com', 0, 'AntonyCoding', NULL, 'user', 0,
         '2024-03-27 22:01:17', '2024-09-02 10:06:57', 0);

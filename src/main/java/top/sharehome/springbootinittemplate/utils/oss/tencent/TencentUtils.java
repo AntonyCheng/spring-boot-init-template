@@ -80,10 +80,10 @@ public class TencentUtils {
     /**
      * 删除文件
      *
-     * @param url 文件所在地址
+     * @param id 文件ID
      */
-    public static void delete(String url) {
-        TENCENT_CONFIGURATION.deleteInCos(url);
+    public static void delete(Long id) {
+        TENCENT_CONFIGURATION.deleteInCos(id);
     }
 
 }

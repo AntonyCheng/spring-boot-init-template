@@ -39,6 +39,11 @@ public class AuthLoginVo implements Serializable {
     private String name;
 
     /**
+     * 头像ID
+     */
+    private Long avatarId;
+
+    /**
      * 头像
      */
     private String avatar;

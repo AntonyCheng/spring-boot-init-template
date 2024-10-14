@@ -12,11 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
+import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthEmailCodeDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthLoginDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRegisterDto;
 import top.sharehome.springbootinittemplate.model.dto.auth.AuthRetrievePasswordDto;
+import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.service.AuthService;
@@ -43,6 +45,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private FileMapper fileMapper;
 
     @Value(value = "${spring.application.name}")
     private String applicationName;
@@ -180,6 +185,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, authLoginVo);
+        File file = fileMapper.selectById(authLoginVo.getAvatarId());
+        authLoginVo.setAvatar(Objects.isNull(file) ? null : file.getUrl());
         return authLoginVo;
     }
 

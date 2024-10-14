@@ -69,7 +69,7 @@
               <el-button type="primary" size="small" style="width: 100px" @click="openAddDialog">添加用户</el-button>
             </template>
             <template>
-              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户</el-button>
+              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户信息</el-button>
             </template>
           </template>
         </el-collapse-item>
@@ -431,7 +431,7 @@ export default {
             email: this.addForm.email
           }
           adminAddUser(data).then(response => {
-            if (this.queryResult.total % this.queryResult.size === 0) {
+            if (this.queryResult.total !== 0 && this.queryResult.total % this.queryResult.size === 0) {
               this.queryForm.page++
             }
             this.pageLoading = true

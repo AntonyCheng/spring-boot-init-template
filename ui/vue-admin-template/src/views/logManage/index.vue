@@ -83,7 +83,7 @@
           </template>
           <template>
             <template>
-              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出日志</el-button>
+              <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出日志信息</el-button>
             </template>
             <template>
               <el-button type="danger" size="small" style="width: 100px" @click="handleClear">清空日志</el-button>
@@ -219,7 +219,7 @@ import { adminClearLog, adminDeleteLog, adminExportExcel, adminPageLog } from '@
 import { Loading, Message } from 'element-ui'
 
 export default {
-  name: 'UserManage',
+  name: 'LogManage',
   data() {
     return {
       queryLoading: false,

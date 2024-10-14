@@ -52,6 +52,12 @@ public class File implements Serializable {
     private String suffix;
 
     /**
+     * 大小
+     */
+    @TableField(value = "file_size")
+    private Integer size;
+
+    /**
      * 地址
      */
     @TableField(value = "file_url")
@@ -62,12 +68,6 @@ public class File implements Serializable {
      */
     @TableField(value = "file_oss_type")
     private String ossType;
-
-    /**
-     * 状态（0表示正常，1表示软删除）
-     */
-    @TableField(value = "file_state")
-    private Integer state;
 
     /**
      * 创建时间

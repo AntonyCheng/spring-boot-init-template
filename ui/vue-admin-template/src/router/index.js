@@ -86,6 +86,19 @@ export const constantRoutes = [
     role: ['admin']
   },
   {
+    path: '/file',
+    component: Layout,
+    children: [
+      {
+        path: 'manage',
+        name: 'FileManage',
+        component: () => import('@/views/fileManage/index'),
+        meta: { title: '文件管理', icon: 'el-icon-s-order' }
+      }
+    ],
+    role: ['admin']
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [

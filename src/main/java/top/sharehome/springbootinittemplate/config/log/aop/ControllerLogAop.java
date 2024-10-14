@@ -112,17 +112,24 @@ public class ControllerLogAop {
             if (Objects.isNull(resMap)) {
                 log.setJson("{}");
             } else {
-                Map dataMap = (Map) resMap.get("data");
-                if (Objects.nonNull(dataMap)) {
+                Object data = resMap.get("data");
+                if (Objects.nonNull(data) && data instanceof Map) {
+                    Map dataMap = (Map) data;
                     Arrays.stream(MASK_PARAMS).forEach(dataMap::remove);
                     Arrays.stream(controllerLog.maskParams()).forEach(dataMap::remove);
+                    resMap.put("data", dataMap);
+                    String json = JSON.toJSONString(resMap);
+                    if (json.length() > 2000) {
+                        json = StringUtils.substring(json, 0, 2000) + "...";
+                    }
+                    log.setJson(json);
+                } else {
+                    String json = JSON.toJSONString(resMap);
+                    if (json.length() > 2000) {
+                        json = StringUtils.substring(json, 0, 2000) + "...";
+                    }
+                    log.setJson(json);
                 }
-                resMap.put("data", dataMap);
-                String json = JSON.toJSONString(resMap);
-                if (json.length() > 2000 && json.charAt(2000) != '}') {
-                    json = StringUtils.substring(json, 0, 2000) + "...}";
-                }
-                log.setJson(json);
             }
             // 设置操作用户ID
             Long userId = null;
@@ -165,8 +172,8 @@ public class ControllerLogAop {
                 Arrays.stream(controllerLog.maskParams()).forEach(parameterMap::remove);
                 param = JSON.toJSONString(parameterMap);
             }
-            if (param.length() > 2000 && param.charAt(2000) != '}') {
-                param = StringUtils.substring(param, 0, 2000) + "...}";
+            if (param.length() > 2000) {
+                param = StringUtils.substring(param, 0, 2000) + "...";
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP

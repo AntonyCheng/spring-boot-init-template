@@ -83,10 +83,10 @@ public class AliUtils {
     /**
      * 删除文件
      *
-     * @param url 文件所在地址
+     * @param id 文件ID
      */
-    public static void delete(String url) {
-        ALI_CONFIGURATION.deleteInOss(url);
+    public static void delete(Long id) {
+        ALI_CONFIGURATION.deleteInOss(id);
     }
 
 }

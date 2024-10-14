@@ -11,12 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
 import top.sharehome.springbootinittemplate.config.oss.service.ali.condition.OssAliCondition;
 import top.sharehome.springbootinittemplate.config.oss.service.ali.properties.AliProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
@@ -28,6 +31,7 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -65,7 +69,8 @@ public class AliConfiguration {
         } catch (IOException e) {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
-        return uploadToOss(inputStream, originalName, suffix, rootPath);
+        // 使用Aop代理类进行上传操作，保证事物生效
+        return ((AliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -81,7 +86,8 @@ public class AliConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
-        return uploadToOss(inputStream, originalName, suffix, rootPath);
+        // 使用Aop代理类进行上传操作，保证事物生效
+        return ((AliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -92,36 +98,35 @@ public class AliConfiguration {
      * @param suffix       文件后缀
      * @param rootPath     上传的路径
      */
+    @Transactional(rollbackFor = Exception.class)
     public File uploadToOss(InputStream inputStream, String originalName, String suffix, String rootPath) {
         OSS ossClient = getOssClient();
-        try {
+        try (inputStream) {
             if (Objects.isNull(inputStream)) {
                 throw new CustomizeFileException(ReturnCode.USER_DO_NOT_UPLOAD_FILE);
             }
-            // 封装输出流为ByteArrayInputStream，防止加密之后，某些类型的输入流不可reset/mark的情况
+            if (StringUtils.isEmpty(suffix)) {
+                suffix = Constants.UNKNOWN_FILE_TYPE_SUFFIX;
+            } else {
+                suffix = suffix.toLowerCase();
+            }
+            if (StringUtils.isBlank(originalName)) {
+                originalName = "none" + "." + suffix;
+            }
             byte[] dataBytes = inputStream.readAllBytes();
-            ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
+            String plainKey = new String(dataBytes) + originalName + suffix;
             // 检查是否能进行秒传，如果能就直接返回秒传结果，否则进行普通上传
-            String uniqueKey = SHA3Utils.encrypt(tempInputStream);
+            String uniqueKey = SHA3Utils.encrypt(plainKey);
             File fastUploadResult = existAndFastUpload(uniqueKey);
             if (Objects.nonNull(fastUploadResult)) {
                 return fastUploadResult;
             }
-            // 加密之后重置数据流，保证流的可重读性
-            tempInputStream.reset();
-            // 接下来进行普通上传
-            if (StringUtils.isEmpty(suffix)) {
-                suffix = "." + Constants.UNKNOWN_FILE_TYPE_SUFFIX;
-            } else {
-                suffix = "." + suffix;
-            }
-            if (StringUtils.isBlank(originalName)) {
-                originalName = "none" + suffix;
-            }
-            // 创建一个随机文件名称
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + suffix;
+            // 接下来进行普通上传，创建一个随机文件名称
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + System.currentTimeMillis() + "." + suffix;
             // 对象键(Key)是对象在存储桶中的唯一标识。
             String key = StringUtils.isBlank(StringUtils.trim(rootPath)) ? fileName : rootPath + "/" + fileName;
+            // 封装输出流为ByteArrayInputStream
+            ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
             ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, tempInputStream).withProgressListener(new PutObjectProgressListener()));
             // 添加新文件
@@ -131,8 +136,9 @@ public class AliConfiguration {
                     .setName(key)
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
+                    .setSize(dataBytes.length)
                     .setUrl(url)
-                    .setState(0);
+                    .setOssType(OssType.ALI.getTypeName());
             if (fileService.save(newFile)) {
                 return newFile;
             } else {
@@ -151,9 +157,39 @@ public class AliConfiguration {
     /**
      * 从OSS中删除文件
      *
+     * @param id 文件ID
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteInOss(Long id) {
+        File fileInDatabase = fileService.getOne(
+                new LambdaQueryWrapper<File>()
+                        .eq(File::getId, id)
+                        .eq(File::getOssType, OssType.ALI.getTypeName())
+        );
+        if (Objects.isNull(fileInDatabase)) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL, "文件不存在");
+        }
+        LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        fileLambdaQueryWrapper
+                .eq(File::getUniqueKey, fileInDatabase.getUniqueKey())
+                .eq(File::getOssType, OssType.ALI.getTypeName())
+                // 搭配事务给数据库被读行数据加行锁
+                .last("FOR UPDATE");
+        List<File> filesInDatabase = fileService.list(fileLambdaQueryWrapper);
+        if (!fileService.removeById(fileInDatabase.getId())) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
+        }
+        if (Objects.equals(filesInDatabase.size(), 1)) {
+            deleteInOssDirect(fileInDatabase.getUrl());
+        }
+    }
+
+    /**
+     * 从OSS中彻底删除文件
+     *
      * @param url 文件URL
      */
-    public void deleteInOss(String url) {
+    private void deleteInOssDirect(String url) {
         if (StringUtils.isEmpty(url)) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
@@ -196,8 +232,8 @@ public class AliConfiguration {
         LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
         fileLambdaQueryWrapper
                 .eq(File::getUniqueKey, uniqueKey)
-                .eq(File::getState, 0)
-                .last("limit 1");
+                .eq(File::getOssType, OssType.ALI.getTypeName())
+                .last("LIMIT 1");
         File fileInDatabase = fileService.getOne(fileLambdaQueryWrapper);
         if (Objects.nonNull(fileInDatabase)) {
             if (fileService.save(fileInDatabase.setId(null))) {
