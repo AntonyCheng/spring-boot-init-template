@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.page.PageModel;
@@ -39,4 +40,11 @@ public interface FileService extends IService<File> {
      * @return 导出表格
      */
     List<AdminFileExportVo> adminExportExcelList();
+
+    /**
+     * 管理员添加文件信息
+     *
+     * @param file 被添加文件
+     */
+    void adminAddFile(MultipartFile file);
 }
