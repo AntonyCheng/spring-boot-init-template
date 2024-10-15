@@ -501,6 +501,7 @@
                   </el-upload>
                 </el-col>
               </el-row>
+              <div slot="tip" class="el-upload__tip" style="text-align: center">只能上传docx文件，且不超过500kb</div>
             </template>
           </el-card>
         </el-collapse-item>
