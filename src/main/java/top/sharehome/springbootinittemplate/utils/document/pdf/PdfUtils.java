@@ -1280,6 +1280,15 @@ public class PdfUtils {
         /**
          * 获取PDF文档中的段落数据，并写入响应流
          *
+         * @param response 响应
+         */
+        public void getParagraphsResponse(HttpServletResponse response) {
+            getParagraphsResponse(null, null, response);
+        }
+
+        /**
+         * 获取PDF文档中的段落数据，并写入响应流
+         *
          * @param txtFileName TXT文件名
          * @param response 响应
          */
@@ -1684,7 +1693,7 @@ public class PdfUtils {
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
             response.setHeader("Content-disposition", contentDispositionValue);
             response.setHeader("download-filename", encodeName);
-            response.setContentType("application/x-zip-compressed;charset=UTF-8");
+            response.setContentType("application/zip;charset=UTF-8");
         }
 
     }

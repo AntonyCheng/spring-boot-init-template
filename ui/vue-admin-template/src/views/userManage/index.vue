@@ -1,7 +1,7 @@
 <template>
   <div class="user-manage-container">
     <template>
-      <el-collapse accordion>
+      <el-collapse>
         <el-collapse-item>
           <template slot="title">
             <span style="font-size: 16px"><b>查询条件</b></span>
@@ -657,7 +657,7 @@ export default {
       })
     },
     showPwd(passwordType) {
-      switch (passwordType){
+      switch (passwordType) {
         case 'add':
           if (this.addPasswordType === 'password') {
             this.addPasswordType = ''

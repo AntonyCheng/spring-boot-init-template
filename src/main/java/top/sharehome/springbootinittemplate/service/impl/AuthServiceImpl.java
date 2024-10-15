@@ -73,6 +73,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         // 插入新用户数据
         User user = new User()
                 .setAccount(authRegisterDto.getAccount())
+                // 注册之后，默认名称是账号
+                .setName(authRegisterDto.getAccount())
                 .setPassword(authRegisterDto.getPassword())
                 .setEmail(authRegisterDto.getEmail())
                 // 在没有激活账号的情况下禁用账号
@@ -202,8 +204,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH);
         }
-        // 判断该用户是否被禁用
-        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
+        // 判断该用户是否被禁用（保证管理员能不受限制找回密码）
+        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE) && !Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         String emailKey = KeyPrefixConstants.EMAIL_RETRIEVE_PASSWORD_PREFIX + userInDatabase.getId();
@@ -216,6 +218,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
                 userLambdaUpdateWrapper
                         .set(User::getPassword, authRetrievePasswordDto.getNewPassword())
                         .set(User::getLoginNum, 0)
+                        // 如果是管理员找回密码，还需要将状态改为正常
+                        .set(Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN), User::getState, Constants.USER_ENABLE_STATE)
                         .eq(User::getId, userInDatabase.getId());
                 userMapper.update(userLambdaUpdateWrapper);
                 CacheUtils.deleteString(emailKey);
@@ -239,8 +243,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.ACCOUNT_AND_EMAIL_DO_NOT_MATCH);
         }
-        // 判断该用户是否被禁用
-        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE)) {
+        // 判断该用户是否被禁用（保证管理员能不受限制找回密码）
+        if (Objects.equals(userInDatabase.getState(), Constants.USER_DISABLE_STATE) && !Objects.equals(userInDatabase.getRole(), Constants.ROLE_ADMIN)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_BANNED);
         }
         String emailKey = KeyPrefixConstants.EMAIL_RETRIEVE_PASSWORD_PREFIX + userInDatabase.getId();
@@ -252,7 +256,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             String subject = "找回密码";
             String emailContent = "[" + applicationName + "]-找回密码验证码为 <b>" + code + "</b> ,五分钟后失效。";
             EmailUtils.sendWithHtml(userInDatabase.getEmail(), subject, emailContent);
-            CacheUtils.putString(emailKey, code, Duration.ofMillis(5));
+            CacheUtils.putString(emailKey, code, Duration.ofMinutes(5));
         } else {
             throw new CustomizeReturnException(ReturnCode.TOO_MANY_REQUESTS, "请在" + expired + "秒后重试");
         }

@@ -92,7 +92,7 @@ public class RateLimitAop {
         rateLimiter.trySetRate(RateType.OVERALL, rateLimit.rate(), rateInterval.toMillis(), RateIntervalUnit.MILLISECONDS);
         boolean canOp = rateLimiter.tryAcquire(rateLimit.permit());
         if (!canOp) {
-            throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS);
+            throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS, rateLimit.message());
         }
         String expireRateLimitKey = rateLimitKey;
         List<String> uselessCacheKeys = new ArrayList<>() {

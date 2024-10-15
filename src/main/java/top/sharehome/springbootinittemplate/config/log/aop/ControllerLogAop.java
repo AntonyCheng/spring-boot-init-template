@@ -50,7 +50,7 @@ public class ControllerLogAop {
      * 系统默认屏蔽的请求/响应字段
      * User：password、checkPassword、oldPassword、newPassword、checkNewPassword
      */
-    private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token"};
+    private static final String[] MASK_PARAMS = {"password", "checkPassword", "oldPassword", "newPassword", "newPassword", "checkNewPassword", "captcha", "token", "email", "passwordCode"};
 
     /**
      * 记录日志操作用户ID，TransmittableThreadLocal是Alibaba继承ThreadLocal的一个类，它适用于适用于复杂的线程池、异步任务等场景，由于该日志记录过程中可能会存在这些场景，所以能够保证线程本地变量的传递性。
@@ -177,7 +177,7 @@ public class ControllerLogAop {
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP
-            log.setIp(NetUtils.getIpAddressByRequest(request));
+            log.setIp(NetUtils.getIpByRequest(request));
             // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时
@@ -284,7 +284,7 @@ public class ControllerLogAop {
             }
             log.setParam(StringUtils.isBlank(param) ? "{}" : param);
             // 设置操作用户IP
-            log.setIp(NetUtils.getIpAddressByRequest(request));
+            log.setIp(NetUtils.getIpByRequest(request));
             // 设置操作用户地址
             log.setLocation(NetUtils.getRegionByRequest(request));
             // 设置接口访问耗时
@@ -334,13 +334,21 @@ public class ControllerLogAop {
                     }
                     declaredField.setAccessible(true);
                     Object object = declaredField.get(obj);
-                    return object instanceof MultipartFile;
+                    if (object instanceof MultipartFile
+                            || object instanceof HttpServletRequest
+                            || object instanceof HttpServletResponse
+                            || object instanceof BindingResult) {
+                        return true;
+                    }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
-        return obj instanceof MultipartFile || obj instanceof HttpServletRequest || obj instanceof HttpServletResponse || obj instanceof BindingResult;
+        return obj instanceof MultipartFile
+                || obj instanceof HttpServletRequest
+                || obj instanceof HttpServletResponse
+                || obj instanceof BindingResult;
     }
 
 }

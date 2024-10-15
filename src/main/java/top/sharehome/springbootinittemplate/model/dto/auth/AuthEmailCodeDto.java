@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
-import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -34,11 +33,6 @@ public class AuthEmailCodeDto implements Serializable {
     @Email(message = "邮箱格式错误", groups = {PostGroup.class})
     @NotBlank(message = "邮箱不能为空", groups = {PostGroup.class})
     private String email;
-
-    /**
-     * 验证码参数实体类
-     */
-    private Captcha captcha;
 
     private static final long serialVersionUID = -6780315895322389464L;
 

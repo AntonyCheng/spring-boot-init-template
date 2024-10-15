@@ -13,7 +13,6 @@ import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2Regio
 import top.sharehome.springbootinittemplate.config.ip2region.properties.enums.LoadType;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,7 @@ import java.io.InputStream;
 @Slf4j
 public class Ip2RegionConfiguration {
 
-    @Resource
+    @javax.annotation.Resource
     private Ip2RegionProperties ip2RegionProperties;
 
     private Searcher searcher = null;
@@ -84,6 +83,12 @@ public class Ip2RegionConfiguration {
         try {
             if (searcher != null) {
                 searcher.close();
+            }
+            String fileName = "ip2region" + File.separator + "ip2region.xdb";
+            String tempFile = (StringUtils.endsWith(FileUtils.getTempDirectoryPath(), File.separator) ? FileUtils.getTempDirectoryPath() : FileUtils.getTempDirectoryPath() + File.separator) + fileName;
+            File existFile = new File(tempFile);
+            if (existFile.exists()) {
+                FileUtils.delete(existFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

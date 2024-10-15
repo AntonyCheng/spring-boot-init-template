@@ -641,10 +641,22 @@ public class WordUtils {
          */
         public Reader(InputStream inputStream) {
             try {
+                if (Objects.isNull(inputStream) || Objects.equals(inputStream.available(), 0)) {
+                    throw new IOException();
+                }
                 this.document = new XWPFDocument(inputStream);
             } catch (IOException e) {
-                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取段落数据时，解析文档异常");
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "解析文档异常");
             }
+        }
+
+        /**
+         * 获取Word文档中的段落数据，并写入响应流
+         *
+         * @param response    响应流
+         */
+        public void getParagraphsResponse(HttpServletResponse response) {
+            getParagraphsResponse(null, response);
         }
 
         /**
@@ -653,7 +665,7 @@ public class WordUtils {
          * @param txtFileName    TXT文件名
          * @param response    响应流
          */
-        public void getTxtParagraphsResponse(String txtFileName, HttpServletResponse response) {
+        public void getParagraphsResponse(String txtFileName, HttpServletResponse response) {
             if (Objects.isNull(response)) {
                 throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "响应为空");
             }
@@ -741,6 +753,8 @@ public class WordUtils {
                 // 预处理ZIP类型响应
                 handleZipResponse(zipFileName, response);
                 getImagesZip(outputStream, zipLevel);
+                // 刷新响应流
+                outputStream.flush();
             } catch (IOException e) {
                 throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
             }
@@ -923,7 +937,7 @@ public class WordUtils {
                 String uuid = UUID.randomUUID().toString().replace("-", "");
                 // 将每个表格byte数组数据传至压缩输出流中
                 for (byte[] picture : tables) {
-                    String entryName = uuid + "_" + index + excelType.getValue();
+                    String entryName = uuid + "_" + index + (Objects.isNull(excelType) ? ExcelTypeEnum.XLSX : excelType).getValue();
                     ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
                     zipArchiveOutputStream.putArchiveEntry(entry);
                     ByteBuf buf = Unpooled.copiedBuffer(picture);
@@ -1031,7 +1045,7 @@ public class WordUtils {
             response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
             response.setHeader("Content-disposition", contentDispositionValue);
             response.setHeader("download-filename", encodeName);
-            response.setContentType("application/x-zip-compressed;charset=UTF-8");
+            response.setContentType("application/zip;charset=UTF-8");
         }
 
     }
@@ -1255,5 +1269,4 @@ public class WordUtils {
 
         }
     }
-
 }
