@@ -58,6 +58,10 @@
                 * [Canal简介](#canal简介)
                 * [搭建Deployer&Adapter系统](#搭建deployeradapter系统)
                 * [搭建Deployer&Client系统](#搭建deployerclient系统)
+    * [容器化部署](#容器化部署)
+        * [准备工作](#准备工作)
+        * [启动基础组件](#启动基础组件)
+        * [启动前后端服务](#启动前后端服务)
     * [申明&联系我](#申明联系我)
     * [项目历史](#项目历史)
     * [下一步开发计划](#下一步开发计划)
@@ -96,19 +100,19 @@ RaabbitMQ 3.X.X（推荐）
     - spring-ai-zhipuai-spring-boot-starter == Spring AI 智谱AI模型依赖
     - spring-ai-ollama-spring-boot-starter == Spring AI Ollama框架AI模型依赖
 - **Netty**
-    - netty-all 4.1.112.Final == Netty 框架
+    - netty-all 4.1.114.Final == Netty 框架
 - **数据驱动层**
     - mysql-connector-j 8.0.33 == Java 连接 MySQL 依赖
     - mybatis-spring 3.0.4 == MyBatis Spring 依赖
-    - mybatis-plus-boot-starter 3.5.7 == MyBatis-Plus 框架
+    - mybatis-plus-boot-starter 3.5.8 == MyBatis-Plus 框架
     - mybatis-plus-annotation 3.5.7 == MyBatis-Plus 注解依赖
     - shardingsphere-jdbc 5.5.0 == 分布式数据库解决方案
     - druid-spring-boot-3-starter 1.2.23 == Druid 连接池
 - **工具类**
     - lombok 1.18.34 == POJO 简化工具
-    - hutool-all 5.8.31 == Hutool 工具类
-    - commons-lang3 3.16.0 == Apache Commons Lang 工具类
-    - commons-io 2.16.1 == Apache Commons IO 工具类
+    - hutool-all 5.8.32 == Hutool 工具类
+    - commons-lang3 3.17.0 == Apache Commons Lang 工具类
+    - commons-io 2.17.0 == Apache Commons IO 工具类
     - commons-codec 1.17.1 == Apache Commons Codec 工具类
     - commons-pool2 2.12.0 == Apache Commons Pool 工具类
     - commons-collections4 4.5.0-M2 == Apache Commons Collections 工具类
@@ -116,8 +120,7 @@ RaabbitMQ 3.X.X（推荐）
     - commons-compress 1.27.1 == Apache Commons Compress 工具类
     - okhttp 4.12.0 == OK Http 工具类
     - okio 3.9.0 == OK IO 工具类
-    - fastjson2 2.0.52 == FastJSON 工具类
-    - fastjson2-extension-spring6 2.0.52 == FastJSON 工具拓展类
+    - fastjson2 2.0.53 == FastJSON 工具类
     - ip2region 2.7.0 == 离线 IP 地址定位库
 - **权限校验**
     - sa-token-spring-boot3-starter 1.39.0 == SaToken 认证鉴权框架
@@ -127,7 +130,7 @@ RaabbitMQ 3.X.X（推荐）
 - **缓存服务**
     - spring-boot-starter-data-redis == Spring Data Redis 依赖
     - spring-boot-starter-cache == Spring Cache 依赖
-    - redisson 3.35.0 == Redis 的基础上实现的 Java 驻内存数据网格
+    - redisson 3.37.0 == Redis 的基础上实现的 Java 驻内存数据网格
 - **本地缓存服务**
     - caffeine 3.1.8 == Caffeine 本地缓存依赖
 - **消息队列**
@@ -139,14 +142,14 @@ RaabbitMQ 3.X.X（推荐）
     - elasticsearch-rest-high-level-client 7.14.0 == ES 高级别客户端依赖
     - logstash-logback-encoder 7.3 == Logstash 依赖
 - **对象存储（OSS）**
-    - cos_api 5.6.229 == 腾讯云 COS
+    - cos_api 5.6.233 == 腾讯云 COS
     - aliyun-sdk-oss 3.18.1 == 阿里云 OSS
     - minio 8.5.12 == Minio 对象存储
 - **文件操作**
     - poi 5.3.0 == 操作 Word
     - poi-tl 1.12.2 == 操作 Word 模板
-    - easyexcel 4.0.2 == 操作 Excel
-    - x-easypdf 3.1.0 == 操作 PDF
+    - easyexcel 4.0.3 == 操作 Excel
+    - x-easypdf 3.1.1 == 操作 PDF
     - thymeleaf 3.1.2.RELEASE == 操作 PDF Thymeleaf 模板
     - jte 2.3.2 == 操作 PDF JTE 数据源模板
 - **接口文档 & API调试**
@@ -164,6 +167,7 @@ RaabbitMQ 3.X.X（推荐）
 - SaToken 可配置分布式登录 & 认证 & 鉴权
 - Spring AI 接入大语言模型（OpenAI、智谱清言以及Ollama本地大模型）
 - AOP 逻辑处理示例
+- Docker Compose 脚本”一键部署“
 - 自定义注解处理示例
 - 验证码分布式校验
 - 注解式记录日志
@@ -190,7 +194,7 @@ RaabbitMQ 3.X.X（推荐）
 ### 示例业务
 
 - 提供模板 SQL 示例文件（业务数据库 & XxlJob 数据库 & PowerJob 数据库）
-- 用户登录、注册、注销、信息获取、添加、查询、删除以及修改等后端接口及前端页面
+- 用户、日志、文件以及示例演示等后端接口及前端页面
 - Spring Scheduler 单机版定时任务示例
 - XxlJob & PowerJob 使用逻辑代码示例
 - RabbitMQ 多类型消息队列逻辑代码示例
@@ -209,13 +213,13 @@ RaabbitMQ 3.X.X（推荐）
 
 ## 快速上手
 
-> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于 application.yaml 文件，即按需修改配置就能引入相关模板功能。
+> 拉取项目模板之后需要确保所有依赖下载完成，以下的操作都是针对于 application-xxx.yaml 文件，即按需修改配置就能引入相关模板功能。
 
 ### 必须执行
 
 1. 执行 `sql/init_db.sql` 、 `sql/init_xxl_job.sql` 以及 ` sql/init_power_job.sql` 文件，模板默认管理员账号：admin，默认用户账号：user，密码均为123456；
 
-2. 修改 `src/main/resources/mysql/mysql.yaml` 文件：
+2. 修改 `src/main/resources/mysql/mysql-xxx.yaml` 文件（ `xxx` 取决于 application.yaml 文件中激活的配置项）：
 
    ```yaml
    dataSources:
@@ -360,7 +364,7 @@ spring:
     - 都开启（都为 true ）：模版只会加载单机版本的 Redisson 配置；
 
    ```yaml
-   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
+   # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # 线程池数量
@@ -646,7 +650,7 @@ spring:
 - secretKey ==> 用户私钥
 - bucketName ==> 桶名称
 
-然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+然后将这些参数写入 `application-xxx.yaml` 文件中，同时开启 enable 配置项：
 
 ```yaml
 # 对象存储配置
@@ -677,7 +681,7 @@ oss:
 - secretKey ==> 用户私钥
 - bucketName ==> 桶名称
 
-然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+然后将这些参数写入 `application-xxx.yaml` 文件中，同时开启 enable 配置项：
 
 ```yaml
 # 对象存储配置
@@ -709,7 +713,7 @@ oss:
 - secretKey ==> 用户私钥
 - bucketName ==> 桶名称
 
-然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+然后将这些参数写入 `application-xxx.yaml` 文件中，同时开启 enable 配置项：
 
 ```yaml
 # 对象存储配置
@@ -737,7 +741,7 @@ oss:
 1. 修改验证码相关配置，开发者可以自行配置验证码的风格以及参数：
 
    ```yaml
-   # Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
+   # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务）
    # 如果同时开启单机版本和集群版本，只有单机版本生效
    redisson:
      # Redis单机版本
@@ -777,10 +781,11 @@ oss:
     */
    @PostMapping("/login")
    @EnableCaptcha
-   public R<AuthLoginVo> login(@RequestBody @Validated(PostGroup.class) AuthLoginDto authLoginDto) {
+   @ControllerLog(description = "用户登录", operator = Operator.OTHER)
+   public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
        AuthLoginVo loginUser = authService.login(authLoginDto);
        LoginUtils.login(loginUser);
-       return R.ok("登录成功", loginUser);
+       return R.okWithToken("登录成功", loginUser);
    }
    ```
 
@@ -841,7 +846,7 @@ oss:
 - password ==> 发送邮件的邮箱验证密码或者授权码
 - protocol ==> 邮箱通讯协议
 
-然后将这些参数写入 `application.yaml` 文件中，同时开启 enable 配置项：
+然后将这些参数写入 `application-xxx.yaml` 文件中，同时开启 enable 配置项：
 
 ```yaml
 # 公共配置文件
@@ -912,7 +917,7 @@ spring:
        use-code-as-default-message: true
    ```
 
-3. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application.yaml` 配置文件一致）：
+3. 开发者需要确定好自己项目中需要涉及到的语言种类，模板中主动提供了英文、中文简体和中文繁体，以中文繁体为例准备好国际化词典文件 messages_zh_TW.properties （注意文件名前缀要保持和 `application-xxx.yaml` 配置文件一致）：
 
    ```properties
    welcome=歡迎,{0}!
@@ -1151,7 +1156,7 @@ sa-token:
 
 SpringBoot 中自带有一些任务调度方案，我们通常将其称为“定时任务”，模板中这样的定时任务主要分为两类，第一类是全量任务，第二类是循环任务；
 
-1. 在编码之前首先修改 `application.yaml` 配置文件：
+1. 在编码之前首先修改 `application-xxx.yaml` 配置文件：
 
    ```yaml
    #配置SpringBoot任务调度
@@ -1234,7 +1239,7 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
 
 1. 部署 XxlJob 分布式调度系统控制面板；
 
-   想要使用 XxlJob 分布式任务调度系统的功能，就需要先部署一个 XxlJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XxlJob 模块来部署一个 XxlJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XxlJob 模块的 `application.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init_xxl_job.sql` 就起到了作用：
+   想要使用 XxlJob 分布式任务调度系统的功能，就需要先部署一个 XxlJob 分布式调度系统控制面板，得益于 Java 生态的完备，开发者可以直接使用模板中已经继承好的 XxlJob 模块来部署一个 XxlJob 分布式调度系统控制面板，在 `module` 文件夹中有一个 xxl-job-admin 模块，首先需要修改 XxlJob 模块的 `application-xxx.yaml` 配置文件，此时在“必须执行”的操作中引入的 `sql/init_xxl_job.sql` 就起到了作用：
 
    ```yaml
    spring:
@@ -1259,7 +1264,7 @@ XxlJob 是一个开箱即用的轻量级分布式任务调度系统，其核心�
 
    部署完成之后即可启动 XxlJob 分布式调度系统控制面板，启动成功即表示部署成功，登录可视化界面之后需要在执行器管理中添加执行器，这个执行器相关信息与在下面 `执行器配置` 中相关信息保持一致；
 
-2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 XxlJob 控制面板地址正确的前提下打开 `enable` 配置项：
+2. 然后修改模板模块 `application-xxx.yaml` 配置文件的相关内容，在保证 XxlJob 控制面板地址正确的前提下打开 `enable` 配置项：
 
    ```yaml
    # XxlJob配置（如果是导入了模板sql，那么登录账号/密码为：admin/123456）
@@ -1371,7 +1376,7 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
    部署完成之后即可启动 PowerJob 分布式调度系统控制面板，启动成功即表示部署成功，打开可视化界面之后需要执行应用注册，这个执行器相关信息与在下面 `执行器配置` 中相关信息保持一致；
 
-2. 然后修改模板模块 `application.yaml` 配置文件的相关内容，在保证 PowerJob 控制面板地址正确的前提下打开 `enabled` 配置项：
+2. 然后修改模板模块 `application-xxx.yaml` 配置文件的相关内容，在保证 PowerJob 控制面板地址正确的前提下打开 `enabled` 配置项：
 
    ```yaml
    # PowerJob配置
@@ -1402,7 +1407,7 @@ PowerJob是全新一代分布式任务调度与计算框架，其主要功能特
 
 如果想拥有正真意义上的服务器推送功能，目前有两种解决方案，第一种是 Server-Send Event（SSE） 单工通信机制，第二种是 WebSocket 全双工通信机制，该模板中给出了基于 Netty 框架搭建的 WebSocket 相关配置，具体编码方法请见：[Netty 学习示例仓库](https://github.com/AntonyCheng/netty-study-demo)。
 
-在该模板中配置 WebSocket 很简单，首先修改 `application.yaml` 文件：
+在该模板中配置 WebSocket 很简单，首先修改 `application-xxx.yaml` 文件：
 
 ```yaml
 # WebSocket配置
@@ -1421,7 +1426,7 @@ websocket:
 
 #### 配置SpringBootAdmin
 
-SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XxlJob 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application.yaml` 文件中查看部署后的地址：
+SpringBoot Admin 能够将 Actuator 中的信息进行界面化的展示，也可以监控所有 Spring Boot 应用的健康状况，提供实时警报功能，和 XxlJob 一样需要先部署，当然在该模板中的 `module` 文件夹中有一个 spring-boot-admin 模块，不用对其进行任何修改，但是需要前往其 `application-xxx.yaml` 文件中查看部署后的地址：
 
 ```yaml
 # 服务概况 ---- 可自定义
@@ -1444,7 +1449,7 @@ spring:
     check-template-location: false
 ```
 
-即 `http://localhost:38077/spring-boot-admin` ，接下来就去整合其他模块，修改模板模块中的 `application.yaml` 文件，更改 enable 配置项：
+即 `http://localhost:38077/spring-boot-admin` ，接下来就去整合其他模块，修改模板模块中的 `application-xxx.yaml` 文件，更改 enable 配置项：
 
 ```yaml
 # 公共配置文件
@@ -1502,6 +1507,80 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 该系统和 Deployer & Adapter 系统的区别就在于该系统需要开发者自己写客户端，模板中已经存在了一个客户端示例代码类： `top.sharehome.springbootinittemplate.config.canal.example.SimpleCanalClientExample` ，同样的，Deployer 的部署在 `module/canal-component` 文件夹中有具体介绍，开发者可以参考示例代码类进行相关功能的开发。
 
+## 容器化部署
+
+针对模板中存在的所有组件和服务编写 Docker Compose 脚本，搭配 Docker 工具实现”一键部署“，接下来介绍一下部署过程：
+
+### 准备工作
+
+1、下载 Docker Engine ，版本建议在 20.10.24 以上，Windows 可以使用 Docker Desktop（如何换 Docker 下载镜像源不进行详细解释）。
+
+2、使用 `docker network` 命令创建容器内网：
+
+```cmd
+docker network create --driver bridge --subnet=177.177.177.0/24 --gateway=177.177.177.1 docker_net
+```
+
+3、将前后端打包（不进行详细解释），前后端分别得到 `dist` 目录和 `spring-boot-init-template-xxx.jar` 文件。
+
+4、使用 `docker build` 命令结合模板项目根目录下 Dockerfile 脚本文件构建 Docker 镜像（不进行详细解释，建议最终镜像名称格式为 spring-boot-init-template:xxx ，具体根据 `docker/application/business/backend/docker-compose.yml` 文件实际内容进行定夺）。
+
+5、最后进入 `docker` 文件夹下准备启动前后端服务和基础组件：
+
+```cmd
+cd ./docker
+```
+
+### 启动基础组件
+
+1、进入组件 `docker-compose.yaml` 文件所在目录：
+
+```cmd
+cd ./application/base
+```
+
+2、使用 `docker` 命令启动脚本：
+
+```cmd
+docker compose up -d
+```
+
+3、此时项目中所用到的基础组件启动成功，MySQL 默认启动，接下来把 `docker/sql/init_db.sql` 文件导入 MySQL 中即可。
+
+4、退出到 `docker` 文件夹下准备启动前后端服务：
+
+```cmd
+cd ../../
+```
+
+### 启动前后端服务
+
+1、进入后端服务 `docker-compose.yaml` 文件所在目录：
+
+```cmd
+cd ./application/business/backend
+```
+
+2、使用 `docker` 命令启动脚本：
+
+```cmd
+docker compose up -d
+```
+
+3、此时后端服务已经启动成功，接下来进入前端服务 `docker-compose.yaml` 文件所在目录：
+
+```cmd
+cd ../frontend
+```
+
+4、使用 `docker` 命令启动脚本：
+
+```cmd
+docker compose up -d
+```
+
+5、此时前端 Nginx 软件已经启动成功，将前端 `dist` 文件中的所有文件复制粘贴到 `docker/application/business/frontend/data/nginx/html` 文件夹中，此时访问 `localhost` 即可进入系统平台。
+
 ## 申明&联系我
 
 作者能力有限，暂时还不能精通使用本模板中所整合的所有框架，若在使用当中遇到问题或者确定 BUG ，请发布 ISSUES 或者直接提交 PR ，作者定会逐一查看，采纳意见并且做出修改。
@@ -1510,7 +1589,7 @@ Deployer 只能监听一个 MySQL 的增量日志。
 
 如果你在使用模板的过程中有建议或者看法，请尽管发布 ISSUES 。
 
-**作者在线时间一般分布在工作日的晚上，其他时间若是查看到消息，在有电脑的情况下也会进行回复或说明。**
+**作者在线时间一般分布在工作日的晚上，上班时间查看到消息，在空闲且有电脑的情况下也会进行回复或说明。**
 
 ## 项目历史
 
@@ -1519,7 +1598,8 @@ Deployer 只能监听一个 MySQL 的增量日志。
 ## 下一步开发计划
 
 * 优化AI模块，设计工具类
-* 设计文件管理模块，实现秒传等高级功能
 * 设计相关工具类前端功能示例界面
+* 调研Spring Boot WebSocket
+* 围绕JSoup设计爬虫工具类
 * 扩展新的前端模板
 * ......
