@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
+import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.config.idempotent.annotation.RateLimit;
 import top.sharehome.springbootinittemplate.config.idempotent.enums.ScopeType;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
@@ -76,7 +77,7 @@ public class AuthController {
      * @return 返回登录用户信息
      */
     @PostMapping("/login")
-//    @EnableCaptcha
+    @EnableCaptcha
     @ControllerLog(description = "用户登录", operator = Operator.OTHER)
     public R<Map<String, Object>> login(@RequestBody @Validated({PostGroup.class}) AuthLoginDto authLoginDto) {
         AuthLoginVo loginUser = authService.login(authLoginDto);

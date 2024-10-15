@@ -5,7 +5,6 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -17,6 +16,7 @@ import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.controller.example.entity.ExampleCaptcha;
 import top.sharehome.springbootinittemplate.controller.example.entity.ExampleEncryptBody;
+import top.sharehome.springbootinittemplate.controller.example.entity.ExampleSingleFile;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.utils.document.pdf.PdfUtils;
 import top.sharehome.springbootinittemplate.utils.document.pdf.enums.ExportDataSource;
@@ -110,8 +110,8 @@ public class ExampleController {
      */
     @PostMapping("/word/txt/paragraphs")
     @ControllerLog(description = "用户调用获取Word中所有段落TXT文件接口", operator = Operator.OTHER)
-    public R<Void> getParagraphsTxtInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
-        try (InputStream inputStream = file.getInputStream()) {
+    public R<Void> getParagraphsTxtInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
+        try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
             new WordUtils.Reader(inputStream).getParagraphsResponse(response);
         } catch (IOException ignored) {
         }
@@ -125,8 +125,8 @@ public class ExampleController {
      */
     @PostMapping("/word/zip/tables")
     @ControllerLog(description = "用户调用获取Word中所有表格压缩包接口", operator = Operator.OTHER)
-    public R<Void> getTablesZipInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
-        try (InputStream inputStream = file.getInputStream()) {
+    public R<Void> getTablesZipInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
+        try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
             new WordUtils.Reader(inputStream).getTablesResponse(response);
         } catch (IOException ignored) {
         }
@@ -140,8 +140,8 @@ public class ExampleController {
      */
     @PostMapping("/word/zip/images")
     @ControllerLog(description = "用户调用获取Word中所有图片压缩包接口", operator = Operator.OTHER)
-    public R<Void> getImagesZipInWord(@RequestPart MultipartFile file, HttpServletResponse response) {
-        try (InputStream inputStream = file.getInputStream()) {
+    public R<Void> getImagesZipInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
+        try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
             new WordUtils.Reader(inputStream).getImagesResponse(response);
         } catch (IOException ignored) {
         }
@@ -205,8 +205,8 @@ public class ExampleController {
      */
     @PostMapping("/pdf/txt/paragraphs")
     @ControllerLog(description = "用户调用获取PDF中所有段落TXT文件接口", operator = Operator.OTHER)
-    public R<Void> getParagraphsTxtInPdf(@RequestPart MultipartFile file, HttpServletResponse response) {
-        try (InputStream inputStream = file.getInputStream()) {
+    public R<Void> getParagraphsTxtInPdf(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
+        try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
             new PdfUtils.Reader(inputStream).getParagraphsResponse(response);
         } catch (IOException ignored) {
         }
@@ -220,8 +220,8 @@ public class ExampleController {
      */
     @PostMapping("/pdf/zip/images")
     @ControllerLog(description = "用户调用获取PDF中所有图片压缩包接口", operator = Operator.OTHER)
-    public R<Void> getTablesZipInPdf(@RequestPart MultipartFile file, HttpServletResponse response) {
-        try (InputStream inputStream = file.getInputStream()) {
+    public R<Void> getTablesZipInPdf(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
+        try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
             new PdfUtils.Reader(inputStream).getImagesResponse(response);
         } catch (IOException ignored) {
         }

@@ -44,35 +44,37 @@ export function exportWordByTemplate(title, name, date) {
       title: title,
       name: name,
       date: date
-    }
+    },
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
-export function getParagraphsTxtInWord(file) {
+export function getParagraphsTxtInWord(data) {
   return request({
     url: '/example/word/txt/paragraphs',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getTablesZipInWord(file) {
+export function getTablesZipInWord(data) {
   return request({
     url: '/example/word/zip/tables',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getImagesZipInWord(file) {
+export function getImagesZipInWord(data) {
   return request({
     url: '/example/word/zip/images',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
@@ -82,49 +84,58 @@ export function getImagesZipInWord(file) {
 export function exportPdfByFreemarkerTemplate() {
   return request({
     url: '/example/pdf/template/freemarker',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
 export function exportPdfByThymeleafTemplate() {
   return request({
     url: '/example/pdf/template/thymeleaf',
-    method: 'get'
+    method: 'get',
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
   })
 }
 
 export function exportPdfByJteTemplate() {
   return request({
     url: '/example/pdf/template/jte',
-    method: 'get'
-  })
-}
-
-export function getParagraphsTxtInPdf(file) {
-  return request({
-    url: '/example/pdf/txt/paragraphs',
-    method: 'post',
-    file,
+    method: 'get',
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
-export function getTablesZipInPdf(file) {
+export function getParagraphsTxtInPdf(data) {
+  return request({
+    url: '/example/pdf/txt/paragraphs',
+    method: 'post',
+    data,
+    // 后端传来二进制流是需要修改为blob类型
+    responseType: 'blob'
+  })
+}
+
+export function getImagesZipInPdf(data) {
   return request({
     url: '/example/pdf/zip/images',
     method: 'post',
-    file,
+    data,
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
   })
 }
 
 // IP工具类
-export function getRegionByIp() {
+export function getRegionByIp(ip) {
   return request({
     url: '/example/ip2region/region/by/ip',
-    method: 'get'
+    method: 'get',
+    params: {
+      ip: ip
+    }
   })
 }
 

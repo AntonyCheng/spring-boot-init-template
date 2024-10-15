@@ -230,7 +230,7 @@
                 </el-form-item>
               </el-form>
               <el-button
-                :loading="registerLoading"
+                :loading="captchaLoading"
                 type="primary"
                 style="width: 120px"
                 @click="checkCaptchaCode"
@@ -309,16 +309,199 @@
           <template slot="title">
             <span style="font-size: 16px"><b>示例四：Word工具类</b></span>
           </template>
-          <el-card style="max-width: 100%">
-            <template #default />
-          </el-card>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-card style="max-width: 100%">
+                <template #default>
+                  <el-form ref="wordForm" :model="wordForm" label-width="80px">
+                    <el-form-item
+                      label="模板标题"
+                      prop="title"
+                      :rules="[
+                        {required:true,message:'模板标题不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="wordTitle"
+                        v-model="wordForm.title"
+                        placeholder="请输入模板标题"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="用户名称"
+                      prop="name"
+                      :rules="[
+                        {required:true,message:'用户名称不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-input
+                        ref="wordName"
+                        v-model="wordForm.name"
+                        placeholder="请输入用户名称"
+                        autocomplete="off"
+                      />
+                    </el-form-item>
+                    <el-form-item
+                      label="导出日期"
+                      prop="date"
+                      :rules="[
+                        {required:true,message:'导出日期不能为空',trigger: 'blur'}
+                      ]"
+                    >
+                      <el-date-picker
+                        v-model="wordForm.date"
+                        type="date"
+                        placeholder="请选择日期"
+                        value-format="yyyy-MM-dd"
+                        style="width: 100%"
+                        clearable
+                      />
+                    </el-form-item>
+                  </el-form>
+                  <el-button
+                    :loading="wordLoading"
+                    type="primary"
+                    style="width: 150px"
+                    @click="getWordTemplate"
+                  >导出Word模板
+                  </el-button>
+                </template>
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <el-card style="max-width: 100%">
+                <template #default>
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordParagraphs"
+                  >
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取Word段落
+                    </el-button>
+                  </el-upload>
+                  <el-divider />
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordTables"
+                  >
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取Word表格
+                    </el-button>
+                  </el-upload>
+                  <el-divider />
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="wordFiles"
+                    :before-upload="beforeUploadWord"
+                    :http-request="getWordImages"
+                  >
+                    <el-button
+                      :loading="wordLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取Word图像
+                    </el-button>
+                  </el-upload>
+                  <div slot="tip" class="el-upload__tip">只能上传docx文件，且不超过500kb</div>
+                </template>
+              </el-card>
+            </el-col>
+          </el-row>
         </el-collapse-item>
         <el-collapse-item>
           <template slot="title">
             <span style="font-size: 16px"><b>示例五：PDF工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
-            <template #default />
+            <template #default>
+              <el-row>
+                <el-col align="center">
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByFreemarker"
+                  >通过Freemarker引擎导出PDF
+                  </el-button>
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByThymeleaf"
+                  >通过Thymeleaf引擎导出PDF
+                  </el-button>
+                  <el-button
+                    :loading="pdfLoading"
+                    type="primary"
+                    size="small"
+                    style="width: 240px"
+                    @click="getPdfByJte"
+                  >通过Jte引擎导出PDF
+                  </el-button>
+                </el-col>
+              </el-row>
+              <el-divider />
+              <el-row :gutter="20">
+                <el-col :span="12" align="right">
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="pdfFiles"
+                    :before-upload="beforeUploadPdf"
+                    :http-request="getPdfParagraphs"
+                  >
+                    <el-button
+                      :loading="pdfLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取PDF段落
+                    </el-button>
+                  </el-upload>
+                </el-col>
+                <el-col :span="12" align="left">
+                  <el-upload
+                    action=""
+                    :limit="1"
+                    :show-file-list="false"
+                    :file-list="pdfFiles"
+                    :before-upload="beforeUploadPdf"
+                    :http-request="getPdfImages"
+                  >
+                    <el-button
+                      :loading="pdfLoading"
+                      type="primary"
+                      size="small"
+                      style="width: 240px"
+                    >获取PDF图像
+                    </el-button>
+                  </el-upload>
+                </el-col>
+              </el-row>
+            </template>
           </el-card>
         </el-collapse-item>
         <el-collapse-item>
@@ -326,7 +509,43 @@
             <span style="font-size: 16px"><b>示例六：IP工具类</b></span>
           </template>
           <el-card style="max-width: 100%">
-            <template #default />
+            <template #default>
+              <el-form ref="ipForm" :model="ipForm" label-width="120px">
+                <el-form-item
+                  label="手动输入IP地址"
+                  prop="ip"
+                  class="ip-form"
+                  :rules="[
+                    {required:true,message:'IP地址不能为空',trigger: 'blur'}
+                  ]"
+                >
+                  <el-input
+                    ref="ip"
+                    v-model="ipForm.ip"
+                    placeholder="请输入IP地址"
+                    name="ip"
+                    type="text"
+                    tabindex="3"
+                    auto-complete="on"
+                  >
+                    <template slot="append">
+                      <span class="ip-container">
+                        <el-button @click="getRegion">获取IP所在地区</el-button>
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <el-divider />
+              <el-button
+                :loading="ipLoading"
+                type="primary"
+                size="small"
+                style="width: 260px"
+                @click="getIpAndRegion"
+              >获取当前请求所带IP和对应地区
+              </el-button>
+            </template>
           </el-card>
         </el-collapse-item>
       </el-collapse>
@@ -338,7 +557,22 @@
 
 import { checkEmailCode, getEmailCode, register } from '@/api/auth'
 import { Message } from 'element-ui'
-import { captcha, checkCaptcha, decryptionRequestParameters, getRsaPublicKey } from '@/api/example'
+import {
+  captcha,
+  checkCaptcha,
+  decryptionRequestParameters,
+  exportPdfByFreemarkerTemplate,
+  exportPdfByJteTemplate,
+  exportPdfByThymeleafTemplate,
+  exportWordByTemplate,
+  getImagesZipInPdf,
+  getImagesZipInWord, getIpAndRegionByRequest,
+  getParagraphsTxtInPdf,
+  getParagraphsTxtInWord,
+  getRegionByIp,
+  getRsaPublicKey,
+  getTablesZipInWord
+} from '@/api/example'
 import { JSEncrypt } from 'jsencrypt'
 
 export default {
@@ -382,10 +616,23 @@ export default {
         password: undefined,
         param: undefined
       },
-      encryptPasswordType: 'password'
+      encryptPasswordType: 'password',
       // Word工具类
+      wordLoading: false,
+      wordForm: {
+        title: undefined,
+        name: undefined,
+        date: undefined
+      },
+      wordFiles: [],
       // PDF工具类
+      pdfLoading: false,
+      pdfFiles: [],
       // IP工具类
+      ipLoading: false,
+      ipForm: {
+        ip: undefined
+      }
     }
   },
   methods: {
@@ -574,6 +821,284 @@ export default {
       this.encryptForm.account = undefined
       this.encryptForm.password = undefined
       this.encryptForm.param = undefined
+    },
+    getWordTemplate() {
+      this.$refs['wordForm'].validate(valid => {
+        if (valid) {
+          this.wordLoading = true
+          exportWordByTemplate(this.wordForm.title, this.wordForm.name, this.wordForm.date).then(async data => {
+            if (data) {
+              const blob = new Blob([data.data])
+              const url = URL.createObjectURL(blob)
+              const link = document.createElement('a')
+              link.href = url
+              link.download = decodeURIComponent(data.headers['download-filename'])
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+              URL.revokeObjectURL(url)
+            } else {
+              Message.error('下载失败')
+            }
+            this.resetWordForm()
+          }).catch(() => {
+            Message.error('下载失败')
+          }).finally(() => {
+            this.wordLoading = false
+          })
+        }
+      })
+    },
+    resetWordForm() {
+      this.wordForm.title = undefined
+      this.wordForm.name = undefined
+      this.wordForm.date = undefined
+    },
+    beforeUploadWord(file) {
+      const isDOCX = file.name.endsWith('.docx')
+      const isLt500K = file.size / 1024 < 500
+      if (!isDOCX) {
+        this.$message.error('上传文件只能是 DOCX 格式!')
+      }
+      if (!isLt500K) {
+        this.$message.error('上传文件大小不能超过 500KB!')
+      }
+      return isDOCX && isLt500K
+    },
+    getWordParagraphs(wordFile) {
+      this.wordLoading = true
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getParagraphsTxtInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
+    },
+    getWordTables(wordFile) {
+      this.wordLoading = true
+      console.log(wordFile)
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getTablesZipInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
+    },
+    getWordImages(wordFile) {
+      this.wordLoading = true
+      const { file } = wordFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getImagesZipInWord(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.wordFiles = []
+        this.wordLoading = false
+      })
+    },
+    beforeUploadPdf(file) {
+      const isPDF = file.name.endsWith('.pdf')
+      const isLt500K = file.size / 1024 < 500
+      if (!isPDF) {
+        this.$message.error('上传文件只能是 PDF 格式!')
+      }
+      if (!isLt500K) {
+        this.$message.error('上传文件大小不能超过 500KB!')
+      }
+      return isPDF && isLt500K
+    },
+    getPdfByFreemarker() {
+      this.pdfLoading = true
+      exportPdfByFreemarkerTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfByThymeleaf() {
+      this.pdfLoading = true
+      exportPdfByThymeleafTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfByJte() {
+      this.pdfLoading = true
+      exportPdfByJteTemplate().then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+        this.resetWordForm()
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfLoading = false
+      })
+    },
+    getPdfParagraphs(pdfFile) {
+      this.pdfLoading = true
+      const { file } = pdfFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getParagraphsTxtInPdf(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfFiles = []
+        this.pdfLoading = false
+      })
+    },
+    getPdfImages(pdfFile) {
+      this.pdfLoading = true
+      const { file } = pdfFile
+      const formData = new FormData()
+      formData.append('file', file)
+      getImagesZipInPdf(formData).then(async data => {
+        if (data) {
+          const blob = new Blob([data.data])
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = decodeURIComponent(data.headers['download-filename'])
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+        } else {
+          Message.error('下载失败')
+        }
+      }).catch(() => {
+        Message.error('下载失败')
+      }).finally(() => {
+        this.pdfFiles = []
+        this.pdfLoading = false
+      })
+    },
+    getRegion() {
+      this.$refs['ipForm'].validate(valid => {
+        if (valid) {
+          this.ipLoading = true
+          getRegionByIp(this.ipForm.ip).then(response => {
+            Message.success(response.msg)
+            this.resetIpForm()
+          }).finally(() => {
+            this.ipLoading = false
+          })
+        }
+      })
+    },
+    resetIpForm() {
+      this.ipForm.ip = undefined
+    },
+    getIpAndRegion() {
+      this.ipLoading = true
+      getIpAndRegionByRequest().then(response => {
+        Message.success(response.msg)
+      }).finally(() => {
+        this.ipLoading = false
+      })
     }
   }
 }
@@ -610,6 +1135,13 @@ export default {
       width: 100px;
       display: inline-block;
     }
+  }
+}
+
+.ip-form {
+  .ip-container {
+    padding-top: 5px;
+    display: inline-block;
   }
 }
 
