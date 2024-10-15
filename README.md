@@ -6,7 +6,7 @@
 
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.2.0-jdk17-pre**
+> **版本号：v2.2.0-jdk17**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 > 
@@ -1649,7 +1649,6 @@ docker compose up -d
 ## 下一步开发计划
 
 * 优化AI模块，设计工具类
-* 设计相关工具类前端功能示例界面
 * 调研Spring Boot WebSocket
 * 围绕JSoup设计爬虫工具类
 * 扩展新的前端模板

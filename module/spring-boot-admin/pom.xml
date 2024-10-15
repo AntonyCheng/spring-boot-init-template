@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>top.sharehome</groupId>
 	<artifactId>spring-boot-admin</artifactId>
-	<version>v2.2.0-jdk17-pre</version>
+	<version>v2.2.0-jdk17</version>
 	<name>spring-boot-admin</name>
 	<description>spring-boot-admin</description>
 	<properties>
