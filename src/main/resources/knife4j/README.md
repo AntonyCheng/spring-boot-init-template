@@ -1,6 +1,6 @@
 > **作者：[AntonyCheng](https://github.com/AntonyCheng)**
 >
-> **版本号：v2.2.0-jdk11-pre**
+> **版本号：v2.2.0-jdk11**
 >
 > **开源协议：[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)**
 >

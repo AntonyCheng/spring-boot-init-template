@@ -3,7 +3,7 @@ version: '3'
 services:
 
   spring-boot-init-template:
-    image: spring-boot-init-template:v2.2.0-jdk17-pre
+    image: spring-boot-init-template:v2.2.0-jdk11
     container_name: spring-boot-init-template
     environment:
       # 时区上海
@@ -19,7 +19,7 @@ services:
         ipv4_address: 177.177.177.111
 
 #  xxl-job-admin:
-#    image: xxl-job-admin:v2.2.0-jdk17-pre
+#    image: xxl-job-admin:v2.2.0-jdk11
 #    container_name: xxl-job-admin
 #    environment:
 #      # 时区上海
@@ -35,7 +35,7 @@ services:
 #        ipv4_address: 177.177.177.112
 
 #  power-job-admin:
-#    image: power-job-admin:v2.2.0-jdk17-pre
+#    image: power-job-admin:v2.2.0-jdk11
 #    container_name: power-job-admin
 #    environment:
 #      # 时区上海
@@ -51,7 +51,7 @@ services:
 #        ipv4_address: 177.177.177.113
 
 #  spring-boot-admin:
-#    image: spring-boot-admin:v2.2.0-jdk17-pre
+#    image: spring-boot-admin:v2.2.0-jdk11
 #    container_name: spring-boot-admin
 #    environment:
 #      # 时区上海
