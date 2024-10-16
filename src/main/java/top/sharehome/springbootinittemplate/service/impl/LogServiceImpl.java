@@ -16,7 +16,7 @@ import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;

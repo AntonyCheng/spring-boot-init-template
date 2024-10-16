@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
 

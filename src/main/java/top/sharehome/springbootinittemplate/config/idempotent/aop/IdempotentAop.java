@@ -34,6 +34,7 @@ import java.util.*;
 
 /**
  * 处理请求幂等的切面类
+ * 💡源自美团GTIS解决方案（https://tech.meituan.com/2016/09/29/distributed-system-mutually-exclusive-idempotence-cerberus-gtis.html）
  *
  * @author AntonyCheng
  */

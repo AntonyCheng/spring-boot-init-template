@@ -21,7 +21,7 @@ import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;

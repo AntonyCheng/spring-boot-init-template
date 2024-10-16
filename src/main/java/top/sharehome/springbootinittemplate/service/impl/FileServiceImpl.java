@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
 import top.sharehome.springbootinittemplate.model.entity.File;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.file.AdminFileExportVo;
 import top.sharehome.springbootinittemplate.model.vo.file.AdminFilePageVo;
 import top.sharehome.springbootinittemplate.service.FileService;

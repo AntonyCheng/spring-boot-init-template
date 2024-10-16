@@ -365,4 +365,18 @@ public class GlobalExceptionHandler {
         return R.fail(code, msg);
     }
 
+    /**
+     * 自定义AI异常
+     *
+     * @param e 异常
+     * @return 返回结果
+     */
+    @ExceptionHandler(CustomizeAiException.class)
+    public R<String> handleCustomizeAiException(CustomizeAiException e) {
+        log.error(e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg(), e);
+        int code = e.getReturnCode().getCode();
+        String msg = e.getMsg() == null ? e.getReturnCode().getMsg() : e.getMsg();
+        return R.fail(code, msg);
+    }
+
 }

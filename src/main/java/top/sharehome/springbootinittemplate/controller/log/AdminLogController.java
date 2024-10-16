@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;

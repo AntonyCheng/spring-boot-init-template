@@ -19,7 +19,7 @@ import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;

@@ -225,6 +225,11 @@ public enum ReturnCode {
     EMAIL_WAS_SENT_ABNORMALLY(15000, "邮件发送异常"),
 
     /**
+     * AI模块异常 16000
+     */
+    EXCEPTION_OCCURRED_IN_AI_MODULE(16000,"AI模块异常"),
+
+    /**
      * 数据库服务出错 20000
      */
     ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE(20000, "数据库服务出错"),
@@ -270,7 +275,7 @@ public enum ReturnCode {
     WORD_FILE_ERROR(40001, "处理Word文件出错"),
 
     /**
-     * 处理Word文件出错 40002
+     * 处理PDF文件出错 40002
      */
     PDF_FILE_ERROR(40002, "处理PDF文件出错");
 

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
 import top.sharehome.springbootinittemplate.model.entity.File;
-import top.sharehome.springbootinittemplate.model.page.PageModel;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.file.AdminFileExportVo;
 import top.sharehome.springbootinittemplate.model.vo.file.AdminFilePageVo;
 

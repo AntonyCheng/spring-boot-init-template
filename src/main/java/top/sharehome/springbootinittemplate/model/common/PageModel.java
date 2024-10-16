@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.model.page;
+package top.sharehome.springbootinittemplate.model.common;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
