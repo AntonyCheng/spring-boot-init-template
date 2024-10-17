@@ -3,8 +3,10 @@ package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 import top.sharehome.springbootinittemplate.model.common.Tuple;
@@ -14,8 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 题词分词器
@@ -27,19 +31,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TokenizersHelper {
 
-    private final static Pattern pattern = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
+    private final static Pattern PATTERN = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
-    public static LinkedHashMap<String, Integer> encoder;
+    private static final HashMap<String, Integer> ENCODER;
 
-    public static LinkedHashMap<Integer, String> decoder;
+    private static final HashMap<Integer, String> DECODER;
 
-    public static LinkedHashMap<Integer, Integer> byteEncoder;
+    private static final HashMap<Integer, Integer> BYTE_ENCODER;
 
-    public static LinkedHashMap<Integer, Integer> byteDecoder;
+    private static final HashMap<Integer, Integer> BYTE_DECODER;
 
-    public static LinkedHashMap<Tuple<String>, Integer> bpeRanks;
+    private static final HashMap<Tuple<String>, Integer> BPE_RANKS;
 
-    public static final LinkedHashMap<String, String> CACHE = new LinkedHashMap<>();
+    private static final HashMap<String, String> CACHE = new HashMap<>();
 
     static {
         String encoderJsonFileName = "tokenizers" + File.separator + "encoder.json";
@@ -50,32 +54,139 @@ public class TokenizersHelper {
                 InputStream vocabBpeFileStream = new ClassPathResource(vocabBpeFileName).getInputStream()
         ) {
             String encoderJsonFileContent = new String(encoderJsonFileStream.readAllBytes(), StandardCharsets.UTF_8);
-            TypeReference<LinkedHashMap<String, Integer>> type = new TypeReference<>() {};
-            encoder = JSONObject.parseObject(encoderJsonFileContent, type);
-            decoder = encoder.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            TypeReference<HashMap<String, Integer>> type = new TypeReference<>() {
+            };
+            ENCODER = JSONObject.parseObject(encoderJsonFileContent, type);
+            DECODER = ENCODER.entrySet().stream()
+                    .parallel()
+                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, HashMap::new));
             vocabBpeFileContent = new String(vocabBpeFileStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "初始化配置文件失败");
         }
 
-        byteEncoder = bytesToUnicode();
-        byteDecoder = byteEncoder.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        BYTE_ENCODER = bytesToUnicode();
+        BYTE_DECODER = BYTE_ENCODER.entrySet().stream()
+                .parallel()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, HashMap::new));
 
         String[] vocabBpeFileLines = vocabBpeFileContent.split("\n");
         List<Tuple<String>> bpeMerges = new ArrayList<>();
         for (int i = 1; i < vocabBpeFileLines.length - 1; i++) {
             String mergeStr = vocabBpeFileLines[i];
-            List<String> pair = Arrays.stream(mergeStr.split("(\\s+)")).filter(e -> !e.trim().isEmpty()).toList();
+            List<String> pair = Arrays.stream(mergeStr.split("(\\s+)"))
+                    .filter(e -> !e.trim().isEmpty())
+                    .toList();
             bpeMerges.add(new Tuple<>(pair.get(0), pair.get(1)));
         }
         List<Integer> rankList = new ArrayList<>();
         for (int i = 0; i < bpeMerges.size(); i++) {
             rankList.add(i);
         }
-        bpeRanks = dictZip(bpeMerges,rankList);
+        BPE_RANKS = dictZip(bpeMerges, rankList);
     }
 
-    public static LinkedHashMap<Integer, Integer> bytesToUnicode() {
+    private static String bpe(String token) {
+        String cacheToken;
+        if (Objects.nonNull(cacheToken = CACHE.get(token))) {
+            return cacheToken;
+        }
+        List<String> word = new Tuple<>(token.split(""));
+        Set<Tuple<String>> pairs = getPairs(word);
+        if (pairs.isEmpty()) {
+            return token;
+        }
+        while (true) {
+            Tuple<String> bigram = pairs.stream()
+                    .parallel()
+                    .min(Comparator.comparing(pair -> BPE_RANKS.getOrDefault(pair, Integer.MAX_VALUE)))
+                    .orElse(null);
+            if (!BPE_RANKS.containsKey(bigram)) {
+                break;
+            }
+            if (Objects.isNull(bigram)) {
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "Token分词算法异常");
+            }
+            String first = bigram.getOrDefault(0, null);
+            String second = bigram.getOrDefault(1, null);
+            if (ObjectUtils.anyNull(first, second)) {
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "Token分词算法异常");
+            }
+            ArrayList<String> newWord = new ArrayList<>();
+            int i = 0;
+            while (i < word.size()) {
+                int j = -1;
+                for (int index = i; index < word.size(); index++) {
+                    if (word.get(index).equals(first)) {
+                        j = index;
+                        break;
+                    }
+                }
+                if (Objects.equals(j, -1)) {
+                    newWord.addAll(word.subList(i, word.size()));
+                    break;
+                }
+                newWord.addAll(word.subList(i, j));
+                i = j;
+                if (Objects.equals(word.get(i), first) && i < word.size() - 1 && Objects.equals(word.get(i + 1), second)) {
+                    newWord.add(first + second);
+                    i = i + 2;
+                } else {
+                    newWord.add(word.get(i));
+                    i = i + 1;
+                }
+            }
+            word = newWord;
+            if (Objects.equals(word.size(), 1)) {
+                break;
+            } else {
+                pairs = getPairs(word);
+            }
+        }
+        word = Arrays.stream(String.join(" ", word).split("")).toList();
+        CACHE.put(token, String.join("", word));
+        return String.join("", word);
+    }
+
+    public static List<String> encode(String text) {
+        List<String> bpeTokens = new ArrayList<>();
+        Matcher matcher = PATTERN.matcher(text);
+        List<String> regexTokens = new ArrayList<>();
+        while (matcher.find()) {
+            String group = matcher.group(0);
+            regexTokens.add(group);
+        }
+        regexTokens.forEach(regexToken -> {
+            byte[] tokenBytes = regexToken.getBytes(StandardCharsets.UTF_8);
+            String token = IntStream.range(0, tokenBytes.length)
+                    .parallel()
+                    .map(i -> Byte.toUnsignedInt(tokenBytes[i]))
+                    .mapToObj(tokenByte -> String.valueOf((char) ((int) BYTE_ENCODER.get(tokenByte))))
+                    .collect(Collectors.joining(""));
+            List<String> newTokens = Arrays.stream(bpe(token).split(" "))
+                    .parallel()
+                    .map(bpeToken -> String.valueOf(ENCODER.get(bpeToken)))
+                    .toList();
+            bpeTokens.addAll(newTokens);
+        });
+        return bpeTokens;
+    }
+
+    public static String decode(List<String> tokens) {
+        String text = tokens.stream()
+                .map(token -> DECODER.get(Integer.valueOf(token)))
+                .collect(Collectors.joining(""));
+        int[] array = text.chars()
+                .map(BYTE_DECODER::get)
+                .toArray();
+        byte[] bytes = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            bytes[i] = (byte) array[i];
+        }
+        return new String(bytes);
+    }
+
+    private static HashMap<Integer, Integer> bytesToUnicode() {
         List<Integer> bs = new ArrayList<>();
         for (char i = '!'; i < '~' + 1; i++) {
             bs.add((int) i);
@@ -95,10 +206,10 @@ public class TokenizersHelper {
                 n += 1;
             }
         }
-        return dictZip(bs,cs);
+        return dictZip(bs, cs);
     }
 
-    public static Set<Tuple<String>> getPairs(List<String> word) {
+    private static Set<Tuple<String>> getPairs(List<String> word) {
         Set<Tuple<String>> pairs = new HashSet<>();
         String prevChar = word.get(0);
         for (int i = 1; i < word.size(); i++) {
@@ -108,8 +219,8 @@ public class TokenizersHelper {
         return pairs;
     }
 
-    public static <K,V> LinkedHashMap<K, V> dictZip(List<K> x, List<V> y) {
-        LinkedHashMap<K, V> result = new LinkedHashMap<>();
+    private static <K, V> HashMap<K, V> dictZip(List<K> x, List<V> y) {
+        HashMap<K, V> result = new HashMap<>();
         for (int i = 0; i < x.size(); i++) {
             result.put(x.get(i), y.get(i));
         }

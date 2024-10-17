@@ -20,7 +20,7 @@ public class Tuple<T> extends AbstractList<T> implements Serializable, Cloneable
     @SafeVarargs
     public Tuple(T... elements) {
         if (elements == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Tuple elements is null");
         }
         this.elements = elements;
     }
@@ -32,6 +32,10 @@ public class Tuple<T> extends AbstractList<T> implements Serializable, Cloneable
     @Override
     public T get(int index) {
         return elements[index];
+    }
+
+    public T getOrDefault(int index, T defaultValue) {
+        return index >= elements.length ? defaultValue : elements[index];
     }
 
     @Override
