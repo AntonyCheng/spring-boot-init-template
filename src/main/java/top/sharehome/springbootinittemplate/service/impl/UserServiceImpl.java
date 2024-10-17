@@ -299,8 +299,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updatePassword(String oldPassword, String newPassword) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         Long userId = LoginUtils.getLoginUserId();
-        userLambdaQueryWrapper.eq(User::getId, userId);
-        userLambdaQueryWrapper.eq(User::getPassword, oldPassword);
+        userLambdaQueryWrapper
+                .eq(User::getId, userId)
+                .eq(User::getPassword, oldPassword)
+                .last("limit 1");
         User userInResult = userMapper.selectOne(userLambdaQueryWrapper);
         if (Objects.isNull(userInResult)) {
             throw new CustomizeReturnException(ReturnCode.PASSWORD_VERIFICATION_FAILED);

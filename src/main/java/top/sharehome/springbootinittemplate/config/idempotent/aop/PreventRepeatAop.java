@@ -60,6 +60,9 @@ public class PreventRepeatAop {
         long interval = preventRepeat.timeUnit().toMillis(preventRepeat.time());
         // 获取请求方法和URI
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (Objects.isNull(servletRequestAttributes)){
+            throw new CustomizeReturnException(ReturnCode.USER_SENT_INVALID_REQUEST, "无法获取请求");
+        }
         HttpServletRequest request = servletRequestAttributes.getRequest();
         String requestMethod = request.getMethod();
         String uri = request.getRequestURI();

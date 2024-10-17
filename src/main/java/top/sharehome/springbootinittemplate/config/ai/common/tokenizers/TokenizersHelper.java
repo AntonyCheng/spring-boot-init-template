@@ -1,12 +1,11 @@
 package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 import top.sharehome.springbootinittemplate.model.common.Tuple;
@@ -56,7 +55,7 @@ public class TokenizersHelper {
             String encoderJsonFileContent = new String(encoderJsonFileStream.readAllBytes(), StandardCharsets.UTF_8);
             TypeReference<HashMap<String, Integer>> type = new TypeReference<>() {
             };
-            ENCODER = JSONObject.parseObject(encoderJsonFileContent, type);
+            ENCODER = JSON.parseObject(encoderJsonFileContent, type);
             DECODER = ENCODER.entrySet().stream()
                     .parallel()
                     .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, HashMap::new));

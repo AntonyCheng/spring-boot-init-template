@@ -109,7 +109,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
                 return;
             }
             LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            userLambdaQueryWrapper.eq(User::getAccount, account);
+            userLambdaQueryWrapper
+                    .eq(User::getAccount, account)
+                    .last("limit 1");
             User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
             if (Objects.isNull(userInDatabase)) {
                 writer.flush();
@@ -135,7 +137,9 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
     @Transactional(noRollbackFor = CustomizeReturnException.class, rollbackFor = Exception.class)
     public AuthLoginVo login(AuthLoginDto authLoginDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getAccount, authLoginDto.getAccount());
+        userLambdaQueryWrapper
+                .eq(User::getAccount, authLoginDto.getAccount())
+                .last("limit 1");
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
         // 判断数据库中是否存在该登录用户的数据
         if (Objects.isNull(userInDatabase)) {
@@ -198,7 +202,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper
                 .eq(User::getAccount, authRetrievePasswordDto.getAccount())
-                .eq(User::getEmail, authRetrievePasswordDto.getEmail());
+                .eq(User::getEmail, authRetrievePasswordDto.getEmail())
+                .last("limit 1");
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
         // 判断数据库中是否存在该登录用户的数据
         if (Objects.isNull(userInDatabase)) {
@@ -237,7 +242,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper
                 .eq(User::getAccount, authEmailCodeDto.getAccount())
-                .eq(User::getEmail, authEmailCodeDto.getEmail());
+                .eq(User::getEmail, authEmailCodeDto.getEmail())
+                .last("limit 1");
         User userInDatabase = userMapper.selectOne(userLambdaQueryWrapper);
         // 判断数据库中是否存在该登录用户的数据
         if (Objects.isNull(userInDatabase)) {

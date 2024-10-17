@@ -1,6 +1,7 @@
 package top.sharehome.springbootinittemplate.config.log.aop;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +19,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.R;
+import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.exception.CustomizeException;
+import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.utils.net.NetUtils;
@@ -29,6 +32,7 @@ import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 日志的切面类
@@ -93,7 +97,7 @@ public class ControllerLogAop {
      * @param returnResult  响应结果
      */
     @AfterReturning(value = "pointCutMethod()&&@annotation(controllerLog)", returning = "returnResult")
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"CallToPrintStackTrace", "rawtypes"})
     public void doAfterReturning(JoinPoint joinPoint, ControllerLog controllerLog, Object returnResult) {
         try {
             Log log = new Log();
@@ -108,7 +112,9 @@ public class ControllerLogAop {
             // 设置操作结果
             log.setResult(Objects.isNull(returnResult) || (returnResult instanceof R<?> r && r.getCode() == R.SUCCESS) ? 0 : 1);
             // 设置响应内容
-            Map resMap = JSON.parseObject(JSON.toJSONString(returnResult), Map.class);
+            TypeReference<HashMap<String, Object>> type = new TypeReference<>() {
+            };
+            HashMap<String, Object> resMap = JSON.parseObject(JSON.toJSONString(returnResult), type);
             if (Objects.isNull(resMap)) {
                 log.setJson("{}");
             } else {
@@ -139,6 +145,9 @@ public class ControllerLogAop {
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (Objects.isNull(servletRequestAttributes)) {
+                throw new CustomizeReturnException(ReturnCode.USER_SENT_INVALID_REQUEST, "无法获取请求");
+            }
             HttpServletRequest request = servletRequestAttributes.getRequest();
             log.setUri(request.getRequestURI());
             // 请求方法类型
@@ -157,7 +166,7 @@ public class ControllerLogAop {
                 Object[] args = joinPoint.getArgs();
                 for (Object arg : args) {
                     if (Objects.nonNull(arg) && !isFilterObject(arg)) {
-                        Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
+                        HashMap<String, Object> map = JSON.parseObject(JSON.toJSONString(arg), type);
                         if (MapUtils.isNotEmpty(map)) {
                             Arrays.stream(MASK_PARAMS).forEach(map::remove);
                             Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
@@ -203,7 +212,7 @@ public class ControllerLogAop {
      * @param e             异常
      */
     @AfterThrowing(value = "pointCutMethod()&&@annotation(controllerLog)", throwing = "e")
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"CallToPrintStackTrace"})
     public void doAfterThrowing(JoinPoint joinPoint, ControllerLog controllerLog, final Throwable e) {
         try {
             Log log = new Log();
@@ -218,7 +227,7 @@ public class ControllerLogAop {
             // 设置操作结果
             log.setResult(1);
             // 设置响应内容
-            HashMap jsonMap = new HashMap<>();
+            HashMap<String, Object> jsonMap = new HashMap<>();
             if (e instanceof CustomizeException customizeException) {
                 jsonMap.put("code", customizeException.getReturnCode().getCode());
                 jsonMap.put("name", customizeException.getReturnCode().name());
@@ -246,6 +255,9 @@ public class ControllerLogAop {
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (Objects.isNull(servletRequestAttributes)) {
+                throw new CustomizeReturnException(ReturnCode.USER_SENT_INVALID_REQUEST, "无法获取请求");
+            }
             HttpServletRequest request = servletRequestAttributes.getRequest();
             log.setUri(request.getRequestURI());
             // 请求方法类型
@@ -263,7 +275,9 @@ public class ControllerLogAop {
                 Object[] args = joinPoint.getArgs();
                 for (Object arg : args) {
                     if (Objects.nonNull(arg) && !isFilterObject(arg)) {
-                        Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
+                        TypeReference<HashMap<String, Object>> type = new TypeReference<>() {
+                        };
+                        HashMap<String, Object> map = JSON.parseObject(JSON.toJSONString(arg), type);
                         if (MapUtils.isNotEmpty(map)) {
                             Arrays.stream(MASK_PARAMS).forEach(map::remove);
                             Arrays.stream(controllerLog.maskParams()).forEach(map::remove);
@@ -288,7 +302,7 @@ public class ControllerLogAop {
             // 设置接口访问耗时
             StopWatch stopWatch = COST_TIME_THREAD_LOCAL.get();
             stopWatch.stop();
-            long time = stopWatch.getTime();
+            long time = stopWatch.getTime(TimeUnit.NANOSECONDS);
             log.setTime(time);
             // 插入数据库
             LOG_MAPPER.insert(log);
@@ -306,7 +320,7 @@ public class ControllerLogAop {
      *
      * @param obj 校验过滤对象
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "BooleanMethodIsAlwaysInverted"})
     private boolean isFilterObject(Object obj) {
         Class<?> clazz = obj.getClass();
         if (clazz.isArray()) {

@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.idempotent.aop;
 
 import cn.dev33.satoken.SaManager;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -61,7 +62,6 @@ public class IdempotentAop {
      * 前置通知
      */
     @Before("pointCutMethod()&&@annotation(idempotent)")
-    @SuppressWarnings({"rawtypes"})
     public void doBefore(JoinPoint joinPoint, Idempotent idempotent) {
         if (idempotent.time() <= 0) {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "请求幂等时间必须大于0");
@@ -70,6 +70,9 @@ public class IdempotentAop {
         long interval = idempotent.timeUnit().toMillis(idempotent.time());
         // 获取请求方法和URI
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (Objects.isNull(servletRequestAttributes)) {
+            throw new CustomizeReturnException(ReturnCode.USER_SENT_INVALID_REQUEST, "无法获取请求");
+        }
         HttpServletRequest request = servletRequestAttributes.getRequest();
         String requestMethod = request.getMethod();
         String uri = request.getRequestURI();
@@ -86,7 +89,9 @@ public class IdempotentAop {
             Object[] args = joinPoint.getArgs();
             for (Object arg : args) {
                 if (Objects.nonNull(arg) && !isFilterObject(arg)) {
-                    Map map = JSON.parseObject(JSON.toJSONString(arg), Map.class);
+                    TypeReference<HashMap<String, Object>> type = new TypeReference<>() {
+                    };
+                    HashMap<String, Object> map = JSON.parseObject(JSON.toJSONString(arg), type);
                     stringJoiner.add(JSON.toJSONString(map));
                 }
             }
