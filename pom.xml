@@ -118,9 +118,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>group.springframework.ai</groupId>
+                <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
-                <version>${spring.ai.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -177,18 +177,25 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring AI相关 -->
+        <!-- AI 相关依赖配置 -->
+        <!-- 敏感词依赖配置 -->
         <dependency>
-            <groupId>group.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-word</artifactId>
+            <version>0.21.0</version>
+        </dependency>
+        <!-- Spring AI -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.ai</groupId>-->
+        <!--            <artifactId>spring-ai-openai</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-zhipuai</artifactId>
         </dependency>
         <dependency>
-            <groupId>group.springframework.ai</groupId>
-            <artifactId>spring-ai-zhipuai-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>group.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-ollama</artifactId>
         </dependency>
 
         <!-- Netty 依赖配置 -->
@@ -475,12 +482,19 @@
             <artifactId>jte</artifactId>
             <version>${jte.version}</version>
         </dependency>
-        
+
         <!-- Knife4j 依赖配置 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>${knife4j.openapi3.starter.version}</version>
+        </dependency>
+
+        <!-- 中文繁简体转换 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>opencc4j</artifactId>
+            <version>${opencc4j.version}</version>
         </dependency>
 
         <!-- XXL-JOB 分布式定时任务依赖配置 -->
@@ -533,13 +547,6 @@
             <version>${antlr.fix.version}</version>
         </dependency>
 
-        <!-- [测试所需依赖] 中文繁简体转换 -->
-        <dependency>
-            <groupId>com.github.houbb</groupId>
-            <artifactId>opencc4j</artifactId>
-            <version>${opencc4j.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <!-- 项目构建概况 -->
@@ -637,6 +644,22 @@
             <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
             </releases>
         </repository>
     </repositories>

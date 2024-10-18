@@ -36,7 +36,7 @@ public class Ip2RegionConfiguration {
      * 初始化配置类
      * 由于打包之后Ip2Region的数据文件就不能以Path形式导入进来，所以直接在系统临时文件夹创建一个ip2region.xdb文件
      */
-    @Bean(destroyMethod = "destroy")
+    @Bean(name = "Ip2RegionConfiguration0", destroyMethod = "destroy")
     @Order(1)
     public Ip2RegionConfiguration initConfiguration() {
         String fileName = "ip2region" + File.separator + "ip2region.xdb";

@@ -1,13 +1,11 @@
 package top.sharehome.springbootinittemplate.oss;
 
-import jakarta.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import top.sharehome.springbootinittemplate.service.FileService;
 import top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
@@ -23,9 +21,6 @@ import java.io.IOException;
  */
 @SpringBootTest
 public class OssTest {
-
-    @Resource
-    private FileService fileService;
 
     /**
      * 测试腾讯云COS工具类——上传

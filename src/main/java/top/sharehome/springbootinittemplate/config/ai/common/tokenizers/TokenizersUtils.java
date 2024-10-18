@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 import top.sharehome.springbootinittemplate.model.common.Tuple;
@@ -21,14 +20,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * 题词分词器
+ * 提示词分词器
  * 💡源自GPT2 BPE（字节对编码）算法（https://github.com/openai/gpt-2/blob/master/src/encoder.py）
  *
  * @author AntonyCheng
  */
-@Component
 @Slf4j
-public class TokenizersHelper {
+public class TokenizersUtils {
 
     private final static Pattern PATTERN = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 

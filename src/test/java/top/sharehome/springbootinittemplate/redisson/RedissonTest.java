@@ -1,6 +1,5 @@
 package top.sharehome.springbootinittemplate.redisson;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @author AntonyCheng
  */
 @SpringBootTest
-@Slf4j
 public class RedissonTest {
 
     /**

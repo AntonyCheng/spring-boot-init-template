@@ -247,46 +247,46 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  # Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
-  ai:
-    # Open AI
-    openai:
-      # OpenAI 密钥
-      api-key: sk-xxx
-      chat:
-        options:
-          # 模型名称
-          model: gpt-3.5-turbo
-          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-          temperature: 0.9
-          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-          top-p: 0.3
-    # 智谱 AI
-    zhipuai:
-      # 智谱AI 密钥
-      api-key: xxx.xxx
-      chat:
-        options:
-          # 模型名称
-          model: GLM-3-Turbo
-          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-          temperature: 0.9
-          # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-          top-p: 0.3
-    # Ollama AI
-    ollama:
-      # Ollama 服务地址
-      base-url: http://177.177.177.109:11434
-      chat:
-        options:
-          # 模型名称
-          model: llama3.1:8b-instruct-q8_0
-          # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-          temperature: 0.9
-          # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
-          top-k: 10
-          # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
-          top-p: 0.3
+  ## Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
+  #ai:
+  #  # Open AI
+  #  openai:
+  #    # OpenAI 密钥
+  #    api-key: sk-xxx
+  #    chat:
+  #      options:
+  #        # 模型名称
+  #        model: gpt-3.5-turbo
+  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+  #        temperature: 0.9
+  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+  #        top-p: 0.3
+  #  # 智谱 AI
+  #  zhipuai:
+  #    # 智谱AI 密钥
+  #    api-key: xxx.xxx
+  #    chat:
+  #      options:
+  #        # 模型名称
+  #        model: GLM-3-Turbo
+  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+  #        temperature: 0.9
+  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
+  #        top-p: 0.3
+  #  # Ollama AI
+  #  ollama:
+  #    # Ollama 服务地址
+  #    base-url: http://177.177.177.109:11434
+  #    chat:
+  #      options:
+  #        # 模型名称
+  #        model: llama3.1:8b-instruct-q8_0
+  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
+  #        temperature: 0.9
+  #        # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
+  #        top-k: 10
+  #        # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
+  #        top-p: 0.3
   data:
     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
     redis:
@@ -509,22 +509,22 @@ easy-es:
   enable: false
   # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
   address: 177.177.177.105:9200
-    # 如果无账号密码则可不配置此行
-    #username:
-    # 如果无账号密码则可不配置此行
-    #password:
-    # 多数据源
-    #dynamic:
-    #datasource:
-    #ds1:
-    #address: 177.177.177.105:9201
-    # 如果无账号密码则可不配置此行
-    #username:
-    # 如果无账号密码则可不配置此行
-    #password:
-    #...（以下配置和单数据源类似）
-  #ds2:
-  #...（以下配置和ds1相似）
+  ## 如果无账号密码则可不配置此行
+  #username:
+  ## 如果无账号密码则可不配置此行
+  #password:
+  ## 多数据源
+  #dynamic:
+  #  datasource:
+  #    ds1:
+  #      address: 177.177.177.105:9201
+  #      # 如果无账号密码则可不配置此行
+  #      username:
+  #      # 如果无账号密码则可不配置此行
+  #      password:
+  #      #...（以下配置和单数据源类似）
+  #    ds2:
+  #      #...（以下配置和ds1相似）
   # 默认为http 可缺省
   schema: http
   # 打印banner 若您不期望打印banner,可配置为false（预先关闭）
@@ -668,6 +668,35 @@ sa-token:
 ip2region:
   # 数据加载方式
   load-type: memory
+
+# 敏感词配置
+sensitive-word:
+  # 是否忽略大小写
+  is-ignore-case: true
+  # 是否忽略半角圆角
+  is-ignore-width: true
+  # 是否忽略数字的写法
+  is-ignore-num-style: true
+  # 是否忽略中文的书写格式
+  is-ignore-chinese-style: true
+  # 是否忽略英文的书写格式
+  is-ignore-english-style: true
+  # 是否忽略重复词
+  is-ignore-repeat: false
+  # 是否启用数字检测
+  enable-num-check: false
+  # 是否启用邮箱检测
+  enable-email-check: false
+  # 是否启用链接检测
+  enable-url-check: false
+  # 是否启用IPv4检测
+  enable-ipv4-check: false
+  # 是否启用敏感单词检测
+  enable-word-check: true
+  # 是否启用默认黑名单
+  enable-default-denys: false
+  # 数字检测，自定义指定长度
+  num-check-len: 8
 
 # 请求参数加密校验配置
 encrypt:

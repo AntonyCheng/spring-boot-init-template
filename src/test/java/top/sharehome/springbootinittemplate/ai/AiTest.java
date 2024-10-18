@@ -4,8 +4,9 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
+import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
+import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -16,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class AiTest {
 
-    @Resource
-    private OpenAiChatModel openAiChatModel;
+//    @Resource
+//    private OpenAiChatModel openAiChatModel;
 
     @Resource
     private ZhiPuAiChatModel zhiPuAiChatModel;
@@ -25,14 +26,22 @@ public class AiTest {
     @Resource
     private OllamaChatModel ollamaChatModel;
 
-    @Test
-    public void testOpenAi() {
-        System.out.println(openAiChatModel.call("你好"));
-    }
+//    @Test
+//    public void testOpenAi() {
+//        System.out.println(openAiChatModel.call("你好"));
+//    }
 
     @Test
     public void testZhiPuAi() {
-        System.out.println(zhiPuAiChatModel.call("你好"));
+        ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi("f403f6d2d967699b5db06313391af8c9.lE9g6q5Xl3WAZjEw");
+        ZhiPuAiChatModel chatModel = new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions
+                .builder()
+                .withModel(ZhiPuAiApi.ChatModel.GLM_3_Turbo.getValue())
+                .withTemperature(0.4)
+                .withMaxTokens(200)
+                .build());
+        System.out.println(chatModel.call("你好"));
+//        System.out.println(zhiPuAiChatModel.call("你好"));
     }
 
     @Test
