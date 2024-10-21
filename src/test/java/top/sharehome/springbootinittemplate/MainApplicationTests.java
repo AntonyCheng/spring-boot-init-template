@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate;
 
+import cn.hutool.core.date.StopWatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
@@ -15,6 +16,8 @@ import top.sharehome.springbootinittemplate.service.AuthService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static top.sharehome.springbootinittemplate.common.base.Constants.*;
 
 /**
  * 测试类
@@ -145,8 +148,24 @@ class MainApplicationTests {
         }
     }
 
+    public static String test(String s){
+        String temp = s.toString();
+        if (!REGEX_NUMBER_AND_LETTER_AND_CHINESE_CHARACTER_PATTERN.matcher(temp).matches()) {
+            return temp;
+        }
+        int maskCount = (int) Math.ceil((double) temp.length() / 2);
+        String start = temp.substring(0, temp.length() - maskCount);
+        return start + "*".repeat(maskCount);
+    }
+
     public static void main(String[] args) {
         System.out.println("Hello World");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        System.out.println(test("中国北京市海淀区翻斗花园一栋1单元"));
+        stopWatch.stop();
+        System.out.println(stopWatch.getTotalTimeMillis());
+        System.out.println("1111+"+"1".substring(0, 0));
     }
 
 }

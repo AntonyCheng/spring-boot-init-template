@@ -669,34 +669,36 @@ ip2region:
   # 数据加载方式
   load-type: memory
 
-# 敏感词配置
-sensitive-word:
-  # 是否忽略大小写
-  is-ignore-case: true
-  # 是否忽略半角圆角
-  is-ignore-width: true
-  # 是否忽略数字的写法
-  is-ignore-num-style: true
-  # 是否忽略中文的书写格式
-  is-ignore-chinese-style: true
-  # 是否忽略英文的书写格式
-  is-ignore-english-style: true
-  # 是否忽略重复词
-  is-ignore-repeat: false
-  # 是否启用数字检测
-  enable-num-check: false
-  # 是否启用邮箱检测
-  enable-email-check: false
-  # 是否启用链接检测
-  enable-url-check: false
-  # 是否启用IPv4检测
-  enable-ipv4-check: false
-  # 是否启用敏感单词检测
-  enable-word-check: true
-  # 是否启用默认黑名单
-  enable-default-denys: false
-  # 数字检测，自定义指定长度
-  num-check-len: 8
+# 敏感数据配置
+sensitive:
+  # 敏感词
+  word:
+    # 是否忽略大小写
+    is-ignore-case: true
+    # 是否忽略半角圆角
+    is-ignore-width: true
+    # 是否忽略数字的写法
+    is-ignore-num-style: true
+    # 是否忽略中文的书写格式
+    is-ignore-chinese-style: true
+    # 是否忽略英文的书写格式
+    is-ignore-english-style: true
+    # 是否忽略重复词
+    is-ignore-repeat: false
+    # 是否启用数字检测
+    enable-num-check: false
+    # 是否启用邮箱检测
+    enable-email-check: false
+    # 是否启用链接检测
+    enable-url-check: false
+    # 是否启用IPv4检测
+    enable-ipv4-check: false
+    # 是否启用敏感单词检测
+    enable-word-check: true
+    # 是否启用默认黑名单
+    enable-default-denys: false
+    # 数字检测，自定义指定长度
+    num-check-len: 8
 
 # 请求参数加密校验配置
 encrypt:

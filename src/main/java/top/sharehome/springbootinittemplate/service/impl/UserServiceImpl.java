@@ -17,11 +17,11 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
@@ -350,7 +350,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 if (StringUtils.isBlank(user.getEmail())) {
                     throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在邮箱[账号：" + user.getAccount() + " 邮箱：" + user.getEmail() + " 名称：" + user.getName() + "]不完整");
                 }
-                if (!user.getEmail().matches(Constants.REGEX_MAIL)) {
+                if (!Constants.REGEX_EMAIL_PATTERN.matcher(user.getEmail()).matches()) {
                     throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在邮箱[" + user.getEmail() + "]格式错误");
                 }
                 if (StringUtils.isBlank(user.getName())) {

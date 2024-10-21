@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.sensitive.plugins;
+package top.sharehome.springbootinittemplate.config.sensitive.word.plugins;
 
 import com.github.houbb.sensitive.word.api.IWordAllow;
 import org.apache.commons.lang3.ArrayUtils;

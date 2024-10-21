@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 邮件配置
@@ -414,8 +413,7 @@ public class MailManager {
      * @return 返回验证结果
      */
     private boolean isValidEmail(String email) {
-        Pattern pattern = Pattern.compile(Constants.REGEX_MAIL);
-        Matcher matcher = pattern.matcher(email);
+        Matcher matcher = Constants.REGEX_EMAIL_PATTERN.matcher(email);
         return matcher.matches();
     }
 

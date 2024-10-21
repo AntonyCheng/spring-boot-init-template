@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.sensitive;
+package top.sharehome.springbootinittemplate.config.sensitive.word;
 
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import com.github.houbb.sensitive.word.support.deny.WordDenys;
@@ -14,26 +14,26 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.sharehome.springbootinittemplate.config.ip2region.properties.Ip2RegionProperties;
-import top.sharehome.springbootinittemplate.config.sensitive.plugins.DefaultWordAllow;
-import top.sharehome.springbootinittemplate.config.sensitive.plugins.DefaultWordDeny;
-import top.sharehome.springbootinittemplate.config.sensitive.properties.SensitiveProperties;
+import top.sharehome.springbootinittemplate.config.sensitive.word.plugins.DefaultWordAllow;
+import top.sharehome.springbootinittemplate.config.sensitive.word.plugins.DefaultWordDeny;
+import top.sharehome.springbootinittemplate.config.sensitive.word.properties.SensitiveWordProperties;
 
 import java.util.*;
 
 /**
- * 离线IP库配置
+ * 敏感词配置
  *
  * @author AntonyCheng
  */
 @Configuration
 @EnableConfigurationProperties(Ip2RegionProperties.class)
 @Slf4j
-public class SensitiveConfiguration {
+public class SensitiveWordConfiguration {
 
     private static SensitiveWordBs sensitiveWordBs = null;
 
     @Resource
-    private SensitiveProperties sensitiveProperties;
+    private SensitiveWordProperties sensitiveWordProperties;
 
     @Resource
     private DefaultWordAllow defaultWordAllow;
@@ -41,34 +41,34 @@ public class SensitiveConfiguration {
     @Resource
     private DefaultWordDeny defaultWordDeny;
 
-    @Bean(name = "SensitiveConfiguration0", destroyMethod = "destroy")
-    public SensitiveConfiguration create() {
+    @Bean(name = "SensitiveWordConfiguration", destroyMethod = "destroy")
+    public SensitiveWordConfiguration create() {
         if (Objects.isNull(sensitiveWordBs)) {
             sensitiveWordBs = SensitiveWordBs.newInstance()
                     // 忽略大小写
-                    .ignoreCase(sensitiveProperties.getIsIgnoreCase())
+                    .ignoreCase(sensitiveWordProperties.getIsIgnoreCase())
                     // 忽略半角圆角
-                    .ignoreWidth(sensitiveProperties.getIsIgnoreWidth())
+                    .ignoreWidth(sensitiveWordProperties.getIsIgnoreWidth())
                     // 忽略数字的写法
-                    .ignoreNumStyle(sensitiveProperties.getIsIgnoreNumStyle())
+                    .ignoreNumStyle(sensitiveWordProperties.getIsIgnoreNumStyle())
                     // 忽略中文的书写格式
-                    .ignoreChineseStyle(sensitiveProperties.getIsIgnoreChineseStyle())
+                    .ignoreChineseStyle(sensitiveWordProperties.getIsIgnoreChineseStyle())
                     // 忽略英文的书写格式
-                    .ignoreEnglishStyle(sensitiveProperties.getIsIgnoreEnglishStyle())
+                    .ignoreEnglishStyle(sensitiveWordProperties.getIsIgnoreEnglishStyle())
                     // 忽略重复词
-                    .ignoreRepeat(sensitiveProperties.getIsIgnoreRepeat())
+                    .ignoreRepeat(sensitiveWordProperties.getIsIgnoreRepeat())
                     // 是否启用数字检测
-                    .enableNumCheck(sensitiveProperties.getEnableNumCheck())
+                    .enableNumCheck(sensitiveWordProperties.getEnableNumCheck())
                     // 是有启用邮箱检测
-                    .enableEmailCheck(sensitiveProperties.getEnableEmailCheck())
+                    .enableEmailCheck(sensitiveWordProperties.getEnableEmailCheck())
                     // 是否启用链接检测
-                    .enableUrlCheck(sensitiveProperties.getEnableUrlCheck())
+                    .enableUrlCheck(sensitiveWordProperties.getEnableUrlCheck())
                     // 是否启用IPv4检测
-                    .enableIpv4Check(sensitiveProperties.getEnableIpv4Check())
+                    .enableIpv4Check(sensitiveWordProperties.getEnableIpv4Check())
                     // 是否启用敏感单词检测
-                    .enableWordCheck(sensitiveProperties.getEnableWordCheck())
+                    .enableWordCheck(sensitiveWordProperties.getEnableWordCheck())
                     // 数字检测，自定义指定长度
-                    .numCheckLen(sensitiveProperties.getNumCheckLen())
+                    .numCheckLen(sensitiveWordProperties.getNumCheckLen())
                     // 词对应的标签
                     .wordTag(WordTags.none())
                     // 忽略的字符
@@ -78,7 +78,7 @@ public class SensitiveConfiguration {
                     // 单词白名单
                     .wordAllow(new DefaultWordAllow())
                     // 单词黑名单
-                    .wordDeny(sensitiveProperties.getEnableDefaultDenys() ? WordDenys.chains(WordDenys.defaults(), new DefaultWordDeny()) : new DefaultWordDeny())
+                    .wordDeny(sensitiveWordProperties.getEnableDefaultDenys() ? WordDenys.chains(WordDenys.defaults(), new DefaultWordDeny()) : new DefaultWordDeny())
                     .init();
         }
         return this;

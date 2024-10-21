@@ -9,12 +9,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
-import top.sharehome.springbootinittemplate.config.captcha.model.Captcha;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
+import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER_STR;
 
 /**
  * 注册Dto类
@@ -32,7 +31,7 @@ public class AuthRegisterDto implements Serializable {
      */
     @Size(min = 2, max = 16, message = "账号长度介于2-16位之间", groups = {PostGroup.class})
     @NotBlank(message = "账号不能为空", groups = {PostGroup.class})
-    @Pattern(regexp = REGEX_NUMBER_AND_LETTER, message = "账户名称包含特殊字符", groups = {PostGroup.class})
+    @Pattern(regexp = REGEX_NUMBER_AND_LETTER_STR, message = "账户名称包含特殊字符", groups = {PostGroup.class})
     private String account;
 
     /**

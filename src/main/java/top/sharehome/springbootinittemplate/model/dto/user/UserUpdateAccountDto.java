@@ -12,7 +12,7 @@ import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import java.io.Serial;
 import java.io.Serializable;
 
-import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER;
+import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_NUMBER_AND_LETTER_STR;
 
 /**
  * 用户更新账号Dto类
@@ -30,7 +30,7 @@ public class UserUpdateAccountDto implements Serializable {
      */
     @Size(min = 2, max = 16, message = "账号长度介于2-16位之间", groups = {PutGroup.class})
     @NotBlank(message = "账号不能为空", groups = {PutGroup.class})
-    @Pattern(regexp = REGEX_NUMBER_AND_LETTER, message = "账户名称包含特殊字符", groups = {PutGroup.class})
+    @Pattern(regexp = REGEX_NUMBER_AND_LETTER_STR, message = "账户名称包含特殊字符", groups = {PutGroup.class})
     private String newAccount;
 
     @Serial

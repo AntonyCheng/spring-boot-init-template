@@ -2,20 +2,20 @@ package top.sharehome.springbootinittemplate.utils.sensitive;
 
 import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.sensitive.SensitiveConfiguration;
+import top.sharehome.springbootinittemplate.config.sensitive.word.SensitiveWordConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 敏感词检查器
+ * 敏感词工具类
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class SensitiveUtils {
+public class SensitiveWordUtils {
 
-    private static final SensitiveConfiguration SENSITIVE = SpringContextHolder.getBean("SensitiveConfiguration0", SensitiveConfiguration.class);
+    private static final SensitiveWordConfiguration SENSITIVE = SpringContextHolder.getBean("SensitiveWordConfiguration", SensitiveWordConfiguration.class);
 
     public static Boolean hasSensitive(String target) {
         return SENSITIVE.hasSensitive(target);

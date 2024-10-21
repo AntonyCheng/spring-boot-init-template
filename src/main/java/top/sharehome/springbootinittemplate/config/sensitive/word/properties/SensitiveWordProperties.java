@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.sensitive.properties;
+package top.sharehome.springbootinittemplate.config.sensitive.word.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "sensitive-word")
-public class SensitiveProperties {
+@ConfigurationProperties(prefix = "sensitive.word")
+public class SensitiveWordProperties {
 
     /**
      * 忽略大小写
