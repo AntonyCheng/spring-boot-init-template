@@ -98,55 +98,55 @@ public interface Constants {
      * 只包含数字和英文的正则表达式
      */
     String REGEX_NUMBER_AND_LETTER_STR = "^[0-9a-zA-Z]+$";
-    Pattern REGEX_NUMBER_AND_LETTER_PATTERN = Pattern.compile("^[0-9a-zA-Z]+$");
+    Pattern REGEX_NUMBER_AND_LETTER_PATTERN = Pattern.compile(REGEX_NUMBER_AND_LETTER_STR);
 
     /**
      * 只包含汉字的正则表达式
      */
     String REGEX_CHINESE_CHARACTER_STR = "^[\\u4e00-\\u9fa5]+$";
-    Pattern REGEX_CHINESE_CHARACTER_PATTERN = Pattern.compile("^[\\u4e00-\\u9fa5]+$");
+    Pattern REGEX_CHINESE_CHARACTER_PATTERN = Pattern.compile(REGEX_CHINESE_CHARACTER_STR);
 
     /**
      * 只包含数字、英文和汉字的正则表达式
      */
     String REGEX_NUMBER_AND_LETTER_AND_CHINESE_CHARACTER_STR = "^[0-9a-zA-Z\\u4e00-\\u9fa5]+$";
-    Pattern REGEX_NUMBER_AND_LETTER_AND_CHINESE_CHARACTER_PATTERN = Pattern.compile("^[0-9a-zA-Z\\u4e00-\\u9fa5]+$");
+    Pattern REGEX_NUMBER_AND_LETTER_AND_CHINESE_CHARACTER_PATTERN = Pattern.compile(REGEX_NUMBER_AND_LETTER_AND_CHINESE_CHARACTER_STR);
 
     /**
      * 中文名字的正则表达式
      */
     String REGEX_CHINESE_NAME_STR = "^[\\u4e00-\\u9fa5·]{2,16}$";
-    Pattern REGEX_CHINESE_NAME_PATTERN = Pattern.compile("^[\\u4e00-\\u9fa5·]{2,16}$");
+    Pattern REGEX_CHINESE_NAME_PATTERN = Pattern.compile(REGEX_CHINESE_NAME_STR);
 
     /**
      * 身份证的正则表达式
      */
     String REGEX_ID_CARD_STR = "^[1-9]\\d{5}((((19|[2-9][0-9])\\d{2})(0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|(((19|[2-9][0-9])\\d{2})(0[13456789]|1[012])(0[1-9]|[12][0-9]|30))|(((19|[2-9][0-9])\\d{2})02(0[1-9]|1[0-9]|2[0-8]))|(((1[6-9]|[2-9][0-9])(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))0229))\\d{3}[0-9Xx]$";
-    Pattern REGEX_ID_CARD_PATTERN = Pattern.compile("^[1-9]\\d{5}((((19|[2-9][0-9])\\d{2})(0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|(((19|[2-9][0-9])\\d{2})(0[13456789]|1[012])(0[1-9]|[12][0-9]|30))|(((19|[2-9][0-9])\\d{2})02(0[1-9]|1[0-9]|2[0-8]))|(((1[6-9]|[2-9][0-9])(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))0229))\\d{3}[0-9Xx]$");
+    Pattern REGEX_ID_CARD_PATTERN = Pattern.compile(REGEX_ID_CARD_STR);
 
     /**
      * 中国手机号的正则表达式
      */
     String REGEX_CHINESE_PHONE_STR = "^1[3-9](\\d{9})$";
-    Pattern REGEX_CHINESE_PHONE_PATTERN = Pattern.compile("^1[3-9](\\d{9})$");
+    Pattern REGEX_CHINESE_PHONE_PATTERN = Pattern.compile(REGEX_CHINESE_PHONE_STR);
 
     /**
      * 邮箱的正则表达式
      */
     String REGEX_EMAIL_STR = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
-    Pattern REGEX_EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$");
+    Pattern REGEX_EMAIL_PATTERN = Pattern.compile(REGEX_EMAIL_STR);
 
     /**
      * 车牌的正则表达式
      */
     String REGEX_LICENSE_PLATE_STR = "^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-HJ-NP-Z][A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]$";
-    Pattern REGEX_LICENSE_PLATE_PATTERN = Pattern.compile("^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领][A-HJ-NP-Z][A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]$");
+    Pattern REGEX_LICENSE_PLATE_PATTERN = Pattern.compile(REGEX_LICENSE_PLATE_STR);
 
     /**
      * 银行卡的正则表达式
      */
-    String REGEX_BANK_CARD_STR = "^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9]{2})[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$";
-    Pattern REGEX_BANK_CARD_PATTERN = Pattern.compile("^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9]{2})[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$");
+    String REGEX_BANK_CARD_STR = "^([1-9])(\\d{15}|\\d{18})$";
+    Pattern REGEX_BANK_CARD_PATTERN = Pattern.compile(REGEX_BANK_CARD_STR);
 
     /**
      * 未知文件类型后缀
