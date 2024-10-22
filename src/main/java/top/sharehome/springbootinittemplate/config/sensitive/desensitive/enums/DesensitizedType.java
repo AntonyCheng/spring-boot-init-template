@@ -18,6 +18,14 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.*;
 public enum DesensitizedType {
 
     /**
+     * 全字符串脱敏示例："123abc!@#ABC一二三安东尼" ==> "******************"
+     */
+    All(s -> {
+        String temp = s.toString();
+        return temp.length() <= 20 ? "*".repeat(temp.length()) : "********************";
+    }),
+
+    /**
      * 用户ID脱敏示例：187382374829948437 ==> "0"
      */
     USER_ID(s -> "0"),
@@ -120,7 +128,7 @@ public enum DesensitizedType {
     /**
      * 银行卡脱敏示例："1111222233334444555" ==> "1111************555"
      */
-    BANK_CARD(s ->{
+    BANK_CARD(s -> {
         String temp = s.toString();
         if (!REGEX_BANK_CARD_PATTERN.matcher(temp).matches()) {
             return temp;
@@ -129,6 +137,62 @@ public enum DesensitizedType {
         String start = temp.substring(0, 4);
         String end = temp.substring(16);
         return start + "*".repeat(maskCount) + end;
+    }),
+
+    /**
+     * IPv4地址脱敏示例："127.0.0.1" ==> "127.*.*.*"
+     */
+    IPV_4(s -> {
+        String temp = s.toString();
+        if (Objects.equal(temp, "localhost")) {
+            return "*.*.*.*";
+        }
+        if (!REGEX_IPV_4_PATTERN.matcher(temp).matches()) {
+            return temp;
+        }
+        String start = temp.split("\\.")[0];
+        return start + ".*.*.*";
+    }),
+
+    /**
+     * IPv6地址脱敏示例：
+     * "1234:1234:1234:1234:1234:1234:1234:1234" ==> "1234:*:*:*:*:*:*:*"
+     * "::"/"::1" ==> "*:*:*:*:*:*:*:*"
+     */
+    IPV_6(s -> {
+        String temp = s.toString();
+        if (Objects.equal(temp, "localhost")) {
+            return "*:*:*:*:*:*:*:*";
+        }
+        if (!REGEX_IPV_6_PATTERN.matcher(temp).matches()) {
+            return temp;
+        }
+        if (temp.startsWith("::")) {
+            return "*:*:*:*:*:*:*:*";
+        }
+        String start = temp.split(":")[1];
+        return start + ":*:*:*:*:*:*:*";
+    }),
+
+    /**
+     * MAC地址脱敏示例：
+     * "00:1A:C2:7B:00:47" ==> "00:*:*:*:*:*"
+     * "00-1A-C2-7B-00-47" ==> "00-*-*-*-*-*"
+     */
+    MAC(s -> {
+        String temp = s.toString();
+        if (!REGEX_MAC_PATTERN.matcher(temp).matches()) {
+            return temp;
+        }
+        String[] split1 = temp.split(":");
+        String[] split2 = temp.split("-");
+        if (split1.length > 1) {
+            String start = split1[0];
+            return start + ":*:*:*:*:*";
+        } else {
+            String start = split2[0];
+            return start + "-*-*-*-*-*";
+        }
     });
 
     private final Function<Object, String> desensitizeFunction;
