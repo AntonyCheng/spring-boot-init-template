@@ -1,9 +1,9 @@
 package top.sharehome.springbootinittemplate.config.sensitive.desensitive.enums;
 
-import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import static top.sharehome.springbootinittemplate.common.base.Constants.*;
@@ -20,10 +20,20 @@ public enum DesensitizedType {
     /**
      * 全字符串脱敏示例："123abc!@#ABC一二三安东尼" ==> "******************"
      */
-    All(s -> {
+    ALL(s -> {
         String temp = s.toString();
         return temp.length() <= 20 ? "*".repeat(temp.length()) : "********************";
     }),
+
+    /**
+     * 空串脱敏示例："123abc!@#" ==> ""
+     */
+    TO_EMPTY(s -> ""),
+
+    /**
+     * 空脱敏示例："123abc!@#" ==> null
+     */
+    TO_NULL(s -> null),
 
     /**
      * 用户ID脱敏示例：187382374829948437 ==> "0"
@@ -98,7 +108,7 @@ public enum DesensitizedType {
         }
         String domain = temp.split("@")[0];
         String suffix = "@" + temp.split("@")[1];
-        if (Objects.equal(domain.length(), 1)) {
+        if (Objects.equals(domain.length(), 1)) {
             return "*" + suffix;
         }
         int maskCount = domain.length() <= 10 ? domain.length() - 1 : 10;
@@ -144,7 +154,7 @@ public enum DesensitizedType {
      */
     IPV_4(s -> {
         String temp = s.toString();
-        if (Objects.equal(temp, "localhost")) {
+        if (Objects.equals(temp, "localhost")) {
             return "*.*.*.*";
         }
         if (!REGEX_IPV_4_PATTERN.matcher(temp).matches()) {
@@ -161,7 +171,7 @@ public enum DesensitizedType {
      */
     IPV_6(s -> {
         String temp = s.toString();
-        if (Objects.equal(temp, "localhost")) {
+        if (Objects.equals(temp, "localhost")) {
             return "*:*:*:*:*:*:*:*";
         }
         if (!REGEX_IPV_6_PATTERN.matcher(temp).matches()) {
@@ -195,6 +205,6 @@ public enum DesensitizedType {
         }
     });
 
-    private final Function<Object, String> desensitizeFunction;
+    private final Function<Object, String> function;
 
 }
