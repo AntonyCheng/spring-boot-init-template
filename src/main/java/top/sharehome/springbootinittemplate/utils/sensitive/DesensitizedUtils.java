@@ -3,7 +3,7 @@ package top.sharehome.springbootinittemplate.utils.sensitive;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import top.sharehome.springbootinittemplate.config.sensitive.desensitive.enums.DesensitizedType;
+import top.sharehome.springbootinittemplate.config.sensitive.desensitize.enums.DesensitizedType;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.sensitive.desensitive.enums;
+package top.sharehome.springbootinittemplate.config.sensitive.desensitize.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

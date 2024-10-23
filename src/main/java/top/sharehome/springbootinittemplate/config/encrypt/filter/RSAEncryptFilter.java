@@ -24,7 +24,7 @@ import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSAEncrypt
 import top.sharehome.springbootinittemplate.config.encrypt.condition.EncryptCondition;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeEncryptException;
 import top.sharehome.springbootinittemplate.utils.encrypt.RSAUtils;
-import top.sharehome.springbootinittemplate.utils.request.ParamsAndBodyRequestWrapper;
+import top.sharehome.springbootinittemplate.utils.servlet.RequestWrapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -85,7 +85,7 @@ public class RSAEncryptFilter implements Filter {
         // 判断本次请求是否包含在RSADecrypt注解方法URI列表中，如果在，那么根据请求体注解（RequestBody）和请求参数注解（RequestParam）进行区分操作
         HandlerMethod handlerMethod = uriMethodMap.get(request.getRequestURI().replace(contextPath, ""));
         if (Objects.nonNull(handlerMethod)) {
-            ParamsAndBodyRequestWrapper paramsAndBodyRequestWrapper = new ParamsAndBodyRequestWrapper(request);
+            RequestWrapper requestWrapper = new RequestWrapper(request);
             Parameter[] parameters = handlerMethod.getMethod().getParameters();
             for (Parameter parameter : parameters) {
                 Annotation[] annotations = parameter.getAnnotations();
@@ -94,7 +94,7 @@ public class RSAEncryptFilter implements Filter {
                     Class<?> parameterType = parameter.getType();
                     Field[] declaredFields = parameterType.getDeclaredFields();
                     ObjectMapper objectMapper = new ObjectMapper();
-                    Object requestBodyObject = objectMapper.readValue(paramsAndBodyRequestWrapper.getInputStream(), parameterType);
+                    Object requestBodyObject = objectMapper.readValue(requestWrapper.getInputStream(), parameterType);
                     for (Field declaredField : declaredFields) {
                         RSAEncrypt annotation = declaredField.getDeclaredAnnotation(RSAEncrypt.class);
                         if (!Objects.equals(declaredField.getType(), String.class) || Objects.isNull(annotation)) {
@@ -124,17 +124,17 @@ public class RSAEncryptFilter implements Filter {
                         } catch (Exception ignore) {
                         }
                     }
-                    paramsAndBodyRequestWrapper.updateOrAddRequestBody(requestBodyObject);
+                    requestWrapper.updateOrAddRequestBody(requestBodyObject);
                 } else if (Arrays.stream(annotations).anyMatch(annotation -> annotation instanceof RequestParam)) {
                     RSAEncrypt annotation = parameter.getDeclaredAnnotation(RSAEncrypt.class);
                     if (!Objects.equals(parameter.getType(), String.class) || Objects.isNull(annotation)) {
                         continue;
                     }
                     String key = parameter.getName();
-                    String value = paramsAndBodyRequestWrapper.getParameter(key);
+                    String value = requestWrapper.getParameter(key);
                     try {
                         String decrypt = RSAUtils.decrypt(value, encryptConfiguration.getRsaPrivateKey());
-                        paramsAndBodyRequestWrapper.updateOrAddParams(key, decrypt);
+                        requestWrapper.updateOrAddParams(key, decrypt);
                     } catch (CustomizeEncryptException e) {
                         response.setContentType("application/json;charset=utf-8");
                         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -146,7 +146,7 @@ public class RSAEncryptFilter implements Filter {
                     }
                 }
             }
-            filterChain.doFilter(paramsAndBodyRequestWrapper, response);
+            filterChain.doFilter(requestWrapper, response);
         } else {
             filterChain.doFilter(request, response);
         }

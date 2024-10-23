@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.utils.request;
+package top.sharehome.springbootinittemplate.utils.servlet;
 
 import com.alibaba.fastjson2.JSON;
 import jakarta.servlet.ReadListener;
@@ -19,12 +19,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 请求参数和请求体修改工具类
+ * 请求修改工具类
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class ParamsAndBodyRequestWrapper extends HttpServletRequestWrapper {
+public class RequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 请求参数Map
@@ -36,7 +36,7 @@ public class ParamsAndBodyRequestWrapper extends HttpServletRequestWrapper {
      */
     private byte[] requestBody;
 
-    public ParamsAndBodyRequestWrapper(HttpServletRequest request) {
+    public RequestWrapper(HttpServletRequest request) {
         super(request);
         this.requestParams = new HashMap<>(request.getParameterMap());
         try (ServletInputStream inputStream = request.getInputStream()) {
@@ -102,19 +102,10 @@ public class ParamsAndBodyRequestWrapper extends HttpServletRequestWrapper {
      */
     public void updateOrAddRequestBody(Object requestBody) {
         String jsonString = JSON.toJSONString(requestBody);
-        updateOrAddRequestBodyStr(jsonString);
-    }
-
-    /**
-     * 修改或添加请求体
-     *
-     * @param requestBodyStr 请求体字符串
-     */
-    public void updateOrAddRequestBodyStr(String requestBodyStr) {
-        if (Objects.isNull(requestBodyStr)) {
-            requestBodyStr = "";
+        if (Objects.isNull(jsonString)) {
+            jsonString = "";
         }
-        this.requestBody = requestBodyStr.getBytes(StandardCharsets.UTF_8);
+        this.requestBody = jsonString.getBytes(StandardCharsets.UTF_8);
     }
 
     /**
