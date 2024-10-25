@@ -31,10 +31,10 @@ public class TestExcelUtils {
             for (int i = 0; i < 100; i++) {
                 add(new ExcelUser(
                         RandomUtils.nextLong(),
-                        RandomStringUtils.random(6),
-                        RandomStringUtils.random(10),
-                        RandomStringUtils.random(3),
-                        RandomStringUtils.random(15),
+                        RandomStringUtils.secure().next(6),
+                        RandomStringUtils.secure().next(10),
+                        RandomStringUtils.secure().next(3),
+                        RandomStringUtils.secure().next(15),
                         RandomUtils.nextInt(0, 2) == 0 ? "user" : "admin",
                         LocalDateTime.now(),
                         LocalDateTime.now().plusDays(10),

@@ -255,7 +255,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         }
         String emailKey = KeyPrefixConstants.EMAIL_RETRIEVE_PASSWORD_PREFIX + userInDatabase.getId();
         // 随机六位数字验证码
-        String code = RandomStringUtils.randomNumeric(6);
+        String code = RandomStringUtils.secure().nextNumeric(6);
         Long expired = CacheUtils.getStringExpired(emailKey);
         // 防止用户快速多次请求邮箱验证码，只要验证码没有过期，就不能二次请求
         if (Objects.equals(expired, 0L)) {
