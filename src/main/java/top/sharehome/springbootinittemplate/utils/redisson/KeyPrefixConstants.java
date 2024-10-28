@@ -39,6 +39,10 @@ public interface KeyPrefixConstants {
      */
     String CACHE_MAP_PREFIX = CACHE_PREFIX + "MAP:";
 
+    // todo 队列相关键前缀
+
+    String QUEUE_PREFIX = "QUEUE:";
+
     // todo 幂等相关键前缀
 
     /**
