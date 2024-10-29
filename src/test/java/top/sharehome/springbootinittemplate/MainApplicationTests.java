@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.service.AuthService;
-import top.sharehome.springbootinittemplate.utils.redisson.queue.QueueUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -143,21 +142,6 @@ class MainApplicationTests {
         }).collect(Collectors.joining(" "))).toList();
         for (int i = 0; i < values.length; i++) {
             System.out.println(values[i].name().toLowerCase().replace("_", ".") + "=" + list.get(i));
-        }
-    }
-
-    @Test
-    void testQueue() throws InterruptedException {
-        new Thread(() -> {
-            QueueUtils.listen("test", data -> {
-                System.out.println(data + "B");
-            });
-        }).start();
-        for (int i = 0; i < 100; i++) {
-            QueueUtils.offer("test", i + "A");
-        }
-        while (true) {
-
         }
     }
 

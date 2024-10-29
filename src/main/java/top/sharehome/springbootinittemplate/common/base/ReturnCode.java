@@ -220,6 +220,11 @@ public enum ReturnCode {
     SYSTEM_FILE_ADDRESS_IS_ABNORMAL(14009, "系统文件地址异常"),
 
     /**
+     * 分布式队列服务异常 14010
+     */
+    REDISSON_MQ_SERVICE_ERROR(14010,"分布式队列服务异常"),
+
+    /**
      * 邮件发送异常 15000
      */
     EMAIL_WAS_SENT_ABNORMALLY(15000, "邮件发送异常"),

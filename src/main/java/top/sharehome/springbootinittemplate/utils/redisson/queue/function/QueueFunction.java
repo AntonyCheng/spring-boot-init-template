@@ -8,6 +8,9 @@ package top.sharehome.springbootinittemplate.utils.redisson.queue.function;
 @FunctionalInterface
 public interface QueueFunction {
 
-    void execute(Object obj);
+    /**
+     * 获取队列元素执行任务
+     */
+    void execute(Object queueData);
 
 }

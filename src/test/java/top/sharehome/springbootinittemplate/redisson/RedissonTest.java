@@ -8,6 +8,7 @@ import top.sharehome.springbootinittemplate.utils.redisson.cache.CacheUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.LockUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.SuccessFunction;
 import top.sharehome.springbootinittemplate.utils.redisson.lock.function.VoidFunction;
+import top.sharehome.springbootinittemplate.utils.redisson.queue.QueueUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.RateLimitUtils;
 import top.sharehome.springbootinittemplate.utils.redisson.rateLimit.model.TimeModel;
 
@@ -185,6 +186,39 @@ public class RedissonTest {
             System.out.println(future.get());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 测试队列工具类
+     * 简单的入队和出队
+     */
+    @Test
+    void testQueueUtils1() {
+        if (QueueUtils.offer("test1", 1) &&
+                QueueUtils.offer("test1", 2) &&
+                QueueUtils.offer("test1", 3)) {
+            System.out.println("QueueData-poll: " + QueueUtils.poll("test1"));
+            System.out.println("QueueData-peek: " + QueueUtils.peek("test1"));
+            System.out.println("QueueData-poll: " + QueueUtils.poll("test1"));
+            System.out.println("QueueData-take: " + QueueUtils.take("test1"));
+        }
+    }
+
+    /**
+     * 测试队列工具类
+     * 监听功能
+     */
+    @Test
+    void testQueueUtils2() throws InterruptedException {
+        CompletableFuture.runAsync(() -> {
+            QueueUtils.listen("test2", queueData -> {
+                System.out.println("QueueData: " + queueData);
+            });
+        });
+        for (int i = 0; i < 10; i++) {
+            QueueUtils.offer("test2", i);
+            Thread.sleep(1000);
         }
     }
 
