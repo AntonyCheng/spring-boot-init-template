@@ -494,14 +494,24 @@ oss:
 
 # WebSocket配置
 websocket:
-  # todo 是否开启（预先关闭）
-  enable: false
-  # websocket服务端口
-  port: 39999
-  # BOSS线程组线程数
-  boss-thread: 4
-  # WORKER线程组线程数
-  worker-thread: 16
+  # 基于Netty手动实现（难度较大，灵活度较大）
+  netty:
+    # todo 是否开启（预先关闭）
+    enable: false
+    # WebSocket端口，范围只允许为0-65535中的整数
+    port: 39999
+    # BOSS线程组线程数
+    boss-thread: 4
+    # WORKER线程组线程数
+    worker-thread: 16
+  # 基于Spring自动实现（难度较小，适配度较大）
+  spring:
+    # todo 是否开启（预先关闭）
+    enable: false
+    # WebSocket路径
+    path: "/websocket"
+    # 跨域，设置访问源地址
+    allowed-origins: "*"
 
 # Easy-ES配置
 easy-es:

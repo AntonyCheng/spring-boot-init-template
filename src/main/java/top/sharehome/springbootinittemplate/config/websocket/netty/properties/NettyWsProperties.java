@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.websocket.properties;
+package top.sharehome.springbootinittemplate.config.websocket.netty.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,8 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "websocket")
-public class WebSocketProperties {
+@ConfigurationProperties(prefix = "websocket.netty")
+public class NettyWsProperties {
 
     /**
      * 是否启用WebSocket服务

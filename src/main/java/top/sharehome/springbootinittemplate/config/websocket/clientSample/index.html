@@ -19,7 +19,9 @@
 
 <script>
     let websocket;
-    websocket = new WebSocket("ws://localhost:39999/websocket");
+    websocket = new WebSocket("ws://localhost:38080/api/websocket");
+    // 如果是Netty版本，则默认使用下面这个连接链接
+    // websocket = new WebSocket("ws://localhost:39999/api/websocket");
     // 服务端可读就绪，event相当于收到服务端回送的消息
     websocket.onmessage = function (event) {
         let rt = document.getElementById("responseText");

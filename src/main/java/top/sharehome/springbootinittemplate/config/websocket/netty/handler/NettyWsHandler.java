@@ -1,11 +1,13 @@
-package top.sharehome.springbootinittemplate.config.websocket.handler;
+package top.sharehome.springbootinittemplate.config.websocket.netty.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
+import top.sharehome.springbootinittemplate.config.websocket.netty.condition.NettyWsCondition;
 import top.sharehome.springbootinittemplate.service.AuthService;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +22,8 @@ import java.util.Date;
  */
 @Component
 @Slf4j
-public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+@Conditional(NettyWsCondition.class)
+public class NettyWsHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     /**
      * 获取Bean示例
