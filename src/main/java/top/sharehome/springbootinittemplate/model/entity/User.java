@@ -91,9 +91,9 @@ public class User implements Serializable {
     /**
      * 逻辑删除（0表示未删除，1表示已删除）
      */
-    @TableField(value = "del_flag", fill = FieldFill.INSERT)
+    @TableField(value = "is_deleted", fill = FieldFill.INSERT)
     @TableLogic
-    private Integer delFlag;
+    private Integer deleted;
 
     @Serial
     private static final long serialVersionUID = -5943787044496569074L;

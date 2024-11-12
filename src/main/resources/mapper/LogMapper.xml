@@ -17,7 +17,7 @@
         <result column="log_time" jdbcType="BIGINT" property="time"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="del_flag" jdbcType="TINYINT" property="delFlag"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
     </resultMap>
     <sql id="Base_Column_List">
         log_id,
@@ -35,6 +35,6 @@
         log_time,
         create_time,
         update_time,
-        del_flag
+        is_deleted
     </sql>
 </mapper>

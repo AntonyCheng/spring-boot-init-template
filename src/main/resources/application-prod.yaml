@@ -754,7 +754,7 @@ mybatis-plus:
       # AUTO 自增；NONE 空；INPUT 用户输入；ASSIGN_ID 雪花算法；ASSIGN_UUID 排除中划线的UUID；UUID 普通的UUID；
       id-type: ASSIGN_ID
       # 逻辑删除的字段
-      logic-delete-field: delFlag
+      logic-delete-field: deleted
       # 逻辑已删除值
       logic-delete-value: 1
       # 逻辑未删除值
