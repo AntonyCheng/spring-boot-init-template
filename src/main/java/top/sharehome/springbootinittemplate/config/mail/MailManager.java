@@ -9,6 +9,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,6 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
@@ -30,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 
 /**
@@ -46,7 +49,7 @@ public class MailManager {
     /**
      * 定义在邮件HTML中能够内嵌的图片后缀
      */
-    private static final Map<String, Long> MAIL_PICTURE_SUFFIX = new HashMap<String, Long>() {
+    private static final Map<String, Long> MAIL_PICTURE_SUFFIX = new HashMap<>() {
         {
             put("jpg", 5 * 1024 * 1024L);
             put("gif", 5 * 1024 * 1024L);
@@ -59,12 +62,26 @@ public class MailManager {
      * 定义邮件附件总大小不超过50MB
      */
     private static final Long MAIL_ATTACHMENT_SIZE = 50 * 1024 * 1024L;
+
     @Resource
     private MailProperties mailProperties;
     @Resource
     private MailAsyncMethod mailAsyncMethod;
     @Resource
     private JavaMailSender javaMailSender;
+
+    /**
+     * 异步发送邮件执行器
+     */
+    @Bean(name = "mailAsyncExecutor")
+    public Executor mailAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(25);
+        executor.initialize();
+        return executor;
+    }
 
     /**
      * 发送简单文本邮件

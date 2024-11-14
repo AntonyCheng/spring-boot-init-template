@@ -20,7 +20,7 @@ import java.util.Arrays;
  * @author AntonyCheng
  */
 @Component
-@Async
+@Async("mailAsyncExecutor")
 @Slf4j
 @Conditional(MailCondition.class)
 public class MailAsyncMethod {
