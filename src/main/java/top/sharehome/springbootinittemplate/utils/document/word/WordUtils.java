@@ -1,7 +1,7 @@
 package top.sharehome.springbootinittemplate.utils.document.word;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.support.ExcelTypeEnum;
+import cn.idev.excel.EasyExcel;
+import cn.idev.excel.support.ExcelTypeEnum;
 import com.deepoove.poi.XWPFTemplate;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

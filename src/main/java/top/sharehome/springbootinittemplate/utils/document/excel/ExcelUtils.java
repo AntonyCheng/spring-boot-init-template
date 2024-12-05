@@ -1,8 +1,8 @@
 package top.sharehome.springbootinittemplate.utils.document.excel;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.support.ExcelTypeEnum;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import cn.idev.excel.EasyExcel;
+import cn.idev.excel.support.ExcelTypeEnum;
+import cn.idev.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
