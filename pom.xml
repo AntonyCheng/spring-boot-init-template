@@ -79,6 +79,9 @@
         <ip2region.version>2.7.0</ip2region.version>
         <knife4j.openapi3.starter.version>4.5.0</knife4j.openapi3.starter.version>
         <fastjson2.version>2.0.53</fastjson2.version>
+        <opencc4j.version>1.8.1</opencc4j.version>
+        <sensitive.word.version>0.21.0</sensitive.word.version>
+        <jtokkit.version>1.1.0</jtokkit.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.39.0</sa.token.version>
         <!-- 缓存相关 -->
@@ -110,8 +113,6 @@
         <maven.compiler.plugin.verison>3.13.0</maven.compiler.plugin.verison>
         <!-- 【其他】修复警告 -->
         <antlr.fix.version>4.10.1</antlr.fix.version>
-        <!-- 【其他】测试依赖 -->
-        <opencc4j.version>1.8.1</opencc4j.version>
     </properties>
 
     <!-- 依赖管理 -->
@@ -186,7 +187,12 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>sensitive-word</artifactId>
-            <version>0.21.0</version>
+            <version>${sensitive.word.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.knuddels</groupId>
+            <artifactId>jtokkit</artifactId>
+            <version>${jtokkit.version}</version>
         </dependency>
         <!-- Spring AI -->
         <!--        <dependency>-->

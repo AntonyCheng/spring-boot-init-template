@@ -2,6 +2,11 @@ package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.knuddels.jtokkit.Encodings;
+import com.knuddels.jtokkit.api.Encoding;
+import com.knuddels.jtokkit.api.EncodingRegistry;
+import com.knuddels.jtokkit.api.EncodingType;
+import com.knuddels.jtokkit.api.IntArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -20,13 +25,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * 提示词分词器
+ * BPE算法提示词分词器
  * 💡源自GPT2 BPE（字节对编码）算法（https://github.com/openai/gpt-2/blob/master/src/encoder.py）
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class TokenizersUtils {
+public class BpeTokenizersUtils {
 
     private final static Pattern PATTERN = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
@@ -145,6 +150,10 @@ public class TokenizersUtils {
         return String.join("", word);
     }
 
+    public static Integer getTokenNumber(String text) {
+        return encode(text).size();
+    }
+
     public static List<String> encode(String text) {
         List<String> bpeTokens = new ArrayList<>();
         Matcher matcher = PATTERN.matcher(text);
@@ -222,6 +231,18 @@ public class TokenizersUtils {
             result.put(x.get(i), y.get(i));
         }
         return result;
+    }
+
+    public static void main(String[] args) {
+        EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
+        // Get encoding via type-safe enum
+        Encoding encoding = registry.getEncoding(EncodingType.O200K_BASE);
+        IntArrayList encoded = encoding.encodeOrdinary("hello <|endoftext|> world");
+        System.out.println(encoded);
+        System.out.println(encoding.decode(encoded));
+        List<String> encode = encode("hello <|endoftext|> world");
+        System.out.println(encode);
+        System.out.println(decode(encode));
     }
 
 }
