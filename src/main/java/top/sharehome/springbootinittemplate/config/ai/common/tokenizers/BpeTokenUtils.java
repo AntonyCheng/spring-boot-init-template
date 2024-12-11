@@ -2,13 +2,10 @@ package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import com.knuddels.jtokkit.Encodings;
-import com.knuddels.jtokkit.api.Encoding;
-import com.knuddels.jtokkit.api.EncodingRegistry;
-import com.knuddels.jtokkit.api.EncodingType;
-import com.knuddels.jtokkit.api.IntArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
@@ -25,15 +22,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * BPE算法提示词分词器
+ * BPE算法提示词分词工具
+ * 这个分词工具比较通用，如果不区分模型大小，推荐使用这个工具进行分词计算
  * 💡源自GPT2 BPE（字节对编码）算法（https://github.com/openai/gpt-2/blob/master/src/encoder.py）
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class BpeTokenizersUtils {
+public class BpeTokenUtils {
 
-    private final static Pattern PATTERN = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern PATTERN = Pattern.compile("'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
     private static final HashMap<String, Integer> ENCODER;
 
@@ -86,6 +84,88 @@ public class BpeTokenizersUtils {
             rankList.add(i);
         }
         BPE_RANKS = dictZip(bpeMerges, rankList);
+    }
+
+    public static Integer getPromptTokenNumber(Prompt prompt) {
+        return getMessageTokenNumber(prompt.getInstructions());
+    }
+
+    public static Integer getMessageTokenNumber(List<Message> messages) {
+        StringBuilder res = new StringBuilder();
+        for (final Message message : messages) {
+            res.append(message.getMessageType().getValue());
+            res.append(message.getContent());
+        }
+        return getTokenNumber(res.toString());
+    }
+
+    public static Integer getMessageTokenNumber(Message... messages) {
+        StringBuilder res = new StringBuilder();
+        for (final Message message : messages) {
+            res.append(message.getMessageType().getValue());
+            res.append(message.getContent());
+        }
+        return getTokenNumber(res.toString());
+    }
+
+    public static Integer getStringTokenNumber(List<String> messages) {
+        StringBuilder res = new StringBuilder();
+        for (final String message : messages) {
+            res.append(message);
+            res.append(message);
+        }
+        return getTokenNumber(res.toString());
+    }
+
+    public static Integer getStringTokenNumber(String... messages) {
+        StringBuilder res = new StringBuilder();
+        for (final String message : messages) {
+            res.append(message);
+            res.append(message);
+        }
+        return getTokenNumber(res.toString());
+    }
+
+    public static Integer getTokenNumber(String text) {
+        return encode(text).size();
+    }
+
+    public static List<Integer> encode(String text) {
+        List<Integer> bpeTokens = new ArrayList<>();
+        Matcher matcher = PATTERN.matcher(text);
+        List<String> regexTokens = new ArrayList<>();
+        while (matcher.find()) {
+            String group = matcher.group(0);
+            regexTokens.add(group);
+        }
+        regexTokens.forEach(regexToken -> {
+            byte[] tokenBytes = regexToken.getBytes(StandardCharsets.UTF_8);
+            String token = IntStream.range(0, tokenBytes.length)
+                    .parallel()
+                    .map(i -> Byte.toUnsignedInt(tokenBytes[i]))
+                    .mapToObj(tokenByte -> String.valueOf((char) ((int) BYTE_ENCODER.get(tokenByte))))
+                    .collect(Collectors.joining(""));
+            List<Integer> newTokens = Arrays.stream(bpe(token).split(" "))
+                    .parallel()
+                    .map(ENCODER::get)
+                    .toList();
+            bpeTokens.addAll(newTokens);
+        });
+        return bpeTokens;
+    }
+
+    public static String decode(List<Integer> tokens) {
+        String text = tokens.stream()
+                .map(DECODER::get)
+                .collect(Collectors.joining(""));
+        int[] array = text.chars()
+                .map(BYTE_DECODER::get)
+                .toArray();
+        byte[] bytes = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            bytes[i] = (byte) array[i];
+        }
+        return new String(bytes);
     }
 
     private static String bpe(String token) {
@@ -150,48 +230,6 @@ public class BpeTokenizersUtils {
         return String.join("", word);
     }
 
-    public static Integer getTokenNumber(String text) {
-        return encode(text).size();
-    }
-
-    public static List<String> encode(String text) {
-        List<String> bpeTokens = new ArrayList<>();
-        Matcher matcher = PATTERN.matcher(text);
-        List<String> regexTokens = new ArrayList<>();
-        while (matcher.find()) {
-            String group = matcher.group(0);
-            regexTokens.add(group);
-        }
-        regexTokens.forEach(regexToken -> {
-            byte[] tokenBytes = regexToken.getBytes(StandardCharsets.UTF_8);
-            String token = IntStream.range(0, tokenBytes.length)
-                    .parallel()
-                    .map(i -> Byte.toUnsignedInt(tokenBytes[i]))
-                    .mapToObj(tokenByte -> String.valueOf((char) ((int) BYTE_ENCODER.get(tokenByte))))
-                    .collect(Collectors.joining(""));
-            List<String> newTokens = Arrays.stream(bpe(token).split(" "))
-                    .parallel()
-                    .map(bpeToken -> String.valueOf(ENCODER.get(bpeToken)))
-                    .toList();
-            bpeTokens.addAll(newTokens);
-        });
-        return bpeTokens;
-    }
-
-    public static String decode(List<String> tokens) {
-        String text = tokens.stream()
-                .map(token -> DECODER.get(Integer.valueOf(token)))
-                .collect(Collectors.joining(""));
-        int[] array = text.chars()
-                .map(BYTE_DECODER::get)
-                .toArray();
-        byte[] bytes = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            bytes[i] = (byte) array[i];
-        }
-        return new String(bytes);
-    }
-
     private static HashMap<Integer, Integer> bytesToUnicode() {
         List<Integer> bs = new ArrayList<>();
         for (char i = '!'; i < '~' + 1; i++) {
@@ -231,18 +269,6 @@ public class BpeTokenizersUtils {
             result.put(x.get(i), y.get(i));
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
-        // Get encoding via type-safe enum
-        Encoding encoding = registry.getEncoding(EncodingType.O200K_BASE);
-        IntArrayList encoded = encoding.encodeOrdinary("hello <|endoftext|> world");
-        System.out.println(encoded);
-        System.out.println(encoding.decode(encoded));
-        List<String> encode = encode("hello <|endoftext|> world");
-        System.out.println(encode);
-        System.out.println(decode(encode));
     }
 
 }
