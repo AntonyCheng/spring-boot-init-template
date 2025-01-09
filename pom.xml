@@ -62,7 +62,7 @@
         <mysql.version>8.0.33</mysql.version>
         <mybatis.spring.version>3.0.4</mybatis.spring.version>
         <mybatis.plus.starter.version>3.5.8</mybatis.plus.starter.version>
-        <shardingsphere.version>5.5.0</shardingsphere.version>
+        <shardingsphere.version>5.5.1</shardingsphere.version>
         <druid.starter.version>1.2.23</druid.starter.version>
         <!-- 工具类相关 -->
         <lombok.version>1.18.34</lombok.version>

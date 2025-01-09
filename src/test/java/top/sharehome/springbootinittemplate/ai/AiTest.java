@@ -36,9 +36,9 @@ public class AiTest {
         ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi("f403f6d2d967699b5db06313391af8c9.lE9g6q5Xl3WAZjEw");
         ZhiPuAiChatModel chatModel = new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions
                 .builder()
-                .withModel(ZhiPuAiApi.ChatModel.GLM_3_Turbo.getValue())
-                .withTemperature(0.4)
-                .withMaxTokens(200)
+                .model(ZhiPuAiApi.ChatModel.GLM_3_Turbo.getValue())
+                .temperature(0.4)
+                .maxTokens(200)
                 .build());
         System.out.println(chatModel.call("你好"));
 //        System.out.println(zhiPuAiChatModel.call("你好"));

@@ -56,6 +56,7 @@ rules:
         type: AES
         props:
           aes-key-value: spring-boot-init-template
+          digest-algorithm-name: SHA-256
     tables:
       # 加密user表中的数据
       t_user:
