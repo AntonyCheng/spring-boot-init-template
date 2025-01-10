@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.utils.redisson.cache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.api.*;
+import org.redisson.api.options.KeysScanOptions;
 import org.redisson.client.codec.StringCodec;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
@@ -282,7 +283,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getKeysByPattern(String keyPattern) {
-        return getKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getKeysByPattern(String keyPattern, Integer limit) {
+        return getKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -293,7 +306,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getKeysNoPrefixByPattern(String keyPattern) {
-        return getKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -301,12 +326,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.OBJECT)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_PREFIX, "")) : res::add);
         return res;
@@ -320,7 +353,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static <T> Map<String, T> getKeyValuesByPattern(String keyPattern) {
-        return getKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static <T> Map<String, T> getKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -331,7 +376,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static <T> Map<String, T> getKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static <T> Map<String, T> getKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -339,11 +396,12 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
     @SuppressWarnings("unchecked")
-    private static <T> Map<String, T> getKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static <T> Map<String, T> getKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", get0(c, hasPrefix, null));
@@ -693,7 +751,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getStringKeysByPattern(String keyPattern) {
-        return getStringKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getStringKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取String类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getStringKeysByPattern(String keyPattern, Integer limit) {
+        return getStringKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -704,7 +774,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getStringKeysNoPrefixByPattern(String keyPattern) {
-        return getStringKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getStringKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取String类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getStringKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getStringKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -712,12 +794,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getStringKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getStringKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.OBJECT)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_STRING_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_STRING_PREFIX, "")) : res::add);
         return res;
@@ -731,7 +821,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, String> getStringKeyValuesByPattern(String keyPattern) {
-        return getStringKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取String类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, String> getStringKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -742,7 +844,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, String> getStringKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getStringKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取String类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, String> getStringKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getStringKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -750,10 +864,11 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static Map<String, String> getStringKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static Map<String, String> getStringKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getStringKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getStringKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getString0(c, hasPrefix));
@@ -1211,7 +1326,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getNumberKeysByPattern(String keyPattern) {
-        return getNumberKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getNumberKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取Number类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getNumberKeysByPattern(String keyPattern, Integer limit) {
+        return getNumberKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -1222,7 +1349,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getNumberKeysNoPrefixByPattern(String keyPattern) {
-        return getNumberKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getNumberKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取Number类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getNumberKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getNumberKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -1230,12 +1369,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getNumberKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getNumberKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.OBJECT)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_NUMBER_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_NUMBER_PREFIX, "")) : res::add);
         return res;
@@ -1249,7 +1396,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Number> getNumberKeyValuesByPattern(String keyPattern) {
-        return getNumberKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取缓存Number类型键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Number> getNumberKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -1260,7 +1419,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Number> getNumberKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getNumberKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取缓存Number类型键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Number> getNumberKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getNumberKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -1268,10 +1439,11 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static Map<String, Number> getNumberKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static Map<String, Number> getNumberKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getNumberKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getNumberKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getNumber0(c, hasPrefix));
@@ -1635,7 +1807,20 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getListKeysByPattern(String keyPattern) {
-        return getListKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getListKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+
+    /**
+     * 使用通配符模糊获取List类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getListKeysByPattern(String keyPattern, Integer limit) {
+        return getListKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -1646,7 +1831,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getListKeysNoPrefixByPattern(String keyPattern) {
-        return getListKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getListKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取List类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getListKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getListKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -1654,12 +1851,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getListKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getListKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.LIST)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_LIST_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_LIST_PREFIX, "")) : res::add);
         return res;
@@ -1673,7 +1878,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, List<Object>> getListKeyValuesByPattern(String keyPattern) {
-        return getListKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getListKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取缓List类型存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, List<Object>> getListKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getListKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -1684,7 +1901,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, List<Object>> getListKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getListKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getListKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取缓List类型存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, List<Object>> getListKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getListKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -1692,11 +1921,12 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, List<Object>> getListKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static Map<String, List<Object>> getListKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getListKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getListKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getList0(c, hasPrefix));
@@ -2060,7 +2290,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getSetKeysByPattern(String keyPattern) {
-        return getSetKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getSetKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取Set类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getSetKeysByPattern(String keyPattern, Integer limit) {
+        return getSetKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -2071,7 +2313,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getSetKeysNoPrefixByPattern(String keyPattern) {
-        return getSetKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getSetKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取Set类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getSetKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getSetKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -2079,12 +2333,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getSetKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getSetKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.SET)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_SET_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_SET_PREFIX, "")) : res::add);
         return res;
@@ -2098,7 +2360,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Set<Object>> getSetKeyValuesByPattern(String keyPattern) {
-        return getSetKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取Set类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Set<Object>> getSetKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -2109,7 +2383,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Set<Object>> getSetKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getSetKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取Set类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Set<Object>> getSetKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getSetKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -2117,11 +2403,12 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Set<Object>> getSetKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static Map<String, Set<Object>> getSetKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getSetKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getSetKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getSet0(c, hasPrefix));
@@ -2507,7 +2794,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getMapKeysByPattern(String keyPattern) {
-        return getMapKeysByPattern0(keyPattern, Boolean.TRUE);
+        return getMapKeysByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取Map类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getMapKeysByPattern(String keyPattern, Integer limit) {
+        return getMapKeysByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -2518,7 +2817,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static List<String> getMapKeysNoPrefixByPattern(String keyPattern) {
-        return getMapKeysByPattern0(keyPattern, Boolean.FALSE);
+        return getMapKeysByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取Map类型缓存键
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static List<String> getMapKeysNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getMapKeysByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -2526,12 +2837,20 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
-    private static List<String> getMapKeysByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static List<String> getMapKeysByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
         RKeys keys = REDISSON_CLIENT.getKeys();
-        Iterable<String> keysByPattern = keys.getKeysByPattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern : keyPattern);
-        // 这里使用链表存储键，从理论上尽可能多的存储键
+        KeysScanOptions keysScanOptions = KeysScanOptions
+                .defaults()
+                .type(RType.MAP)
+                .pattern(Objects.equals(hasPrefix, Boolean.TRUE) ? KeyPrefixConstants.CACHE_MAP_PREFIX + keyPattern : keyPattern);
+        if (Objects.nonNull(limit)) {
+            keysScanOptions.limit(limit);
+        }
+        Iterable<String> keysByPattern = keys.getKeys(keysScanOptions);
+        // 这里使用链表存储键，从理论上尽可能多地存储键
         List<String> res = new LinkedList<>();
         keysByPattern.forEach(Objects.equals(hasPrefix, Boolean.TRUE) ? key -> res.add(key.replaceFirst(KeyPrefixConstants.CACHE_MAP_PREFIX, "")) : res::add);
         return res;
@@ -2545,7 +2864,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Map<Object, Object>> getMapKeyValuesByPattern(String keyPattern) {
-        return getMapKeyValuesByPattern0(keyPattern, Boolean.TRUE);
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.TRUE, null);
+    }
+
+    /**
+     * 使用通配符模糊获取Map类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Map<Object, Object>> getMapKeyValuesByPattern(String keyPattern, Integer limit) {
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.TRUE, limit);
     }
 
     /**
@@ -2556,7 +2887,19 @@ public class CacheUtils {
      * @param keyPattern key通配符
      */
     public static Map<String, Map<Object, Object>> getMapKeyValuesNoPrefixByPattern(String keyPattern) {
-        return getMapKeyValuesByPattern0(keyPattern, Boolean.FALSE);
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.FALSE, null);
+    }
+
+    /**
+     * 不需要默认前缀，使用通配符模糊获取Map类型缓存键值对
+     * * 表示匹配零个或多个字符。
+     * ? 表示匹配一个字符。
+     *
+     * @param keyPattern key通配符
+     * @param limit      限制数量
+     */
+    public static Map<String, Map<Object, Object>> getMapKeyValuesNoPrefixByPattern(String keyPattern, Integer limit) {
+        return getMapKeyValuesByPattern0(keyPattern, Boolean.FALSE, limit);
     }
 
     /**
@@ -2564,11 +2907,12 @@ public class CacheUtils {
      *
      * @param keyPattern key通配符
      * @param hasPrefix  是否默认前缀
+     * @param limit      限制数量
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Map<Object, Object>> getMapKeyValuesByPattern0(String keyPattern, Boolean hasPrefix) {
+    private static Map<String, Map<Object, Object>> getMapKeyValuesByPattern0(String keyPattern, Boolean hasPrefix, Integer limit) {
         verifyParameters(keyPattern);
-        return getMapKeysByPattern0(keyPattern, hasPrefix).stream().map(c -> {
+        return getMapKeysByPattern0(keyPattern, hasPrefix, limit).stream().map(c -> {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
             hashMap.put("key", c);
             hashMap.put("value", getMap0(c, hasPrefix));

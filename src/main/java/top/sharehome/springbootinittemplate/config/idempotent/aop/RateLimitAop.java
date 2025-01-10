@@ -8,7 +8,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.redisson.api.RRateLimiter;
-import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Conditional;
@@ -71,7 +70,7 @@ public class RateLimitAop {
         long interval = rateLimit.timeUnit().toMillis(rateLimit.time());
         // 获取请求方法和URI
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (Objects.isNull(servletRequestAttributes)){
+        if (Objects.isNull(servletRequestAttributes)) {
             throw new CustomizeReturnException(ReturnCode.USER_SENT_INVALID_REQUEST, "无法获取请求");
         }
         HttpServletRequest request = servletRequestAttributes.getRequest();
@@ -92,7 +91,8 @@ public class RateLimitAop {
         }
         TimeModel rateInterval = new TimeModel(interval, TimeUnit.MILLISECONDS);
         RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(rateLimitKey);
-        rateLimiter.trySetRate(RateType.OVERALL, rateLimit.rate(), rateInterval.toMillis(), RateIntervalUnit.MILLISECONDS);
+
+        rateLimiter.trySetRate(RateType.OVERALL, rateLimit.rate(), Duration.ofMillis(rateInterval.toMillis()));
         boolean canOp = rateLimiter.tryAcquire(rateLimit.permit());
         if (!canOp) {
             throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS, rateLimit.message());

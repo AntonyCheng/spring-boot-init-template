@@ -37,7 +37,7 @@ public class TikTokenUtils {
         StringBuilder res = new StringBuilder();
         for (final Message message : messages) {
             res.append(message.getMessageType().getValue());
-            res.append(message.getContent());
+            res.append(message.getText());
         }
         return getTokenNumber(res.toString());
     }
@@ -46,7 +46,7 @@ public class TikTokenUtils {
         StringBuilder res = new StringBuilder();
         for (final Message message : messages) {
             res.append(message.getMessageType().getValue());
-            res.append(message.getContent());
+            res.append(message.getText());
         }
         return getTokenNumber(res.toString());
     }

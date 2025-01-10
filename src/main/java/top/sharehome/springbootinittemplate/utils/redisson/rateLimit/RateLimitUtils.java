@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RRateLimiter;
-import org.redisson.api.RateIntervalUnit;
 import org.redisson.api.RateType;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Conditional;
@@ -74,7 +73,7 @@ public class RateLimitUtils {
             throw new CustomizeRedissonException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "令牌数不足");
         }
         RRateLimiter rateLimiter = REDISSON_CLIENT.getRateLimiter(KeyPrefixConstants.RATE_LIMIT_UTILS_PREFIX + key);
-        rateLimiter.trySetRate(RateType.OVERALL, rate, rateInterval.toMillis(), RateIntervalUnit.MILLISECONDS);
+        rateLimiter.trySetRate(RateType.OVERALL, rate, Duration.ofMillis(rateInterval.toMillis()));
         boolean canOp = rateLimiter.tryAcquire(permit);
         if (!canOp) {
             throw new CustomizeRedissonException(ReturnCode.TOO_MANY_REQUESTS);
