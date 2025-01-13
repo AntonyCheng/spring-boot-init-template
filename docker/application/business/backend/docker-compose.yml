@@ -16,7 +16,7 @@ services:
     privileged: true
     networks:
       docker_net:
-        ipv4_address: 177.177.177.111
+        ipv4_address: 177.177.177.110
 
 #  xxl-job-admin:
 #    image: xxl-job-admin:v2.2.1-jdk17-pre
@@ -32,7 +32,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.112
+#        ipv4_address: 177.177.177.111
 
 #  power-job-admin:
 #    image: power-job-admin:v2.2.1-jdk17-pre
@@ -48,7 +48,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.113
+#        ipv4_address: 177.177.177.112
 
 #  spring-boot-admin:
 #    image: spring-boot-admin:v2.2.1-jdk17-pre
@@ -64,7 +64,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.114
+#        ipv4_address: 177.177.177.113
 
 networks:
   docker_net:

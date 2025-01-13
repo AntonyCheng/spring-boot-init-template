@@ -10,14 +10,14 @@ dataSources:
   ds_master:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://177.177.177.101:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://177.177.177.100:3306/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: root
     password: 123456
 #  # 从库在需要时开启
 #  ds_slave:
 #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
 #    driverClassName: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://177.177.177.101:3307/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+#    url: jdbc:mysql://177.177.177.100:3307/init_db?serverZoneId=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
 #    username: root
 #    password: 123456
 props:
@@ -56,6 +56,7 @@ rules:
         type: AES
         props:
           aes-key-value: spring-boot-init-template
+          digest-algorithm-name: SHA-256
     tables:
       # 加密user表中的数据
       t_user:

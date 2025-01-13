@@ -29,8 +29,8 @@ public class MyBatisPlusConfiguration {
         mybatisPlusInterceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         // 数据变动记录插件
         mybatisPlusInterceptor.addInnerInterceptor(new DataChangeRecorderInnerInterceptor());
-        // 分页插件，如果有多个插件，分页插件添加在最后
-        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        // 分页插件，如果有多个插件，分页插件添加在最后，由于多数据源，所以不要指定new PaginationInnerInterceptor(DbType dbType)参数
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return mybatisPlusInterceptor;
     }
 

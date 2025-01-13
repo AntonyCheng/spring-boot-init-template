@@ -124,7 +124,7 @@ spring:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
         # SpringBootAdmin地址
-        url: http://177.177.177.114:38077/spring-boot-admin/
+        url: http://177.177.177.113:38077/spring-boot-admin/
         # SpringBootAdmin账号
         username: admin
         # SpringBootAdmin密码
@@ -240,8 +240,6 @@ spring:
     exclude:
       # todo 是否开启MongoDB依赖类（如果要启用MongoDB，就将MongoAutoConfiguration注释掉，该配置类一旦被注释，就需要设置MongoDB相关配置，预先关闭）
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
-      # todo 是否使用DruidCP连接池（如果要使用Druid连接池，就将DruidDataSourceAutoConfigure注释掉，然后记得查看spring.datasource.druid相关配置和提示，预先不使用）
-      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
       # todo 是否开启Redis依赖类（如果要启动Redis，就将RedisAutoConfiguration注释掉，该配置类一旦被注释，就需要设置Redis相关配置，预先关闭）
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
@@ -325,62 +323,72 @@ spring:
       # 如果不需要用户名和密码，即：uri: mongodb://主机地址:主机端口/默认数据库?authSource=admin
       # 如果需要用户名和密码，即：uri: mongodb://用户名:密码@主机地址:主机端口/默认数据库?authSource=admin
       uri: mongodb://root:123456@177.177.177.108:27017/init_db?authSource=admin
-  # MySQL配置
+  # 数据源配置
   datasource:
-    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:mysql/mysql-prod.yaml
-    # HikariCP连接池配置（性能较好，模板首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
-    hikari:
-      # 连接池名称
-      pool-name: HikariCP
-      # 连接池最小连接数量
-      minimum-idle: 10
-      # 连接池最大连接数量
-      maximum-pool-size: 25
-      # 配置连接超时时间
-      connection-timeout: 30000
-      # 多久检查一次连接的活性（单位：毫秒，小于30000即不进行活性检查，默认不检查连接活性）
-      keepalive-time: 0
-      # 校验超时时间（单位毫秒）
-      validation-timeout: 5000
-      # 控制从池返回的连接的默认自动提交行为，默认值：true
-      auto-commit: true
-      # 空闲连接存活最大时间，默认10分钟
-      idle-timeout: 600000
-      # 池中连接的最长生命周期，值0表示无限生命周期，默认设置30分钟
-      max-lifetime: 1800000
-      # 配置检测连接是否有效
-      connection-test-query: SELECT 1 FROM DUAL
-    # DruidCP连接池配置（功能性强，模板备选【dataSourceClassName: com.alibaba.druid.pool.DruidDataSource】，如果使用同时记得更改dataSourceClassName等相关属性）
-    druid:
-      # 初始连接数 ---- 可自定义
-      initial-size: 5
-      # 连接池最小连接数量
-      min-idle: 10
-      # 连接池最大连接数量
-      max-active: 25
-      # 配置获取连接等待超时的时间，单位是毫秒
-      max-wait: 60000
-      # 配置连接超时时间
-      connect-timeout: 30000
-      # 此属性控制从池返回的连接的默认自动提交行为，默认值：true
-      default-auto-commit: true
-      # 配置网络超时时间
-      socket-timeout: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒，设置10分钟
-      time-between-eviction-runs-millis: 30000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒，设置10分钟
-      min-evictable-idle-time-millis: 600000
-      # 配置一个连接在池中最大生存的时间，单位是毫秒，设置30分钟
-      max-evictable-idle-time-millis: 1800000
-      # 配置检测连接是否有效
-      validation-query: SELECT 2 FROM DUAL
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      web-stat-filter:
-        enabled: true
-
+    # 多数据源
+    dynamic:
+      # 默认master数据源
+      primary: master
+      datasource:
+           # ShardingSphere MySQL数据源
+        master:
+          driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+          url: jdbc:shardingsphere:classpath:mysql/mysql-prod.yaml
+          type: com.zaxxer.hikari.HikariDataSource
+        # PostgreSQL数据源
+        slave:
+          driver-class-name: org.postgresql.Driver
+          url: jdbc:postgresql://177.177.177.101:5432/init_db?ssl=false
+          username: root
+          password: 123456
+          type: com.zaxxer.hikari.HikariDataSource
+      # HikariCP连接池配置（首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
+      hikari:
+        # 连接池最小连接数量
+        minimum-idle: 10
+        # 连接池最大连接数量
+        maximum-pool-size: 25
+        # 配置连接超时时间
+        connection-timeout: 30000
+        # 多久检查一次连接的活性（单位：毫秒，小于30000即不进行活性检查，默认不检查连接活性）
+        keepalive-time: 0
+        # 校验超时时间（单位毫秒）
+        validation-timeout: 5000
+        # 控制从池返回的连接的默认自动提交行为，默认值：true
+        is-auto-commit: true
+        # 空闲连接存活最大时间，默认10分钟
+        idle-timeout: 600000
+        # 池中连接的最长生命周期，值0表示无限生命周期，默认设置30分钟
+        max-lifetime: 1800000
+        # 配置检测连接是否有效
+        connection-test-query: SELECT 1
+      # Druid连接池配置（备选【dataSourceClassName: com.alibaba.druid.pool.DruidDataSource】）
+      druid:
+        # 初始连接数
+        initial-size: 5
+        # 连接池最小连接数量
+        min-idle: 10
+        # 连接池最大连接数量
+        max-active: 25
+        # 配置获取连接等待超时的时间，单位是毫秒
+        max-wait: 60000
+        # 配置连接超时时间
+        connect-timeout: 30000
+        # 此属性控制从池返回的连接的默认自动提交行为，默认值：true
+        default-auto-commit: true
+        # 配置网络超时时间
+        socket-timeout: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒，设置10分钟
+        time-between-eviction-runs-millis: 30000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒，设置10分钟
+        min-evictable-idle-time-millis: 600000
+        # 配置一个连接在池中最大生存的时间，单位是毫秒，设置30分钟
+        max-evictable-idle-time-millis: 1800000
+        # 配置检测连接是否有效
+        validation-query: SELECT 1
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
 redisson:
@@ -583,7 +591,7 @@ xxl:
     # todo 是否开启（预先关闭）
     enable: false
     # Xxl-Job监控面板地址
-    admin-addresses: http://177.177.177.112:38079/xxl-job-admin
+    admin-addresses: http://177.177.177.111:38079/xxl-job-admin
     # Xxl-Job token
     access-token: xxl-job
     # 执行器配置
@@ -613,7 +621,7 @@ powerjob:
     # 执行器AppName
     app-name: power-job-executor
     # PowerJob服务器地址
-    server-address: 177.177.177.113:38078/power-job-admin
+    server-address: 177.177.177.112:38078/power-job-admin
     # 网络传输协议
     protocol: http
     # 执行器信息存储介质
@@ -753,7 +761,7 @@ mybatis-plus:
       # AUTO 自增；NONE 空；INPUT 用户输入；ASSIGN_ID 雪花算法；ASSIGN_UUID 排除中划线的UUID；UUID 普通的UUID；
       id-type: ASSIGN_ID
       # 逻辑删除的字段
-      logic-delete-field: deleted
+      logic-delete-field: is_deleted
       # 逻辑已删除值
       logic-delete-value: 1
       # 逻辑未删除值

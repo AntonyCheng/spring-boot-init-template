@@ -60,8 +60,10 @@
         <netty.version>4.1.114.Final</netty.version>
         <!-- 数据驱动层相关 -->
         <mysql.version>8.0.33</mysql.version>
+        <postgresql.version>42.7.2</postgresql.version>
         <mybatis.spring.version>3.0.4</mybatis.spring.version>
         <mybatis.plus.starter.version>3.5.8</mybatis.plus.starter.version>
+        <dynamic.datasource.starter.version>4.3.1</dynamic.datasource.starter.version>
         <shardingsphere.version>5.5.1</shardingsphere.version>
         <druid.starter.version>1.2.23</druid.starter.version>
         <!-- 工具类相关 -->
@@ -222,6 +224,11 @@
             <version>${mysql.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
             <version>${mybatis.spring.version}</version>
@@ -241,6 +248,11 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>
             <version>${mybatis.plus.starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <version>${dynamic.datasource.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>

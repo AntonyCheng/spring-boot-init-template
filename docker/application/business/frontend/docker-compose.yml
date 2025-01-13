@@ -21,7 +21,7 @@ services:
     privileged: true
     networks:
       docker_net:
-        ipv4_address: 177.177.177.121
+        ipv4_address: 177.177.177.120
 
 networks:
   docker_net:

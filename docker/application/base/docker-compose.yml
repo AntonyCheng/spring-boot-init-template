@@ -23,7 +23,7 @@ services:
       # 配置挂载
       - ./data/mysql/conf/:/etc/mysql/conf.d/
     command:
-      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
+      # 将mysql8.0默认密码策略修改为"原生"策略 (mysql8.0对其默认策略做了更改，会导致密码无法匹配)
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
@@ -33,13 +33,29 @@ services:
     privileged: true
     networks:
       docker_net:
-        ipv4_address: 177.177.177.101
+        ipv4_address: 177.177.177.100
 
   #######################################################################
   ##########################以下是选择启动容器##############################
   #######################################################################
+#  postgresql:
+#    image: pgvector/pgvector:0.7.4-pg17
+#    container_name: postgresql
+#    environment:
+#      POSTGRES_USER: root
+#      POSTGRES_PASSWORD: 123456
+#      POSTGRES_DB: init_db
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - ./data/postgresql/data/:/var/lib/postgresql/data/
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.101
+#
 #  redis:
-#    image: redis:7.4.0
+#    image: redis:7.4.1
 #    container_name: redis
 #    ports:
 #      - "6379:6379"

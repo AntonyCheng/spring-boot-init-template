@@ -9,7 +9,6 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.mapper.FileMapper;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
