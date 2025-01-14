@@ -34,7 +34,14 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="请求方法">
-                      <el-input v-model="queryForm.requestMethod" placeholder="请输入请求方法" style="width: 200px" />
+                      <el-select v-model="queryForm.requestMethod" placeholder="请选择请求方法" clearable>
+                        <el-option
+                          v-for="item in requestMethodMapping"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
                     </el-form-item>
                     <el-form-item label="方法名称">
                       <el-input v-model="queryForm.method" placeholder="请输入方法名称" style="width: 200px" />
@@ -276,6 +283,40 @@ export default {
         {
           label: '导出',
           value: 6
+        }
+      ],
+      requestMethodMapping: [
+        {
+          label: 'POST',
+          value: 'POST'
+        },
+        {
+          label: 'DELETE',
+          value: 'DELETE'
+        },
+        {
+          label: 'GET',
+          value: 'GET'
+        },
+        {
+          label: 'PUT',
+          value: 'PUT'
+        },
+        {
+          label: 'HEAD',
+          value: 'HEAD'
+        },
+        {
+          label: 'PATCH',
+          value: 'PATCH'
+        },
+        {
+          label: 'OPTIONS',
+          value: 'OPTIONS'
+        },
+        {
+          label: 'TRACE',
+          value: 'TRACE'
         }
       ]
     }

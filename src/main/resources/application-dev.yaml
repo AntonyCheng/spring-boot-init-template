@@ -336,12 +336,12 @@ spring:
           url: jdbc:shardingsphere:classpath:mysql/mysql-dev.yaml
           type: com.zaxxer.hikari.HikariDataSource
         # PostgreSQL数据源
-        slave:
-          driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://127.0.0.1:5432/init_db?ssl=false
-          username: postgres
-          password: 123456
-          type: com.zaxxer.hikari.HikariDataSource
+        #slave:
+        #  driver-class-name: org.postgresql.Driver
+        #  url: jdbc:postgresql://127.0.0.1:5432/init_db?ssl=false
+        #  username: postgres
+        #  password: 123456
+        #  type: com.zaxxer.hikari.HikariDataSource
       # HikariCP连接池配置（首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
       hikari:
         # 连接池最小连接数量
