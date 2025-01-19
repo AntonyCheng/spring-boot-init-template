@@ -68,7 +68,7 @@ rules:
               encryptorName: aes_encryptor
 #  # 读写分离（从库开启后开启，使用之前务必请先理解读写分离和事务的关系，因为一旦在业务中使用的事务，那么读写操作都会只发生在主库）
 #  - !READWRITE_SPLITTING
-#    dataSources:
+#    dataSourceGroups:
 #      # 读写库配置名称（主库写，从库读，只允许一写多读）
 #      readwrite_ds:
 #        writeDataSourceName: ds_master
