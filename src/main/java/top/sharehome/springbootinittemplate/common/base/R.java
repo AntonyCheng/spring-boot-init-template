@@ -1,8 +1,8 @@
 package top.sharehome.springbootinittemplate.common.base;
 
-import cn.dev33.satoken.stp.StpUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -103,7 +103,7 @@ public class R<T> implements Serializable {
 
     public static <T> R<Map<String, Object>> okWithToken(T data) {
         Map<String, Object> res = new HashMap<>();
-        res.put("token", StpUtil.getTokenValue());
+        res.put("token", LoginUtils.getLoginUserToken());
         res.put("res", data);
         return restResult(res, SUCCESS, SUCCESS_MSG);
     }
@@ -114,7 +114,7 @@ public class R<T> implements Serializable {
 
     public static <T> R<Map<String, Object>> okWithToken(String msg) {
         Map<String, Object> res = new HashMap<>();
-        res.put("token", StpUtil.getTokenValue());
+        res.put("token", LoginUtils.getLoginUserToken());
         res.put("res", null);
         return restResult(res, SUCCESS, msg);
     }
@@ -125,14 +125,14 @@ public class R<T> implements Serializable {
 
     public static <T> R<Map<String, Object>> okWithToken(String msg, T data) {
         Map<String, Object> res = new HashMap<>();
-        res.put("token", StpUtil.getTokenValue());
+        res.put("token", LoginUtils.getLoginUserToken());
         res.put("res", data);
         return restResult(res, SUCCESS, msg);
     }
 
     // todo 成功仅响应Token方法
     public static R<String> token() {
-        return restResult(StpUtil.getTokenValue(), SUCCESS, SUCCESS_MSG);
+        return restResult(LoginUtils.getLoginUserToken(), SUCCESS, SUCCESS_MSG);
     }
 
     // todo 失败响应方法

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
+package top.sharehome.springbootinittemplate.utils.tokenizers;
 
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.*;

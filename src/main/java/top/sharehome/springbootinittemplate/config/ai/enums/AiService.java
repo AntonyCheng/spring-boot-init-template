@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.ai.common.enums;
+package top.sharehome.springbootinittemplate.config.ai.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

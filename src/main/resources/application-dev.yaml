@@ -389,6 +389,7 @@ spring:
         test-while-idle: true
         test-on-borrow: false
         test-on-return: false
+
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
 redisson:
@@ -519,6 +520,15 @@ websocket:
     path: "/websocket"
     # 跨域，设置访问源地址
     allowed-origins: "*"
+
+# SSE配置
+sse:
+  # todo 是否开启（预先关闭）
+  enable: false
+  # SSE访问路径
+  path: "/sse"
+  # SSE连接超时时间（单位：毫秒），0表示无限制
+  timeout: 0
 
 # Easy-ES配置
 easy-es:

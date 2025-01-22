@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.ai.common.tokenizers;
+package top.sharehome.springbootinittemplate.utils.tokenizers;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;

@@ -185,22 +185,6 @@
         </dependency>
 
         <!-- AI 相关依赖配置 -->
-        <!-- 敏感词依赖配置 -->
-        <dependency>
-            <groupId>com.github.houbb</groupId>
-            <artifactId>sensitive-word</artifactId>
-            <version>${sensitive.word.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.knuddels</groupId>
-            <artifactId>jtokkit</artifactId>
-            <version>${jtokkit.version}</version>
-        </dependency>
-        <!-- Spring AI -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.ai</groupId>-->
-        <!--            <artifactId>spring-ai-openai</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-zhipuai</artifactId>
@@ -208,6 +192,18 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-ollama</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.knuddels</groupId>
+            <artifactId>jtokkit</artifactId>
+            <version>${jtokkit.version}</version>
+        </dependency>
+
+        <!-- 敏感词依赖配置 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-word</artifactId>
+            <version>${sensitive.word.version}</version>
         </dependency>
 
         <!-- Netty 依赖配置 -->
@@ -316,7 +312,6 @@
             <version>${commons.compress.version}</version>
         </dependency>
 
-
         <!-- Ok Http 依赖配置 -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -416,6 +411,7 @@
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
+
         <!-- Logstash 依赖配置 -->
         <dependency>
             <groupId>net.logstash.logback</groupId>

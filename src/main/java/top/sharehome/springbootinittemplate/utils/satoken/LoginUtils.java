@@ -104,6 +104,13 @@ public class LoginUtils {
     }
 
     /**
+     * 获取登录用户会话Token
+     */
+    public static String getLoginUserToken() {
+        return StpUtil.getTokenValue();
+    }
+
+    /**
      * 登录用户账户角色是否为管理员
      */
     public static boolean isAdmin() {
