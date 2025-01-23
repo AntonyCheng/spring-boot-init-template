@@ -1,10 +1,8 @@
 package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatService;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
@@ -23,19 +21,19 @@ public class ChatModelBase {
     /**
      * Chat模型服务方
      */
-    private ChatService chatService;
+    protected ChatService chatService;
 
     /**
      * 模型温度，默认0.8
      */
     @Setter
-    private Double temperature;
+    protected Double temperature;
 
     /**
      * 模型top-p，默认0.9
      */
     @Setter
-    private Double topP;
+    protected Double topP;
 
     public ChatModelBase(ChatService chatService, Double temperature, Double topP) {
         if (Objects.isNull(chatService)) {

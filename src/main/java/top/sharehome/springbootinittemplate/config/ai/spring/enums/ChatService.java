@@ -40,7 +40,13 @@ public enum ChatService {
     /**
      * QianFan Chat服务
      */
-    QianFan("千帆AI", "qianfan");
+    QianFan("千帆AI", "qianfan"),
+
+
+    /**
+     * MiniMax Chat服务
+     */
+    MiniMax("MiniMax", "minimax");
 
     /**
      * 模型中文标签

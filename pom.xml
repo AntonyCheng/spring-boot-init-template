@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Spring AI相关 -->
-        <spring.ai.version>1.1.0</spring.ai.version>
+        <spring.ai.version>1.0.0-M5</spring.ai.version>
         <!-- Netty相关 -->
         <netty.version>4.1.114.Final</netty.version>
         <!-- 数据驱动层相关 -->
@@ -188,32 +188,37 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-openai</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-ollama</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-zhipuai</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-moonshot</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-mistral-ai</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-qianfan</artifactId>
+            <version>${spring.ai.version}</version>
         </dependency>
-        <!-- todo: 以下模型未同步SpringAI官方，未来会进一步集成 -->
         <dependency>
-            <groupId>group.springframework.ai</groupId>
+            <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-minimax</artifactId>
-            <version>1.1.0</version>
+            <version>${spring.ai.version}</version>
         </dependency>
 
         <!-- 分词工具配置 -->

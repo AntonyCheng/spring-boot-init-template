@@ -27,7 +27,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：gpt-3.5-turbo
      */
-    private static final String DEFAULT_MODEL = OpenAiApi.ChatModel.GPT_3_5_TURBO.getValue();
+    private static final String DEFAULT_MODEL = OpenAiApi.ChatModel.GPT_3_5_TURBO.getName();
 
     /**
      * 模型名称，默认gpt-3.5-turbo
@@ -45,27 +45,27 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
     private String apiKey;
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, null, null);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, temperature, topP);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, baseUrl, null, null);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, baseUrl, temperature, topP);
     }
 
-    public OpenAiChatEntity(String name, String apiKey) {
-        this(name, apiKey, null, null, null);
+    public OpenAiChatEntity(String model, String apiKey) {
+        this(model, apiKey, null, null, null);
     }
 
-    public OpenAiChatEntity(String name, String apiKey, String baseUrl) {
-        this(name, apiKey, baseUrl, null, null);
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl) {
+        this(model, apiKey, baseUrl, null, null);
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP) {
@@ -79,7 +79,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public void setName(OpenAiApi.ChatModel chatModel) {
-        this.model = chatModel.getValue();
+        this.model = chatModel.getName();
     }
 
     @Serial
