@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ChatService {
+public enum ChatServiceType {
 
     /**
      * OpenAI Chat服务

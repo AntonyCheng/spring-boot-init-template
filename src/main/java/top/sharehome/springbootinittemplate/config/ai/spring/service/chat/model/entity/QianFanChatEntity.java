@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ai.qianfan.api.QianFanApi;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatService;
+import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatServiceType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
@@ -57,7 +57,7 @@ public class QianFanChatEntity extends ChatModelBase implements Serializable {
     }
 
     public QianFanChatEntity(String model, String apiKey, String secretKey, Double temperature, Double topP) {
-        super(ChatService.QianFan, temperature, topP);
+        super(ChatServiceType.QianFan, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

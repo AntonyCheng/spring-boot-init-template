@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatService;
+import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatServiceType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class ChatModelBase {
     /**
      * Chat模型服务方
      */
-    protected ChatService chatService;
+    protected ChatServiceType chatServiceType;
 
     /**
      * 模型温度，默认0.8
@@ -35,11 +35,11 @@ public class ChatModelBase {
     @Setter
     protected Double topP;
 
-    public ChatModelBase(ChatService chatService, Double temperature, Double topP) {
-        if (Objects.isNull(chatService)) {
+    public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP) {
+        if (Objects.isNull(chatServiceType)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatService]不能为空");
         }
-        this.chatService = chatService;
+        this.chatServiceType = chatServiceType;
         this.temperature = Objects.isNull(temperature) ? 0.8 : temperature;
         this.topP = Objects.isNull(topP) ? 0.9 : temperature;
     }

@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ai.ollama.api.OllamaModel;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatService;
+import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatServiceType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
@@ -47,7 +47,7 @@ public class OllamaChatEntity extends ChatModelBase implements Serializable {
     }
 
     public OllamaChatEntity(String model, String baseUrl, Double temperature, Double topP) {
-        super(ChatService.Ollama, temperature, topP);
+        super(ChatServiceType.Ollama, temperature, topP);
         if (StringUtils.isBlank(model)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]不能为空");
         }

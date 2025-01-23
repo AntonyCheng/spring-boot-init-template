@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ai.minimax.api.MiniMaxApi;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatService;
+import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatServiceType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
@@ -52,7 +52,7 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
     }
 
     public MiniMaxChatEntity(String model, String apiKey, Double temperature, Double topP) {
-        super(ChatService.MiniMax, temperature, topP);
+        super(ChatServiceType.MiniMax, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }
