@@ -80,6 +80,17 @@ public class LoginUtils {
      * 从缓存中获取登录用户信息
      */
     public static AuthLoginVo getLoginUser() {
+        if (StpUtil.isLogin()) {
+            return getLoginUserOrThrow();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 从缓存中获取登录用户信息
+     */
+    public static AuthLoginVo getLoginUserOrThrow() {
         AuthLoginVo loginUser = (AuthLoginVo) SaHolder.getStorage().get(Constants.LOGIN_USER_KEY);
         if (Objects.nonNull(loginUser)) {
             return loginUser;
@@ -93,14 +104,30 @@ public class LoginUtils {
      * 从缓存中获取登录用户ID
      */
     public static Long getLoginUserId() {
-        return getLoginUser().getId();
+        AuthLoginVo loginUser = getLoginUser();
+        return Objects.nonNull(loginUser) ? loginUser.getId() : null;
+    }
+
+    /**
+     * 从缓存中获取登录用户ID
+     */
+    public static Long getLoginUserIdOrThrow() {
+        return getLoginUserOrThrow().getId();
     }
 
     /**
      * 从缓存中获取登录用户账户
      */
     public static String getLoginUserAccount() {
-        return getLoginUser().getAccount();
+        AuthLoginVo loginUser = getLoginUser();
+        return Objects.nonNull(loginUser) ? loginUser.getAccount() : null;
+    }
+
+    /**
+     * 从缓存中获取登录用户账户
+     */
+    public static String getLoginUserAccountOrThrow() {
+        return getLoginUserOrThrow().getAccount();
     }
 
     /**
@@ -114,7 +141,22 @@ public class LoginUtils {
      * 登录用户账户角色是否为管理员
      */
     public static boolean isAdmin() {
-        return Constants.ROLE_ADMIN.equals(getLoginUser().getRole());
+        AuthLoginVo loginUser = getLoginUser();
+        return Objects.nonNull(loginUser) && Constants.ROLE_ADMIN.equals(loginUser.getRole());
+    }
+
+    /**
+     * 检查目标用户是否存在Token
+     */
+    public static boolean isLogin(Object userId) {
+        return StpUtil.isLogin(userId);
+    }
+
+    /**
+     * 检查当前会话是否存在Token
+     */
+    public static boolean isLogin() {
+        return StpUtil.isLogin();
     }
 
     /**

@@ -244,46 +244,6 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  ## Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
-  #ai:
-  #  # Open AI
-  #  openai:
-  #    # OpenAI 密钥
-  #    api-key: sk-xxx
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: gpt-3.5-turbo
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
-  #  # 智谱 AI
-  #  zhipuai:
-  #    # 智谱AI 密钥
-  #    api-key: xxx.xxx
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: GLM-3-Turbo
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
-  #  # Ollama AI
-  #  ollama:
-  #    # Ollama 服务地址
-  #    base-url: http://127.0.0.1:11434
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: llama3.1:8b-instruct-q8_0
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
-  #        top-k: 10
-  #        # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
   data:
     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
     redis:

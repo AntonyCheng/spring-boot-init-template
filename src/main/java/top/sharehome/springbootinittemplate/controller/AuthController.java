@@ -123,7 +123,7 @@ public class AuthController {
     @GetMapping("/info")
     public R<AuthLoginVo> info() {
         LoginUtils.syncLoginUser();
-        return R.ok(LoginUtils.getLoginUser());
+        return R.ok(LoginUtils.getLoginUserOrThrow());
     }
 
     /**

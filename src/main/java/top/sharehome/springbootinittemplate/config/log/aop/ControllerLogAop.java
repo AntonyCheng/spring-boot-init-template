@@ -79,9 +79,10 @@ public class ControllerLogAop {
      */
     @Before("pointCutMethod()")
     public void doBefore() {
-        try {
-            USER_ID_THREAD_LOCAL.set(LoginUtils.getLoginUserId());
-        } catch (Exception e) {
+        Long userId = LoginUtils.getLoginUserId();
+        if (Objects.nonNull(userId)) {
+            USER_ID_THREAD_LOCAL.set(userId);
+        } else {
             USER_ID_THREAD_LOCAL.remove();
         }
         StopWatch stopWatch = new StopWatch();
@@ -137,11 +138,7 @@ public class ControllerLogAop {
                 }
             }
             // 设置操作用户ID
-            Long userId = null;
-            try {
-                userId = LoginUtils.getLoginUserId();
-            } catch (Exception ignored) {
-            }
+            Long userId = LoginUtils.getLoginUserId();
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -247,11 +244,7 @@ public class ControllerLogAop {
             }
             log.setJson(json);
             // 设置操作用户ID
-            Long userId = null;
-            try {
-                userId = LoginUtils.getLoginUserId();
-            } catch (Exception ignored) {
-            }
+            Long userId = LoginUtils.getLoginUserId();
             log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

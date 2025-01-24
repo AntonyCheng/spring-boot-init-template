@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaMode;
 import jakarta.annotation.Resource;
 import org.apache.commons.io.FilenameUtils;
@@ -45,7 +46,7 @@ public class UserController {
     /**
      * 头像文件后缀集合
      */
-    private static final List<String> AVATAR_SUFFIX_LIST = new ArrayList<String>() {
+    private static final List<String> AVATAR_SUFFIX_LIST = new ArrayList<>() {
         {
             add("png");
             add("jpg");
@@ -81,7 +82,7 @@ public class UserController {
     @PutMapping("/update/name")
     @ControllerLog(description = "用户更新自身名称", operator = Operator.UPDATE)
     public R<String> updateName(@RequestBody @Validated(PutGroup.class) UserUpdateNameDto userUpdateNameDto) {
-        if (StringUtils.equals(LoginUtils.getLoginUser().getName(), userUpdateNameDto.getNewName())) {
+        if (StringUtils.equals(LoginUtils.getLoginUserOrThrow().getName(), userUpdateNameDto.getNewName())) {
             throw new CustomizeReturnException(ReturnCode.NEW_USERNAME_AND_OLD_USERNAME_ARE_SAME);
         }
         userService.updateName(userUpdateNameDto.getNewName());
@@ -96,8 +97,9 @@ public class UserController {
      */
     @PutMapping("/update/email")
     @ControllerLog(description = "用户更新自身邮箱", operator = Operator.UPDATE)
+    @SaIgnore
     public R<String> updateEmail(@RequestBody @Validated(PutGroup.class) UserUpdateEmailDto userUpdateEmailDto) {
-        if (StringUtils.equals(LoginUtils.getLoginUser().getEmail(), userUpdateEmailDto.getNewEmail())) {
+        if (StringUtils.equals(LoginUtils.getLoginUserOrThrow().getEmail(), userUpdateEmailDto.getNewEmail())) {
             throw new CustomizeReturnException(ReturnCode.NEW_EMAIL_AND_OLD_EMAIL_ARE_SAME);
         }
         userService.updateEmail(userUpdateEmailDto.getNewEmail());

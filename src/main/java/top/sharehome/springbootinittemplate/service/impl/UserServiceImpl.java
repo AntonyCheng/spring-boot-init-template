@@ -254,13 +254,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateAccount(String newAccount) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, newAccount);
-        userLambdaQueryWrapper.ne(User::getId, LoginUtils.getLoginUserId());
+        userLambdaQueryWrapper.ne(User::getId, LoginUtils.getLoginUserIdOrThrow());
         if (userMapper.exists(userLambdaQueryWrapper)) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS);
         }
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getAccount, newAccount);
-        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
+        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserIdOrThrow());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -273,7 +273,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateName(String newName) {
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getName, newName);
-        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
+        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserIdOrThrow());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -286,7 +286,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateEmail(String newEmail) {
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getEmail, newEmail);
-        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
+        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserIdOrThrow());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -298,7 +298,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(String oldPassword, String newPassword) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        Long userId = LoginUtils.getLoginUserId();
+        Long userId = LoginUtils.getLoginUserIdOrThrow();
         userLambdaQueryWrapper
                 .eq(User::getId, userId)
                 .eq(User::getPassword, oldPassword)
@@ -323,7 +323,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         File avatarFile = MinioUtils.upload(file, avatarPath);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getAvatarId, avatarFile.getId());
-        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserId());
+        userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserIdOrThrow());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
