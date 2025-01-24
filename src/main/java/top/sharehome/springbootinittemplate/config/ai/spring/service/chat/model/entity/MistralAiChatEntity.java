@@ -3,7 +3,7 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.ChatServiceType;

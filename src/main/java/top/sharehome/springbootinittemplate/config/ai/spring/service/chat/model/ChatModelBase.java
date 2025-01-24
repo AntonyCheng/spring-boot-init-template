@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Getter
 @NoArgsConstructor
-public class ChatModelBase {
+public abstract class ChatModelBase {
 
     /**
      * Chat模型服务方
