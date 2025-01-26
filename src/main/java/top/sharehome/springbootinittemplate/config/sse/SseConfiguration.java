@@ -128,21 +128,41 @@ public class SseConfiguration {
      * 建立SSE连接
      */
     public SseEmitter connect() {
-        return connect(LoginUtils.getLoginUserId(), LoginUtils.getLoginUserToken());
+        return connect(LoginUtils.getLoginUserId(), LoginUtils.getLoginUserToken(), null);
     }
 
     /**
      * 建立SSE连接
      *
-     * @param userId 用户ID
-     * @param token  用户登录会话Token
+     * @param timeout   连接超时时间
+     */
+    public SseEmitter connect(Long timeout) {
+        return connect(LoginUtils.getLoginUserId(), LoginUtils.getLoginUserToken(), timeout);
+    }
+
+    /**
+     * 建立SSE连接
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
      */
     public SseEmitter connect(Long userId, String token) {
+        return connect(userId, token, null);
+    }
+
+    /**
+     * 建立SSE连接
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
+     * @param timeout   连接超时时间
+     */
+    public SseEmitter connect(Long userId, String token, Long timeout) {
         if (ObjectUtils.anyNull(userId, token)) {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "用户ID和凭证不能为空");
         }
         Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_MAP.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
-        SseEmitter sseEmitter = new SseEmitter(sseProperties.getTimeout());
+        SseEmitter sseEmitter = new SseEmitter(Objects.isNull(timeout) || timeout <= 0 ? sseProperties.getTimeout() : timeout);
         sseEmitterMap.put(token, sseEmitter);
         sseEmitter.onCompletion(() -> {
             sseEmitterMap.remove(token);

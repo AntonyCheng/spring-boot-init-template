@@ -89,11 +89,31 @@ public class SseUtils {
     /**
      * 建立SSE连接
      *
-     * @param userId 用户ID
-     * @param token  用户登录会话Token
+     * @param timeout   连接超时时间
+     */
+    public static SseEmitter connect(Long timeout) {
+        return SSE.connect(timeout);
+    }
+
+    /**
+     * 建立SSE连接
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
      */
     public static SseEmitter connect(Long userId, String token) {
         return SSE.connect(userId, token);
+    }
+
+    /**
+     * 建立SSE连接
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
+     * @param timeout   连接超时时间
+     */
+    public static SseEmitter connect(Long userId, String token, Long timeout) {
+        return SSE.connect(userId, token, timeout);
     }
 
     /**
