@@ -4,6 +4,7 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.minimax.MiniMaxChatModel;
@@ -38,6 +39,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiExcep
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * AI Chat服务接口实现类
@@ -48,55 +50,103 @@ import java.util.Objects;
 public class AiChatServiceImpl implements AiChatService {
 
     @Override
-    public String chat(ChatModelBase model, String message) {
-        if (StringUtils.isBlank(message)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[message]不能为空");
+    public String chatString(ChatModelBase model, String prompt) {
+        if (StringUtils.isBlank(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
         if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).call(message);
+            return this.getOpenAiChatModel(entity).call(prompt);
         } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).call(message);
+            return this.getOllamaChatModel(entity).call(prompt);
         } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).call(message);
+            return this.getZhiPuAiChatModel(entity).call(prompt);
         } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).call(message);
+            return this.getMoonshotChatModel(entity).call(prompt);
         } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).call(message);
+            return this.getMistralAiChatModel(entity).call(prompt);
         } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).call(message);
+            return this.getQianFanChatModel(entity).call(prompt);
         } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).call(message);
+            return this.getMiniMaxChatModel(entity).call(prompt);
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
     }
 
     @Override
-    public String chat(ChatModelBase model, Message... messages) {
-        if (ArrayUtils.isEmpty(messages)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[messages]不能为空");
+    public Stream<String> chatStream(ChatModelBase model, String prompt) {
+        if (StringUtils.isBlank(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
         if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).call(messages);
+            return this.getOpenAiChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).call(messages);
+            return this.getOllamaChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).call(messages);
+            return this.getZhiPuAiChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).call(messages);
+            return this.getMoonshotChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).call(messages);
+            return this.getMistralAiChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).call(messages);
+            return this.getQianFanChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).call(messages);
+            return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
     }
 
     @Override
-    public String chat(ChatModelBase model, Prompt prompt) {
+    public String chatString(ChatModelBase model, Message... prompt) {
+        if (ArrayUtils.isEmpty(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (model instanceof OpenAiChatEntity entity) {
+            return this.getOpenAiChatModel(entity).call(prompt);
+        } else if (model instanceof OllamaChatEntity entity) {
+            return this.getOllamaChatModel(entity).call(prompt);
+        } else if (model instanceof ZhiPuAiChatEntity entity) {
+            return this.getZhiPuAiChatModel(entity).call(prompt);
+        } else if (model instanceof MoonshotChatEntity entity) {
+            return this.getMoonshotChatModel(entity).call(prompt);
+        } else if (model instanceof MistralAiChatEntity entity) {
+            return this.getMistralAiChatModel(entity).call(prompt);
+        } else if (model instanceof QianFanChatEntity entity) {
+            return this.getQianFanChatModel(entity).call(prompt);
+        } else if (model instanceof MiniMaxChatEntity entity) {
+            return this.getMiniMaxChatModel(entity).call(prompt);
+        } else {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
+        }
+    }
+
+    @Override
+    public Stream<String> chatStream(ChatModelBase model, Message... prompt) {
+        if (ArrayUtils.isEmpty(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (model instanceof OpenAiChatEntity entity) {
+            return this.getOpenAiChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof OllamaChatEntity entity) {
+            return this.getOllamaChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof ZhiPuAiChatEntity entity) {
+            return this.getZhiPuAiChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof MoonshotChatEntity entity) {
+            return this.getMoonshotChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof MistralAiChatEntity entity) {
+            return this.getMistralAiChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof QianFanChatEntity entity) {
+            return this.getQianFanChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof MiniMaxChatEntity entity) {
+            return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
+        } else {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
+        }
+    }
+
+    @Override
+    public String chatString(ChatModelBase model, Prompt prompt) {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -121,6 +171,30 @@ public class AiChatServiceImpl implements AiChatService {
         } else if (model instanceof MiniMaxChatEntity entity) {
             Generation generation = this.getMiniMaxChatModel(entity).call(prompt).getResult();
             return Objects.nonNull(generation) ? generation.getOutput().getText() : "";
+        } else {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
+        }
+    }
+
+    @Override
+    public Stream<String> chatStream(ChatModelBase model, Prompt prompt) {
+        if (Objects.isNull(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (model instanceof OpenAiChatEntity entity) {
+            return this.getOpenAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof OllamaChatEntity entity) {
+            return this.getOllamaChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof ZhiPuAiChatEntity entity) {
+            return this.getZhiPuAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof MoonshotChatEntity entity) {
+            return this.getMoonshotChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof MistralAiChatEntity entity) {
+            return this.getMistralAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof QianFanChatEntity entity) {
+            return this.getQianFanChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof MiniMaxChatEntity entity) {
+            return this.getMiniMaxChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
