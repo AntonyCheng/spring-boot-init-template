@@ -1,8 +1,10 @@
 package top.sharehome.springbootinittemplate.config.sse.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import top.sharehome.springbootinittemplate.common.base.R;
@@ -19,12 +21,14 @@ import top.sharehome.springbootinittemplate.config.sse.utils.SseUtils;
  */
 @RestController
 @Conditional(SseCondition.class)
+@RequestMapping(value = "/${sse.path}")
+@SaCheckLogin
 public class SseController {
 
     /**
      * SSE创建连接
      */
-    @GetMapping(value = "${sse.path}/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ControllerLog(description = "SSE创建连接", operator = Operator.OTHER)
     public SseEmitter connect() {
         return SseUtils.connect();
@@ -33,7 +37,7 @@ public class SseController {
     /**
      * SSE断开连接
      */
-    @GetMapping(value = "${sse.path}/disconnect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/disconnect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ControllerLog(description = "SSE断开连接", operator = Operator.OTHER)
     public R<Void> disconnect() {
         SseUtils.disconnect();

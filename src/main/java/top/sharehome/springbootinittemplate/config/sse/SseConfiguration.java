@@ -40,9 +40,9 @@ public class SseConfiguration {
     private final SseProperties sseProperties;
 
     /**
-     * 用户凭证池
+     * 用户凭证连接池
      */
-    private final static Map<Long, Map<String, SseEmitter>> TOKEN_SSE_EMITTER_MAP = new ConcurrentHashMap<>();
+    private final static Map<Long, Map<String, SseEmitter>> TOKEN_SSE_EMITTER_POOL = new ConcurrentHashMap<>();
 
     /**
      * 快速建立SSE，并发送消息
@@ -58,7 +58,7 @@ public class SseConfiguration {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public SseEmitter quickSseStream(Stream<String> messages, Long timeout) {
         List<SseMessage> messagelist = messages.map(str -> new SseMessage().setData(str)).toList();
@@ -79,7 +79,7 @@ public class SseConfiguration {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public SseEmitter quickSseStrings(List<String> messages, Long timeout) {
         List<SseMessage> messagelist = messages.stream().map(str -> new SseMessage().setData(str)).toList();
@@ -99,7 +99,7 @@ public class SseConfiguration {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public SseEmitter quickSseMessages(List<SseMessage> messages, Long timeout) {
         SseEmitter sseEmitter = new SseEmitter(Objects.isNull(timeout) || timeout <= 0L ? 0L : timeout);
@@ -161,7 +161,7 @@ public class SseConfiguration {
         if (ObjectUtils.anyNull(userId, token)) {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "用户ID和凭证不能为空");
         }
-        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_MAP.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
+        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_POOL.computeIfAbsent(userId, key -> new ConcurrentHashMap<>());
         SseEmitter sseEmitter = new SseEmitter(Objects.isNull(timeout) || timeout <= 0 ? sseProperties.getTimeout() : timeout);
         sseEmitterMap.put(token, sseEmitter);
         sseEmitter.onCompletion(() -> {
@@ -187,6 +187,30 @@ public class SseConfiguration {
     }
 
     /**
+     * 获取Sse连接，如果token为null，则返回userId下所有Token对应的SseEmitter
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
+     */
+    public Map<String, SseEmitter> getSseEmitter(Long userId, String token) {
+        if (ObjectUtils.anyNull(userId, token)) {
+            throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "用户ID和凭证不能为空");
+        }
+        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_POOL.get(userId);
+        if (MapUtils.isNotEmpty(sseEmitterMap)) {
+            if (Objects.isNull(token)) {
+                return sseEmitterMap;
+            } else {
+                SseEmitter sseEmitter = sseEmitterMap.get(token);
+                return Objects.isNull(sseEmitter) ? null : Map.of(token, sseEmitter);
+            }
+        } else {
+            TOKEN_SSE_EMITTER_POOL.remove(userId);
+            return null;
+        }
+    }
+
+    /**
      * 切断SSE连接
      */
     public void disconnect() {
@@ -203,7 +227,7 @@ public class SseConfiguration {
         if (ObjectUtils.anyNull(userId, token)) {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "用户ID和凭证不能为空");
         }
-        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_MAP.get(userId);
+        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_POOL.get(userId);
         if (MapUtils.isNotEmpty(sseEmitterMap)) {
             try {
                 SseEmitter sseEmitter = sseEmitterMap.get(token);
@@ -214,12 +238,12 @@ public class SseConfiguration {
             }
             sseEmitterMap.remove(token);
         } else {
-            TOKEN_SSE_EMITTER_MAP.remove(userId);
+            TOKEN_SSE_EMITTER_POOL.remove(userId);
         }
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -229,7 +253,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -239,7 +263,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param messages      消息内容
@@ -250,7 +274,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -262,7 +286,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -275,7 +299,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -285,7 +309,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -295,7 +319,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param messages      消息内容
@@ -306,7 +330,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -318,7 +342,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -331,7 +355,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -340,7 +364,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
@@ -349,7 +373,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param messages      消息内容
@@ -359,7 +383,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -370,7 +394,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -382,7 +406,7 @@ public class SseConfiguration {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
@@ -393,7 +417,7 @@ public class SseConfiguration {
         if (CollectionUtils.isEmpty(messages)) {
             return;
         }
-        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_MAP.get(userId);
+        Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_POOL.get(userId);
         if (MapUtils.isNotEmpty(sseEmitterMap)) {
             // 预处理消息
             this.handleMessages(messages);
@@ -409,7 +433,7 @@ public class SseConfiguration {
             }
         } else {
             log.warn("SSE连接已断开，用户[ id:{} | token:{} ]离线", userId, token);
-            TOKEN_SSE_EMITTER_MAP.remove(userId);
+            TOKEN_SSE_EMITTER_POOL.remove(userId);
             throw new CustomizeReturnException(ReturnCode.FAIL, "连接已断开");
         }
     }

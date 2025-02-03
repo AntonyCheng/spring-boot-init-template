@@ -61,16 +61,4 @@ public interface AiChatService {
      */
     Stream<String> chatStream(ChatModelBase model, Prompt prompt);
 
-
-//    /**
-//     * 发起AI Chat功能，并且将结果输出至SSE连接
-//     *
-//     * @param model       chat模型信息
-//     * @param message     提示词
-//     * @param sseEmitter  SSE连接
-//     * @param isLogin     是否存在登录状态
-//     * @param isStream    是否流式返回
-//     */
-//    void chatToSse(ChatModelBase model, String message, SseEmitter sseEmitter, Boolean isLogin, Boolean isStream);
-
 }

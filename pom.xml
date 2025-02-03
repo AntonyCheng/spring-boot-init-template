@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Spring AI相关 -->
-        <spring.ai.version>1.0.0-M5</spring.ai.version>
+        <spring.ai.version>1.0.0-SNAPSHOT</spring.ai.version>
         <!-- Netty相关 -->
         <netty.version>4.1.114.Final</netty.version>
         <!-- 数据驱动层相关 -->
@@ -218,6 +218,11 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-minimax</artifactId>
+            <version>${spring.ai.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-stability-ai</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
 

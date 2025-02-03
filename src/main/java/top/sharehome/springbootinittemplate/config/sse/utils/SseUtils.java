@@ -7,6 +7,7 @@ import top.sharehome.springbootinittemplate.config.sse.SseConfiguration;
 import top.sharehome.springbootinittemplate.config.sse.entity.SseMessage;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +36,7 @@ public class SseUtils {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public static SseEmitter quickSseStream(Stream<String> messages, Long timeout) {
         return SSE.quickSseStream(messages, timeout);
@@ -54,7 +55,7 @@ public class SseUtils {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public static SseEmitter quickSseStrings(List<String> messages, Long timeout) {
         return SSE.quickSseStrings(messages, timeout);
@@ -73,7 +74,7 @@ public class SseUtils {
      * 快速建立SSE，并发送消息
      *
      * @param messages      消息内容
-     * @param timeout       SSE连接超时时间
+     * @param timeout       SSE连接等待超时时间
      */
     public static SseEmitter quickSseMessages(List<SseMessage> messages, Long timeout) {
         return SSE.quickSseMessages(messages, timeout);
@@ -114,6 +115,16 @@ public class SseUtils {
      */
     public static SseEmitter connect(Long userId, String token, Long timeout) {
         return SSE.connect(userId, token, timeout);
+    }
+
+    /**
+     * 获取Sse连接，如果token为null，则返回userId下所有Token对应的SseEmitter
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
+     */
+    public static Map<String, SseEmitter> getSseEmitter(Long userId, String token) {
+        return SSE.getSseEmitter(userId, token);
     }
 
     /**

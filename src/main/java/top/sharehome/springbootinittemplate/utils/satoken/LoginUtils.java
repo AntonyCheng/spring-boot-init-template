@@ -146,14 +146,21 @@ public class LoginUtils {
     }
 
     /**
-     * 检查目标用户是否存在Token
+     * 检查目标Token是否登录
+     */
+    public static boolean isLogin(Object userId, String token) {
+        return StpUtil.isLogin(userId) && StpUtil.getTokenValueListByLoginId(userId).contains(token);
+    }
+
+    /**
+     * 检查目标用户是否登录
      */
     public static boolean isLogin(Object userId) {
         return StpUtil.isLogin(userId);
     }
 
     /**
-     * 检查当前会话是否存在Token
+     * 检查当前会话是否登录
      */
     public static boolean isLogin() {
         return StpUtil.isLogin();
