@@ -27,24 +27,24 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：abab5.5-chat
      */
-    private static final String DEFAULT_MODEL = MiniMaxApi.ChatModel.ABAB_5_5_Chat.getName();
-
-    /**
-     * 模型名称，默认abab5.5-chat
-     */
-    private String model;
+    private static final String DEFAULT_MODEL = MiniMaxApi.ChatModel.ABAB_5_5_Chat.getValue();
 
     /**
      * MiniMax密钥
      */
     private String apiKey;
 
+    /**
+     * 模型名称，默认abab5.5-chat
+     */
+    private String model;
+
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
     }
 
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
     }
 
     public MiniMaxChatEntity(String model, String apiKey) {
@@ -61,7 +61,7 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
     }
 
     public void setName(MiniMaxApi.ChatModel chatModel) {
-        this.model = chatModel.getName();
+        this.model = chatModel.getValue();
     }
 
     @Serial

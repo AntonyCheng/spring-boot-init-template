@@ -27,24 +27,24 @@ public class ZhiPuAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：glm-4-flash
      */
-    private static final String DEFAULT_MODEL = ZhiPuAiApi.ChatModel.GLM_4_Flash.getName();
-
-    /**
-     * 模型名称，默认glm-4-flash
-     */
-    private String model;
+    private static final String DEFAULT_MODEL = ZhiPuAiApi.ChatModel.GLM_4_Flash.getValue();
 
     /**
      * ZhiPuAI密钥
      */
     private String apiKey;
 
+    /**
+     * 模型名称，默认glm-4-flash
+     */
+    private String model;
+
     public ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
     }
 
     public ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
     }
 
     public ZhiPuAiChatEntity(String model, String apiKey) {
@@ -61,7 +61,7 @@ public class ZhiPuAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public void setName(ZhiPuAiApi.ChatModel chatModel) {
-        this.model = chatModel.getName();
+        this.model = chatModel.getValue();
     }
 
     @Serial

@@ -27,24 +27,24 @@ public class MoonshotChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：moonshot-v1-8k
      */
-    private static final String DEFAULT_MODEL = MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName();
-
-    /**
-     * 模型名称，默认moonshot-v1-8k
-     */
-    private String model;
+    private static final String DEFAULT_MODEL = MoonshotApi.ChatModel.MOONSHOT_V1_8K.getValue();
 
     /**
      * ZhiPuAI密钥
      */
     private String apiKey;
 
+    /**
+     * 模型名称，默认moonshot-v1-8k
+     */
+    private String model;
+
     public MoonshotChatEntity(MoonshotApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
     }
 
     public MoonshotChatEntity(MoonshotApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
     }
 
     public MoonshotChatEntity(String model, String apiKey) {
@@ -61,7 +61,7 @@ public class MoonshotChatEntity extends ChatModelBase implements Serializable {
     }
 
     public void setName(MoonshotApi.ChatModel chatModel) {
-        this.model = chatModel.getName();
+        this.model = chatModel.getValue();
     }
 
     @Serial

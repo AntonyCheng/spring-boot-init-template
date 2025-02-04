@@ -30,11 +30,6 @@ public class QianFanChatEntity extends ChatModelBase implements Serializable {
     private static final String DEFAULT_MODEL = QianFanApi.ChatModel.ERNIE_Speed_8K.getValue();
 
     /**
-     * 模型名称，默认ernie_speed
-     */
-    private String model;
-
-    /**
      * QianFan公钥
      */
     private String apiKey;
@@ -43,6 +38,11 @@ public class QianFanChatEntity extends ChatModelBase implements Serializable {
      * QianFan私钥
      */
     private String secretKey;
+
+    /**
+     * 模型名称，默认ernie_speed
+     */
+    private String model;
 
     public QianFanChatEntity(QianFanApi.ChatModel chatModel, String apiKey, String secretKey) {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, secretKey, null, null);

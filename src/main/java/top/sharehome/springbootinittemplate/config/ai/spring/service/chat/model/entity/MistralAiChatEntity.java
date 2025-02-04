@@ -27,24 +27,24 @@ public class MistralAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：open-mistral-7b
      */
-    private static final String DEFAULT_MODEL = MistralAiApi.ChatModel.OPEN_MISTRAL_7B.getName();
-
-    /**
-     * 模型名称，默认open-mistral-7b
-     */
-    private String model;
+    private static final String DEFAULT_MODEL = MistralAiApi.ChatModel.OPEN_MISTRAL_7B.getValue();
 
     /**
      * MistralAi密钥
      */
     private String apiKey;
 
+    /**
+     * 模型名称，默认open-mistral-7b
+     */
+    private String model;
+
     public MistralAiChatEntity(MistralAiApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
     }
 
     public MistralAiChatEntity(MistralAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getName(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
     }
 
     public MistralAiChatEntity(String model, String apiKey) {
@@ -61,7 +61,7 @@ public class MistralAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public void setName(MistralAiApi.ChatModel chatModel) {
-        this.model = chatModel.getName();
+        this.model = chatModel.getValue();
     }
 
     @Serial

@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * SpringAI Chat服务类型
+ * SpringAI Image服务类型
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum ChatServiceType {
+public enum ImageServiceType {
 
     /**
      * OpenAI服务
@@ -18,35 +18,19 @@ public enum ChatServiceType {
     OpenAi("OpenAI", "openai"),
 
     /**
-     * Ollama服务
-     */
-    Ollama("Ollama", "ollama"),
-
-    /**
      * ZhiPuAi服务
      */
     ZhiPuAi("智谱AI", "zhipu"),
-
-    /**
-     * Moonshot服务
-     */
-    Moonshot("月之暗面", "moonshot"),
-
-    /**
-     * MistralAi服务
-     */
-    MistralAi("MistralAI", "mistralai"),
 
     /**
      * QianFan服务
      */
     QianFan("千帆AI", "qianfan"),
 
-
     /**
-     * MiniMax服务
+     * Stability服务
      */
-    MiniMax("MiniMax", "minimax");
+    Stability("Stability","stability");
 
     /**
      * 模型中文标签

@@ -13,7 +13,7 @@ import org.springframework.ai.minimax.api.MiniMaxApi;
 import org.springframework.ai.mistralai.MistralAiChatModel;
 import org.springframework.ai.mistralai.MistralAiChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
-import org.springframework.ai.model.function.DefaultFunctionCallbackResolver;
+import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.moonshot.MoonshotChatModel;
 import org.springframework.ai.moonshot.MoonshotChatOptions;
 import org.springframework.ai.moonshot.api.MoonshotApi;
@@ -27,6 +27,8 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.qianfan.QianFanChatModel;
 import org.springframework.ai.qianfan.QianFanChatOptions;
 import org.springframework.ai.qianfan.api.QianFanApi;
+import org.springframework.ai.tool.execution.DefaultToolCallExceptionConverter;
+import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
@@ -224,7 +226,9 @@ public class AiChatServiceImpl implements AiChatService {
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
                 .build()
-                , new DefaultFunctionCallbackResolver(), List.of(), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
+                , new DefaultToolCallingManager(ObservationRegistry.NOOP,
+                new DelegatingToolCallbackResolver(List.of()),
+                new DefaultToolCallExceptionConverter(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
     }
 
     /**
