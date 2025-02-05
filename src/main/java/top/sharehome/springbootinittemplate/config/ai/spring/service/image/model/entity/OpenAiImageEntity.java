@@ -46,7 +46,7 @@ public class OpenAiImageEntity extends ImageModelBase implements Serializable {
     private String baseUrl;
 
     /**
-     * 生成图片张数
+     * 生成图像张数
      */
     private Integer n;
 
@@ -73,7 +73,7 @@ public class OpenAiImageEntity extends ImageModelBase implements Serializable {
         this.apiKey = apiKey;
         this.openAiImageType = openAiImageType;
         this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL : baseUrl;
-        this.n = OpenAiImageApi.ImageModel.DALL_E_2.getValue().equals(openAiImageType.getImageModel().getValue()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+        this.n = OpenAiImageApi.ImageModel.DALL_E_3.getValue().equals(openAiImageType.getImageModel().getValue()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
     }
 
     @Serial

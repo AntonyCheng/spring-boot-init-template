@@ -59,7 +59,7 @@ public enum OpenAiImageType {
     DallE3_1792_1024_HD(OpenAiImageApi.ImageModel.DALL_E_3, 1792, 1024, "hd");
 
     /**
-     * Open图像模型
+     * OpenAI图像模型
      */
     private final OpenAiImageApi.ImageModel imageModel;
 
