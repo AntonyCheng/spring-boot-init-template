@@ -55,13 +55,13 @@ public enum StabilityAiImageType {
     private final String imageModel;
 
     /**
-     * 图像高度
-     */
-    private final Integer height;
-
-    /**
      * 图像宽度
      */
     private final Integer width;
+
+    /**
+     * 图像高度
+     */
+    private final Integer height;
 
 }

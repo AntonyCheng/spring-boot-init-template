@@ -8,6 +8,9 @@ import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.api.OpenAiImageApi;
+import org.springframework.ai.qianfan.QianFanImageModel;
+import org.springframework.ai.qianfan.QianFanImageOptions;
+import org.springframework.ai.qianfan.api.QianFanImageApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.stabilityai.StabilityAiImageModel;
 import org.springframework.ai.stabilityai.api.StabilityAiApi;
@@ -21,6 +24,7 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.AiImageService;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.ImageModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.OpenAiImageEntity;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.QianFanImageEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.StabilityAiImageEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.ZhiPuAiImageEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
@@ -30,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -52,6 +57,8 @@ public class AiImageServiceImpl implements AiImageService {
             imageResponse = this.getStabilityAiImageModel(entity).call(new ImagePrompt(prompt));
         } else if (model instanceof ZhiPuAiImageEntity entity) {
             imageResponse = this.getZhiPuAiImageModel(entity).call(new ImagePrompt(prompt));
+        } else if (model instanceof QianFanImageEntity entity) {
+            imageResponse = this.getQianFanImageModel(entity).call(new ImagePrompt(prompt));
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -80,7 +87,7 @@ public class AiImageServiceImpl implements AiImageService {
     private OpenAiImageModel getOpenAiImageModel(OpenAiImageEntity openAiImageEntity) {
         OpenAiImageApi openAiImageApi = new OpenAiImageApi(openAiImageEntity.getBaseUrl(), openAiImageEntity.getApiKey(), RestClient.builder());
         return new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder()
-                .model(openAiImageEntity.getOpenAiImageType().getImageModel().getValue())
+                .model(openAiImageEntity.getOpenAiImageType().getImageModel())
                 .quality(openAiImageEntity.getOpenAiImageType().getQuality())
                 .N(openAiImageEntity.getN())
                 .height(openAiImageEntity.getOpenAiImageType().getHeight())
@@ -90,6 +97,8 @@ public class AiImageServiceImpl implements AiImageService {
 
     /**
      * 获取StabilityAiImageModel
+     *
+     * @apiNote 如果直接使用Stability官方的模型，则不支持仅包含中文的提示词（会触发审核系统），推荐直接使用英文提示词
      */
     private StabilityAiImageModel getStabilityAiImageModel(StabilityAiImageEntity stabilityAiImageEntity) {
         StabilityAiApi stabilityAiApi = new StabilityAiApi(stabilityAiImageEntity.getApiKey());
@@ -98,7 +107,7 @@ public class AiImageServiceImpl implements AiImageService {
                 .N(stabilityAiImageEntity.getN())
                 .height(stabilityAiImageEntity.getStabilityAiImageType().getHeight())
                 .width(stabilityAiImageEntity.getStabilityAiImageType().getWidth())
-                .stylePreset(stabilityAiImageEntity.getStyleEnum())
+                .stylePreset(Objects.isNull(stabilityAiImageEntity.getStyleEnum()) ? null : stabilityAiImageEntity.getStyleEnum().toString())
                 .build());
     }
 
@@ -112,4 +121,20 @@ public class AiImageServiceImpl implements AiImageService {
                 .user(StringUtils.isBlank(zhiPuAiImageEntity.getUser()) ? null : zhiPuAiImageEntity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
+
+    /**
+     * 获取QianFanImageModel
+     */
+    private QianFanImageModel getQianFanImageModel(QianFanImageEntity qianFanImageEntity) {
+        QianFanImageApi qianFanImageApi = new QianFanImageApi(qianFanImageEntity.getApiKey(), qianFanImageEntity.getSecretKey());
+        return new QianFanImageModel(qianFanImageApi, QianFanImageOptions.builder()
+                .model(qianFanImageEntity.getQianFanImageType().getImageModel())
+                .N(qianFanImageEntity.getN())
+                .height(qianFanImageEntity.getQianFanImageType().getHeight())
+                .width(qianFanImageEntity.getQianFanImageType().getWidth())
+                .style(Objects.isNull(qianFanImageEntity.getStyleEnum()) ? null : qianFanImageEntity.getStyleEnum().toString())
+                .user(StringUtils.isBlank(qianFanImageEntity.getUser()) ? null : qianFanImageEntity.getUser())
+                .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
+    }
+
 }

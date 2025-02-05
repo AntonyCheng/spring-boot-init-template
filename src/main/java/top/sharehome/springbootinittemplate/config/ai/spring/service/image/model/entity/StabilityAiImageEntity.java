@@ -89,7 +89,7 @@ public class StabilityAiImageEntity extends ImageModelBase implements Serializab
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Integer n, StyleEnum styleEnum) {
-        super(ImageServiceType.OpenAi);
+        super(ImageServiceType.Stability);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }
@@ -99,7 +99,7 @@ public class StabilityAiImageEntity extends ImageModelBase implements Serializab
         this.apiKey = apiKey;
         this.stabilityAiImageType = stabilityAiImageType;
         this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL + DEFAULT_BASE_URI : baseUrl + stabilityAiImageType.getBaseUri();
-        this.n = Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+        this.n = Objects.isNull(n) || n < 1 || n > 4 ? 1 : n;
         this.styleEnum = styleEnum;
     }
 
