@@ -29,13 +29,13 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.ZhiPuAiImageEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * AI Image服务接口实现类
@@ -46,7 +46,7 @@ import java.util.UUID;
 public class AiImageServiceImpl implements AiImageService {
 
     @Override
-    public List<String> quickImage(ImageModelBase model, String prompt) {
+    public List<String> imageToTempUrl(ImageModelBase model, String prompt) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -76,6 +76,45 @@ public class AiImageServiceImpl implements AiImageService {
                 }
             } else {
                 res.add(result.getOutput().getUrl());
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public List<byte[]> imageToByteArray(ImageModelBase model, String prompt) {
+        if (StringUtils.isBlank(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        ImageResponse imageResponse;
+        if (model instanceof OpenAiImageEntity entity) {
+            imageResponse = this.getOpenAiImageModel(entity).call(new ImagePrompt(prompt));
+        } else if (model instanceof StabilityAiImageEntity entity) {
+            imageResponse = this.getStabilityAiImageModel(entity).call(new ImagePrompt(prompt));
+        } else if (model instanceof ZhiPuAiImageEntity entity) {
+            imageResponse = this.getZhiPuAiImageModel(entity).call(new ImagePrompt(prompt));
+        } else if (model instanceof QianFanImageEntity entity) {
+            imageResponse = this.getQianFanImageModel(entity).call(new ImagePrompt(prompt));
+        } else {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
+        }
+        List<byte[]> res = new ArrayList<>();
+        for (ImageGeneration result : imageResponse.getResults()) {
+            if (StringUtils.isBlank(result.getOutput().getUrl())) {
+                String b64Json = result.getOutput().getB64Json();
+                byte[] decode = Base64.getDecoder().decode(b64Json);
+                res.add(decode);
+            } else {
+                try (InputStream inputStream = new URL(result.getOutput().getUrl()).openStream(); ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        byteArrayOutputStream.write(buffer, 0, bytesRead);
+                    }
+                    res.add(byteArrayOutputStream.toByteArray());
+                } catch (IOException e) {
+                    throw new CustomizeAiException(ReturnCode.SYSTEM_FILE_ADDRESS_IS_ABNORMAL, "图片链接解析异常");
+                }
             }
         }
         return res;
@@ -136,5 +175,4 @@ public class AiImageServiceImpl implements AiImageService {
                 .user(StringUtils.isBlank(qianFanImageEntity.getUser()) ? null : qianFanImageEntity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
-
 }

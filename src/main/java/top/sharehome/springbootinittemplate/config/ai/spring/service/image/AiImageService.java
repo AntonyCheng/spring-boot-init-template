@@ -17,6 +17,11 @@ public interface AiImageService {
      * @param model     image模型信息
      * @param prompt    提示词
      */
-    List<String> quickImage(ImageModelBase model, String prompt);
+    List<String> imageToTempUrl(ImageModelBase model, String prompt);
+
+    /**
+     * 生成AI Image功能，快速生成图片，返回图片byte[]数组
+     */
+    List<byte[]> imageToByteArray(ImageModelBase model, String prompt);
 
 }

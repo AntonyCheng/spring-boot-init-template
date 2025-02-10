@@ -13,6 +13,7 @@ import org.springframework.ai.minimax.api.MiniMaxApi;
 import org.springframework.ai.mistralai.MistralAiChatModel;
 import org.springframework.ai.mistralai.MistralAiChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
+import org.springframework.ai.model.SimpleApiKey;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.moonshot.MoonshotChatModel;
 import org.springframework.ai.moonshot.MoonshotChatOptions;
@@ -27,7 +28,7 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.qianfan.QianFanChatModel;
 import org.springframework.ai.qianfan.QianFanChatOptions;
 import org.springframework.ai.qianfan.api.QianFanApi;
-import org.springframework.ai.tool.execution.DefaultToolCallExceptionConverter;
+import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
@@ -206,7 +207,7 @@ public class AiChatServiceImpl implements AiChatService {
      * 获取OpenAiChatModel
      */
     private OpenAiChatModel getOpenAiChatModel(OpenAiChatEntity entity) {
-        OpenAiApi openAiApi = new OpenAiApi(entity.getBaseUrl(), entity.getApiKey());
+        OpenAiApi openAiApi = OpenAiApi.builder().baseUrl(entity.getBaseUrl()).apiKey(new SimpleApiKey(entity.getApiKey())).build();
         return new OpenAiChatModel(openAiApi, OpenAiChatOptions
                 .builder()
                 .model(entity.getModel())
@@ -228,7 +229,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .build()
                 , new DefaultToolCallingManager(ObservationRegistry.NOOP,
                 new DelegatingToolCallbackResolver(List.of()),
-                new DefaultToolCallExceptionConverter(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
+                new DefaultToolExecutionExceptionProcessor(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
     }
 
     /**

@@ -25,9 +25,9 @@ import java.util.Objects;
 public class MistralAiChatEntity extends ChatModelBase implements Serializable {
 
     /**
-     * 默认模型名称：open-mistral-7b
+     * 默认模型名称：ministral-8b-latest
      */
-    private static final String DEFAULT_MODEL = MistralAiApi.ChatModel.OPEN_MISTRAL_7B.getValue();
+    private static final String DEFAULT_MODEL = MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getValue();
 
     /**
      * MistralAi密钥
@@ -35,7 +35,7 @@ public class MistralAiChatEntity extends ChatModelBase implements Serializable {
     private String apiKey;
 
     /**
-     * 模型名称，默认open-mistral-7b
+     * 模型名称，默认ministral-8b-latest
      */
     private String model;
 
