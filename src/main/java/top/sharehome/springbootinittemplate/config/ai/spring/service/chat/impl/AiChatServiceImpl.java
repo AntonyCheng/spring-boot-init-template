@@ -208,12 +208,15 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private OpenAiChatModel getOpenAiChatModel(OpenAiChatEntity entity) {
         OpenAiApi openAiApi = OpenAiApi.builder().baseUrl(entity.getBaseUrl()).apiKey(new SimpleApiKey(entity.getApiKey())).build();
-        return new OpenAiChatModel(openAiApi, OpenAiChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTemperature())
-                .build());
+        return OpenAiChatModel.builder()
+                .openAiApi(openAiApi)
+                .defaultOptions(OpenAiChatOptions
+                        .builder()
+                        .model(entity.getModel())
+                        .temperature(entity.getTemperature())
+                        .topP(entity.getTemperature())
+                        .build())
+                .build();
     }
 
     /**
@@ -263,12 +266,15 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private MistralAiChatModel getMistralAiChatModel(MistralAiChatEntity entity) {
         MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
-        return new MistralAiChatModel(mistralAiApi, MistralAiChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
+        return MistralAiChatModel.builder()
+                .mistralAiApi(mistralAiApi)
+                .defaultOptions(MistralAiChatOptions
+                        .builder()
+                        .model(entity.getModel())
+                        .temperature(entity.getTemperature())
+                        .topP(entity.getTopP())
+                        .build())
+                .build();
     }
 
     /**

@@ -124,7 +124,11 @@ public class AiImageServiceImpl implements AiImageService {
      * 获取OpenAiImageModel
      */
     private OpenAiImageModel getOpenAiImageModel(OpenAiImageEntity openAiImageEntity) {
-        OpenAiImageApi openAiImageApi = new OpenAiImageApi(openAiImageEntity.getBaseUrl(), openAiImageEntity.getApiKey(), RestClient.builder());
+        OpenAiImageApi openAiImageApi = OpenAiImageApi.builder()
+                .baseUrl(openAiImageEntity.getBaseUrl())
+                .apiKey(openAiImageEntity.getApiKey())
+                .restClientBuilder(RestClient.builder())
+                .build();
         return new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder()
                 .model(openAiImageEntity.getOpenAiImageType().getImageModel())
                 .quality(openAiImageEntity.getOpenAiImageType().getQuality())
