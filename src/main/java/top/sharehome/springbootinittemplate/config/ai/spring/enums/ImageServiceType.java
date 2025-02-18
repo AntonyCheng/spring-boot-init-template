@@ -18,6 +18,11 @@ public enum ImageServiceType {
     OpenAi("OpenAI", "openai"),
 
     /**
+     * AzureOpenAi服务
+     */
+    AzureOpenAi("AzureOpenAi", "azureopenai"),
+
+    /**
      * ZhiPuAi服务
      */
     ZhiPuAi("智谱AI", "zhipu"),
@@ -30,7 +35,7 @@ public enum ImageServiceType {
     /**
      * Stability服务
      */
-    Stability("Stability","stability");
+    Stability("Stability", "stability");
 
     /**
      * 模型中文标签
