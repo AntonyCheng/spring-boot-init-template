@@ -19,6 +19,7 @@ import org.springframework.ai.zhipuai.ZhiPuAiImageModel;
 import org.springframework.ai.zhipuai.ZhiPuAiImageOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiImageApi;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.AiImageService;
@@ -128,6 +129,7 @@ public class AiImageServiceImpl implements AiImageService {
                 .baseUrl(openAiImageEntity.getBaseUrl())
                 .apiKey(openAiImageEntity.getApiKey())
                 .restClientBuilder(RestClient.builder())
+                .responseErrorHandler(new DefaultResponseErrorHandler())
                 .build();
         return new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder()
                 .model(openAiImageEntity.getOpenAiImageType().getImageModel())
@@ -144,7 +146,7 @@ public class AiImageServiceImpl implements AiImageService {
      * @apiNote 如果直接使用Stability官方的模型，则不支持仅包含中文的提示词（会触发审核系统），推荐直接使用英文提示词
      */
     private StabilityAiImageModel getStabilityAiImageModel(StabilityAiImageEntity stabilityAiImageEntity) {
-        StabilityAiApi stabilityAiApi = new StabilityAiApi(stabilityAiImageEntity.getApiKey());
+        StabilityAiApi stabilityAiApi = new StabilityAiApi(stabilityAiImageEntity.getApiKey(), stabilityAiImageEntity.getStabilityAiImageType().getImageModel(), stabilityAiImageEntity.getBaseUrl(), RestClient.builder());
         return new StabilityAiImageModel(stabilityAiApi, StabilityAiImageOptions.builder()
                 .model(stabilityAiImageEntity.getStabilityAiImageType().getImageModel())
                 .N(stabilityAiImageEntity.getN())

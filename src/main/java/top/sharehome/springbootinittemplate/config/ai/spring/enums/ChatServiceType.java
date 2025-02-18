@@ -42,11 +42,15 @@ public enum ChatServiceType {
      */
     QianFan("千帆AI", "qianfan"),
 
-
     /**
      * MiniMax服务
      */
-    MiniMax("MiniMax", "minimax");
+    MiniMax("MiniMax", "minimax"),
+
+    /**
+     * AzureOpenAi服务
+     */
+    AzureOpenAi("AzureOpenAi", "azureopenai");
 
     /**
      * 模型中文标签

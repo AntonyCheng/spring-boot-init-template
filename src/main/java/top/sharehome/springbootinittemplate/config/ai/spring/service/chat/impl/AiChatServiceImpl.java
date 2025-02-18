@@ -1,8 +1,12 @@
 package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.impl;
 
+import com.azure.ai.openai.OpenAIClientBuilder;
+import com.azure.core.credential.AzureKeyCredential;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
+import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -71,6 +75,8 @@ public class AiChatServiceImpl implements AiChatService {
             return this.getQianFanChatModel(entity).call(prompt);
         } else if (model instanceof MiniMaxChatEntity entity) {
             return this.getMiniMaxChatModel(entity).call(prompt);
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatModel(entity).call(prompt);
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -95,6 +101,8 @@ public class AiChatServiceImpl implements AiChatService {
             return this.getQianFanChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof MiniMaxChatEntity entity) {
             return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatModel(entity).stream(prompt).toStream();
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -119,6 +127,8 @@ public class AiChatServiceImpl implements AiChatService {
             return this.getQianFanChatModel(entity).call(prompt);
         } else if (model instanceof MiniMaxChatEntity entity) {
             return this.getMiniMaxChatModel(entity).call(prompt);
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatModel(entity).call(prompt);
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -143,6 +153,8 @@ public class AiChatServiceImpl implements AiChatService {
             return this.getQianFanChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof MiniMaxChatEntity entity) {
             return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatModel(entity).stream(prompt).toStream();
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -174,6 +186,9 @@ public class AiChatServiceImpl implements AiChatService {
         } else if (model instanceof MiniMaxChatEntity entity) {
             Generation generation = this.getMiniMaxChatModel(entity).call(prompt).getResult();
             return Objects.nonNull(generation) ? generation.getOutput().getText() : "";
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            Generation generation = this.getAzureOpenAiChatModel(entity).call(prompt).getResult();
+            return Objects.nonNull(generation) ? generation.getOutput().getText() : "";
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -198,6 +213,8 @@ public class AiChatServiceImpl implements AiChatService {
             return this.getQianFanChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
         } else if (model instanceof MiniMaxChatEntity entity) {
             return this.getMiniMaxChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -208,15 +225,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private OpenAiChatModel getOpenAiChatModel(OpenAiChatEntity entity) {
         OpenAiApi openAiApi = OpenAiApi.builder().baseUrl(entity.getBaseUrl()).apiKey(new SimpleApiKey(entity.getApiKey())).build();
-        return OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(OpenAiChatOptions
-                        .builder()
-                        .model(entity.getModel())
-                        .temperature(entity.getTemperature())
-                        .topP(entity.getTemperature())
-                        .build())
-                .build();
+        return OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(OpenAiChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTemperature()).build()).build();
     }
 
     /**
@@ -224,15 +233,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private OllamaChatModel getOllamaChatModel(OllamaChatEntity entity) {
         OllamaApi ollamaApi = new OllamaApi(entity.getBaseUrl());
-        return new OllamaChatModel(ollamaApi, OllamaOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build()
-                , new DefaultToolCallingManager(ObservationRegistry.NOOP,
-                new DelegatingToolCallbackResolver(List.of()),
-                new DefaultToolExecutionExceptionProcessor(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
+        return new OllamaChatModel(ollamaApi, OllamaOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build(), new DefaultToolCallingManager(ObservationRegistry.NOOP, new DelegatingToolCallbackResolver(List.of()), new DefaultToolExecutionExceptionProcessor(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder().build());
     }
 
     /**
@@ -240,12 +241,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private ZhiPuAiChatModel getZhiPuAiChatModel(ZhiPuAiChatEntity entity) {
         ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
-        return new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
+        return new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build());
     }
 
     /**
@@ -253,12 +249,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private MoonshotChatModel getMoonshotChatModel(MoonshotChatEntity entity) {
         MoonshotApi moonshotApi = new MoonshotApi(entity.getApiKey());
-        return new MoonshotChatModel(moonshotApi, MoonshotChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
+        return new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build());
     }
 
     /**
@@ -266,15 +257,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private MistralAiChatModel getMistralAiChatModel(MistralAiChatEntity entity) {
         MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
-        return MistralAiChatModel.builder()
-                .mistralAiApi(mistralAiApi)
-                .defaultOptions(MistralAiChatOptions
-                        .builder()
-                        .model(entity.getModel())
-                        .temperature(entity.getTemperature())
-                        .topP(entity.getTopP())
-                        .build())
-                .build();
+        return MistralAiChatModel.builder().mistralAiApi(mistralAiApi).defaultOptions(MistralAiChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build()).build();
     }
 
     /**
@@ -282,12 +265,7 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private QianFanChatModel getQianFanChatModel(QianFanChatEntity entity) {
         QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        return new QianFanChatModel(qianFanApi, QianFanChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
+        return new QianFanChatModel(qianFanApi, QianFanChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build());
     }
 
     /**
@@ -295,12 +273,15 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private MiniMaxChatModel getMiniMaxChatModel(MiniMaxChatEntity entity) {
         MiniMaxApi miniMaxApi = new MiniMaxApi(entity.getApiKey());
-        return new MiniMaxChatModel(miniMaxApi, MiniMaxChatOptions
-                .builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
+        return new MiniMaxChatModel(miniMaxApi, MiniMaxChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build());
+    }
+
+    /**
+     * 获取AzureOpenAiChatModel
+     */
+    private AzureOpenAiChatModel getAzureOpenAiChatModel(AzureOpenAiChatEntity entity) {
+        OpenAIClientBuilder clientBuilder = new OpenAIClientBuilder().credential(new AzureKeyCredential(entity.getApiKey())).endpoint(entity.getEndpoint()).serviceVersion(entity.getModelVersion());
+        return new AzureOpenAiChatModel(clientBuilder, AzureOpenAiChatOptions.builder().deploymentName(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTopP()).build(), DefaultToolCallingManager.builder().build(), ObservationRegistry.NOOP);
     }
 
 }
