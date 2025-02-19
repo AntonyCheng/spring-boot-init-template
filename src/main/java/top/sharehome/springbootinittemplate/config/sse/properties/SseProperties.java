@@ -18,9 +18,9 @@ public class SseProperties {
     private Boolean enable = false;
 
     /**
-     * SSE访问路径
+     * SSE访问路径（即/sse）
      */
-    private String path = "/sse";
+    private String path = "sse";
 
     /**
      * SSE默认连接超时时间（单位：毫秒），0表示无限制

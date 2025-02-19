@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.chat;
 
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 
 import java.util.stream.Stream;
@@ -30,6 +31,14 @@ public interface AiChatService {
     Stream<String> chatStream(ChatModelBase model, String prompt);
 
     /**
+     * 发起AI Chat功能，返回响应式数据
+     *
+     * @param model     chat模型信息
+     * @param prompt    提示词
+     */
+    Flux<String> chatFlux(ChatModelBase model, String prompt);
+
+    /**
      * 发起AI Chat功能，返回字符串数据
      *
      * @param model     chat模型信息
@@ -46,6 +55,14 @@ public interface AiChatService {
     Stream<String> chatStream(ChatModelBase model, Message... prompt);
 
     /**
+     * 发起AI Chat功能，返回响应式数据
+     *
+     * @param model     chat模型信息
+     * @param prompt    提示词
+     */
+    Flux<String> chatFlux(ChatModelBase model, Message... prompt);
+
+    /**
      * 发起AI Chat功能，返回字符串数据
      *
      * @param model     chat模型信息
@@ -60,5 +77,13 @@ public interface AiChatService {
      * @param prompt    提示词
      */
     Stream<String> chatStream(ChatModelBase model, Prompt prompt);
+
+    /**
+     * 发起AI Chat功能，返回响应式数据
+     *
+     * @param model     chat模型信息
+     * @param prompt    提示词
+     */
+    Flux<String> chatFlux(ChatModelBase model, Prompt prompt);
 
 }

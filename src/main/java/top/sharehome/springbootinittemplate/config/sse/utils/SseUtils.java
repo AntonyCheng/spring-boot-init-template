@@ -2,9 +2,9 @@ package top.sharehome.springbootinittemplate.config.sse.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
 import top.sharehome.springbootinittemplate.config.sse.SseConfiguration;
-import top.sharehome.springbootinittemplate.config.sse.entity.SseMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -66,8 +66,8 @@ public class SseUtils {
      *
      * @param messages      消息内容
      */
-    public static SseEmitter quickSseMessages(List<SseMessage> messages) {
-        return SSE.quickSseMessages(messages);
+    public static SseEmitter quickSseFlux(Flux<String> messages) {
+        return SSE.quickSseFlux(messages);
     }
 
     /**
@@ -76,8 +76,8 @@ public class SseUtils {
      * @param messages      消息内容
      * @param timeout       SSE连接等待超时时间
      */
-    public static SseEmitter quickSseMessages(List<SseMessage> messages, Long timeout) {
-        return SSE.quickSseMessages(messages, timeout);
+    public static SseEmitter quickSseFlux(Flux<String> messages, Long timeout) {
+        return SSE.quickSseFlux(messages, timeout);
     }
 
     /**
@@ -118,16 +118,6 @@ public class SseUtils {
     }
 
     /**
-     * 获取Sse连接，如果token为null，则返回userId下所有Token对应的SseEmitter
-     *
-     * @param userId    用户ID
-     * @param token     用户登录会话Token
-     */
-    public static Map<String, SseEmitter> getSseEmitter(Long userId, String token) {
-        return SSE.getSseEmitter(userId, token);
-    }
-
-    /**
      * 切断SSE连接
      */
     public static void disconnect() {
@@ -142,6 +132,25 @@ public class SseUtils {
      */
     public static void disconnect(Long userId, String token) {
         SSE.disconnect(userId, token);
+    }
+
+    /**
+     * 根据用户ID获取Sse连接
+     *
+     * @param userId 用户ID
+     */
+    public static Map<String, SseEmitter> getSseEmitter(Long userId) {
+        return SSE.getSseEmitter(userId);
+    }
+
+    /**
+     * 根据用户ID和用户登录会话Token获取Sse连接
+     *
+     * @param userId    用户ID
+     * @param token     用户登录会话Token
+     */
+    public static SseEmitter getSseEmitter(Long userId, String token) {
+        return SSE.getSseEmitter(userId, token);
     }
 
     /**
@@ -247,54 +256,54 @@ public class SseUtils {
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
-    public static void sendMessagesToCurrentUser(List<SseMessage> messages) {
+    public static void sendMessagesToCurrentUser(Flux<String> messages) {
         SSE.sendMessagesToCurrentUser(messages);
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param messages      消息内容
      */
-    public static void sendMessagesToCurrentToken(List<SseMessage> messages) {
-        SSE.sendMessagesToCurrentToken(messages);
+    public static void sendFluxToCurrentToken(Flux<String> messages) {
+        SSE.sendFluxToCurrentToken(messages);
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param messages      消息内容
      */
-    public static void sendMessages(Long userId, List<SseMessage> messages) {
-        SSE.sendMessages(userId, messages);
+    public static void sendFlux(Long userId, Flux<String> messages) {
+        SSE.sendFlux(userId, messages);
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
      * @param messages      消息内容
      */
-    public static void sendMessages(Long userId, String token, List<SseMessage> messages) {
-        SSE.sendMessages(userId, token, messages);
+    public static void sendFlux(Long userId, String token, Flux<String> messages) {
+        SSE.sendFlux(userId, token, messages);
     }
 
     /**
-     * 向凭证池中的用户会话发送消息
+     * 向凭证连接池中的用户会话发送消息
      *
      * @param userId        用户ID
      * @param token         用户登录会话Token，如果为null则代表向userId用户所有会话发送消息
      * @param messages      消息内容
      * @param isDisconnect  是否需要断开连接，如果为null或者false，则表示不需要在发送消息后断开连接
      */
-    public static void sendMessages(Long userId, String token, List<SseMessage> messages, Boolean isDisconnect) {
-        SSE.sendMessages(userId, token, messages, isDisconnect);
+    public static void sendFlux(Long userId, String token, Flux<String> messages, Boolean isDisconnect) {
+        SSE.sendFlux(userId, token, messages, isDisconnect);
     }
 
 }

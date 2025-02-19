@@ -525,8 +525,8 @@ websocket:
 sse:
   # todo 是否开启（预先关闭）
   enable: false
-  # SSE访问路径
-  path: "/sse"
+  # SSE访问路径（即/sse）
+  path: "sse"
   # SSE连接超时时间（单位：毫秒），0表示无限制
   timeout: 0
 
