@@ -13,11 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SseProperties {
 
     /**
-     * 是否开启
-     */
-    private Boolean enable = false;
-
-    /**
      * SSE访问路径（即/sse）
      */
     private String path = "sse";

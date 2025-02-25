@@ -6,12 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.sse.condition.SseCondition;
 import top.sharehome.springbootinittemplate.config.sse.entity.SseMessage;
 import top.sharehome.springbootinittemplate.config.sse.enums.SseStatus;
 import top.sharehome.springbootinittemplate.config.sse.properties.SseProperties;
@@ -34,7 +32,6 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(SseProperties.class)
 @AllArgsConstructor
 @Slf4j
-@Conditional(SseCondition.class)
 public class SseConfiguration {
 
     private final SseProperties sseProperties;

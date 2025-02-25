@@ -45,7 +45,6 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.entity.*;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;

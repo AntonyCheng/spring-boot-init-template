@@ -10,7 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
-import top.sharehome.springbootinittemplate.config.sse.condition.SseCondition;
 import top.sharehome.springbootinittemplate.config.sse.utils.SseUtils;
 
 /**
@@ -20,7 +19,6 @@ import top.sharehome.springbootinittemplate.config.sse.utils.SseUtils;
  * @author AntonyCheng
  */
 @RestController
-@Conditional(SseCondition.class)
 @RequestMapping(value = "/${sse.path}")
 @SaCheckLogin
 public class SseController {
