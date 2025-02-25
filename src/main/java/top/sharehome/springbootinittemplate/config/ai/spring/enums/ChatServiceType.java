@@ -13,6 +13,11 @@ import lombok.Getter;
 public enum ChatServiceType {
 
     /**
+     * DeepSeek服务
+     */
+    DeepSeek("DeepSeek", "deepseek"),
+
+    /**
      * OpenAI服务
      */
     OpenAi("OpenAI", "openai"),

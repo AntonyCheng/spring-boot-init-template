@@ -62,7 +62,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).call(prompt);
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).call(prompt);
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).call(prompt);
@@ -88,7 +90,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).stream(prompt).toStream();
@@ -114,7 +118,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt);
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).stream(prompt);
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).stream(prompt);
@@ -140,7 +146,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).call(prompt);
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).call(prompt);
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).call(prompt);
@@ -166,7 +174,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt).toStream();
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).stream(prompt).toStream();
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).stream(prompt).toStream();
@@ -192,7 +202,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt);
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).stream(prompt);
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).stream(prompt);
@@ -218,7 +230,10 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            Generation generation = this.getDeepSeekChatModel(entity).call(prompt).getResult();
+            return Objects.nonNull(generation) ? generation.getOutput().getText() : "";
+        } else if (model instanceof OpenAiChatEntity entity) {
             Generation generation = this.getOpenAiChatModel(entity).call(prompt).getResult();
             return Objects.nonNull(generation) ? generation.getOutput().getText() : "";
         } else if (model instanceof OllamaChatEntity entity) {
@@ -252,7 +267,9 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
+        } else if (model instanceof OpenAiChatEntity entity) {
             return this.getOpenAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
         } else if (model instanceof OllamaChatEntity entity) {
             return this.getOllamaChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
@@ -278,25 +295,35 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
+        } else if (model instanceof OpenAiChatEntity entity) {
+            return this.getOpenAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getOllamaChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getZhiPuAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getMoonshotChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getMistralAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getQianFanChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getMiniMaxChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt).map(res-> res.getResult().getOutput().getText());
+            return this.getAzureOpenAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
+    }
+
+    /**
+     * 获取DeepSeekChatModel
+     */
+    private OpenAiChatModel getDeepSeekChatModel(DeepSeekChatEntity entity) {
+        OpenAiApi openAiApi = OpenAiApi.builder().baseUrl(entity.getBaseUrl()).apiKey(new SimpleApiKey(entity.getApiKey())).build();
+        return OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(OpenAiChatOptions.builder().model(entity.getModel()).temperature(entity.getTemperature()).topP(entity.getTemperature()).build()).build();
     }
 
     /**
