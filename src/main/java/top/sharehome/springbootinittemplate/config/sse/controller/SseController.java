@@ -1,7 +1,6 @@
 package top.sharehome.springbootinittemplate.config.sse.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
