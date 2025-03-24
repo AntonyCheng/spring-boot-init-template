@@ -9,7 +9,6 @@ import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.ImageServiceType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.ImageModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.AzureOpenAiImageType;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.OpenAiImageType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
 import java.io.Serial;
@@ -52,7 +51,7 @@ public class AzureOpenAiImageEntity extends ImageModelBase implements Serializab
     }
 
     public AzureOpenAiImageEntity(AzureOpenAiImageType azureOpenAiImageType, String apiKey, String endpoint, Integer n) {
-        super(ImageServiceType.AzureOpenAi);
+        super(ImageServiceType.AzureOpenAI);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

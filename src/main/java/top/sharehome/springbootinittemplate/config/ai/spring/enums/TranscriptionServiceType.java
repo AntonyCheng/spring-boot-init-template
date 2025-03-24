@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * SpringAI Image服务类型
+ * SpringAI Transcription服务类型
  *
  * @author AntonyCheng
  */
 @Getter
 @AllArgsConstructor
-public enum ImageServiceType {
+public enum TranscriptionServiceType {
 
     /**
      * OpenAI服务
@@ -20,22 +20,7 @@ public enum ImageServiceType {
     /**
      * AzureOpenAI服务
      */
-    AzureOpenAI("AzureOpenAI", "azureopenai"),
-
-    /**
-     * ZhiPuAi服务
-     */
-    ZhiPuAI("智谱AI", "zhipu"),
-
-    /**
-     * QianFan服务
-     */
-    QianFan("千帆AI", "qianfan"),
-
-    /**
-     * Stability服务
-     */
-    Stability("Stability", "stability");
+    AzureOpenAI("AzureOpenAI", "azureopenai");
 
     /**
      * 模型中文标签

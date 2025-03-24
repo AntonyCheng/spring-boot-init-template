@@ -52,7 +52,7 @@ public class MistralAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public MistralAiChatEntity(String model, String apiKey, Double temperature, Double topP) {
-        super(ChatServiceType.MistralAi, temperature, topP);
+        super(ChatServiceType.MistralAI, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

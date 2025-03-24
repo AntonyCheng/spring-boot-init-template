@@ -49,7 +49,7 @@ public class AzureOpenAiChatEntity extends ChatModelBase implements Serializable
     }
 
     public AzureOpenAiChatEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Double temperature, Double topP) {
-        super(ChatServiceType.AzureOpenAi, temperature, topP);
+        super(ChatServiceType.AzureOpenAI, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

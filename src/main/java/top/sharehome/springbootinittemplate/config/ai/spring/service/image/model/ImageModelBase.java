@@ -24,7 +24,7 @@ public abstract class ImageModelBase {
 
     public ImageModelBase(ImageServiceType imageServiceType) {
         if (Objects.isNull(imageServiceType)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatService]不能为空");
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[imageServiceType]不能为空");
         }
         this.imageServiceType = imageServiceType;
     }

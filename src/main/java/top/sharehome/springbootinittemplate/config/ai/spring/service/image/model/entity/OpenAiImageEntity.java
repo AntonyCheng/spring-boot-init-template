@@ -63,7 +63,7 @@ public class OpenAiImageEntity extends ImageModelBase implements Serializable {
     }
 
     public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, String baseUrl, Integer n) {
-        super(ImageServiceType.OpenAi);
+        super(ImageServiceType.OpenAI);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

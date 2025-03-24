@@ -37,7 +37,7 @@ public abstract class ChatModelBase {
 
     public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP) {
         if (Objects.isNull(chatServiceType)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatService]不能为空");
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatServiceType]不能为空");
         }
         this.chatServiceType = chatServiceType;
         this.temperature = Objects.isNull(temperature) ? 0.8 : temperature;

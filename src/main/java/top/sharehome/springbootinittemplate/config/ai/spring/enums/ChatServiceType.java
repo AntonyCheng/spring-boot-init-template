@@ -20,7 +20,7 @@ public enum ChatServiceType {
     /**
      * OpenAI服务
      */
-    OpenAi("OpenAI", "openai"),
+    OpenAI("OpenAI", "openai"),
 
     /**
      * Ollama服务
@@ -30,7 +30,7 @@ public enum ChatServiceType {
     /**
      * ZhiPuAi服务
      */
-    ZhiPuAi("智谱AI", "zhipu"),
+    ZhiPuAI("智谱AI", "zhipu"),
 
     /**
      * Moonshot服务
@@ -40,7 +40,7 @@ public enum ChatServiceType {
     /**
      * MistralAi服务
      */
-    MistralAi("MistralAI", "mistralai"),
+    MistralAI("MistralAI", "mistralai"),
 
     /**
      * QianFan服务
@@ -53,9 +53,9 @@ public enum ChatServiceType {
     MiniMax("MiniMax", "minimax"),
 
     /**
-     * AzureOpenAi服务
+     * AzureOpenAI服务
      */
-    AzureOpenAi("AzureOpenAi", "azureopenai");
+    AzureOpenAI("AzureOpenAI", "azureopenai");
 
     /**
      * 模型中文标签

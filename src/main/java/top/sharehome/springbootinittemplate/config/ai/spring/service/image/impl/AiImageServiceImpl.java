@@ -203,4 +203,5 @@ public class AiImageServiceImpl implements AiImageService {
                 .user(StringUtils.isBlank(entity.getUser()) ? null : entity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
+
 }

@@ -52,7 +52,7 @@ public class ZhiPuAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public ZhiPuAiChatEntity(String model, String apiKey, Double temperature, Double topP) {
-        super(ChatServiceType.ZhiPuAi, temperature, topP);
+        super(ChatServiceType.ZhiPuAI, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

@@ -74,7 +74,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP) {
-        super(ChatServiceType.OpenAi, temperature, topP);
+        super(ChatServiceType.OpenAI, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }
