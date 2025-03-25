@@ -60,6 +60,10 @@ public class AzureOpenAiTranscriptionEntity extends TranscriptionModelBase imple
         this(azureOpenAiTranscriptionType, apiKey, null, null, null, null);
     }
 
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String endpoint) {
+        this(azureOpenAiTranscriptionType, apiKey, null, endpoint, null, null);
+    }
+
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format) {
         this(azureOpenAiTranscriptionType, apiKey, format, null, null, null);
     }

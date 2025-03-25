@@ -65,6 +65,10 @@ public class OpenAiTranscriptionEntity extends TranscriptionModelBase implements
         this(openAiTranscriptionType, apiKey, null, null, null, null);
     }
 
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl) {
+        this(openAiTranscriptionType, apiKey, null, baseUrl, null, null);
+    }
+
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format) {
         this(openAiTranscriptionType, apiKey, format, null, null, null);
     }

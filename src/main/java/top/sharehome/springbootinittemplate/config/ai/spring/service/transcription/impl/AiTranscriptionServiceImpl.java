@@ -112,7 +112,7 @@ public class AiTranscriptionServiceImpl implements AiTranscriptionService {
                 .responseErrorHandler(new DefaultResponseErrorHandler())
                 .build();
         return new OpenAiAudioTranscriptionModel(openAiAudioApi, OpenAiAudioTranscriptionOptions.builder()
-                .language(entity.getLanguage().getValue())
+                .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .model(entity.getOpenAiTranscriptionType().getTranscriptionModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
@@ -128,7 +128,7 @@ public class AiTranscriptionServiceImpl implements AiTranscriptionService {
                 .endpoint(entity.getEndpoint())
                 .buildClient();
         return new AzureOpenAiAudioTranscriptionModel(openAiClient, AzureOpenAiAudioTranscriptionOptions.builder()
-                .language(entity.getLanguage().getValue())
+                .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .deploymentName(entity.getAzureOpenAiTranscriptionType().getTranscriptionModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())

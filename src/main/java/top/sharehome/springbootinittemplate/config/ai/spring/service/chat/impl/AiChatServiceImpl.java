@@ -314,7 +314,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        String messageData = (String) message.getData();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -458,7 +458,7 @@ public class AiChatServiceImpl implements AiChatService {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        Object messageData = message.getData();
+                        String messageData = (String) message.getData();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -600,7 +600,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        String messageData = (String) message.getData();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
