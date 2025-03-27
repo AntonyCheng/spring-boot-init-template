@@ -7,12 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
-import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 import top.sharehome.springbootinittemplate.config.captcha.annotation.EnableCaptcha;
 import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSADecrypt;
 import top.sharehome.springbootinittemplate.config.encrypt.annotation.RSAEncrypt;
@@ -114,7 +112,7 @@ public class ExampleController {
     @ControllerLog(description = "用户调用获取Word中所有段落TXT文件接口", operator = Operator.OTHER)
     public R<Void> getParagraphsTxtInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
         try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
-            new WordUtils.Reader(inputStream).getParagraphsResponse(response);
+            new WordUtils.HWPFReader(inputStream).getParagraphsResponse(response);
         } catch (IOException ignored) {
         }
         return R.empty();
@@ -129,7 +127,7 @@ public class ExampleController {
     @ControllerLog(description = "用户调用获取Word中所有表格压缩包接口", operator = Operator.OTHER)
     public R<Void> getTablesZipInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
         try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
-            new WordUtils.Reader(inputStream).getTablesResponse(response);
+            new WordUtils.HWPFReader(inputStream).getTablesResponse(response);
         } catch (IOException ignored) {
         }
         return R.empty();
@@ -144,7 +142,7 @@ public class ExampleController {
     @ControllerLog(description = "用户调用获取Word中所有图片压缩包接口", operator = Operator.OTHER)
     public R<Void> getImagesZipInWord(@Validated({PostGroup.class}) ExampleSingleFile exampleSingleFile, HttpServletResponse response) {
         try (InputStream inputStream = exampleSingleFile.getFile().getInputStream()) {
-            new WordUtils.Reader(inputStream).getImagesResponse(response);
+            new WordUtils.HWPFReader(inputStream).getImagesResponse(response);
         } catch (IOException ignored) {
         }
         return R.empty();

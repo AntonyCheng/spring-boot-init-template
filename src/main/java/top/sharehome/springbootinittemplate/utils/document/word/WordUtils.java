@@ -16,8 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
@@ -624,9 +625,9 @@ public class WordUtils {
     }
 
     /**
-     * 读取Word数据内部类
+     * 读取Word数据内部类，适用基于docx格式的文件类型（推荐使用）
      */
-    public static class Reader {
+    public static class XWPFReader {
 
         /**
          * 初始化文档
@@ -636,7 +637,7 @@ public class WordUtils {
         /**
          * 读取Word数据内部类构造器
          */
-        public Reader(InputStream inputStream) {
+        public XWPFReader(InputStream inputStream) {
             try {
                 if (Objects.isNull(inputStream) || Objects.equals(inputStream.available(), 0)) {
                     throw new IOException();
@@ -705,7 +706,7 @@ public class WordUtils {
                 List<String> list = document.getParagraphs()
                         .stream()
                         .map(XWPFParagraph::getText)
-                        .filter(ObjectUtils::isNotEmpty)
+                        .filter(StringUtils::isNotEmpty)
                         .toList();
                 // 关闭文档
                 document.close();
@@ -991,6 +992,450 @@ public class WordUtils {
                     }
                     return tableMap;
                 }).toList();
+                // 关闭文档
+                document.close();
+                return tableMaps;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取表格数据时，关闭输出流异常");
+            }
+        }
+
+        /**
+         * 处理ContentType是Txt格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handleTxtResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".txt";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".txt";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("text/plain;charset=UTF-8");
+        }
+
+        /**
+         * 处理ContentType是Zip格式的响应
+         *
+         * @param fileName 文件名
+         * @param response 响应
+         */
+        private void handleZipResponse(String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+            String realName = null;
+            if (StringUtils.isBlank(fileName)) {
+                realName = UUID.randomUUID().toString().replace("-", "") + ".zip";
+            } else {
+                realName = fileName + "_" + UUID.randomUUID().toString().replace("-", "") + ".zip";
+            }
+            String encodeName = URLEncoder
+                    .encode(realName, StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+            String contentDispositionValue = "attachment; filename=" + encodeName + ";filename*=utf-8''" + encodeName;
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
+            response.setHeader("Content-disposition", contentDispositionValue);
+            response.setHeader("download-filename", encodeName);
+            response.setContentType("application/zip;charset=UTF-8");
+        }
+
+    }
+
+    /**
+     * 读取Word数据内部类，适用基于doc格式的文件类型
+     */
+    public static class HWPFReader {
+
+        /**
+         * 初始化文档
+         */
+        private final HWPFDocument document;
+
+        /**
+         * 读取Word数据内部类构造器
+         */
+        public HWPFReader(InputStream inputStream) {
+            try {
+                if (Objects.isNull(inputStream) || Objects.equals(inputStream.available(), 0)) {
+                    throw new IOException();
+                }
+                this.document = new HWPFDocument(inputStream);
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "解析文档异常");
+            }
+        }
+
+        /**
+         * 获取Word文档中的段落数据，并写入响应流
+         *
+         * @param response    响应流
+         */
+        public void getParagraphsResponse(HttpServletResponse response) {
+            getParagraphsResponse(null, response);
+        }
+
+        /**
+         * 获取Word文档中的段落数据，并写入响应流
+         *
+         * @param txtFileName    TXT文件名
+         * @param response    响应流
+         */
+        public void getParagraphsResponse(String txtFileName, HttpServletResponse response) {
+            if (Objects.isNull(response)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "响应为空");
+            }
+            // 获取响应中的响应流
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                // 预处理TXT类型响应
+                handleTxtResponse(txtFileName, response);
+                getParagraphsTxt(outputStream);
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取段落数据时，写入输出流异常");
+            }
+        }
+
+        /**
+         * 获取Word文档中的段落数据，并写入输出流
+         *
+         * @param outputStream 输出流
+         */
+        public void getParagraphsTxt(OutputStream outputStream) {
+            if (Objects.isNull(outputStream)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取段落数据时，输出流不能为空");
+            }
+            List<String> paragraphsList = getParagraphsList();
+            // 遍历段落列表，同时将数据传至输出流
+            paragraphsList.forEach(paragraph -> {
+                try {
+                    outputStream.write(paragraph.getBytes(StandardCharsets.UTF_8));
+                    outputStream.write('\n');
+                } catch (IOException e) {
+                    throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取段落数据时，写入输出流异常");
+                }
+            });
+        }
+
+        /**
+         * 获取Word文档中的段落数据
+         */
+        public List<String> getParagraphsList() {
+            try {
+                Range range = document.getRange();
+                List<String> list = new ArrayList<>();
+                for (int i = 0; i < range.numParagraphs(); i++) {
+                    String text = range.getParagraph(i).text();
+                    if (StringUtils.isNotEmpty(text)) {
+                        list.add(text);
+                    }
+                }
+                // 关闭文档
+                document.close();
+                return list;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取段落数据时，关闭输出流异常");
+            }
+        }
+
+        /**
+         * 获取Word文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param response 响应
+         */
+        public void getImagesResponse(HttpServletResponse response) {
+            getImagesResponse(null, response, null);
+        }
+
+        /**
+         * 获取Word文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         */
+        public void getImagesResponse(String zipFileName, HttpServletResponse response) {
+            getImagesResponse(zipFileName, response, null);
+        }
+
+        /**
+         * 获取Word文档中的图像数据，并且进行压缩，将压缩后的数据转为响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         * @param zipLevel 压缩等级：-1~9，理论上等级越高，压缩效率越高，耗时越长
+         */
+        public void getImagesResponse(String zipFileName, HttpServletResponse response, Integer zipLevel) {
+            if (Objects.isNull(response)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "响应为空");
+            }
+            // 获取响应中的响应流
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                // 预处理ZIP类型响应
+                handleZipResponse(zipFileName, response);
+                getImagesZip(outputStream, zipLevel);
+                // 刷新响应流
+                outputStream.flush();
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
+            }
+        }
+
+        /**
+         * 从Word数据流中获取图像数据，压缩后输出到一个输出流中
+         *
+         * @param outputStream 输出流
+         */
+        public void getImagesZip(OutputStream outputStream) {
+            getImagesZip(outputStream, null);
+        }
+
+        /**
+         * 从Word数据流中获取图像数据，压缩后输出到一个输出流中
+         *
+         * @param outputStream 输出流
+         * @param zipLevel     压缩等级-1~9，等级越高，压缩效率越高
+         */
+        public void getImagesZip(OutputStream outputStream, Integer zipLevel) {
+            if (Objects.isNull(outputStream)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "读取Word中的图像时，压缩数据输出流不能为空");
+            }
+            // 构造ZIP文件输出流
+            try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(outputStream)) {
+                // 获取图像byte数组
+                Map<String, List<byte[]>> imagesByteArray = getImagesByteArray();
+                // 设置压缩等级
+                zipArchiveOutputStream.setLevel(Objects.isNull(zipLevel) || zipLevel < -1 || zipLevel > 9 ? 5 : zipLevel);
+                // 设置压缩方法
+                zipArchiveOutputStream.setMethod(ZipEntry.DEFLATED);
+                // 准备压缩计数和名称
+                int index = 1;
+                String uuid = UUID.randomUUID().toString().replace("-", "");
+                for (Map.Entry<String, List<byte[]>> stringListEntry : imagesByteArray.entrySet()) {
+                    // 根据图像扩展名进行遍历
+                    String extension = stringListEntry.getKey();
+                    List<byte[]> imageArrayList = stringListEntry.getValue();
+                    // 将每张图像byte数组数据传至压缩输出流中
+                    for (byte[] image : imageArrayList) {
+                        String entryName = uuid + "_" + index + "." + extension;
+                        ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
+                        zipArchiveOutputStream.putArchiveEntry(entry);
+                        ByteBuf buf = Unpooled.copiedBuffer(image);
+                        buf.readBytes(zipArchiveOutputStream, buf.readableBytes());
+                        zipArchiveOutputStream.closeArchiveEntry();
+                        index++;
+                    }
+                }
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "读取Word中的图像时，压缩发生异常");
+            }
+        }
+
+        /**
+         * 获取Word文档中的图像数据，同时按照扩展名分类，并转换为byte[]集合类型
+         */
+        public Map<String, List<byte[]>> getImagesByteArray() {
+            try {
+                // 创建结果集
+                Map<String, List<byte[]>> result = new HashMap<>();
+                // 获取所有图像信息List
+                List<Picture> imageInfos = document.getPicturesTable().getAllPictures();
+                // 遍历图像信息
+                for (Picture imageInfo : imageInfos) {
+                    // 获取图像byte[]数据
+                    byte[] data = imageInfo.getContent();
+                    // 获取图像扩展名
+                    String extension = imageInfo.suggestFileExtension();
+                    // 封装结果集
+                    if (Objects.isNull(result.get(extension))) {
+                        ArrayList<byte[]> value = new ArrayList<>();
+                        value.add(data);
+                        result.put(extension, value);
+                    } else {
+                        result.get(extension).add(data);
+                    }
+                }
+                // 关闭文档
+                document.close();
+                return result;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取图像数据时，关闭输出流异常");
+            }
+        }
+
+        /**
+         * 从Word中获取表格数据，将所有表格数据压缩后写入响应流
+         *
+         * @param response 响应
+         */
+        public void getTablesResponse(HttpServletResponse response) {
+            getTablesResponse(null, response, null, null);
+        }
+
+        /**
+         * 从Word中获取表格数据，将所有表格数据压缩后写入响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         */
+        public void getTablesResponse(String zipFileName, HttpServletResponse response) {
+            getTablesResponse(zipFileName, response, null, null);
+        }
+
+        /**
+         * 从Word中获取表格数据，将所有表格数据压缩后写入响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         * @param excelType    表格格式
+         */
+        public void getTablesResponse(String zipFileName, HttpServletResponse response, ExcelTypeEnum excelType) {
+            getTablesResponse(zipFileName, response, excelType, null);
+        }
+
+        /**
+         * 从Word中获取表格数据，将所有表格数据压缩后写入响应流
+         *
+         * @param zipFileName 压缩后的文件名
+         * @param response 响应
+         * @param excelType    表格格式
+         * @param zipLevel     压缩等级-1~9，等级越高，压缩效率越高
+         */
+        public void getTablesResponse(String zipFileName, HttpServletResponse response, ExcelTypeEnum excelType, Integer zipLevel) {
+            if (Objects.isNull(response)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "响应为空");
+            }
+            // 获取响应中的响应流
+            try (ServletOutputStream outputStream = response.getOutputStream()) {
+                // 预处理ZIP类型响应
+                handleZipResponse(zipFileName, response);
+                getTablesZip(outputStream, excelType, zipLevel);
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取响应输出流异常");
+            }
+        }
+
+        /**
+         * 从Word数据流中获取表格数据，将所有表格数据压缩后写入输出流
+         *
+         * @param outputStream 输出流
+         */
+        public void getTablesZip(OutputStream outputStream) {
+            getTablesZip(outputStream, null, null);
+        }
+
+        /**
+         * 从Word数据流中获取表格数据，将所有表格数据压缩后写入输出流
+         *
+         * @param outputStream 输出流
+         * @param excelType    表格格式
+         */
+        public void getTablesZip(OutputStream outputStream, ExcelTypeEnum excelType) {
+            getTablesZip(outputStream, excelType, null);
+        }
+
+        /**
+         * 从Word中获取表格数据，将所有表格数据压缩后写入输出流
+         *
+         * @param outputStream 输出流
+         * @param excelType    表格格式
+         * @param zipLevel     压缩等级-1~9，等级越高，压缩效率越高
+         */
+        public void getTablesZip(OutputStream outputStream, ExcelTypeEnum excelType, Integer zipLevel) {
+            if (Objects.isNull(outputStream)) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "读取Word中的表格时，压缩数据输出流不能为空");
+            }
+            // 构造ZIP文件输出流
+            try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(outputStream)) {
+                // 获取图像byte数组
+                List<byte[]> tables = getTablesByteArray(excelType);
+                // 设置压缩等级
+                zipArchiveOutputStream.setLevel(Objects.isNull(zipLevel) || zipLevel < -1 || zipLevel > 9 ? 5 : zipLevel);
+                // 设置压缩方法
+                zipArchiveOutputStream.setMethod(ZipEntry.DEFLATED);
+                // 准备压缩计数和名称
+                int index = 1;
+                String uuid = UUID.randomUUID().toString().replace("-", "");
+                // 将每个表格byte数组数据传至压缩输出流中
+                for (byte[] picture : tables) {
+                    String entryName = uuid + "_" + index + (Objects.isNull(excelType) ? ExcelTypeEnum.XLSX : excelType).getValue();
+                    ZipArchiveEntry entry = new ZipArchiveEntry(entryName);
+                    zipArchiveOutputStream.putArchiveEntry(entry);
+                    ByteBuf buf = Unpooled.copiedBuffer(picture);
+                    buf.readBytes(zipArchiveOutputStream, buf.readableBytes());
+                    zipArchiveOutputStream.closeArchiveEntry();
+                    index++;
+                }
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "读取Word中的表格时，压缩发生异常");
+            }
+        }
+
+        /**
+         * 从Word中获取表格数据流，默认封装成xlsx格式文件Byte[]数据
+         * 注意：封装后得到xlsx文件不支持“合并”或者“拆分”的表格，即要求表格每行的列数和每列的行数均相同，否则导出得到的表格会不尽人意，如有这样的需求请使用getTablesText()拿到文本数据后自行填充
+         *
+         * @param excelType 封装后的Excel文件扩展名
+         */
+        public List<byte[]> getTablesByteArray(ExcelTypeEnum excelType) {
+            try {
+                Range range = document.getRange();
+                TableIterator tableIterator = new TableIterator(range);
+                List<byte[]> list = new ArrayList<>();
+                // 获取表格，遍历每一行单元格数据，封装结果集
+                while (tableIterator.hasNext()) {
+                    Table table = tableIterator.next();
+                    List<List<String>> tableList = new ArrayList<>();
+                    int numberOfRows = table.numRows();
+                    for (int i = 0; i < numberOfRows; i++) {
+                        TableRow row = table.getRow(i);
+                        int numberOfCells = row.numCells();
+                        List<String> cellList = new ArrayList<>();
+                        for (int j = 0; j < numberOfCells; j++) {
+                            cellList.add(row.getCell(j).text());
+                        }
+                        tableList.add(cellList);
+                    }
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    EasyExcel.write(byteArrayOutputStream).excelType(Objects.isNull(excelType)?ExcelTypeEnum.XLSX:excelType).sheet().doWrite(tableList);
+                    list.add(byteArrayOutputStream.toByteArray());
+                }
+                // 关闭文档
+                document.close();
+                return list;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.WORD_FILE_ERROR, "获取表格数据时，关闭输出流异常");
+            }
+        }
+
+        /**
+         * 从Word数据流中获取表格文本数据，并封装成TableMap类型对象列表
+         */
+        public List<WordTable.TableMap> getTablesMaps() {
+            try {
+                Range range = document.getRange();
+                TableIterator tableIterator = new TableIterator(range);
+                List<WordTable.TableMap> tableMaps = new ArrayList<>();
+                // 获取表格，遍历每一行单元格数据，封装结果集
+                while (tableIterator.hasNext()) {
+                    Table table = tableIterator.next();
+                    WordTable.TableMap tableMap = new WordTable.TableMap();
+                    int numberOfRows = table.numRows();
+                    for (int i = 0; i < numberOfRows; i++) {
+                        TableRow row = table.getRow(i);
+                        int numberOfCells = row.numCells();
+                        List<String> cellList = new ArrayList<>();
+                        for (int j = 0; j < numberOfCells; j++) {
+                            cellList.add(row.getCell(j).text());
+                        }
+                        tableMap.put(cellList);
+                    }
+                    tableMaps.add(tableMap);
+                }
                 // 关闭文档
                 document.close();
                 return tableMaps;

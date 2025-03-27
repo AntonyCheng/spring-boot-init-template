@@ -28,7 +28,7 @@ public class TestWordReadAndWrite {
                     .addParagraph("Hello World, 你好世界！");
             FileInputStream fileInputStream = new FileInputStream(READABLE_WORD_PATH_NAME);
             // 从READABLE_WORD_PATH_NAME文档中获取图片
-            Map<String, List<byte[]>> imagesByteArray = new WordUtils.Reader(fileInputStream).getImagesByteArray();
+            Map<String, List<byte[]>> imagesByteArray = new WordUtils.XWPFReader(fileInputStream).getImagesByteArray();
             imagesByteArray.values().forEach(list -> {
                 list.forEach(image -> {
                     // 将图片遍历插入WRITABLE_WORD_FILE_PATH_NAME文档中
@@ -36,7 +36,7 @@ public class TestWordReadAndWrite {
                 });
             });
             // 从READABLE_WORD_PATH_NAME文档中获取第一个表格
-            List<WordUtils.WordTable.TableMap> tableMaps = new WordUtils.Reader(new FileInputStream(READABLE_WORD_PATH_NAME)).getTablesMaps();
+            List<WordUtils.WordTable.TableMap> tableMaps = new WordUtils.XWPFReader(new FileInputStream(READABLE_WORD_PATH_NAME)).getTablesMaps();
             WordUtils.WordTable.TableMap tableMap = tableMaps.get(0);
             // 插入WRITABLE_WORD_FILE_PATH_NAME文档表格
             writer.addTable(tableMap, true);
