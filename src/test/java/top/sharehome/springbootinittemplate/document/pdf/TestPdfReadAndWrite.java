@@ -28,13 +28,13 @@ public class TestPdfReadAndWrite {
                     .addPage()
                     .addWatermark("测试水印")
                     .addSplitLine()
-                    .addParagraph(
+                    .addTextarea(
                             new PdfUtils.PdfParagraph()
                                     .setTextContent("测试段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落段落")
                                     .setTextIndent(2)
                     )
                     .addSplitLine()
-                    .addParagraph("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+                    .addTextarea("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
                     .addSplitLine()
                     .addTable(
                             new String[][]{

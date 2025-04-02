@@ -282,7 +282,12 @@ public enum ReturnCode {
     /**
      * 处理PDF文件出错 40002
      */
-    PDF_FILE_ERROR(40002, "处理PDF文件出错");
+    PDF_FILE_ERROR(40002, "处理PDF文件出错"),
+
+    /**
+     * 处理PDF文件出错 40003
+     */
+    PPT_FILE_ERROR(40003, "处理PPT文件出错");
 
     final private int code;
 

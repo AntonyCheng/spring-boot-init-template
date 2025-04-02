@@ -413,8 +413,8 @@ public class PdfUtils {
          *
          * @param textarea 文本内容
          */
-        public Writer addParagraph(String textarea) {
-            return addParagraph(textarea, null, null, null, null);
+        public Writer addTextarea(String textarea) {
+            return addTextarea(textarea, null, null, null, null);
         }
 
         /**
@@ -423,8 +423,8 @@ public class PdfUtils {
          * @param textarea 文本内容
          * @param fontSize 字号
          */
-        public Writer addParagraph(String textarea, Integer fontSize) {
-            return addParagraph(textarea, fontSize, null, null, null);
+        public Writer addTextarea(String textarea, Integer fontSize) {
+            return addTextarea(textarea, fontSize, null, null, null);
         }
 
         /**
@@ -434,8 +434,8 @@ public class PdfUtils {
          * @param fontSize  字号
          * @param fontColor 字体颜色
          */
-        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor) {
-            return addParagraph(textarea, fontSize, fontColor, null, null);
+        public Writer addTextarea(String textarea, Integer fontSize, Color fontColor) {
+            return addTextarea(textarea, fontSize, fontColor, null, null);
         }
 
         /**
@@ -447,8 +447,8 @@ public class PdfUtils {
          * @param fontWeight 字体字重
          * @param fontStyle  字体样式
          */
-        public Writer addParagraph(String textarea, Integer fontSize, Color fontColor, FontWeight fontWeight, FontStyle fontStyle) {
-            return addParagraph(
+        public Writer addTextarea(String textarea, Integer fontSize, Color fontColor, FontWeight fontWeight, FontStyle fontStyle) {
+            return addTextarea(
                     new PdfParagraph()
                             .setTextContent(textarea)
                             .setFontSize(fontSize)
@@ -463,7 +463,7 @@ public class PdfUtils {
          *
          * @param pdfParagraph PDF段落构造类
          */
-        public Writer addParagraph(PdfParagraph pdfParagraph) {
+        public Writer addTextarea(PdfParagraph pdfParagraph) {
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
