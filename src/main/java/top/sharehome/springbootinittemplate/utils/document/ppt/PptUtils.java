@@ -4,12 +4,12 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.*;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -22,10 +22,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * PPT工具类
@@ -148,13 +147,16 @@ public class PptUtils {
          * @param pptTextarea PPT文本构造类
          */
         public Writer addTextarea(PptTextarea pptTextarea) {
+            if (Objects.isNull(pptTextarea)) {
+                throw new CustomizeDocumentException(ReturnCode.PPT_FILE_ERROR, "PptTextarea参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (slideList.isEmpty()) {
                 addSlide();
             }
             // 创建文本框
             XSLFTextBox textBox = slideList.get(slideIndex).createTextBox();
-            // 设置文本位置，默认x0y0h0w0
+            // 设置文本位置，默认x0y0w720h60
             textBox.setAnchor(Objects.isNull(pptTextarea.getPosition()) ? new Rectangle2D.Double(0, 0, 720, 60) : pptTextarea.getPosition());
             // 清空原本存在的""内容
             textBox.clearText();
@@ -175,6 +177,71 @@ public class PptUtils {
             textRun.setItalic(Objects.isNull(pptTextarea.getIsItalic()) ? Boolean.FALSE : pptTextarea.getIsItalic());
             // 设置文本是否有下划线，默认否
             textRun.setUnderlined(Objects.isNull(pptTextarea.getIsUnderline()) ? Boolean.FALSE : pptTextarea.getIsUnderline());
+            return this;
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param pptTable PPT表格构造类
+         */
+        public Writer addTable(PptTable pptTable) {
+            if (Objects.isNull(pptTable)) {
+                throw new CustomizeDocumentException(ReturnCode.PPT_FILE_ERROR, "PptTable参数为空");
+            }
+            // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+            if (slideList.isEmpty()) {
+                addSlide();
+            }
+            // 如果输入预设行列值异常，那就直接返回即可
+            if ((Objects.nonNull(pptTable.getRowNum()) && pptTable.getRowNum() <= 0) || (Objects.nonNull(pptTable.getColumnNum()) && pptTable.getColumnNum() <= 0)) {
+                return this;
+            }
+            // 由表格内容获取表格本身的行列值
+            Map<Integer, List<String>> map = pptTable.getTableMap().getMap();
+            int maxRow = -1;
+            int maxColumn = -1;
+            for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+                if (entry.getKey() > maxRow) {
+                    maxRow = entry.getKey();
+                }
+                if (entry.getValue().size() > maxColumn) {
+                    maxColumn = entry.getValue().size();
+                }
+            }
+            // 如果表格本身无行值，则说明表格内容为空，直接返回即可
+            if (maxRow == -1) {
+                return this;
+            } else {
+                // 先把行值从索引值改为真实数值
+                maxRow++;
+                // 如果表格本身有行值，那就和预设值作比较，判断预设值是否是无效值
+                if (Objects.nonNull(pptTable.getRowNum()) && maxRow < pptTable.getRowNum()) {
+                    maxRow = pptTable.getRowNum();
+                }
+                if (Objects.nonNull(pptTable.getColumnNum()) && maxColumn < pptTable.getColumnNum()) {
+                    maxColumn = pptTable.getColumnNum();
+                }
+            }
+            XSLFTable table = slideList.get(slideIndex).createTable(maxRow, maxColumn);
+            // 设置文本位置，默认x0y0w0h0
+            table.setAnchor(Objects.isNull(pptTable.getPosition()) ? new Rectangle2D.Double(0, 0, 720, 60) : pptTable.getPosition());
+            // 填充表格
+            table.getRows().forEach(row -> {
+                for (int i = 0; i < table.getRows().size(); i++) {
+                    List<String> cellData = map.get(i);
+                    for (int j = 0; j < cellData.size(); j++) {
+                        XSLFTableCell cell = row.getCells().get(j);
+                        cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                        cell.setText(cellData.get(j));
+                    }
+                }
+            });
+            // 设置表格格式
+            for (int i = 0; i < maxColumn; i++) {
+                table.setColumnWidth(i, Objects.isNull(pptTable.getColumnWidth()) || pptTable.getColumnWidth() <= 0 ? 240 : pptTable.getColumnNum());
+            }
+
             return this;
         }
 
@@ -279,4 +346,103 @@ public class PptUtils {
         private Boolean isUnderline;
 
     }
+
+    /**
+     * PPT表格构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PptTable {
+
+        /**
+         * 表格数据Map
+         */
+        private PptUtils.PptTable.TableMap tableMap;
+
+        /**
+         * 表格位置
+         */
+        private Rectangle2D.Double position;
+
+        /**
+         * 表格行数
+         */
+        private Integer rowNum;
+
+        /**
+         * 表格列数
+         */
+        private Integer columnNum;
+
+        /**
+         * 表格列宽
+         */
+        private Integer columnWidth;
+
+        /**
+         * 表格Map类
+         */
+        public static class TableMap {
+
+            @Getter
+            private Map<Integer, List<String>> map;
+
+            private AtomicInteger index;
+
+            public TableMap() {
+                map = new HashMap<>();
+                index = new AtomicInteger(0);
+            }
+
+            /**
+             * 增加
+             *
+             * @param rowContent 行内容
+             */
+            public void put(List<String> rowContent) {
+                if (Objects.isNull(rowContent)) {
+                    rowContent = new ArrayList<>();
+                }
+                map.put(index.getAndIncrement(), rowContent);
+            }
+
+            /**
+             * 删除
+             *
+             * @param index 行索引
+             * @return 返回最大行索引，若被删除行索引无效则返回-1
+             */
+            public int remove(Integer index) {
+                if (Objects.isNull(map.remove(index))) {
+                    return -1;
+                }
+                HashMap<Integer, List<String>> newMap = new HashMap<>();
+                AtomicInteger newIndex = new AtomicInteger(0);
+                for (List<String> value : map.values()) {
+                    newMap.put(newIndex.getAndIncrement(), value);
+                }
+                this.map = newMap;
+                this.index = newIndex;
+                return this.index.intValue() - 1;
+            }
+
+            /**
+             * 替换
+             *
+             * @param index      行索引
+             * @param rowContent 行内容
+             * @return 返回替换结果，若被替换行索引无效则返回false，其余情况返回true
+             */
+            public boolean replace(Integer index, List<String> rowContent) {
+                if (Objects.isNull(rowContent)) {
+                    rowContent = new ArrayList<>();
+                }
+                return Objects.nonNull(map.replace(index, rowContent));
+            }
+
+        }
+    }
+
 }

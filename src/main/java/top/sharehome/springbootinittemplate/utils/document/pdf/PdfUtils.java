@@ -372,12 +372,12 @@ public class PdfUtils {
          * @param pdfWatermark PDF水印构造类
          */
         public Writer addWatermark(PdfWatermark pdfWatermark) {
+            if (Objects.isNull(pdfWatermark)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfWatermark参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfWatermark)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfWatermark参数为空");
             }
             Watermark watermark = TemplateHandler.Watermark.build()
                     // 设置水印ID，必须保持唯一性，默认UUID
@@ -464,12 +464,12 @@ public class PdfUtils {
          * @param pdfParagraph PDF段落构造类
          */
         public Writer addTextarea(PdfParagraph pdfParagraph) {
+            if (Objects.isNull(pdfParagraph)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfParagraph参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfParagraph)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfParagraph参数为空");
             }
             Text text = TemplateHandler.Text.build()
                     // 设置段落文本
@@ -718,12 +718,12 @@ public class PdfUtils {
          * @param pdfTable PDF表格构造类
          */
         public Writer addTable(PdfTable pdfTable) {
+            if (Objects.isNull(pdfTable)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTable参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfTable)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfTable参数为空");
             }
             // 设置填充表格的标志符号
             int isAddTable = 0;
@@ -910,12 +910,12 @@ public class PdfUtils {
          * @param pdfSplitLine PDF分割线构造类
          */
         public Writer addSplitLine(PdfSplitLine pdfSplitLine) {
+            if (Objects.isNull(pdfSplitLine)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfSplitLine)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfSplitLine参数为空");
             }
             SplitLine splitLine = TemplateHandler.SplitLine.build()
                     // 设置分割线长度占比，默认100，合理范围[0,100]，允许范围[0,无穷大)
@@ -1062,12 +1062,12 @@ public class PdfUtils {
          * @param pdfImage PDF图像构造类
          */
         public Writer addImage(PdfImage pdfImage) {
+            if (Objects.isNull(pdfImage)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfImage)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数为空");
             }
             if (!Files.isRegularFile(Path.of(pdfImage.getPath()))) {
                 throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfImage参数中图像所在路径[path]为不存在或者非文件");
@@ -1147,12 +1147,12 @@ public class PdfUtils {
          * @param pdfBarcode PDF条码构造类
          */
         public Writer addBarcode(PdfBarcode pdfBarcode) {
+            if (Objects.isNull(pdfBarcode)) {
+                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfBarcode参数为空");
+            }
             // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
             if (pageList.isEmpty()) {
                 addPage();
-            }
-            if (Objects.isNull(pdfBarcode)) {
-                throw new CustomizeDocumentException(ReturnCode.PDF_FILE_ERROR, "PdfBarcode参数为空");
             }
             Barcode barcode = TemplateHandler.Barcode.build()
                     // 设置条码类型，默认二维码
