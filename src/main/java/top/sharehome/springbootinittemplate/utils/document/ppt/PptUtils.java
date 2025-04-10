@@ -183,6 +183,78 @@ public class PptUtils {
         /**
          * 添加表格
          *
+         * @param tableMap 表格数据Map
+         * @param rowNum 表格行数
+         * @param columnNum 表格列数
+         */
+        public Writer addTable(PptTable.TableMap tableMap, Integer rowNum, Integer columnNum) {
+            return addTable(
+                    new PptTable()
+                            .setTableMap(tableMap)
+                            .setRowNum(rowNum)
+                            .setColumnNum(columnNum)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param tableMap 表格数据Map
+         * @param columnWidth 表格列宽
+         * @param rowNum 表格行数
+         * @param columnNum 表格列数
+         */
+        public Writer addTable(PptTable.TableMap tableMap, Integer columnWidth, Integer rowNum, Integer columnNum) {
+            return addTable(
+                    new PptTable()
+                            .setTableMap(tableMap)
+                            .setColumnWidth(columnWidth)
+                            .setRowNum(rowNum)
+                            .setColumnNum(columnNum)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param tableMap 表格数据Map
+         * @param position 表格位置
+         * @param rowNum 表格行数
+         * @param columnNum 表格列数
+         */
+        public Writer addTable(PptTable.TableMap tableMap, Rectangle2D.Double position, Integer rowNum, Integer columnNum) {
+            return addTable(
+                    new PptTable()
+                            .setTableMap(tableMap)
+                            .setPosition(position)
+                            .setRowNum(rowNum)
+                            .setColumnNum(columnNum)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
+         * @param tableMap 表格数据Map
+         * @param position 表格位置
+         * @param columnWidth 表格列宽
+         * @param rowNum 表格行数
+         * @param columnNum 表格列数
+         */
+        public Writer addTable(PptTable.TableMap tableMap, Rectangle2D.Double position, Integer columnWidth, Integer rowNum, Integer columnNum) {
+            return addTable(
+                    new PptTable()
+                            .setTableMap(tableMap)
+                            .setPosition(position)
+                            .setColumnWidth(columnWidth)
+                            .setRowNum(rowNum)
+                            .setColumnNum(columnNum)
+            );
+        }
+
+        /**
+         * 添加表格
+         *
          * @param pptTable PPT表格构造类
          */
         public Writer addTable(PptTable pptTable) {
@@ -227,21 +299,28 @@ public class PptUtils {
             // 设置文本位置，默认x0y0w0h0
             table.setAnchor(Objects.isNull(pptTable.getPosition()) ? new Rectangle2D.Double(0, 0, 720, 60) : pptTable.getPosition());
             // 填充表格
-            table.getRows().forEach(row -> {
-                for (int i = 0; i < table.getRows().size(); i++) {
-                    List<String> cellData = map.get(i);
+            List<XSLFTableRow> rows = table.getRows();
+            for (int i = 0; i < rows.size(); i++) {
+                List<XSLFTableCell> cells = rows.get(i).getCells();
+                for (XSLFTableCell cell : cells) {
+                    cell.setBorderColor(TableCell.BorderEdge.bottom, Color.black);
+                    cell.setBorderColor(TableCell.BorderEdge.top, Color.black);
+                    cell.setBorderColor(TableCell.BorderEdge.right, Color.black);
+                    cell.setBorderColor(TableCell.BorderEdge.left, Color.black);
+                }
+                List<String> cellData = map.get(i);
+                if (Objects.nonNull(cellData)){
                     for (int j = 0; j < cellData.size(); j++) {
-                        XSLFTableCell cell = row.getCells().get(j);
+                        XSLFTableCell cell = cells.get(j);
                         cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
                         cell.setText(cellData.get(j));
                     }
                 }
-            });
-            // 设置表格格式
-            for (int i = 0; i < maxColumn; i++) {
-                table.setColumnWidth(i, Objects.isNull(pptTable.getColumnWidth()) || pptTable.getColumnWidth() <= 0 ? 240 : pptTable.getColumnNum());
             }
-
+            // 设置表格列宽
+            for (int i = 0; i < maxColumn; i++) {
+                table.setColumnWidth(i, Objects.isNull(pptTable.getColumnWidth()) || pptTable.getColumnWidth() <= 0 ? (double) 720 /maxColumn : pptTable.getColumnWidth());
+            }
             return this;
         }
 

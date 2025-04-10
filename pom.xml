@@ -100,7 +100,7 @@
         <ali.activation.version>1.1.1</ali.activation.version>
         <minio.version>8.5.12</minio.version>
         <!-- 文件操作相关 -->
-        <poi.version>5.3.0</poi.version>
+        <poi.version>5.4.1</poi.version>
         <poi.tl.version>1.12.2</poi.tl.version>
         <fast.excel.version>1.0.0</fast.excel.version>
         <x.easypdf.version>3.1.1</x.easypdf.version>

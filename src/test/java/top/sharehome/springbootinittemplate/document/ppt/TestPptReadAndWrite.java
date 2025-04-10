@@ -23,7 +23,7 @@ public class TestPptReadAndWrite {
             tableMap.put(List.of("123", "345"));
             tableMap.put(List.of("123"));
             writer
-                    .addTable(new PptUtils.PptTable(tableMap, null, 3, 3, null))
+                    .addTable(tableMap,80, 7, 7)
                     .addSlide()
                     .addTextarea(StringUtils.reverse("AntonyCheng12345678910qwertyuiop!@#$%^&*()一二三四五六七八九十"))
                     .doWrite(new FileOutputStream(tempFile));
