@@ -533,6 +533,8 @@ public class WordUtils {
                 // 如果连数据流都没有，那就直接返回即可
                 if (Objects.isNull(wordImage.getInputStream())) {
                     return this;
+                } else {
+                    wordImage.setInputStream(new ByteArrayInputStream(wordImage.getInputStream().readAllBytes()));
                 }
                 XWPFParagraph paragraph = document.createParagraph();
                 // 添加图像的前提就是存在一个段落

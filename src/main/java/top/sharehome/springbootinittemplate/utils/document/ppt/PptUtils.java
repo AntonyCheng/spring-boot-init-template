@@ -8,18 +8,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeDocumentException;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -188,12 +190,7 @@ public class PptUtils {
          * @param columnNum 表格列数
          */
         public Writer addTable(PptTable.TableMap tableMap, Integer rowNum, Integer columnNum) {
-            return addTable(
-                    new PptTable()
-                            .setTableMap(tableMap)
-                            .setRowNum(rowNum)
-                            .setColumnNum(columnNum)
-            );
+            return addTable(tableMap, null, null, rowNum, columnNum);
         }
 
         /**
@@ -205,13 +202,7 @@ public class PptUtils {
          * @param columnNum 表格列数
          */
         public Writer addTable(PptTable.TableMap tableMap, Integer columnWidth, Integer rowNum, Integer columnNum) {
-            return addTable(
-                    new PptTable()
-                            .setTableMap(tableMap)
-                            .setColumnWidth(columnWidth)
-                            .setRowNum(rowNum)
-                            .setColumnNum(columnNum)
-            );
+            return addTable(tableMap, null, columnWidth, rowNum, columnNum);
         }
 
         /**
@@ -223,13 +214,7 @@ public class PptUtils {
          * @param columnNum 表格列数
          */
         public Writer addTable(PptTable.TableMap tableMap, Rectangle2D.Double position, Integer rowNum, Integer columnNum) {
-            return addTable(
-                    new PptTable()
-                            .setTableMap(tableMap)
-                            .setPosition(position)
-                            .setRowNum(rowNum)
-                            .setColumnNum(columnNum)
-            );
+            return addTable(tableMap, position, null, rowNum, columnNum);
         }
 
         /**
@@ -309,7 +294,7 @@ public class PptUtils {
                     cell.setBorderColor(TableCell.BorderEdge.left, Color.black);
                 }
                 List<String> cellData = map.get(i);
-                if (Objects.nonNull(cellData)){
+                if (Objects.nonNull(cellData)) {
                     for (int j = 0; j < cellData.size(); j++) {
                         XSLFTableCell cell = cells.get(j);
                         cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
@@ -319,9 +304,104 @@ public class PptUtils {
             }
             // 设置表格列宽
             for (int i = 0; i < maxColumn; i++) {
-                table.setColumnWidth(i, Objects.isNull(pptTable.getColumnWidth()) || pptTable.getColumnWidth() <= 0 ? (double) 720 /maxColumn : pptTable.getColumnWidth());
+                table.setColumnWidth(i, Objects.isNull(pptTable.getColumnWidth()) || pptTable.getColumnWidth() <= 0 ? (double) 720 / maxColumn : pptTable.getColumnWidth());
             }
             return this;
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param multipartFile 图像文件
+         */
+        public Writer addImage(MultipartFile multipartFile) {
+            return addImage(multipartFile, null);
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream 图像数据输入流
+         */
+        public Writer addImage(InputStream inputStream) {
+            return addImage(inputStream, null, null);
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param multipartFile 图像文件
+         * @param position 图像位置及长宽
+         */
+        public Writer addImage(MultipartFile multipartFile, Rectangle2D.Double position) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                String extension = FilenameUtils.getExtension(StringUtils.isNotBlank(multipartFile.getOriginalFilename()) ? multipartFile.getOriginalFilename() : multipartFile.getName());
+                PictureData.PictureType pictureType = PictureData.PictureType.valueOf((Objects.equals(extension, "jpg") ? "jpeg" : extension).toUpperCase());
+                return addImage(inputStream, position, pictureType);
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.PPT_FILE_ERROR, "获取图像数据流失败");
+            }
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream 图像数据输入流
+         * @param position 图像位置及长宽
+         */
+        public Writer addImage(InputStream inputStream, Rectangle2D.Double position) {
+            return addImage(inputStream, position, null);
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param inputStream 图像数据输入流
+         * @param position 图像位置及长宽
+         * @param imageExtension 图像类型
+         */
+        public Writer addImage(InputStream inputStream, Rectangle2D.Double position, PictureData.PictureType imageExtension) {
+            return addImage(
+                    new PptImage()
+                            .setInputStream(inputStream)
+                            .setPosition(position)
+                            .setImageExtension(imageExtension)
+            );
+        }
+
+        /**
+         * 添加图像
+         *
+         * @param pptImage PPT图像构造类
+         */
+        public Writer addImage(PptImage pptImage) {
+            try {
+                if (Objects.isNull(pptImage)) {
+                    throw new CustomizeDocumentException(ReturnCode.PPT_FILE_ERROR, "PptImage参数为空");
+                }
+                // 如果连数据流都没有，那就直接返回即可
+                if (Objects.isNull(pptImage.getInputStream())) {
+                    return this;
+                } else {
+                    pptImage.setInputStream(new ByteArrayInputStream(pptImage.getInputStream().readAllBytes()));
+                }
+                // 如果页面列表中无数据，则自动添加一页，以防开发者因忘记创建页面而出现异常
+                if (slideList.isEmpty()) {
+                    addSlide();
+                }
+                // 先获取图像信息
+                int imgHeight = ImageIO.read(pptImage.getInputStream()).getHeight();
+                pptImage.getInputStream().reset();
+                int imgWidth = ImageIO.read(pptImage.getInputStream()).getWidth();
+                pptImage.getInputStream().reset();
+                // 添加图片
+                XSLFPictureData pictureData = document.addPicture(pptImage.getInputStream(), Objects.isNull(pptImage.getImageExtension()) ? PictureData.PictureType.JPEG : pptImage.getImageExtension());
+                XSLFPictureShape picture = slideList.get(slideIndex).createPicture(pictureData);
+                picture.setAnchor(Objects.isNull(pptImage.getPosition()) ? new Rectangle2D.Double(0, 0, imgWidth, imgHeight) : pptImage.getPosition());
+                return this;
+            } catch (IOException e) {
+                throw new CustomizeDocumentException(ReturnCode.PPT_FILE_ERROR, "添加图像异常");
+            }
         }
 
         /**
@@ -522,6 +602,32 @@ public class PptUtils {
             }
 
         }
+    }
+
+    /**
+     * PPT图像构造类
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    public static class PptImage {
+
+        /**
+         * 图像数据输入流
+         */
+        private InputStream inputStream;
+
+        /**
+         * 图像位置及长宽
+         */
+        private Rectangle2D.Double position;
+
+        /**
+         * 图像类型
+         */
+        private PictureData.PictureType imageExtension;
+
     }
 
 }
