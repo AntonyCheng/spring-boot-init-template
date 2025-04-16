@@ -71,6 +71,10 @@ public class OpenAiTtsEntity extends TtsModelBase implements Serializable {
         this(openAiTtsType, apiKey, format, baseUrl, null);
     }
 
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.Voice voice) {
+        this(openAiTtsType, apiKey, null, null, voice);
+    }
+
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, String baseUrl, OpenAiAudioApi.SpeechRequest.Voice voice) {
         this(openAiTtsType, apiKey, null, baseUrl, voice);
     }
