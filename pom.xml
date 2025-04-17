@@ -235,6 +235,11 @@
             <artifactId>spring-ai-stability-ai</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>
+            <version>${spring.ai.version}</version>
+        </dependency>
 
         <!-- 分词工具配置 -->
         <dependency>

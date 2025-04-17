@@ -10,11 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
 import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.minimax.MiniMaxChatModel;
 import org.springframework.ai.minimax.MiniMaxChatOptions;
@@ -81,56 +80,16 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
+        // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        if (model instanceof DeepSeekChatEntity entity) {
-            String result = this.getDeepSeekChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            String result = this.getOpenAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OllamaChatEntity entity) {
-            String result = this.getOllamaChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            String result = this.getZhiPuAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            String result = this.getMoonshotChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            String result = this.getMistralAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof QianFanChatEntity entity) {
-            String result = this.getQianFanChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            String result = this.getMiniMaxChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            String result = this.getAzureOpenAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        String result = getChatClientByModel(model)
+                .prompt(prompt)
+                .call()
+                .content();
+        sw.stop();
+        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
+        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
     @Override
@@ -138,27 +97,11 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt).toStream();
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .toStream();
     }
 
     @Override
@@ -166,27 +109,10 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt);
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt);
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content();
     }
 
     @Override
@@ -206,110 +132,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -322,6 +150,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -348,110 +185,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -466,6 +205,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -492,110 +240,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -609,6 +259,15 @@ public class AiChatServiceImpl implements AiChatService {
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
     }
@@ -618,72 +277,17 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getDeepSeekChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getOpenAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OllamaChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getOllamaChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getZhiPuAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getMoonshotChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getMistralAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof QianFanChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getQianFanChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getMiniMaxChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            String result = this.getAzureOpenAiChatModel(entity).call(prompt);
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result)));
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        // 计时器
+        StopWatch sw = new StopWatch();
+        sw.start();
+        String result = getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .call()
+                .content();
+        sw.stop();
+        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt);
+        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
     @Override
@@ -691,27 +295,12 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt).toStream();
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt).toStream();
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .stream()
+                .content()
+                .toStream();
     }
 
     @Override
@@ -719,27 +308,11 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt);
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt);
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .stream()
+                .content();
     }
 
     @Override
@@ -759,110 +332,13 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -875,6 +351,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -901,110 +386,13 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -1019,6 +407,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -1045,110 +442,13 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt()
+                .messages(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -1162,6 +462,15 @@ public class AiChatServiceImpl implements AiChatService {
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
     }
@@ -1171,81 +480,16 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getDeepSeekChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getOpenAiChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof OllamaChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getOllamaChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getZhiPuAiChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getMoonshotChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getMistralAiChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof QianFanChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getQianFanChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getMiniMaxChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            StopWatch sw = new StopWatch();
-            sw.start();
-            Generation generation = this.getAzureOpenAiChatModel(entity).call(prompt).getResult();
-            String result = Objects.nonNull(generation) ? generation.getOutput().getText() : "";
-            sw.stop();
-            Integer tokenNum = new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions());
-            return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        // 计时器
+        StopWatch sw = new StopWatch();
+        sw.start();
+        String result = getChatClientByModel(model)
+                .prompt(prompt)
+                .call()
+                .content();
+        sw.stop();
+        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions());
+        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
     @Override
@@ -1253,27 +497,11 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt).map(ChatResponse::getResult).mapNotNull(generation -> generation.getOutput().getText()).toStream();
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .toStream();
     }
 
     @Override
@@ -1281,27 +509,10 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatModel(entity).stream(prompt).map(res -> res.getResult().getOutput().getText());
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
+        return getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content();
     }
 
     @Override
@@ -1321,119 +532,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -1446,6 +550,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -1472,119 +585,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -1599,6 +605,15 @@ public class AiChatServiceImpl implements AiChatService {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
+                })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -1625,119 +640,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<String> flux;
-        if (model instanceof DeepSeekChatEntity entity) {
-            flux = this.getDeepSeekChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.O200K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OpenAiChatEntity entity) {
-            flux = this.getOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof OllamaChatEntity entity) {
-            flux = this.getOllamaChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            flux = this.getZhiPuAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MoonshotChatEntity entity) {
-            flux = this.getMoonshotChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MistralAiChatEntity entity) {
-            flux = this.getMistralAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof QianFanChatEntity entity) {
-            flux = this.getQianFanChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            flux = this.getMiniMaxChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.P50K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            flux = this.getAzureOpenAiChatModel(entity).stream(prompt)
-                    .map(chatResponse -> chatResponse.getResult().getOutput().getText())
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                        tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(prompt.getInstructions()));
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        // 获取大模型回复
+        getChatClientByModel(model)
+                .prompt(prompt)
+                .stream()
+                .content()
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -1751,95 +659,138 @@ public class AiChatServiceImpl implements AiChatService {
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
+                })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
     }
 
     /**
-     * 获取DeepSeekChatModel
+     * 根据Model类型获取ChatClient
      */
-    private OpenAiChatModel getDeepSeekChatModel(DeepSeekChatEntity entity) {
+    private ChatClient getChatClientByModel(ChatModelBase model) {
+        if (model instanceof DeepSeekChatEntity entity) {
+            return this.getDeepSeekChatClient(entity);
+        } else if (model instanceof OpenAiChatEntity entity) {
+            return this.getOpenAiChatClient(entity);
+        } else if (model instanceof OllamaChatEntity entity) {
+            return this.getOllamaChatClient(entity);
+        } else if (model instanceof ZhiPuAiChatEntity entity) {
+            return this.getZhiPuAiChatClient(entity);
+        } else if (model instanceof MoonshotChatEntity entity) {
+            return this.getMoonshotChatClient(entity);
+        } else if (model instanceof MistralAiChatEntity entity) {
+            return this.getMistralAiChatClient(entity);
+        } else if (model instanceof QianFanChatEntity entity) {
+            return this.getQianFanChatClient(entity);
+        } else if (model instanceof MiniMaxChatEntity entity) {
+            return this.getMiniMaxChatClient(entity);
+        } else if (model instanceof AzureOpenAiChatEntity entity) {
+            return this.getAzureOpenAiChatClient(entity);
+        } else {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
+        }
+    }
+
+    /**
+     * 根据Model类型获取Token编码类型
+     * DeepSeek ==> O200K_BASE
+     * OpenAi/AzureOpenAi ==> CL100K_BASE
+     * 其他 ==> P50K_BASE
+     */
+    private EncodingType getEncodingTypeByModel(ChatModelBase model) {
+        return model instanceof DeepSeekChatEntity ? EncodingType.O200K_BASE :
+                model instanceof OpenAiChatEntity || model instanceof AzureOpenAiChatEntity ? EncodingType.CL100K_BASE : EncodingType.P50K_BASE;
+    }
+
+    /**
+     * 获取DeepSeek ChatClient
+     */
+    private ChatClient getDeepSeekChatClient(DeepSeekChatEntity entity) {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(new SimpleApiKey(entity.getApiKey()))
                 .restClientBuilder(RestClient.builder())
                 .build();
-        return OpenAiChatModel.builder()
+        return ChatClient.builder(OpenAiChatModel.builder()
                 .openAiApi(openAiApi)
-                .defaultOptions(
-                        OpenAiChatOptions.builder()
-                                .model(entity.getModel())
-                                .temperature(entity.getTemperature())
-                                .topP(entity.getTemperature())
-                                .build()
-                )
-                .build();
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model(entity.getModel())
+                        .temperature(entity.getTemperature())
+                        .topP(entity.getTemperature())
+                        .build()
+                ).build()).build();
     }
 
     /**
-     * 获取OpenAiChatModel
+     * 获取OpenAi ChatClient
      */
-    private OpenAiChatModel getOpenAiChatModel(OpenAiChatEntity entity) {
+    private ChatClient getOpenAiChatClient(OpenAiChatEntity entity) {
         OpenAiApi openAiApi = OpenAiApi.builder()
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(new SimpleApiKey(entity.getApiKey()))
                 .restClientBuilder(RestClient.builder())
                 .build();
-        return OpenAiChatModel.builder()
+        return ChatClient.builder(OpenAiChatModel.builder()
                 .openAiApi(openAiApi)
-                .defaultOptions(
-                        OpenAiChatOptions.builder()
-                                .model(entity.getModel())
-                                .temperature(entity.getTemperature())
-                                .topP(entity.getTemperature())
-                                .build()
-                )
-                .build();
+                .defaultOptions(OpenAiChatOptions.builder()
+                        .model(entity.getModel())
+                        .temperature(entity.getTemperature())
+                        .topP(entity.getTemperature())
+                        .build()
+                ).build()).build();
     }
 
     /**
-     * 获取OllamaChatModel
+     * 获取Ollama ChatClient
      */
-    private OllamaChatModel getOllamaChatModel(OllamaChatEntity entity) {
+    private ChatClient getOllamaChatClient(OllamaChatEntity entity) {
         OllamaApi ollamaApi = new OllamaApi(entity.getBaseUrl());
-        return new OllamaChatModel(ollamaApi, OllamaOptions.builder()
+        return ChatClient.builder(new OllamaChatModel(ollamaApi, OllamaOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
                 .build(), new DefaultToolCallingManager(ObservationRegistry.NOOP, new DelegatingToolCallbackResolver(List.of()), new DefaultToolExecutionExceptionProcessor(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder()
-                .build());
+                .build())).build();
     }
 
     /**
-     * 获取ZhiPuAiChatModel
+     * 获取ZhiPuAi ChatClient
      */
-    private ZhiPuAiChatModel getZhiPuAiChatModel(ZhiPuAiChatEntity entity) {
+    private ChatClient getZhiPuAiChatClient(ZhiPuAiChatEntity entity) {
         ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
-        return new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions.builder()
+        return ChatClient.builder(new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
-                .build());
+                .build())).build();
     }
 
     /**
-     * 获取MoonshotChatModel
+     * 获取Moonshot ChatClient
      */
-    private MoonshotChatModel getMoonshotChatModel(MoonshotChatEntity entity) {
+    private ChatClient getMoonshotChatClient(MoonshotChatEntity entity) {
         MoonshotApi moonshotApi = new MoonshotApi(entity.getApiKey());
-        return new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
+        return ChatClient.builder(new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
-                .build());
+                .build())).build();
     }
 
     /**
-     * 获取MistralAiChatModel
+     * 获取MistralAi ChatClient
      */
-    private MistralAiChatModel getMistralAiChatModel(MistralAiChatEntity entity) {
+    private ChatClient getMistralAiChatClient(MistralAiChatEntity entity) {
         MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
-        return MistralAiChatModel.builder()
+        return ChatClient.builder(MistralAiChatModel.builder()
                 .mistralAiApi(mistralAiApi)
                 .defaultOptions(
                         MistralAiChatOptions.builder()
@@ -1847,43 +798,43 @@ public class AiChatServiceImpl implements AiChatService {
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP()).build()
                 )
-                .build();
+                .build()).build();
     }
 
     /**
-     * 获取QianFanChatModel
+     * 获取QianFan ChatClient
      */
-    private QianFanChatModel getQianFanChatModel(QianFanChatEntity entity) {
+    private ChatClient getQianFanChatClient(QianFanChatEntity entity) {
         QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        return new QianFanChatModel(qianFanApi, QianFanChatOptions.builder()
+        return ChatClient.builder(new QianFanChatModel(qianFanApi, QianFanChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
-                .build());
+                .build())).build();
     }
 
     /**
-     * 获取MiniMaxChatModel
+     * 获取MiniMax ChatClient
      */
-    private MiniMaxChatModel getMiniMaxChatModel(MiniMaxChatEntity entity) {
+    private ChatClient getMiniMaxChatClient(MiniMaxChatEntity entity) {
         MiniMaxApi miniMaxApi = new MiniMaxApi(entity.getApiKey());
-        return new MiniMaxChatModel(miniMaxApi, MiniMaxChatOptions.builder()
+        return ChatClient.builder(new MiniMaxChatModel(miniMaxApi, MiniMaxChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
-                .build());
+                .build())).build();
     }
 
     /**
-     * 获取AzureOpenAiChatModel
+     * 获取AzureOpenAi ChatClient
      */
-    private AzureOpenAiChatModel getAzureOpenAiChatModel(AzureOpenAiChatEntity entity) {
+    private ChatClient getAzureOpenAiChatClient(AzureOpenAiChatEntity entity) {
         OpenAIClientBuilder clientBuilder = new OpenAIClientBuilder().credential(new AzureKeyCredential(entity.getApiKey())).endpoint(entity.getEndpoint()).serviceVersion(entity.getModelVersion());
-        return new AzureOpenAiChatModel(clientBuilder, AzureOpenAiChatOptions.builder()
+        return ChatClient.builder(new AzureOpenAiChatModel(clientBuilder, AzureOpenAiChatOptions.builder()
                 .deploymentName(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
-                .build(), DefaultToolCallingManager.builder().build(), ObservationRegistry.NOOP);
+                .build(), DefaultToolCallingManager.builder().build(), ObservationRegistry.NOOP)).build();
     }
 
 }
