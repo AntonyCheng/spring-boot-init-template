@@ -6,6 +6,7 @@ import com.knuddels.jtokkit.api.EncodingType;
 import io.micrometer.observation.ObservationRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
@@ -41,8 +42,12 @@ import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -58,6 +63,7 @@ import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 import top.sharehome.springbootinittemplate.utils.tokenizers.TikTokenUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -77,6 +83,25 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatString(ChatModelBase model, String prompt) {
+        return chatString(model, prompt, null, null);
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatString(model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -84,7 +109,13 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         String result = getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .call()
                 .content();
         sw.stop();
@@ -94,11 +125,36 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public Stream<String> chatStream(ChatModelBase model, String prompt) {
+        return chatStream(model, prompt, null, null);
+    }
+
+    @Override
+    public Stream<String> chatStream(ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatStream(model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public Stream<String> chatStream(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
         return getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .stream()
                 .content()
                 .toStream();
@@ -106,17 +162,61 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public Flux<String> chatFlux(ChatModelBase model, String prompt) {
+        return chatFlux(model, prompt, null, null);
+    }
+
+    @Override
+    public Flux<String> chatFlux(ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatFlux(model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public Flux<String> chatFlux(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
         return getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .stream()
                 .content();
     }
 
     @Override
     public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt) {
+        return chatFlux(sseEmitter, model, prompt, null, null);
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatFlux(sseEmitter, model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -134,7 +234,13 @@ public class AiChatServiceImpl implements AiChatService {
         sw.start();
         // 获取大模型回复
         getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .stream()
                 .content()
                 .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
@@ -166,6 +272,25 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, ChatModelBase model, String prompt) {
+        return chatFlux(userId, model, prompt, null, null);
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatFlux(userId, model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -187,7 +312,13 @@ public class AiChatServiceImpl implements AiChatService {
         sw.start();
         // 获取大模型回复
         getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .stream()
                 .content()
                 .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
@@ -221,6 +352,25 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt) {
+        return chatFlux(userId, token, model, prompt, null, null);
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt, MultipartFile multipartFile) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)){
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatFlux(userId, token, model, prompt, mimeType, inputStream);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream) {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -242,7 +392,13 @@ public class AiChatServiceImpl implements AiChatService {
         sw.start();
         // 获取大模型回复
         getChatClientByModel(model)
-                .prompt(prompt)
+                .prompt()
+                .user(u -> {
+                    u.text(prompt);
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .stream()
                 .content()
                 .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))

@@ -2,11 +2,14 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.chat;
 
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.util.MimeType;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatResult;
 
+import java.io.InputStream;
 import java.util.stream.Stream;
 
 /**
@@ -25,12 +28,50 @@ public interface AiChatService {
     ChatResult chatString(ChatModelBase model, String prompt);
 
     /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    ChatResult chatString(ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    ChatResult chatString(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
+
+    /**
      * 发起AI Chat功能，返回流式数据
      *
      * @param model         chat模型信息
      * @param prompt        提示词
      */
     Stream<String> chatStream(ChatModelBase model, String prompt);
+
+    /**
+     * 发起AI Chat功能，返回流式数据
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    Stream<String> chatStream(ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，返回流式数据
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    Stream<String> chatStream(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
 
     /**
      * 发起AI Chat功能，返回响应式数据
@@ -41,6 +82,25 @@ public interface AiChatService {
     Flux<String> chatFlux(ChatModelBase model, String prompt);
 
     /**
+     * 发起AI Chat功能，返回响应式数据
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    Flux<String> chatFlux(ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，返回响应式数据
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    Flux<String> chatFlux(ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
+
+    /**
      * 发起AI Chat功能，响应式输出，并返回Chat结果集
      *
      * @param sseEmitter    Sse连接器
@@ -48,6 +108,27 @@ public interface AiChatService {
      * @param prompt        提示词
      */
     ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param sseEmitter    Sse连接器
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param sseEmitter    Sse连接器
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
 
     /**
      * 发起AI Chat功能，响应式输出，并返回Chat结果集
@@ -62,11 +143,52 @@ public interface AiChatService {
      * 发起AI Chat功能，响应式输出，并返回Chat结果集
      *
      * @param userId        输出目标用户ID
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    ChatResult chatFlux(Long userId, ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param userId        输出目标用户ID
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    ChatResult chatFlux(Long userId, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param userId        输出目标用户ID
      * @param token         输出目标用户Token
      * @param model         chat模型信息
      * @param prompt        提示词
      */
     ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param userId        输出目标用户ID
+     * @param token         输出目标用户Token
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     */
+    ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，响应式输出，并返回Chat结果集
+     *
+     * @param userId        输出目标用户ID
+     * @param token         输出目标用户Token
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     */
+    ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream);
 
     /**
      * 发起AI Chat功能，Chat结果集
