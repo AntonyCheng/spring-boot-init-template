@@ -39,24 +39,24 @@ public class ChatResult implements Serializable {
     private Prompt prompt;
 
     public ChatResult(String result, Long takeTime, Integer tokenNum, String prompt) {
-        this.prompt = new Prompt(new UserMessage(prompt));
+        this.result = result;
         this.takeTime = takeTime;
         this.tokenNum = tokenNum;
-        this.result = result;
+        this.prompt = new Prompt(new UserMessage(prompt));
     }
 
     public ChatResult(String result, Long takeTime, Integer tokenNum, Message... prompt) {
-        this.prompt = new Prompt(prompt);
+        this.result = result;
         this.takeTime = takeTime;
         this.tokenNum = tokenNum;
-        this.result = result;
+        this.prompt = new Prompt(prompt);
     }
 
     public ChatResult(String result, Long takeTime, Integer tokenNum, Prompt prompt) {
-        this.prompt = prompt;
+        this.result = result;
         this.takeTime = takeTime;
         this.tokenNum = tokenNum;
-        this.result = result;
+        this.prompt = prompt;
     }
 
     @Serial

@@ -9,7 +9,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.core.io.ClassPathResource;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
-import top.sharehome.springbootinittemplate.model.common.Tuple;
+import top.sharehome.springbootinittemplate.model.common.TupleN;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class BpeTokenUtils {
 
     private static final HashMap<Integer, Integer> BYTE_DECODER;
 
-    private static final HashMap<Tuple<String>, Integer> BPE_RANKS;
+    private static final HashMap<TupleN<String>, Integer> BPE_RANKS;
 
     private static final HashMap<String, String> CACHE = new HashMap<>();
 
@@ -71,13 +71,13 @@ public class BpeTokenUtils {
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (oldValue, newValue) -> oldValue, HashMap::new));
 
         String[] vocabBpeFileLines = vocabBpeFileContent.split("\n");
-        List<Tuple<String>> bpeMerges = new ArrayList<>();
+        List<TupleN<String>> bpeMerges = new ArrayList<>();
         for (int i = 1; i < vocabBpeFileLines.length - 1; i++) {
             String mergeStr = vocabBpeFileLines[i];
             List<String> pair = Arrays.stream(mergeStr.split("(\\s+)"))
                     .filter(e -> !e.trim().isEmpty())
                     .toList();
-            bpeMerges.add(new Tuple<>(pair.get(0), pair.get(1)));
+            bpeMerges.add(new TupleN<>(pair.get(0), pair.get(1)));
         }
         List<Integer> rankList = new ArrayList<>();
         for (int i = 0; i < bpeMerges.size(); i++) {
@@ -173,13 +173,13 @@ public class BpeTokenUtils {
         if (Objects.nonNull(cacheToken = CACHE.get(token))) {
             return cacheToken;
         }
-        List<String> word = new Tuple<>(token.split(""));
-        Set<Tuple<String>> pairs = getPairs(word);
+        List<String> word = new TupleN<>(token.split(""));
+        Set<TupleN<String>> pairs = getPairs(word);
         if (pairs.isEmpty()) {
             return token;
         }
         while (true) {
-            Tuple<String> bigram = pairs.stream()
+            TupleN<String> bigram = pairs.stream()
                     .parallel()
                     .min(Comparator.comparing(pair -> BPE_RANKS.getOrDefault(pair, Integer.MAX_VALUE)))
                     .orElse(null);
@@ -253,11 +253,11 @@ public class BpeTokenUtils {
         return dictZip(bs, cs);
     }
 
-    private static Set<Tuple<String>> getPairs(List<String> word) {
-        Set<Tuple<String>> pairs = new HashSet<>();
+    private static Set<TupleN<String>> getPairs(List<String> word) {
+        Set<TupleN<String>> pairs = new HashSet<>();
         String prevChar = word.get(0);
         for (int i = 1; i < word.size(); i++) {
-            pairs.add(new Tuple<>(prevChar, word.get(i)));
+            pairs.add(new TupleN<>(prevChar, word.get(i)));
             prevChar = word.get(i);
         }
         return pairs;
