@@ -10,7 +10,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  *
  * @author AntonyCheng
  */
-
 public class MongoCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {

@@ -9,9 +9,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.azure.openai.AzureOpenAiEmbeddingModel;
 import org.springframework.ai.azure.openai.AzureOpenAiEmbeddingOptions;
-import org.springframework.ai.document.Document;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.Embedding;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.minimax.MiniMaxEmbeddingModel;
 import org.springframework.ai.minimax.MiniMaxEmbeddingOptions;
@@ -113,20 +113,27 @@ public class AiEmbeddingServiceImpl implements AiEmbeddingService {
      * 获得向量响应对象
      */
     private EmbeddingResponse getEmbeddingResponse(EmbeddingModelBase model, List<String> text) {
+        return this.getEmbeddingModel(model).embedForResponse(text);
+    }
+
+    /**
+     * 获得向量模型对象
+     */
+    public EmbeddingModel getEmbeddingModel(EmbeddingModelBase model) {
         if (model instanceof OpenAiEmbeddingEntity entity) {
-            return this.getOpenAiEmbeddingModel(entity).embedForResponse(text);
+            return this.getOpenAiEmbeddingModel(entity);
         } else if (model instanceof OllamaEmbeddingEntity entity) {
-            return this.getOllamaEmbeddingModel(entity).embedForResponse(text);
+            return this.getOllamaEmbeddingModel(entity);
         } else if (model instanceof ZhiPuAiEmbeddingEntity entity) {
-            return this.getZhiPuAiEmbeddingModel(entity).embedForResponse(text);
+            return this.getZhiPuAiEmbeddingModel(entity);
         } else if (model instanceof MistralAiEmbeddingEntity entity) {
-            return this.getMistralAiEmbeddingModel(entity).embedForResponse(text);
+            return this.getMistralAiEmbeddingModel(entity);
         } else if (model instanceof QianFanEmbeddingEntity entity) {
-            return this.getQianFanEmbeddingModel(entity).embedForResponse(text);
+            return this.getQianFanEmbeddingModel(entity);
         } else if (model instanceof MiniMaxEmbeddingEntity entity) {
-            return this.getMiniMaxEmbeddingModel(entity).embedForResponse(text);
+            return this.getMiniMaxEmbeddingModel(entity);
         } else if (model instanceof AzureOpenAiEmbeddingEntity entity) {
-            return this.getAzureOpenAiEmbeddingModel(entity).embedForResponse(text);
+            return this.getAzureOpenAiEmbeddingModel(entity);
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -149,7 +156,9 @@ public class AiEmbeddingServiceImpl implements AiEmbeddingService {
      * 获取OllamaEmbeddingModel
      */
     private OllamaEmbeddingModel getOllamaEmbeddingModel(OllamaEmbeddingEntity entity) {
-        OllamaApi ollamaApi = new OllamaApi(entity.getBaseUrl());
+        OllamaApi ollamaApi = OllamaApi.builder()
+                .baseUrl(entity.getBaseUrl())
+                .build();
         return new OllamaEmbeddingModel(ollamaApi, OllamaOptions.builder()
                 .model(entity.getModel())
                 .build(), ObservationRegistry.NOOP, ModelManagementOptions.defaults());

@@ -119,7 +119,9 @@ public class SpringEmbeddingTest {
     @Test
     public void testOllamaEmbedding() {
         OllamaEmbeddingEntity entity = new OllamaEmbeddingEntity("nomic-embed-text", "http://localhost:11434");
-        OllamaApi ollamaApi = new OllamaApi(entity.getBaseUrl());
+        OllamaApi ollamaApi = OllamaApi.builder()
+                .baseUrl(entity.getBaseUrl())
+                .build();
         OllamaEmbeddingModel embeddingModel = new OllamaEmbeddingModel(ollamaApi, OllamaOptions.builder()
                 .model(entity.getModel())
                 .build(), ObservationRegistry.NOOP, ModelManagementOptions.defaults());

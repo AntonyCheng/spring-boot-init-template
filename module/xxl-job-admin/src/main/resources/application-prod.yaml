@@ -31,7 +31,7 @@ spring:
       client:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
-        url: http://177.177.177.113:38077/spring-boot-admin/
+        url: http://177.177.177.204:38077/spring-boot-admin/
         username: admin
         password: admin123456
         instance:

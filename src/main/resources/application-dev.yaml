@@ -280,9 +280,9 @@ spring:
     # MongoDB配置
     mongodb:
       # 使用uri进行连接，防止字符拼接错误
-      # 如果不需要用户名和密码，即：uri: mongodb://主机地址:主机端口/默认数据库?authSource=admin
-      # 如果需要用户名和密码，即：uri: mongodb://用户名:密码@主机地址:主机端口/默认数据库?authSource=admin
-      uri: mongodb://127.0.0.1:27017/init_db?authSource=admin
+      # 如果不需要用户名和密码，即：uri: mongodb://主机地址:主机端口/默认数据库?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
+      # 如果需要用户名和密码，即：uri: mongodb://用户名:密码@主机地址:主机端口/默认数据库?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
+      uri: mongodb://root:123456@127.0.0.1:27017/init_db?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
   # 数据源配置
   datasource:
     # 多数据源
@@ -349,6 +349,29 @@ spring:
         test-while-idle: true
         test-on-borrow: false
         test-on-return: false
+
+# Milvus向量数据库
+milvus:
+  # todo 是否启动Milvus向量数据库（预先关闭）
+  enable: false
+  # 主机
+  host: 127.0.0.1
+  # 端口
+  port: 19530
+  # 用户名称
+  username: root
+  # 密码
+  password: 123456
+  # 数据库名称
+  database-name: default
+  # 数据库集合名称
+  collection-name: vector_store
+  # 嵌入维度
+  embedding-dimension: 2048
+  # 索引类型
+  index-type: ivf_flat
+  # 度量类型
+  metric-type: cosine
 
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效

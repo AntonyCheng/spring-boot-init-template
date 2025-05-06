@@ -2,9 +2,9 @@ version: '3'
 
 services:
 
-  #######################################################################
-  ##########################以下是必须启动容器##############################
-  #######################################################################
+#########################################################################
+############################以下是必须启动容器##############################
+#########################################################################
   mysql:
     image: mysql:8.0.39
     container_name: mysql
@@ -35,9 +35,10 @@ services:
       docker_net:
         ipv4_address: 177.177.177.100
 
-  #######################################################################
-  ##########################以下是选择启动容器##############################
-  #######################################################################
+#########################################################################
+############################以下是选择启动容器##############################
+#########################################################################
+###########################   PostgreSQL   ##############################
 #  postgresql:
 #    image: pgvector/pgvector:0.7.4-pg17
 #    container_name: postgresql
@@ -54,6 +55,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.101
 #
+############################   Redis   ###############################
 #  redis:
 #    image: redis:7.4.1
 #    container_name: redis
@@ -73,6 +75,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.102
 #
+############################   MinIO   ###############################
 #  minio:
 #    image: minio/minio:RELEASE.2024-09-13T20-26-02Z
 #    container_name: minio
@@ -108,6 +111,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.103
 #
+###########################   RabbitMQ   #############################
 #  rabbitmq:
 #    image: rabbitmq:3.13.7-management
 #    container_name: rabbitmq
@@ -128,6 +132,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.104
 #
+##############################   ELK   ################################
 #  elasticsearch:
 #    image: elasticsearch:7.14.0
 #    container_name: elasticsearch
@@ -185,6 +190,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.107
 #
+############################   MongoDB   ##############################
 #  mongodb:
 #    image: mongodb/mongodb-community-server:7.0.12-ubi8
 #    container_name: mongodb
@@ -200,6 +206,7 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.108
 #
+#############################   Ollama   ##############################
 #  ollama:
 #    image: ollama/ollama:0.3.11
 #    container_name: ollama
@@ -211,7 +218,114 @@ services:
 #    networks:
 #      docker_net:
 #        ipv4_address: 177.177.177.109
-
+#
+#############################   NewAPI   ##############################
+#  newapi:
+#    image: calciumion/new-api:v0.6.7.1
+#    container_name: newapi
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./data/newapi/data/one-api.db:/data/one-api.db
+#    command: "sh -c ./one-api --port 3000 --log-dir ./logs"
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.110
+#
+##############################   m3e   ################################
+#  m3e:
+#    image: stawky/m3e-large-api:latest
+#    container_name: m3e
+#    ports:
+#      - "6008:6008"
+#    command: "sh -c 'cd /app && uvicorn localembedding:app --host 0.0.0.0 --port 6008'"
+#    #如果需要英伟达GPU，使用nvidia-smi命令查看后进行配置：
+#    #deploy:
+#    #  resources:
+#    #    reservations:
+#    #      devices:
+#    #      - driver: nvidia
+#    #        device_ids: ['0']
+#    #        capabilities: [gpu]
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.111
+#
+############################   Milvus   ###############################
+#  milvus-etcd:
+#    container_name: milvus-etcd
+#    image: quay.io/coreos/etcd:v3.5.18
+#    environment:
+#      TZ: Asia/Shanghai
+#      ETCD_AUTO_COMPACTION_MODE: revision
+#      ETCD_AUTO_COMPACTION_RETENTION: 1000
+#      ETCD_QUOTA_BACKEND_BYTES: 4294967296
+#      ETCD_SNAPSHOT_COUNT: 50000
+#    volumes:
+#      - ./data/milvus/etcd:/etcd
+#    command: etcd -advertise-client-urls=http://177.177.177.112:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+#    healthcheck:
+#      test: ["CMD", "etcdctl", "endpoint", "health"]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.112
+#
+#  milvus-minio:
+#    container_name: milvus-minio
+#    image: minio/minio:RELEASE.2024-09-13T20-26-02Z
+#    environment:
+#      TZ: Asia/Shanghai
+#      MINIO_ACCESS_KEY: minioadmin
+#      MINIO_SECRET_KEY: minioadmin
+#    volumes:
+#      - ./data/milvus/minio:/minio_data
+#    command: minio server /minio_data --console-address ":9001"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.113
+#
+#  milvus-standalone:
+#    container_name: milvus-standalone
+#    image: milvusdb/milvus:v2.5.10
+#    command: ["milvus", "run", "standalone"]
+#    security_opt:
+#      - seccomp:unconfined
+#    environment:
+#      TZ: Asia/Shanghai
+#      ETCD_ENDPOINTS: 177.177.177.112:2379
+#      MINIO_ADDRESS: 177.177.177.113:9000
+#    volumes:
+#      - ./data/milvus/data:/var/lib/milvus
+#      - ./data/milvus/milvus.yaml:/milvus/configs/milvus.yaml
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
+#    ports:
+#      - "19530:19530"
+#      - "9091:9091"
+#    depends_on:
+#      - "milvus-etcd"
+#      - "milvus-minio"
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.114
 networks:
   docker_net:
     external: true

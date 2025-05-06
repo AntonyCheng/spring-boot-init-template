@@ -124,7 +124,7 @@ spring:
         # todo 是否纳入SpringBootAdmin监控体系（预先关闭）
         enabled: false
         # SpringBootAdmin地址
-        url: http://177.177.177.113:38077/spring-boot-admin/
+        url: http://177.177.177.204:38077/spring-boot-admin/
         # SpringBootAdmin账号
         username: admin
         # SpringBootAdmin密码
@@ -244,46 +244,6 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       # todo 是否使用Redis搭配SaToken鉴权认证（如果需要，就将RedisAutoConfiguration和SaTokenDaoRedisJackson同时注释掉，预先不使用）
       - cn.dev33.satoken.dao.SaTokenDaoRedisJackson
-  ## Spring AI相关注解（要调用OpenAI API时需要特殊网络环境，否则会超时）
-  #ai:
-  #  # Open AI
-  #  openai:
-  #    # OpenAI 密钥
-  #    api-key: sk-xxx
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: gpt-3.5-turbo
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
-  #  # 智谱 AI
-  #  zhipuai:
-  #    # 智谱AI 密钥
-  #    api-key: xxx.xxx
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: GLM-3-Turbo
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
-  #  # Ollama AI
-  #  ollama:
-  #    # Ollama 服务地址
-  #    base-url: http://177.177.177.109:11434
-  #    chat:
-  #      options:
-  #        # 模型名称
-  #        model: llama3.1:8b-instruct-q8_0
-  #        # 用于决定生成文本的随机性，值越高表示生成的答案可能性越多样化。
-  #        temperature: 0.9
-  #        # 限制生成概率较低的文本，高值会生成更多样化的答案，低值则较为保守。
-  #        top-k: 10
-  #        # 与top-k相似，高值生成更多样化的文本，低值生成较为集中和保守的文本。
-  #        top-p: 0.3
   data:
     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
     redis:
@@ -320,9 +280,9 @@ spring:
     # MongoDB配置
     mongodb:
       # 使用uri进行连接，防止字符拼接错误
-      # 如果不需要用户名和密码，即：uri: mongodb://主机地址:主机端口/默认数据库?authSource=admin
-      # 如果需要用户名和密码，即：uri: mongodb://用户名:密码@主机地址:主机端口/默认数据库?authSource=admin
-      uri: mongodb://root:123456@177.177.177.108:27017/init_db?authSource=admin
+      # 如果不需要用户名和密码，即：uri: mongodb://主机地址:主机端口/默认数据库?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
+      # 如果需要用户名和密码，即：uri: mongodb://用户名:密码@主机地址:主机端口/默认数据库?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
+      uri: mongodb://root:123456@177.177.177.108:27017/init_db?authSource=admin&maxPoolSize=50&connectTimeoutMS=30000
   # 数据源配置
   datasource:
     # 多数据源
@@ -389,6 +349,29 @@ spring:
         test-while-idle: true
         test-on-borrow: false
         test-on-return: false
+
+# Milvus向量数据库
+milvus:
+  # todo 是否启动Milvus向量数据库（预先关闭）
+  enable: false
+  # 主机
+  host: 177.177.177.114
+  # 端口
+  port: 19530
+  # 用户名称
+  username: root
+  # 密码
+  password: 123456
+  # 数据库名称
+  database-name: default
+  # 数据库集合名称
+  collection-name: vector_store
+  # 嵌入维度
+  embedding-dimension: 2048
+  # 索引类型
+  index-type: ivf_flat
+  # 度量类型
+  metric-type: cosine
 
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
@@ -609,7 +592,7 @@ xxl:
     # todo 是否开启（预先关闭）
     enable: false
     # Xxl-Job监控面板地址
-    admin-addresses: http://177.177.177.111:38079/xxl-job-admin
+    admin-addresses: http://177.177.177.202:38079/xxl-job-admin
     # Xxl-Job token
     access-token: xxl-job
     # 执行器配置
@@ -639,7 +622,7 @@ powerjob:
     # 执行器AppName
     app-name: power-job-executor
     # PowerJob服务器地址
-    server-address: 177.177.177.112:38078/power-job-admin
+    server-address: 177.177.177.203:38078/power-job-admin
     # 网络传输协议
     protocol: http
     # 执行器信息存储介质

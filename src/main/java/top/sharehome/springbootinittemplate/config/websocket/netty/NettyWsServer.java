@@ -32,9 +32,9 @@ import top.sharehome.springbootinittemplate.config.websocket.netty.properties.Ne
 @Conditional(NettyWsCondition.class)
 public class NettyWsServer {
 
-    private EventLoopGroup bossGroup = null;
+    private final EventLoopGroup bossGroup;
 
-    private EventLoopGroup workerGroup = null;
+    private final EventLoopGroup workerGroup;
 
     public NettyWsServer(NettyWsProperties nettyWsProperties) {
         // 判断端口号是否合法

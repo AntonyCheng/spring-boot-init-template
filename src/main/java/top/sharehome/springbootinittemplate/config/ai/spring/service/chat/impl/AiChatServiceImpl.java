@@ -139,7 +139,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result));
+        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(Objects.isNull(result) ? "" : result));
         return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
@@ -1028,7 +1028,9 @@ public class AiChatServiceImpl implements AiChatService {
      * 获取Ollama ChatClient
      */
     private ChatClient getOllamaChatClient(OllamaChatEntity entity) {
-        OllamaApi ollamaApi = new OllamaApi(entity.getBaseUrl());
+        OllamaApi ollamaApi = OllamaApi.builder()
+                .baseUrl(entity.getBaseUrl())
+                .build();
         return ChatClient.builder(new OllamaChatModel(ollamaApi, OllamaOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
@@ -1054,11 +1056,12 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private ChatClient getMoonshotChatClient(MoonshotChatEntity entity) {
         MoonshotApi moonshotApi = new MoonshotApi(entity.getApiKey());
-        return ChatClient.builder(new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build())).build();
+//        return ChatClient.builder(new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
+//                .model(entity.getModel())
+//                .temperature(entity.getTemperature())
+//                .topP(entity.getTopP())
+//                .build())).build();
+        return null;
     }
 
     /**

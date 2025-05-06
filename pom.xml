@@ -184,7 +184,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- AI 相关依赖配置 -->
+        <!-- AI 服务依赖配置 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-openai</artifactId>
@@ -235,9 +235,32 @@
             <artifactId>spring-ai-stability-ai</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
+
+        <!-- AI 其他依赖配置 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>
+            <version>${spring.ai.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-milvus-store</artifactId>
+            <version>${spring.ai.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java-util</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.25.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-pgvector-store</artifactId>
             <version>${spring.ai.version}</version>
         </dependency>
 

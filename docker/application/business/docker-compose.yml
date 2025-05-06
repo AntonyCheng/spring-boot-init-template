@@ -16,7 +16,29 @@ services:
     privileged: true
     networks:
       docker_net:
-        ipv4_address: 177.177.177.110
+        ipv4_address: 177.177.177.200
+
+  nginx:
+    image: nginx:1.27.1
+    container_name: nginx
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    ports:
+      - "80:80"
+    volumes:
+      # 证书映射
+      - ./data/nginx/cert:/etc/nginx/cert
+      # 配置文件映射
+      - ./data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      # 页面目录
+      - ./data/nginx/html:/usr/share/nginx/html
+      # 日志目录
+      - ./data/nginx/log:/var/log/nginx
+    privileged: true
+    networks:
+      docker_net:
+        ipv4_address: 177.177.177.201
 
 #  xxl-job-admin:
 #    image: xxl-job-admin:v2.2.1-jdk17-pre
@@ -32,7 +54,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.111
+#        ipv4_address: 177.177.177.202
 
 #  power-job-admin:
 #    image: power-job-admin:v2.2.1-jdk17-pre
@@ -48,7 +70,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.112
+#        ipv4_address: 177.177.177.203
 
 #  spring-boot-admin:
 #    image: spring-boot-admin:v2.2.1-jdk17-pre
@@ -64,7 +86,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.113
+#        ipv4_address: 177.177.177.204
 
 networks:
   docker_net:
