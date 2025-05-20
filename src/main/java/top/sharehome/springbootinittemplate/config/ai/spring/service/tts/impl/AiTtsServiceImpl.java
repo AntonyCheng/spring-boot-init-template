@@ -4,17 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.ai.openai.OpenAiAudioSpeechModel;
-import org.springframework.ai.openai.OpenAiAudioSpeechOptions;
-import org.springframework.ai.openai.api.OpenAiAudioApi;
-import org.springframework.ai.retry.RetryUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.AiTtsService;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.manager.TtsManager;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.TtsModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.TtsResult;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.entity.OpenAiTtsEntity;
@@ -47,7 +42,7 @@ public class AiTtsServiceImpl implements AiTtsService {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
         }
         if (model instanceof OpenAiTtsEntity entity) {
-            return this.getOpenAiAudioSpeechModel(entity).call(text);
+            return TtsManager.getTtsModel(entity).call(text);
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
@@ -61,7 +56,7 @@ public class AiTtsServiceImpl implements AiTtsService {
         try {
             if (model instanceof OpenAiTtsEntity entity) {
                 ByteArrayOutputStream res = new ByteArrayOutputStream();
-                res.write(this.getOpenAiAudioSpeechModel(entity).call(text));
+                res.write(TtsManager.getTtsModel(entity).call(text));
                 return res;
             } else {
                 throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
@@ -88,7 +83,7 @@ public class AiTtsServiceImpl implements AiTtsService {
         sw.start();
         Flux<byte[]> flux;
         if (model instanceof OpenAiTtsEntity entity) {
-            flux = this.getOpenAiAudioSpeechModel(entity).stream(text)
+            flux = TtsManager.getTtsModel(entity).stream(text)
                     .doOnError(e -> {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
@@ -139,7 +134,7 @@ public class AiTtsServiceImpl implements AiTtsService {
         sw.start();
         Flux<byte[]> flux;
         if (model instanceof OpenAiTtsEntity entity) {
-            flux = this.getOpenAiAudioSpeechModel(entity).stream(text)
+            flux = TtsManager.getTtsModel(entity).stream(text)
                     .doOnError(e -> {
                         log.error(e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
@@ -190,21 +185,15 @@ public class AiTtsServiceImpl implements AiTtsService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        Flux<byte[]> flux;
-        if (model instanceof OpenAiTtsEntity entity) {
-            flux = this.getOpenAiAudioSpeechModel(entity).stream(text)
-                    .doOnError(e -> {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    })
-                    .doOnTerminate(() -> {
-                        sw.stop();
-                        takeTime.set(sw.getDuration().toMillis());
-                    });
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        TtsManager.getTtsModel(model).stream(text)
+                .doOnError(e -> {
+                    log.error(e.getMessage());
+                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
+                })
+                .doOnTerminate(() -> {
+                    sw.stop();
+                    takeTime.set(sw.getDuration().toMillis());
+                }).index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
@@ -220,23 +209,6 @@ public class AiTtsServiceImpl implements AiTtsService {
                 })
                 .blockLast();
         return new TtsResult(result.get(), takeTime.get(), text);
-    }
-
-    /**
-     * 获取OpenAiAudioSpeechModel
-     */
-    private OpenAiAudioSpeechModel getOpenAiAudioSpeechModel(OpenAiTtsEntity entity) {
-        OpenAiAudioApi openAiAudioApi = OpenAiAudioApi.builder()
-                .baseUrl(entity.getBaseUrl())
-                .apiKey(entity.getApiKey())
-                .restClientBuilder(RestClient.builder())
-                .responseErrorHandler(new DefaultResponseErrorHandler())
-                .build();
-        return new OpenAiAudioSpeechModel(openAiAudioApi, OpenAiAudioSpeechOptions.builder()
-                .model(entity.getOpenAiTtsType().getTtsModel())
-                .voice(entity.getVoice())
-                .responseFormat(entity.getFormat())
-                .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
 
 }

@@ -18,7 +18,7 @@ import top.sharehome.springbootinittemplate.config.milvus.properties.MilvusPrope
 import java.util.ArrayList;
 
 /**
- * Milvus向量数据库
+ * Milvus V1版本向量数据库
  *
  * @author AntonyCheng
  */
@@ -26,13 +26,12 @@ import java.util.ArrayList;
 @Conditional({MilvusCondition.class})
 @EnableConfigurationProperties(MilvusProperties.class)
 @Slf4j
-public class MilvusClientCore {
+public class MilvusCoreV1 {
 
     @Bean(destroyMethod = "close")
     public MilvusServiceClient milvusServiceClient(MilvusProperties milvusProperties) {
         MilvusServiceClient milvusServiceClient = new MilvusServiceClient(ConnectParam.newBuilder()
-                .withHost(milvusProperties.getHost())
-                .withPort(milvusProperties.getPort())
+                .withUri(milvusProperties.getUrl())
                 .withAuthorization(milvusProperties.getUsername(), milvusProperties.getPassword())
                 .withDatabaseName(milvusProperties.getDatabaseName())
                 .build());
@@ -80,8 +79,15 @@ public class MilvusClientCore {
             milvusServiceClient.createIndex(CreateIndexParam.newBuilder()
                     .withDatabaseName(milvusProperties.getDatabaseName())
                     .withCollectionName(milvusProperties.getCollectionName())
+                    .withFieldName("doc_id")
+                    .withIndexType(IndexType.AUTOINDEX)
+                    .withSyncMode(true)
+                    .build());
+            milvusServiceClient.createIndex(CreateIndexParam.newBuilder()
+                    .withDatabaseName(milvusProperties.getDatabaseName())
+                    .withCollectionName(milvusProperties.getCollectionName())
                     .withFieldName("embedding")
-                    .withIndexType(IndexType.IVF_FLAT)
+                    .withIndexType(IndexType.AUTOINDEX)
                     .withMetricType(MetricType.COSINE)
                     .withSyncMode(true)
                     .build());

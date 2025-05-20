@@ -22,12 +22,7 @@ public class MilvusProperties {
     /**
      * Milvus向量数据库主机
      */
-    private String host = "127.0.0.1";
-
-    /**
-     * Milvus向量数据库端口
-     */
-    private Integer port = 19530;
+    private String url = "http://127.0.0.1:19530";
 
     /**
      * Milvus向量数据库用户名称
@@ -53,15 +48,5 @@ public class MilvusProperties {
      * Milvus向量数据库嵌入维度
      */
     private Integer embeddingDimension = 1536;
-
-    /**
-     * Milvus向量数据库索引类型
-     */
-    private IndexType indexType = IndexType.IVF_FLAT;
-
-    /**
-     * Milvus向量数据库度量类型
-     */
-    private MetricType metricType = MetricType.COSINE;
 
 }

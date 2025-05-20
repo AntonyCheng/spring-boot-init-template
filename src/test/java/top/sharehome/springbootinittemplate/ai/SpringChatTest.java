@@ -20,9 +20,6 @@ import org.springframework.ai.mistralai.MistralAiChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.model.SimpleApiKey;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
-import org.springframework.ai.moonshot.MoonshotChatModel;
-import org.springframework.ai.moonshot.MoonshotChatOptions;
-import org.springframework.ai.moonshot.api.MoonshotApi;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
@@ -135,21 +132,6 @@ public class SpringChatTest {
     }
 
     /**
-     * 测试MoonshotChat
-     */
-    @Test
-    public void testMoonshotChat() {
-//        MoonshotChatEntity entity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
-//        MoonshotApi moonshotApi = new MoonshotApi(entity.getApiKey());
-//        MoonshotChatModel chatModel = new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
-//                .model(entity.getModel())
-//                .temperature(entity.getTemperature())
-//                .topP(entity.getTopP())
-//                .build());
-//        System.out.println(chatModel.call("你是谁？"));
-    }
-
-    /**
      * 测试MistralAiChat
      */
     @Test
@@ -221,7 +203,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -231,7 +212,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(openAiChatEntity, message));
         System.out.println(aiChatService.chatString(ollamaChatEntity, message));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, message));
-        System.out.println(aiChatService.chatString(moonshotChatEntity, message));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, message));
         System.out.println(aiChatService.chatString(qianFanChatEntity, message));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, message));
@@ -244,7 +224,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -282,16 +261,6 @@ public class SpringChatTest {
         System.out.println();
         List<String> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, message).toList();
         for (String s : zhiPuAi) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
-        List<String> moonshot = aiChatService.chatStream(moonshotChatEntity, message).toList();
-        for (String s : moonshot) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -347,7 +316,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -360,8 +328,6 @@ public class SpringChatTest {
         aiChatService.chatFlux(ollamaChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(zhiPuAiChatEntity, message).doOnNext(System.out::print).blockLast();
-        System.out.println();
-        aiChatService.chatFlux(moonshotChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
@@ -379,7 +345,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -392,7 +357,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(openAiChatEntity, messages));
         System.out.println(aiChatService.chatString(ollamaChatEntity, messages));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, messages));
-        System.out.println(aiChatService.chatString(moonshotChatEntity, messages));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, messages));
         System.out.println(aiChatService.chatString(qianFanChatEntity, messages));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, messages));
@@ -405,7 +369,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -446,16 +409,6 @@ public class SpringChatTest {
         System.out.println();
         List<String> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, messages).toList();
         for (String s : zhiPuAi) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
-        List<String> moonshot = aiChatService.chatStream(moonshotChatEntity, messages).toList();
-        for (String s : moonshot) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -511,7 +464,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -527,8 +479,6 @@ public class SpringChatTest {
         aiChatService.chatFlux(ollamaChatEntity, messages).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(zhiPuAiChatEntity, messages).doOnNext(System.out::print).blockLast();
-        System.out.println();
-        aiChatService.chatFlux(moonshotChatEntity, messages).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, messages).doOnNext(System.out::print).blockLast();
         System.out.println();
@@ -546,7 +496,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -556,7 +505,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(openAiChatEntity, prompt));
         System.out.println(aiChatService.chatString(ollamaChatEntity, prompt));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, prompt));
-        System.out.println(aiChatService.chatString(moonshotChatEntity, prompt));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, prompt));
         System.out.println(aiChatService.chatString(qianFanChatEntity, prompt));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, prompt));
@@ -569,7 +517,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -607,16 +554,6 @@ public class SpringChatTest {
         System.out.println();
         List<String> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, prompt).toList();
         for (String s : zhiPuAi) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
-        List<String> moonshot = aiChatService.chatStream(moonshotChatEntity, prompt).toList();
-        for (String s : moonshot) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -672,7 +609,6 @@ public class SpringChatTest {
         OpenAiChatEntity openAiChatEntity = new OpenAiChatEntity(OpenAiApi.ChatModel.GPT_3_5_TURBO, "sk-xxx");
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        MoonshotChatEntity moonshotChatEntity = new MoonshotChatEntity(MoonshotApi.ChatModel.MOONSHOT_V1_8K.getName(), "sk-xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
         QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
@@ -685,8 +621,6 @@ public class SpringChatTest {
         aiChatService.chatFlux(ollamaChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(zhiPuAiChatEntity, prompt).doOnNext(System.out::print).blockLast();
-        System.out.println();
-        aiChatService.chatFlux(moonshotChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();

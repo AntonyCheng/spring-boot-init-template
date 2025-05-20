@@ -1,60 +1,27 @@
 package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.impl;
 
-import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.core.credential.AzureKeyCredential;
 import com.knuddels.jtokkit.api.EncodingType;
-import io.micrometer.observation.ObservationRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
-import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.minimax.MiniMaxChatModel;
-import org.springframework.ai.minimax.MiniMaxChatOptions;
-import org.springframework.ai.minimax.api.MiniMaxApi;
-import org.springframework.ai.mistralai.MistralAiChatModel;
-import org.springframework.ai.mistralai.MistralAiChatOptions;
-import org.springframework.ai.mistralai.api.MistralAiApi;
-import org.springframework.ai.model.SimpleApiKey;
-import org.springframework.ai.model.tool.DefaultToolCallingManager;
-import org.springframework.ai.moonshot.MoonshotChatModel;
-import org.springframework.ai.moonshot.MoonshotChatOptions;
-import org.springframework.ai.moonshot.api.MoonshotApi;
-import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.ai.ollama.management.ModelManagementOptions;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.qianfan.QianFanChatModel;
-import org.springframework.ai.qianfan.QianFanChatOptions;
-import org.springframework.ai.qianfan.api.QianFanApi;
-import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
-import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
-import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
-import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
-import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.AiChatService;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.manager.ChatManager;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatResult;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.entity.*;
 import top.sharehome.springbootinittemplate.config.sse.entity.SseMessage;
 import top.sharehome.springbootinittemplate.config.sse.enums.SseStatus;
 import top.sharehome.springbootinittemplate.config.sse.utils.SseUtils;
@@ -64,7 +31,6 @@ import top.sharehome.springbootinittemplate.utils.tokenizers.TikTokenUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -123,7 +89,7 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        String result = getChatClientByModel(model)
+        String result = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -139,7 +105,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(Objects.isNull(result) ? "" : result));
+        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(Objects.isNull(result) ? "" : result));
         return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
@@ -182,7 +148,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -239,7 +205,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -308,7 +274,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -406,7 +372,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -506,7 +472,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -542,7 +508,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -556,13 +522,13 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        String result = getChatClientByModel(model)
+        String result = ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt);
+        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt);
         return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
@@ -571,7 +537,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .stream()
@@ -584,7 +550,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (ArrayUtils.isEmpty(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .stream()
@@ -609,7 +575,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .stream()
@@ -635,7 +601,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -663,7 +629,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .stream()
@@ -691,7 +657,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -719,7 +685,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt()
                 .messages(prompt)
                 .stream()
@@ -745,7 +711,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -759,12 +725,12 @@ public class AiChatServiceImpl implements AiChatService {
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        String result = getChatClientByModel(model)
+        String result = ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions());
+        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions());
         return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
     }
 
@@ -773,7 +739,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .stream()
                 .content()
@@ -785,7 +751,7 @@ public class AiChatServiceImpl implements AiChatService {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        return getChatClientByModel(model)
+        return ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .stream()
                 .content();
@@ -809,7 +775,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .stream()
                 .content()
@@ -834,7 +800,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -862,7 +828,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .stream()
                 .content()
@@ -889,7 +855,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
@@ -917,7 +883,7 @@ public class AiChatServiceImpl implements AiChatService {
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        getChatClientByModel(model)
+        ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .stream()
                 .content()
@@ -942,178 +908,10 @@ public class AiChatServiceImpl implements AiChatService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(this.getEncodingTypeByModel(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
         return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
-    }
-
-    /**
-     * 根据Model类型获取ChatClient
-     */
-    private ChatClient getChatClientByModel(ChatModelBase model) {
-        if (model instanceof DeepSeekChatEntity entity) {
-            return this.getDeepSeekChatClient(entity);
-        } else if (model instanceof OpenAiChatEntity entity) {
-            return this.getOpenAiChatClient(entity);
-        } else if (model instanceof OllamaChatEntity entity) {
-            return this.getOllamaChatClient(entity);
-        } else if (model instanceof ZhiPuAiChatEntity entity) {
-            return this.getZhiPuAiChatClient(entity);
-        } else if (model instanceof MoonshotChatEntity entity) {
-            return this.getMoonshotChatClient(entity);
-        } else if (model instanceof MistralAiChatEntity entity) {
-            return this.getMistralAiChatClient(entity);
-        } else if (model instanceof QianFanChatEntity entity) {
-            return this.getQianFanChatClient(entity);
-        } else if (model instanceof MiniMaxChatEntity entity) {
-            return this.getMiniMaxChatClient(entity);
-        } else if (model instanceof AzureOpenAiChatEntity entity) {
-            return this.getAzureOpenAiChatClient(entity);
-        } else {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
-        }
-    }
-
-    /**
-     * 根据Model类型获取Token编码类型
-     * DeepSeek ==> O200K_BASE
-     * OpenAi/AzureOpenAi ==> CL100K_BASE
-     * 其他 ==> P50K_BASE
-     */
-    private EncodingType getEncodingTypeByModel(ChatModelBase model) {
-        return model instanceof DeepSeekChatEntity ? EncodingType.O200K_BASE :
-                model instanceof OpenAiChatEntity || model instanceof AzureOpenAiChatEntity ? EncodingType.CL100K_BASE : EncodingType.P50K_BASE;
-    }
-
-    /**
-     * 获取DeepSeek ChatClient
-     */
-    private ChatClient getDeepSeekChatClient(DeepSeekChatEntity entity) {
-        OpenAiApi openAiApi = OpenAiApi.builder()
-                .baseUrl(entity.getBaseUrl())
-                .apiKey(new SimpleApiKey(entity.getApiKey()))
-                .restClientBuilder(RestClient.builder())
-                .build();
-        return ChatClient.builder(OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(OpenAiChatOptions.builder()
-                        .model(entity.getModel())
-                        .temperature(entity.getTemperature())
-                        .topP(entity.getTemperature())
-                        .build()
-                ).build()).build();
-    }
-
-    /**
-     * 获取OpenAi ChatClient
-     */
-    private ChatClient getOpenAiChatClient(OpenAiChatEntity entity) {
-        OpenAiApi openAiApi = OpenAiApi.builder()
-                .baseUrl(entity.getBaseUrl())
-                .apiKey(new SimpleApiKey(entity.getApiKey()))
-                .restClientBuilder(RestClient.builder())
-                .build();
-        return ChatClient.builder(OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(OpenAiChatOptions.builder()
-                        .model(entity.getModel())
-                        .temperature(entity.getTemperature())
-                        .topP(entity.getTemperature())
-                        .build()
-                ).build()).build();
-    }
-
-    /**
-     * 获取Ollama ChatClient
-     */
-    private ChatClient getOllamaChatClient(OllamaChatEntity entity) {
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(entity.getBaseUrl())
-                .build();
-        return ChatClient.builder(new OllamaChatModel(ollamaApi, OllamaOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build(), new DefaultToolCallingManager(ObservationRegistry.NOOP, new DelegatingToolCallbackResolver(List.of()), new DefaultToolExecutionExceptionProcessor(true)), ObservationRegistry.NOOP, ModelManagementOptions.builder()
-                .build())).build();
-    }
-
-    /**
-     * 获取ZhiPuAi ChatClient
-     */
-    private ChatClient getZhiPuAiChatClient(ZhiPuAiChatEntity entity) {
-        ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
-        return ChatClient.builder(new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build())).build();
-    }
-
-    /**
-     * 获取Moonshot ChatClient
-     */
-    private ChatClient getMoonshotChatClient(MoonshotChatEntity entity) {
-        MoonshotApi moonshotApi = new MoonshotApi(entity.getApiKey());
-//        return ChatClient.builder(new MoonshotChatModel(moonshotApi, MoonshotChatOptions.builder()
-//                .model(entity.getModel())
-//                .temperature(entity.getTemperature())
-//                .topP(entity.getTopP())
-//                .build())).build();
-        return null;
-    }
-
-    /**
-     * 获取MistralAi ChatClient
-     */
-    private ChatClient getMistralAiChatClient(MistralAiChatEntity entity) {
-        MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
-        return ChatClient.builder(MistralAiChatModel.builder()
-                .mistralAiApi(mistralAiApi)
-                .defaultOptions(
-                        MistralAiChatOptions.builder()
-                                .model(entity.getModel())
-                                .temperature(entity.getTemperature())
-                                .topP(entity.getTopP()).build()
-                )
-                .build()).build();
-    }
-
-    /**
-     * 获取QianFan ChatClient
-     */
-    private ChatClient getQianFanChatClient(QianFanChatEntity entity) {
-        QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        return ChatClient.builder(new QianFanChatModel(qianFanApi, QianFanChatOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build())).build();
-    }
-
-    /**
-     * 获取MiniMax ChatClient
-     */
-    private ChatClient getMiniMaxChatClient(MiniMaxChatEntity entity) {
-        MiniMaxApi miniMaxApi = new MiniMaxApi(entity.getApiKey());
-        return ChatClient.builder(new MiniMaxChatModel(miniMaxApi, MiniMaxChatOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build())).build();
-    }
-
-    /**
-     * 获取AzureOpenAi ChatClient
-     */
-    private ChatClient getAzureOpenAiChatClient(AzureOpenAiChatEntity entity) {
-        OpenAIClientBuilder clientBuilder = new OpenAIClientBuilder().credential(new AzureKeyCredential(entity.getApiKey())).endpoint(entity.getEndpoint()).serviceVersion(entity.getModelVersion());
-        return ChatClient.builder(new AzureOpenAiChatModel(clientBuilder, AzureOpenAiChatOptions.builder()
-                .deploymentName(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build(), DefaultToolCallingManager.builder().build(), ObservationRegistry.NOOP)).build();
     }
 
 }

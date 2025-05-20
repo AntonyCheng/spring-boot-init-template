@@ -1,6 +1,8 @@
 package top.sharehome.springbootinittemplate.config.ai.spring.vector.milvus.impl;
 
 import io.milvus.client.MilvusServiceClient;
+import io.milvus.param.IndexType;
+import io.milvus.param.MetricType;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.impl.AiEmbeddingServiceImpl;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.manager.EmbeddingManager;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.model.EmbeddingModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.vector.milvus.MilvusVectorService;
 import top.sharehome.springbootinittemplate.config.milvus.condition.MilvusCondition;
@@ -96,12 +99,12 @@ public class MilvusVectorServiceImpl implements MilvusVectorService {
      * 构建向量操作对象
      */
     private MilvusVectorStore buildVectorStore(EmbeddingModelBase model) {
-        return MilvusVectorStore.builder(milvusServiceClient, aiEmbeddingService.getEmbeddingModel(model))
+        return MilvusVectorStore.builder(milvusServiceClient, EmbeddingManager.getEmbeddingModel(model))
                 .collectionName(milvusProperties.getCollectionName())
                 .databaseName(milvusProperties.getDatabaseName())
                 .embeddingDimension(milvusProperties.getEmbeddingDimension())
-                .indexType(milvusProperties.getIndexType())
-                .metricType(milvusProperties.getMetricType())
+                .indexType(IndexType.AUTOINDEX)
+                .metricType(MetricType.COSINE)
                 .batchingStrategy(new TokenCountBatchingStrategy())
                 .build();
     }

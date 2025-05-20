@@ -61,7 +61,7 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
     }
 
     public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP) {
-        super(ChatServiceType.OpenAI, temperature, topP);
+        super(ChatServiceType.DeepSeek, temperature, topP);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

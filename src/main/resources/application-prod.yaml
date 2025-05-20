@@ -354,10 +354,8 @@ spring:
 milvus:
   # todo 是否启动Milvus向量数据库（预先关闭）
   enable: false
-  # 主机
-  host: 177.177.177.114
-  # 端口
-  port: 19530
+  # URL
+  url: http://177.177.177.114:19530
   # 用户名称
   username: root
   # 密码
@@ -368,10 +366,6 @@ milvus:
   collection-name: vector_store
   # 嵌入维度
   embedding-dimension: 2048
-  # 索引类型
-  index-type: ivf_flat
-  # 度量类型
-  metric-type: cosine
 
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
