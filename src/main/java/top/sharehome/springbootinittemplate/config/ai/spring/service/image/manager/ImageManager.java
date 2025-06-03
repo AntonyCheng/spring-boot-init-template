@@ -10,9 +10,6 @@ import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.api.OpenAiImageApi;
-import org.springframework.ai.qianfan.QianFanImageModel;
-import org.springframework.ai.qianfan.QianFanImageOptions;
-import org.springframework.ai.qianfan.api.QianFanImageApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.stabilityai.StabilityAiImageModel;
 import org.springframework.ai.stabilityai.api.StabilityAiApi;
@@ -24,7 +21,10 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.ImageModelBase;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.*;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.AzureOpenAiImageEntity;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.OpenAiImageEntity;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.StabilityAiImageEntity;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.ZhiPuAiImageEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
 import java.util.Objects;
@@ -46,8 +46,6 @@ public class ImageManager {
             return getStabilityAiImageModel(entity);
         } else if (model instanceof ZhiPuAiImageEntity entity) {
             return getZhiPuAiImageModel(entity);
-        } else if (model instanceof QianFanImageEntity entity) {
-            return getQianFanImageModel(entity);
         } else if (model instanceof AzureOpenAiImageEntity entity) {
             return getAzureOpenAiImageModel(entity);
         } else {
@@ -113,21 +111,6 @@ public class ImageManager {
         ZhiPuAiImageApi zhiPuAiImageApi = new ZhiPuAiImageApi(entity.getApiKey());
         return new ZhiPuAiImageModel(zhiPuAiImageApi, ZhiPuAiImageOptions.builder()
                 .model(entity.getZhiPuAiImageType().getImageModel())
-                .user(StringUtils.isBlank(entity.getUser()) ? null : entity.getUser())
-                .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
-    }
-
-    /**
-     * 获取QianFanImageModel
-     */
-    private static QianFanImageModel getQianFanImageModel(QianFanImageEntity entity) {
-        QianFanImageApi qianFanImageApi = new QianFanImageApi(entity.getApiKey(), entity.getSecretKey());
-        return new QianFanImageModel(qianFanImageApi, QianFanImageOptions.builder()
-                .model(entity.getQianFanImageType().getImageModel())
-                .N(entity.getN())
-                .height(entity.getQianFanImageType().getHeight())
-                .width(entity.getQianFanImageType().getWidth())
-                .style(Objects.isNull(entity.getStyleEnum()) ? null : entity.getStyleEnum().toString())
                 .user(StringUtils.isBlank(entity.getUser()) ? null : entity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }

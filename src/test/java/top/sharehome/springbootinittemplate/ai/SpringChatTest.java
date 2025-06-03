@@ -12,6 +12,9 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.deepseek.DeepSeekChatModel;
+import org.springframework.ai.deepseek.DeepSeekChatOptions;
+import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.ai.minimax.MiniMaxChatModel;
 import org.springframework.ai.minimax.MiniMaxChatOptions;
 import org.springframework.ai.minimax.api.MiniMaxApi;
@@ -27,9 +30,6 @@ import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.qianfan.QianFanChatModel;
-import org.springframework.ai.qianfan.QianFanChatOptions;
-import org.springframework.ai.qianfan.api.QianFanApi;
 import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
@@ -59,17 +59,17 @@ public class SpringChatTest {
     @Test
     public void testDeepSeekChat() {
         DeepSeekChatEntity entity = new DeepSeekChatEntity("deepseek-reasoner", "sk-xxx");
-        OpenAiApi openAiApi = OpenAiApi.builder()
+        DeepSeekApi deepSeekApi = DeepSeekApi.builder()
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(new SimpleApiKey(entity.getApiKey()))
                 .restClientBuilder(RestClient.builder())
                 .build();
-        OpenAiChatModel chatModel = OpenAiChatModel.builder()
-                .openAiApi(openAiApi)
-                .defaultOptions(OpenAiChatOptions.builder()
+        DeepSeekChatModel chatModel = DeepSeekChatModel.builder()
+                .deepSeekApi(deepSeekApi)
+                .defaultOptions(DeepSeekChatOptions.builder()
                         .model(entity.getModel())
                         .temperature(entity.getTemperature())
-                        .topP(entity.getTemperature())
+                        .topP(entity.getTopP())
                         .build())
                 .build();
         System.out.println(chatModel.call("你是谁？"));
@@ -150,21 +150,6 @@ public class SpringChatTest {
     }
 
     /**
-     * 测试QianFanChat
-     */
-    @Test
-    public void testQianFanChat() {
-        QianFanChatEntity entity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
-        QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        QianFanChatModel chatModel = new QianFanChatModel(qianFanApi, QianFanChatOptions.builder()
-                .model(entity.getModel())
-                .temperature(entity.getTemperature())
-                .topP(entity.getTopP())
-                .build());
-        System.out.println(chatModel.call("你是谁？"));
-    }
-
-    /**
      * 测试MinimaxChat
      */
     @Test
@@ -204,7 +189,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         String message = "你是什么模型？";
@@ -213,7 +197,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(ollamaChatEntity, message));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, message));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, message));
-        System.out.println(aiChatService.chatString(qianFanChatEntity, message));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, message));
         System.out.println(aiChatService.chatString(azureOpenAiChatEntity, message));
     }
@@ -225,7 +208,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         String message = "你是什么模型？";
@@ -279,16 +261,6 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> qianFan = aiChatService.chatStream(qianFanChatEntity, message).toList();
-        for (String s : qianFan) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
         List<String> miniMax = aiChatService.chatStream(miniMaxChatEntity, message).toList();
         for (String s : miniMax) {
             System.out.println(s);
@@ -317,7 +289,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         String message = "你是什么模型？";
@@ -330,8 +301,6 @@ public class SpringChatTest {
         aiChatService.chatFlux(zhiPuAiChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, message).doOnNext(System.out::print).blockLast();
-        System.out.println();
-        aiChatService.chatFlux(qianFanChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(miniMaxChatEntity, message).doOnNext(System.out::print).blockLast();
         System.out.println();
@@ -346,7 +315,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Message[] messages = new Message[]{
@@ -358,7 +326,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(ollamaChatEntity, messages));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, messages));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, messages));
-        System.out.println(aiChatService.chatString(qianFanChatEntity, messages));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, messages));
         System.out.println(aiChatService.chatString(azureOpenAiChatEntity, messages));
     }
@@ -370,7 +337,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Message[] messages = new Message[]{
@@ -427,16 +393,6 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> qianFan = aiChatService.chatStream(qianFanChatEntity, messages).toList();
-        for (String s : qianFan) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
         List<String> miniMax = aiChatService.chatStream(miniMaxChatEntity, messages).toList();
         for (String s : miniMax) {
             System.out.println(s);
@@ -465,7 +421,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Message[] messages = new Message[]{
@@ -482,8 +437,6 @@ public class SpringChatTest {
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, messages).doOnNext(System.out::print).blockLast();
         System.out.println();
-        aiChatService.chatFlux(qianFanChatEntity, messages).doOnNext(System.out::print).blockLast();
-        System.out.println();
         aiChatService.chatFlux(miniMaxChatEntity, messages).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(azureOpenAiChatEntity, messages).doOnNext(System.out::print).blockLast();
@@ -497,7 +450,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Prompt prompt = new Prompt("你是什么模型？");
@@ -506,7 +458,6 @@ public class SpringChatTest {
         System.out.println(aiChatService.chatString(ollamaChatEntity, prompt));
         System.out.println(aiChatService.chatString(zhiPuAiChatEntity, prompt));
         System.out.println(aiChatService.chatString(mistralAiChatEntity, prompt));
-        System.out.println(aiChatService.chatString(qianFanChatEntity, prompt));
         System.out.println(aiChatService.chatString(miniMaxChatEntity, prompt));
         System.out.println(aiChatService.chatString(azureOpenAiChatEntity, prompt));
     }
@@ -518,7 +469,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Prompt prompt = new Prompt("你是什么模型？");
@@ -572,16 +522,6 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> qianFan = aiChatService.chatStream(qianFanChatEntity, prompt).toList();
-        for (String s : qianFan) {
-            System.out.println(s);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.println();
         List<String> miniMax = aiChatService.chatStream(miniMaxChatEntity, prompt).toList();
         for (String s : miniMax) {
             System.out.println(s);
@@ -610,7 +550,6 @@ public class SpringChatTest {
         OllamaChatEntity ollamaChatEntity = new OllamaChatEntity("qwen2.5:0.5b-instruct-fp16", "http://localhost:11434");
         ZhiPuAiChatEntity zhiPuAiChatEntity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
         MistralAiChatEntity mistralAiChatEntity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        QianFanChatEntity qianFanChatEntity = new QianFanChatEntity(QianFanApi.ChatModel.ERNIE_Speed_8K.getValue(), "xxx", "xxx");
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Prompt prompt = new Prompt("你是什么模型？");
@@ -623,8 +562,6 @@ public class SpringChatTest {
         aiChatService.chatFlux(zhiPuAiChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(mistralAiChatEntity, prompt).doOnNext(System.out::print).blockLast();
-        System.out.println();
-        aiChatService.chatFlux(qianFanChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();
         aiChatService.chatFlux(miniMaxChatEntity, prompt).doOnNext(System.out::print).blockLast();
         System.out.println();

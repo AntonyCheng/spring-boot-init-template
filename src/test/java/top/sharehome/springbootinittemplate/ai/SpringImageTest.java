@@ -15,9 +15,6 @@ import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.api.OpenAiImageApi;
-import org.springframework.ai.qianfan.QianFanImageModel;
-import org.springframework.ai.qianfan.QianFanImageOptions;
-import org.springframework.ai.qianfan.api.QianFanImageApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.stabilityai.StabilityAiImageModel;
 import org.springframework.ai.stabilityai.api.StabilityAiApi;
@@ -86,7 +83,7 @@ public class SpringImageTest {
     }
 
     @Test
-    public void testAzureOpenaiImage(){
+    public void testAzureOpenaiImage() {
         AzureOpenAiImageEntity entity = new AzureOpenAiImageEntity(AzureOpenAiImageType.DallE3_1024_1024, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         OpenAIClient openAiClient = new OpenAIClientBuilder()
                 .credential(new AzureKeyCredential(entity.getApiKey()))
@@ -155,37 +152,6 @@ public class SpringImageTest {
         ZhiPuAiImageModel imageModel = new ZhiPuAiImageModel(zhiPuAiImageApi, ZhiPuAiImageOptions.builder()
                 .model(zhiPuAiImageEntity.getZhiPuAiImageType().getImageModel())
                 .user(StringUtils.isBlank(zhiPuAiImageEntity.getUser()) ? null : zhiPuAiImageEntity.getUser())
-                .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
-        ImageResponse imageResponse = imageModel.call(new ImagePrompt("a dog and two cat"));
-        for (ImageGeneration result : imageResponse.getResults()) {
-            if (StringUtils.isBlank(result.getOutput().getUrl())) {
-                try {
-                    String b64Json = result.getOutput().getB64Json();
-                    byte[] bytes = Base64Util.decodeString(b64Json);
-                    Path png = Files.createTempFile(UUID.randomUUID().toString(), ".png");
-                    Files.write(png, bytes);
-                    System.out.println(png);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                String url = result.getOutput().getUrl();
-                System.out.println(url);
-            }
-        }
-    }
-
-    @Test
-    public void testQianFanImage() {
-        QianFanImageEntity qianFanImageEntity = new QianFanImageEntity(QianFanImageType.SD_XL_1024_1024, "xxx", "xxx");
-        QianFanImageApi qianFanImageApi = new QianFanImageApi(qianFanImageEntity.getApiKey(), qianFanImageEntity.getSecretKey());
-        QianFanImageModel imageModel = new QianFanImageModel(qianFanImageApi, QianFanImageOptions.builder()
-                .model(qianFanImageEntity.getQianFanImageType().getImageModel())
-                .N(qianFanImageEntity.getN())
-                .height(qianFanImageEntity.getQianFanImageType().getHeight())
-                .width(qianFanImageEntity.getQianFanImageType().getWidth())
-                .style(Objects.isNull(qianFanImageEntity.getStyleEnum()) ? null : qianFanImageEntity.getStyleEnum().toString())
-                .user(StringUtils.isBlank(qianFanImageEntity.getUser()) ? null : qianFanImageEntity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
         ImageResponse imageResponse = imageModel.call(new ImagePrompt("a dog and two cat"));
         for (ImageGeneration result : imageResponse.getResults()) {

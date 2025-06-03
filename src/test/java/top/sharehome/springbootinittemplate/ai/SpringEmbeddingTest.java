@@ -24,9 +24,6 @@ import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.qianfan.QianFanEmbeddingModel;
-import org.springframework.ai.qianfan.QianFanEmbeddingOptions;
-import org.springframework.ai.qianfan.api.QianFanApi;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingModel;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
@@ -130,20 +127,6 @@ public class SpringEmbeddingTest {
     }
 
     /**
-     * 测试QianFanEmbedding
-     */
-    @Test
-    public void testQianFanEmbedding() {
-        QianFanEmbeddingEntity entity = new QianFanEmbeddingEntity(QianFanApi.EmbeddingModel.EMBEDDING_V1, "xxx.xxx", "xxx.xxx");
-        QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        QianFanEmbeddingModel embeddingModel = new QianFanEmbeddingModel(qianFanApi, MetadataMode.EMBED, QianFanEmbeddingOptions.builder()
-                .model(entity.getModel())
-                .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);
-        EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of("Hello World", "你好,世界！"));
-        embeddingResponse.getResults().forEach(result -> System.out.println(Arrays.toString(result.getOutput())));
-    }
-
-    /**
      * 测试ZhiPuAiEmbedding
      */
     @Test
@@ -164,7 +147,6 @@ public class SpringEmbeddingTest {
         MistralAiEmbeddingEntity mistralAiEmbeddingEntity = new MistralAiEmbeddingEntity(MistralAiApi.EmbeddingModel.EMBED, "xxx");
         MiniMaxEmbeddingEntity miniMaxEmbeddingEntity = new MiniMaxEmbeddingEntity(MiniMaxApi.EmbeddingModel.Embo_01, "xxx.xxx");
         OllamaEmbeddingEntity ollamaEmbeddingEntity = new OllamaEmbeddingEntity("nomic-embed-text", "http://localhost:11434");
-        QianFanEmbeddingEntity qianFanEmbeddingEntity = new QianFanEmbeddingEntity(QianFanApi.EmbeddingModel.EMBEDDING_V1, "xxx.xxx", "xxx.xxx");
         ZhiPuAiEmbeddingEntity zhiPuAiEmbeddingEntity = new ZhiPuAiEmbeddingEntity(ZhiPuAiApi.EmbeddingModel.Embedding_3, "xxx.xxx");
         String text = "Hello,World! 你好，世界！";
         System.out.println(Arrays.toString(aiEmbeddingService.embedToArray(openAiEmbeddingEntity, text)));
@@ -177,8 +159,6 @@ public class SpringEmbeddingTest {
         System.out.println("************************************************************************");
         System.out.println(Arrays.toString(aiEmbeddingService.embedToArray(ollamaEmbeddingEntity, text)));
         System.out.println("************************************************************************");
-        System.out.println(Arrays.toString(aiEmbeddingService.embedToArray(qianFanEmbeddingEntity, text)));
-        System.out.println("************************************************************************");
         System.out.println(Arrays.toString(aiEmbeddingService.embedToArray(zhiPuAiEmbeddingEntity, text)));
     }
 
@@ -189,7 +169,6 @@ public class SpringEmbeddingTest {
         MistralAiEmbeddingEntity mistralAiEmbeddingEntity = new MistralAiEmbeddingEntity(MistralAiApi.EmbeddingModel.EMBED, "xxx");
         MiniMaxEmbeddingEntity miniMaxEmbeddingEntity = new MiniMaxEmbeddingEntity(MiniMaxApi.EmbeddingModel.Embo_01, "xxx.xxx");
         OllamaEmbeddingEntity ollamaEmbeddingEntity = new OllamaEmbeddingEntity("nomic-embed-text", "http://localhost:11434");
-        QianFanEmbeddingEntity qianFanEmbeddingEntity = new QianFanEmbeddingEntity(QianFanApi.EmbeddingModel.EMBEDDING_V1, "xxx.xxx", "xxx.xxx");
         ZhiPuAiEmbeddingEntity zhiPuAiEmbeddingEntity = new ZhiPuAiEmbeddingEntity(ZhiPuAiApi.EmbeddingModel.Embedding_3, "xxx.xxx");
         String[] text = {"Hello,World!", "你好，世界！"};
         List<float[]> openAiResList = aiEmbeddingService.embedToArrayList(openAiEmbeddingEntity, text);
@@ -207,9 +186,6 @@ public class SpringEmbeddingTest {
         List<float[]> ollamaResList = aiEmbeddingService.embedToArrayList(ollamaEmbeddingEntity, text);
         System.out.println(ollamaResList);
         System.out.println("************************************************************************");
-        List<float[]> qianFanResList = aiEmbeddingService.embedToArrayList(qianFanEmbeddingEntity, text);
-        System.out.println(qianFanResList);
-        System.out.println("************************************************************************");
         List<float[]> zhiPuAiResList = aiEmbeddingService.embedToArrayList(zhiPuAiEmbeddingEntity, text);
         System.out.println(zhiPuAiResList);
     }
@@ -221,7 +197,6 @@ public class SpringEmbeddingTest {
         MistralAiEmbeddingEntity mistralAiEmbeddingEntity = new MistralAiEmbeddingEntity(MistralAiApi.EmbeddingModel.EMBED, "xxx");
         MiniMaxEmbeddingEntity miniMaxEmbeddingEntity = new MiniMaxEmbeddingEntity(MiniMaxApi.EmbeddingModel.Embo_01, "xxx.xxx");
         OllamaEmbeddingEntity ollamaEmbeddingEntity = new OllamaEmbeddingEntity("nomic-embed-text", "http://localhost:11434");
-        QianFanEmbeddingEntity qianFanEmbeddingEntity = new QianFanEmbeddingEntity(QianFanApi.EmbeddingModel.EMBEDDING_V1, "xxx.xxx", "xxx.xxx");
         ZhiPuAiEmbeddingEntity zhiPuAiEmbeddingEntity = new ZhiPuAiEmbeddingEntity(ZhiPuAiApi.EmbeddingModel.Embedding_3, "xxx.xxx");
         String[] text = {"Hello,World!", "你好，世界！"};
         List<Embedding> openAiResList = aiEmbeddingService.embedToEmbeddingList(openAiEmbeddingEntity, text);
@@ -239,9 +214,6 @@ public class SpringEmbeddingTest {
         List<Embedding> ollamaResList = aiEmbeddingService.embedToEmbeddingList(ollamaEmbeddingEntity, text);
         System.out.println(ollamaResList);
         System.out.println("************************************************************************");
-        List<Embedding> qianFanResList = aiEmbeddingService.embedToEmbeddingList(qianFanEmbeddingEntity, text);
-        System.out.println(qianFanResList);
-        System.out.println("************************************************************************");
         List<Embedding> zhiPuAiResList = aiEmbeddingService.embedToEmbeddingList(zhiPuAiEmbeddingEntity, text);
         System.out.println(zhiPuAiResList);
     }
@@ -253,7 +225,6 @@ public class SpringEmbeddingTest {
         MistralAiEmbeddingEntity mistralAiEmbeddingEntity = new MistralAiEmbeddingEntity(MistralAiApi.EmbeddingModel.EMBED, "xxx");
         MiniMaxEmbeddingEntity miniMaxEmbeddingEntity = new MiniMaxEmbeddingEntity(MiniMaxApi.EmbeddingModel.Embo_01, "xxx.xxx");
         OllamaEmbeddingEntity ollamaEmbeddingEntity = new OllamaEmbeddingEntity("nomic-embed-text", "http://localhost:11434");
-        QianFanEmbeddingEntity qianFanEmbeddingEntity = new QianFanEmbeddingEntity(QianFanApi.EmbeddingModel.EMBEDDING_V1, "xxx.xxx", "xxx.xxx");
         ZhiPuAiEmbeddingEntity zhiPuAiEmbeddingEntity = new ZhiPuAiEmbeddingEntity(ZhiPuAiApi.EmbeddingModel.Embedding_3, "xxx.xxx");
         String[] text = {"Hello,World!", "你好，世界！"};
         EmbeddingResult openAiRes = aiEmbeddingService.embedToResult(openAiEmbeddingEntity, text);
@@ -270,9 +241,6 @@ public class SpringEmbeddingTest {
         System.out.println("************************************************************************");
         EmbeddingResult ollamaRes = aiEmbeddingService.embedToResult(ollamaEmbeddingEntity, text);
         System.out.println(ollamaRes);
-        System.out.println("************************************************************************");
-        EmbeddingResult qianFanRes = aiEmbeddingService.embedToResult(qianFanEmbeddingEntity, text);
-        System.out.println(qianFanRes);
         System.out.println("************************************************************************");
         EmbeddingResult zhiPuAiRes = aiEmbeddingService.embedToResult(zhiPuAiEmbeddingEntity, text);
         System.out.println(zhiPuAiRes);

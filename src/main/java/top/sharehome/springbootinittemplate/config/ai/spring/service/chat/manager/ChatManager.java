@@ -8,6 +8,9 @@ import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
 import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.deepseek.DeepSeekChatModel;
+import org.springframework.ai.deepseek.DeepSeekChatOptions;
+import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.ai.minimax.MiniMaxChatModel;
 import org.springframework.ai.minimax.MiniMaxChatOptions;
 import org.springframework.ai.minimax.api.MiniMaxApi;
@@ -22,9 +25,6 @@ import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.qianfan.QianFanChatModel;
-import org.springframework.ai.qianfan.QianFanChatOptions;
-import org.springframework.ai.qianfan.api.QianFanApi;
 import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
@@ -59,8 +59,6 @@ public class ChatManager {
             return getZhiPuAiClient(entity);
         } else if (model instanceof MistralAiChatEntity entity) {
             return getMistralAiClient(entity);
-        } else if (model instanceof QianFanChatEntity entity) {
-            return getQianFanClient(entity);
         } else if (model instanceof MiniMaxChatEntity entity) {
             return getMiniMaxClient(entity);
         } else if (model instanceof AzureOpenAiChatEntity entity) {
@@ -84,8 +82,6 @@ public class ChatManager {
             return getZhiPuAiModel(entity);
         } else if (model instanceof MistralAiChatEntity entity) {
             return getMistralAiModel(entity);
-        } else if (model instanceof QianFanChatEntity entity) {
-            return getQianFanModel(entity);
         } else if (model instanceof MiniMaxChatEntity entity) {
             return getMiniMaxModel(entity);
         } else if (model instanceof AzureOpenAiChatEntity entity) {
@@ -117,18 +113,19 @@ public class ChatManager {
      * 获取DeepSeek ChatModel
      */
     private static ChatModel getDeepSeekModel(DeepSeekChatEntity entity) {
-        return OpenAiChatModel.builder()
-                .openAiApi(
-                        OpenAiApi.builder()
+        return DeepSeekChatModel.builder()
+                .deepSeekApi(
+                        DeepSeekApi.builder()
                                 .baseUrl(entity.getBaseUrl())
                                 .apiKey(new SimpleApiKey(entity.getApiKey()))
                                 .restClientBuilder(RestClient.builder())
-                                .build())
+                                .build()
+                )
                 .defaultOptions(
-                        OpenAiChatOptions.builder()
+                        DeepSeekChatOptions.builder()
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
-                                .topP(entity.getTemperature())
+                                .topP(entity.getTopP())
                                 .build()
                 ).build();
     }
@@ -155,7 +152,7 @@ public class ChatManager {
                         OpenAiChatOptions.builder()
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
-                                .topP(entity.getTemperature())
+                                .topP(entity.getTopP())
                                 .build()
                 ).build();
     }
@@ -238,30 +235,10 @@ public class ChatManager {
                         MistralAiChatOptions.builder()
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
-                                .topP(entity.getTopP()).build()
+                                .topP(entity.getTopP())
+                                .build()
                 )
                 .build();
-    }
-
-    /**
-     * 获取QianFan ChatClient
-     */
-    private static ChatClient getQianFanClient(QianFanChatEntity entity) {
-        return ChatClient.builder(getQianFanModel(entity)).build();
-    }
-
-    /**
-     * 获取QianFan ChatModel
-     */
-    private static ChatModel getQianFanModel(QianFanChatEntity entity) {
-        return new QianFanChatModel(
-                new QianFanApi(entity.getApiKey(), entity.getSecretKey()),
-                QianFanChatOptions.builder()
-                        .model(entity.getModel())
-                        .temperature(entity.getTemperature())
-                        .topP(entity.getTopP())
-                        .build()
-        );
     }
 
     /**

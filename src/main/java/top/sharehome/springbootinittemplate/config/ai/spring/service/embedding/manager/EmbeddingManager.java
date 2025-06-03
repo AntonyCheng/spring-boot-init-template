@@ -21,9 +21,6 @@ import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.qianfan.QianFanEmbeddingModel;
-import org.springframework.ai.qianfan.QianFanEmbeddingOptions;
-import org.springframework.ai.qianfan.api.QianFanApi;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingModel;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
@@ -61,8 +58,6 @@ public class EmbeddingManager {
             return getZhiPuAiEmbeddingModel(entity);
         } else if (model instanceof MistralAiEmbeddingEntity entity) {
             return getMistralAiEmbeddingModel(entity);
-        } else if (model instanceof QianFanEmbeddingEntity entity) {
-            return getQianFanEmbeddingModel(entity);
         } else if (model instanceof MiniMaxEmbeddingEntity entity) {
             return getMiniMaxEmbeddingModel(entity);
         } else if (model instanceof AzureOpenAiEmbeddingEntity entity) {
@@ -115,16 +110,6 @@ public class EmbeddingManager {
         return new MistralAiEmbeddingModel(mistralAiApi, MetadataMode.EMBED, MistralAiEmbeddingOptions.builder()
                 .withEncodingFormat("float")
                 .withModel(entity.getModel())
-                .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);
-    }
-
-    /**
-     * 获取QianFanEmbeddingModel
-     */
-    private static QianFanEmbeddingModel getQianFanEmbeddingModel(QianFanEmbeddingEntity entity) {
-        QianFanApi qianFanApi = new QianFanApi(entity.getApiKey(), entity.getSecretKey());
-        return new QianFanEmbeddingModel(qianFanApi, MetadataMode.EMBED, QianFanEmbeddingOptions.builder()
-                .model(entity.getModel())
                 .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);
     }
 
