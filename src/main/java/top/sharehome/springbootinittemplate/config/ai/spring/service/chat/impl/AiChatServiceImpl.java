@@ -104,9 +104,9 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .call()
                 .content();
+        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(Objects.isNull(result) ? "" : result));
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(Objects.isNull(result) ? "" : result));
-        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
+        return new ChatResult(result, sw.getDuration().toMillis(), usage, prompt);
     }
 
     @Override
@@ -267,9 +267,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -309,11 +309,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -365,9 +365,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -409,11 +409,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -465,9 +465,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -507,11 +507,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -528,8 +528,8 @@ public class AiChatServiceImpl implements AiChatService {
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt);
-        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
+        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt);
+        return new ChatResult(result, sw.getDuration().toMillis(), usage, prompt);
     }
 
     @Override
@@ -568,9 +568,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -600,11 +600,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -622,9 +622,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -656,11 +656,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -678,9 +678,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -710,11 +710,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -730,8 +730,8 @@ public class AiChatServiceImpl implements AiChatService {
                 .call()
                 .content();
         sw.stop();
-        Integer tokenNum = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions());
-        return new ChatResult(result, sw.getDuration().toMillis(), tokenNum, prompt);
+        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions());
+        return new ChatResult(result, sw.getDuration().toMillis(), usage, prompt);
     }
 
     @Override
@@ -768,9 +768,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -799,11 +799,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -821,9 +821,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -854,11 +854,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -876,9 +876,9 @@ public class AiChatServiceImpl implements AiChatService {
         // 结果总汇
         AtomicReference<String> result = new AtomicReference<>("");
         // 消耗时间
-        AtomicLong takeTime = new AtomicLong();
+        AtomicLong time = new AtomicLong();
         // 消耗Token
-        AtomicInteger tokenNum = new AtomicInteger();
+        AtomicInteger usage = new AtomicInteger();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -907,11 +907,11 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
-                    takeTime.set(sw.getDuration().toMillis());
-                    tokenNum.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
+                    time.set(sw.getDuration().toMillis());
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions()));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), takeTime.get(), tokenNum.get(), prompt);
+        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
     }
 
 }

@@ -26,36 +26,36 @@ public class ChatResult implements Serializable {
     /**
      * 耗时（单位：毫秒）
      */
-    private Long takeTime;
+    private Long time;
 
     /**
      * Token数
      */
-    private Integer tokenNum;
+    private Integer usage;
 
     /**
      * 提示词
      */
     private Prompt prompt;
 
-    public ChatResult(String result, Long takeTime, Integer tokenNum, String prompt) {
+    public ChatResult(String result, Long time, Integer usage, String prompt) {
         this.result = result;
-        this.takeTime = takeTime;
-        this.tokenNum = tokenNum;
+        this.time = time;
+        this.usage = usage;
         this.prompt = new Prompt(new UserMessage(prompt));
     }
 
-    public ChatResult(String result, Long takeTime, Integer tokenNum, Message... prompt) {
+    public ChatResult(String result, Long time, Integer usage, Message... prompt) {
         this.result = result;
-        this.takeTime = takeTime;
-        this.tokenNum = tokenNum;
+        this.time = time;
+        this.usage = usage;
         this.prompt = new Prompt(prompt);
     }
 
-    public ChatResult(String result, Long takeTime, Integer tokenNum, Prompt prompt) {
+    public ChatResult(String result, Long time, Integer usage, Prompt prompt) {
         this.result = result;
-        this.takeTime = takeTime;
-        this.tokenNum = tokenNum;
+        this.time = time;
+        this.usage = usage;
         this.prompt = prompt;
     }
 
