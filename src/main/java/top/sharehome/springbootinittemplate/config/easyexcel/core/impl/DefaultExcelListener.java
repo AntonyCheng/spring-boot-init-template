@@ -6,6 +6,7 @@ import cn.idev.excel.exception.ExcelDataConvertException;
 import com.alibaba.fastjson2.JSON;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.easyexcel.core.ExcelListener;
@@ -28,6 +29,7 @@ public class DefaultExcelListener<T> extends AnalysisEventListener<T> implements
     /**
      * Excel表头数据
      */
+    @Getter
     private Map<Integer, String> headMap;
 
     /**

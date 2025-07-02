@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.utils.document.excel;
 import cn.idev.excel.EasyExcel;
 import cn.idev.excel.support.ExcelTypeEnum;
 import cn.idev.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Excel工具类
@@ -60,6 +59,33 @@ public class ExcelUtils {
     }
 
     /**
+     * 同步导入小型Excel数据流，转换为JSON字符串且不关闭流
+     *
+     * @param inputStream 输入流
+     * @return Excel -> JSON String 结果
+     */
+    public static String importStreamToJsonSync(InputStream inputStream) {
+        DefaultExcelListener<Map<Integer, Object>> listener = new DefaultExcelListener<>();
+        EasyExcel
+                .read(inputStream, listener)
+                .autoCloseStream(false)
+                .sheet()
+                .doRead();
+        List<String> headers = new ArrayList<>(listener.getHeadMap().values());
+        List<Map<Integer, Object>> dataList = listener.getExcelResult().getList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<Integer, Object> data : dataList) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            data.forEach((key, value) -> {
+                String fieldName = headers.get(key);
+                item.put(fieldName, value);
+            });
+            result.add(item);
+        }
+        return JSONObject.toJSONString(result);
+    }
+
+    /**
      * 同步导入小型Excel数据流，但不关闭流
      *
      * @param inputStream 输入流
@@ -74,6 +100,34 @@ public class ExcelUtils {
                 .autoCloseStream(false)
                 .sheet(sheetName)
                 .doReadSync();
+    }
+
+    /**
+     * 同步导入小型Excel数据流，转换为JSON字符串且不关闭流
+     *
+     * @param inputStream 输入流
+     * @param sheetName   工作表名
+     * @return Excel -> JSON String 结果
+     */
+    public static String importStreamToJsonSync(InputStream inputStream, String sheetName) {
+        DefaultExcelListener<Map<Integer, Object>> listener = new DefaultExcelListener<>();
+        EasyExcel
+                .read(inputStream, listener)
+                .autoCloseStream(false)
+                .sheet(sheetName)
+                .doRead();
+        List<String> headers = new ArrayList<>(listener.getHeadMap().values());
+        List<Map<Integer, Object>> dataList = listener.getExcelResult().getList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<Integer, Object> data : dataList) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            data.forEach((key, value) -> {
+                String fieldName = headers.get(key);
+                item.put(fieldName, value);
+            });
+            result.add(item);
+        }
+        return JSONObject.toJSONString(result);
     }
 
     /**
@@ -92,6 +146,32 @@ public class ExcelUtils {
     }
 
     /**
+     * 同步导入小型Excel数据流，转换为JSON字符串且关闭流
+     *
+     * @param inputStream 输入流
+     * @return Excel -> JSON String 结果
+     */
+    public static String importStreamToJsonSyncAndClose(InputStream inputStream) {
+        DefaultExcelListener<Map<Integer, Object>> listener = new DefaultExcelListener<>();
+        EasyExcel
+                .read(inputStream, listener)
+                .sheet()
+                .doRead();
+        List<String> headers = new ArrayList<>(listener.getHeadMap().values());
+        List<Map<Integer, Object>> dataList = listener.getExcelResult().getList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<Integer, Object> data : dataList) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            data.forEach((key, value) -> {
+                String fieldName = headers.get(key);
+                item.put(fieldName, value);
+            });
+            result.add(item);
+        }
+        return JSONObject.toJSONString(result);
+    }
+
+    /**
      * 同步导入小型Excel数据流，同时关闭流
      *
      * @param inputStream 输入流
@@ -105,6 +185,33 @@ public class ExcelUtils {
                 .head(clazz)
                 .sheet(sheetName)
                 .doReadSync();
+    }
+
+    /**
+     * 同步导入小型Excel数据流，转换为JSON字符串且关闭流
+     *
+     * @param inputStream 输入流
+     * @param sheetName   工作表名
+     * @return Excel -> JSON String 结果
+     */
+    public static String importStreamToJsonSyncAndClose(InputStream inputStream, String sheetName) {
+        DefaultExcelListener<Map<Integer, Object>> listener = new DefaultExcelListener<>();
+        EasyExcel
+                .read(inputStream, listener)
+                .sheet(sheetName)
+                .doRead();
+        List<String> headers = new ArrayList<>(listener.getHeadMap().values());
+        List<Map<Integer, Object>> dataList = listener.getExcelResult().getList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<Integer, Object> data : dataList) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            data.forEach((key, value) -> {
+                String fieldName = headers.get(key);
+                item.put(fieldName, value);
+            });
+            result.add(item);
+        }
+        return JSONObject.toJSONString(result);
     }
 
     /**
