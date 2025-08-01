@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- Spring AI相关 -->
-        <spring.ai.version>1.1.0-SNAPSHOT</spring.ai.version>
+        <spring.ai.version>1.0.1</spring.ai.version>
         <!-- Netty相关 -->
         <netty.version>4.1.114.Final</netty.version>
         <!-- 数据驱动层相关 -->

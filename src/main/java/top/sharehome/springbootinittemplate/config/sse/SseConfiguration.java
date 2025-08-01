@@ -103,7 +103,7 @@ public class SseConfiguration {
             log.error(e.getMessage());
             throw new CustomizeReturnException(ReturnCode.FAIL, "数据传输异常");
         });
-        messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .startWith(new SseMessage().setStatus(SseStatus.CONNECTED.getName()))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.DISCONNECTED.getName())))
@@ -419,7 +419,7 @@ public class SseConfiguration {
         Map<String, SseEmitter> sseEmitterMap = TOKEN_SSE_EMITTER_POOL.get(userId);
         if (MapUtils.isNotEmpty(sseEmitterMap)) {
             if (Objects.isNull(token)) {
-                messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                         .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                         .doOnError(e -> {
                             log.error(e.getMessage());
@@ -453,7 +453,7 @@ public class SseConfiguration {
                 if (Objects.isNull(sseEmitter)) {
                     throw new CustomizeReturnException(ReturnCode.FAIL, "用户凭证连接池中无此凭证");
                 } else {
-                    messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                    messages.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                             .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                             .doOnError(e -> {
                                 log.error(e.getMessage());

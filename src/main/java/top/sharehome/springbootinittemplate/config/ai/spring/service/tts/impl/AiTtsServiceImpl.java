@@ -95,12 +95,12 @@ public class AiTtsServiceImpl implements AiTtsService {
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        byte[] messageData = (byte[]) message.getData();
+                        byte[] messageData = (byte[]) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(ArrayUtils.addAll(result.get(), messageData));
                         }
@@ -146,14 +146,14 @@ public class AiTtsServiceImpl implements AiTtsService {
         } else {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]存在异常");
         }
-        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+        flux.index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        byte[] messageData = (byte[]) message.getData();
+                        byte[] messageData = (byte[]) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(ArrayUtils.addAll(result.get(), messageData));
                         }
@@ -193,12 +193,12 @@ public class AiTtsServiceImpl implements AiTtsService {
                 .doOnTerminate(() -> {
                     sw.stop();
                     takeTime.set(sw.getDuration().toMillis());
-                }).index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                }).index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        byte[] messageData = (byte[]) message.getData();
+                        byte[] messageData = (byte[]) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(ArrayUtils.addAll(result.get(), messageData));
                         }

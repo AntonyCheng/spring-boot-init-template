@@ -289,12 +289,12 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        String messageData = (String) message.getData();
+                        String messageData = (String) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -387,14 +387,14 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        String messageData = (String) message.getData();
+                        String messageData = (String) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -487,12 +487,12 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        String messageData = (String) message.getData();
+                        String messageData = (String) message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -580,12 +580,12 @@ public class AiChatServiceImpl implements AiChatService {
                 .messages(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -634,14 +634,14 @@ public class AiChatServiceImpl implements AiChatService {
                 .messages(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -690,12 +690,12 @@ public class AiChatServiceImpl implements AiChatService {
                 .messages(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -779,12 +779,12 @@ public class AiChatServiceImpl implements AiChatService {
                 .prompt(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -832,14 +832,14 @@ public class AiChatServiceImpl implements AiChatService {
                 .prompt(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }
@@ -887,12 +887,12 @@ public class AiChatServiceImpl implements AiChatService {
                 .prompt(prompt)
                 .stream()
                 .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setData(message))
+                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
                 .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        Object messageData = message.getData();
+                        Object messageData = message.getContent();
                         if (Objects.nonNull(messageData)) {
                             result.set(result.get() + messageData);
                         }

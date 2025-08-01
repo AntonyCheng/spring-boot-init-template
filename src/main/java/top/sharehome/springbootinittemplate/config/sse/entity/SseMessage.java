@@ -28,7 +28,12 @@ public class SseMessage implements Serializable {
     /**
      * 消息主体
      */
-    private Object data;
+    private Object content;
+
+    /**
+     * 消息思考内容
+     */
+    private String reasoningContent;
 
     /**
      * 消息附加信息

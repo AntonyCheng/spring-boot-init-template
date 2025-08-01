@@ -21,7 +21,12 @@ public class ChatResult implements Serializable {
     /**
      * 结果
      */
-    private String result;
+    private String content;
+
+    /**
+     * 思考内容
+     */
+    private String reasoningContent;
 
     /**
      * 耗时（单位：毫秒）
@@ -38,22 +43,22 @@ public class ChatResult implements Serializable {
      */
     private Prompt prompt;
 
-    public ChatResult(String result, Long time, Integer usage, String prompt) {
-        this.result = result;
+    public ChatResult(String content, Long time, Integer usage, String prompt) {
+        this.content = content;
         this.time = time;
         this.usage = usage;
         this.prompt = new Prompt(new UserMessage(prompt));
     }
 
-    public ChatResult(String result, Long time, Integer usage, Message... prompt) {
-        this.result = result;
+    public ChatResult(String content, Long time, Integer usage, Message... prompt) {
+        this.content = content;
         this.time = time;
         this.usage = usage;
         this.prompt = new Prompt(prompt);
     }
 
-    public ChatResult(String result, Long time, Integer usage, Prompt prompt) {
-        this.result = result;
+    public ChatResult(String content, Long time, Integer usage, Prompt prompt) {
+        this.content = content;
         this.time = time;
         this.usage = usage;
         this.prompt = prompt;
