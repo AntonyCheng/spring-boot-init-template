@@ -3,6 +3,7 @@ package top.sharehome.springbootinittemplate.utils.tokenizers;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
 
@@ -36,8 +37,11 @@ public class TikTokenUtils {
     public Integer getMessageTokenNumber(List<Message> messages) {
         StringBuilder res = new StringBuilder();
         for (final Message message : messages) {
-            res.append(message.getMessageType().getValue());
-            res.append(message.getText());
+            String text = message.getText();
+            if (StringUtils.isNotBlank(text)){
+                res.append(message.getMessageType().getValue());
+                res.append(text);
+            }
         }
         return getTokenNumber(res.toString());
     }
@@ -45,8 +49,11 @@ public class TikTokenUtils {
     public Integer getMessageTokenNumber(Message... messages) {
         StringBuilder res = new StringBuilder();
         for (final Message message : messages) {
-            res.append(message.getMessageType().getValue());
-            res.append(message.getText());
+            String text = message.getText();
+            if (StringUtils.isNotBlank(text)){
+                res.append(message.getMessageType().getValue());
+                res.append(text);
+            }
         }
         return getTokenNumber(res.toString());
     }
@@ -54,8 +61,9 @@ public class TikTokenUtils {
     public Integer getStringTokenNumber(List<String> messages) {
         StringBuilder res = new StringBuilder();
         for (final String message : messages) {
-            res.append(message);
-            res.append(message);
+            if (StringUtils.isNotBlank(message)){
+                res.append(message);
+            }
         }
         return getTokenNumber(res.toString());
     }
@@ -63,7 +71,6 @@ public class TikTokenUtils {
     public Integer getStringTokenNumber(String... messages) {
         StringBuilder res = new StringBuilder();
         for (final String message : messages) {
-            res.append(message);
             res.append(message);
         }
         return getTokenNumber(res.toString());
