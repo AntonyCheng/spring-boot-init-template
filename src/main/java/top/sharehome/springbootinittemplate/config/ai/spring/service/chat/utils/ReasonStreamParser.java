@@ -265,7 +265,7 @@ public class ReasonStreamParser {
     public String getThinkContent() {
         String res = thinkContent.toString().trim();
         if (StringUtils.isNotBlank(res)){
-            return res;
+            return res.trim();
         }
         return StringUtils.EMPTY;
     }
@@ -296,7 +296,7 @@ public class ReasonStreamParser {
     public String getReplyContent() {
         String res = replyContent.toString();
         if (StringUtils.isNotBlank(res)){
-            return res;
+            return res.trim();
         }
         return StringUtils.EMPTY;
     }

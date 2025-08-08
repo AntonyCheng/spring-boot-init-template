@@ -12,7 +12,6 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.deepseek.DeepSeekAssistantMessage;
 import org.springframework.ai.deepseek.DeepSeekChatModel;
 import org.springframework.ai.deepseek.DeepSeekChatOptions;
 import org.springframework.ai.deepseek.api.DeepSeekApi;
@@ -43,7 +42,6 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.entity.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Spring AI Chat测试类
@@ -475,8 +473,8 @@ public class SpringChatTest {
         MiniMaxChatEntity miniMaxChatEntity = new MiniMaxChatEntity(MiniMaxApi.ChatModel.ABAB_6_5_Chat, "xxx.xxx.xxx-xxx-xxx-xxx-xxx-xxx");
         AzureOpenAiChatEntity azureOpenAiChatEntity = new AzureOpenAiChatEntity("gpt-4o-mini", OpenAIServiceVersion.V2024_05_01_PREVIEW, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         Prompt prompt = new Prompt("你是什么模型？");
-        List<String> deepSeek = aiChatService.chatStream(deepSeekChatEntity, prompt).toList();
-        for (String s : deepSeek) {
+        List<ChatResultChunk> deepSeek = aiChatService.chatStream(deepSeekChatEntity, prompt).toList();
+        for (ChatResultChunk s : deepSeek) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -485,8 +483,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> openAi = aiChatService.chatStream(openAiChatEntity, prompt).toList();
-        for (String s : openAi) {
+        List<ChatResultChunk> openAi = aiChatService.chatStream(openAiChatEntity, prompt).toList();
+        for (ChatResultChunk s : openAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -495,8 +493,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> ollama = aiChatService.chatStream(ollamaChatEntity, prompt).toList();
-        for (String s : ollama) {
+        List<ChatResultChunk> ollama = aiChatService.chatStream(ollamaChatEntity, prompt).toList();
+        for (ChatResultChunk s : ollama) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -505,8 +503,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, prompt).toList();
-        for (String s : zhiPuAi) {
+        List<ChatResultChunk> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, prompt).toList();
+        for (ChatResultChunk s : zhiPuAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -515,8 +513,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> mistralAi = aiChatService.chatStream(mistralAiChatEntity, prompt).toList();
-        for (String s : mistralAi) {
+        List<ChatResultChunk> mistralAi = aiChatService.chatStream(mistralAiChatEntity, prompt).toList();
+        for (ChatResultChunk s : mistralAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -525,8 +523,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> miniMax = aiChatService.chatStream(miniMaxChatEntity, prompt).toList();
-        for (String s : miniMax) {
+        List<ChatResultChunk> miniMax = aiChatService.chatStream(miniMaxChatEntity, prompt).toList();
+        for (ChatResultChunk s : miniMax) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -535,8 +533,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> azureOpenAi = aiChatService.chatStream(azureOpenAiChatEntity, prompt).toList();
-        for (String s : azureOpenAi) {
+        List<ChatResultChunk> azureOpenAi = aiChatService.chatStream(azureOpenAiChatEntity, prompt).toList();
+        for (ChatResultChunk s : azureOpenAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
