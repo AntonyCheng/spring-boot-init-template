@@ -440,12 +440,62 @@ public interface AiChatService {
     ChatResult chatFlux(Long userId, String token, ChatModelBase model, Message... prompt);
 
     /**
-     * 发起AI Chat功能，Chat结果集
+     * 发起AI Chat功能，返回Chat结果集
      *
      * @param model         chat模型信息
      * @param prompt        提示词
      */
     ChatResult chatString(ChatModelBase model, Prompt prompt);
+
+    /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param systemPrompt  系统提示词
+     */
+    ChatResult chatString(ChatModelBase model, Prompt prompt, String systemPrompt);
+
+    /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     */
+    ChatResult chatString(ChatModelBase model, Prompt prompt, MultipartFile multipartFile);
+
+    /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param multipartFile 请求文件
+     * @param systemPrompt  系统提示词
+     */
+    ChatResult chatString(ChatModelBase model, Prompt prompt, MultipartFile multipartFile, String systemPrompt);
+
+
+    /**
+     * 发起AI Chat功能，返回Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     */
+    ChatResult chatString(ChatModelBase model, Prompt prompt, MimeType mimeType, InputStream inputStream);
+
+    /**
+     * 发起AI Chat功能，Chat结果集
+     *
+     * @param model         chat模型信息
+     * @param prompt        提示词
+     * @param mimeType      多模态文件MIME格式
+     * @param inputStream   文件流
+     * @param systemPrompt  系统提示词
+     */
+    ChatResult chatString(ChatModelBase model, Prompt prompt, MimeType mimeType, InputStream inputStream, String systemPrompt);
 
     /**
      * 发起AI Chat功能，返回流式数据

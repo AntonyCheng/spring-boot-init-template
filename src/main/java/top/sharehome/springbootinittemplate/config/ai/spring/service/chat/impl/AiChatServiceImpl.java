@@ -6,7 +6,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.springframework.ai.chat.messages.AbstractMessage;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -21,6 +20,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.AiChatService;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.manager.ChatManager;
@@ -112,20 +112,20 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .call()
                 .chatResponse();
-        AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
-                .map(ChatResponse::getResult)
-                .map(Generation::getOutput)
-                .orElse(null);
         String content = StringUtils.EMPTY;
         String reasonContent = StringUtils.EMPTY;
+        AssistantMessage assistantMessage = chatResponse != null && chatResponse.getResult() != null
+                ? chatResponse.getResult().getOutput()
+                : null;
         if (Objects.nonNull(assistantMessage)) {
             if (model instanceof DeepSeekChatEntity) {
                 DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
-                content = Optional.ofNullable(output.getText()).orElse(StringUtils.EMPTY);
-                reasonContent = Optional.ofNullable(output.getReasoningContent()).orElse(StringUtils.EMPTY);
+                content = output.getText() != null ? output.getText() : StringUtils.EMPTY;
+                reasonContent = output.getReasoningContent() != null ? output.getReasoningContent() : StringUtils.EMPTY;
             } else {
+                String text = assistantMessage.getText() != null ? assistantMessage.getText() : StringUtils.EMPTY;
                 ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
-                reasonStreamParser.processChunk(Optional.ofNullable(assistantMessage.getText()).orElse(StringUtils.EMPTY));
+                reasonStreamParser.processChunk(text);
                 content = reasonStreamParser.getReplyContent();
                 reasonContent = reasonStreamParser.getThinkContent();
             }
@@ -174,7 +174,6 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
         Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
@@ -190,41 +189,37 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .stream()
                 .chatResponse();
-        if (model instanceof DeepSeekChatEntity) {
-            return chatResponseFlux
-                    .mapNotNull(chatResponse -> {
-                        AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
-                                .map(ChatResponse::getResult)
-                                .map(Generation::getOutput)
-                                .orElse(null);
-                        if (Objects.nonNull(assistantMessage)) {
-                            DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
-                            return new ChatResultChunk(output.getText(), output.getReasoningContent());
-                        } else {
+        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
+        return model instanceof DeepSeekChatEntity ?
+                chatResponseFlux
+                        .mapNotNull(chatResponse -> {
+                            AssistantMessage assistantMessage = chatResponse != null && chatResponse.getResult() != null
+                                    ? chatResponse.getResult().getOutput()
+                                    : null;
+                            if (Objects.nonNull(assistantMessage)) {
+                                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                                return new ChatResultChunk(output.getText(), output.getReasoningContent());
+                            } else {
+                                return null;
+                            }
+                        })
+                        .toStream() :
+                chatResponseFlux
+                        .mapNotNull(chatResponse -> {
+                            String assistantMessage = chatResponse != null && chatResponse.getResult() != null && chatResponse.getResult().getOutput() != null
+                                    ? chatResponse.getResult().getOutput().getText()
+                                    : null;
+                            if (Objects.nonNull(assistantMessage)) {
+                                reasonStreamParser.processChunk(assistantMessage);
+                                String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
+                                String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
+                                if (!replyContentIncrement.isEmpty() || !thinkContentIncrement.isEmpty()) {
+                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
+                                }
+                            }
                             return null;
-                        }
-                    })
-                    .toStream();
-        } else {
-            return chatResponseFlux
-                    .mapNotNull(chatResponse -> {
-                        String assistantMessage = Optional.ofNullable(chatResponse)
-                                .map(ChatResponse::getResult)
-                                .map(Generation::getOutput)
-                                .map(AbstractMessage::getText)
-                                .orElse(null);
-                        if (Objects.nonNull(assistantMessage)) {
-                            reasonStreamParser.processChunk(Objects.requireNonNull(assistantMessage));
-                        }
-                        String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
-                        String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
-                        if (replyContentIncrement.isEmpty() || thinkContentIncrement.isEmpty()) {
-                            return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
-                        }
-                        return null;
-                    })
-                    .toStream();
-        }
+                        })
+                        .toStream();
     }
 
     @Override
@@ -266,7 +261,6 @@ public class AiChatServiceImpl implements AiChatService {
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
-        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
         Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
@@ -282,39 +276,35 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .stream()
                 .chatResponse();
-        if (model instanceof DeepSeekChatEntity) {
-            return chatResponseFlux
-                    .mapNotNull(chatResponse -> {
-                        AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
-                                .map(ChatResponse::getResult)
-                                .map(Generation::getOutput)
-                                .orElse(null);
-                        if (Objects.nonNull(assistantMessage)) {
-                            DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
-                            return new ChatResultChunk(output.getText(), output.getReasoningContent());
-                        } else {
+        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
+        return model instanceof DeepSeekChatEntity ?
+                chatResponseFlux
+                        .mapNotNull(chatResponse -> {
+                            AssistantMessage assistantMessage = chatResponse != null && chatResponse.getResult() != null
+                                    ? chatResponse.getResult().getOutput()
+                                    : null;
+                            if (Objects.nonNull(assistantMessage)) {
+                                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                                return new ChatResultChunk(output.getText(), output.getReasoningContent());
+                            } else {
+                                return null;
+                            }
+                        }) :
+                chatResponseFlux
+                        .mapNotNull(chatResponse -> {
+                            String assistantMessage = chatResponse != null && chatResponse.getResult() != null && chatResponse.getResult().getOutput() != null
+                                    ? chatResponse.getResult().getOutput().getText()
+                                    : null;
+                            if (Objects.nonNull(assistantMessage)) {
+                                reasonStreamParser.processChunk(assistantMessage);
+                                String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
+                                String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
+                                if (!replyContentIncrement.isEmpty() || !thinkContentIncrement.isEmpty()) {
+                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
+                                }
+                            }
                             return null;
-                        }
-                    });
-        } else {
-            return chatResponseFlux
-                    .mapNotNull(chatResponse -> {
-                        String assistantMessage = Optional.ofNullable(chatResponse)
-                                .map(ChatResponse::getResult)
-                                .map(Generation::getOutput)
-                                .map(AbstractMessage::getText)
-                                .orElse(null);
-                        if (Objects.nonNull(assistantMessage)) {
-                            reasonStreamParser.processChunk(Objects.requireNonNull(assistantMessage));
-                        }
-                        String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
-                        String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
-                        if (replyContentIncrement.isEmpty() || thinkContentIncrement.isEmpty()) {
-                            return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
-                        }
-                        return null;
-                    });
-        }
+                        });
     }
 
     @Override
@@ -353,6 +343,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream, String systemPrompt) {
+        // 参数验证
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -360,16 +351,17 @@ public class AiChatServiceImpl implements AiChatService {
             throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
         }
         // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
+        AtomicReference<String> content = new AtomicReference<>("");
+        AtomicReference<String> reasoningContent = new AtomicReference<>("");
         AtomicLong time = new AtomicLong();
-        // 消耗Token
         AtomicInteger usage = new AtomicInteger();
+        // 非DeepSeek协议深度思考流解析器
+        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        ChatManager.getChatClient(model)
+        Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -383,32 +375,77 @@ public class AiChatServiceImpl implements AiChatService {
                     }
                 })
                 .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
+                .chatResponse();
+        // 公共的流处理逻辑
+        Flux<SseMessage> processedFlux = model instanceof DeepSeekChatEntity ?
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                                String tempContent = output.getText();
+                                String tempReasoningContent = output.getReasoningContent();
+                                return new SseMessage()
+                                        .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                        .setContent(StringUtils.isBlank(tempContent) ? StringUtils.EMPTY : tempContent)
+                                        .setReasoningContent(StringUtils.isBlank(tempReasoningContent) ? StringUtils.EMPTY : tempReasoningContent);
+                            } else {
+                                return new SseMessage();
+                            }
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus())) :
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            String assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .map(AssistantMessage::getText)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                reasonStreamParser.processChunk(assistantMessage);
+                                String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
+                                String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
+                                if (replyContentIncrement.isEmpty() || thinkContentIncrement.isEmpty()) {
+                                    return new SseMessage()
+                                            .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                            .setContent(StringUtils.isEmpty(replyContentIncrement) ? StringUtils.EMPTY : replyContentIncrement)
+                                            .setReasoningContent(StringUtils.isEmpty(thinkContentIncrement) ? StringUtils.EMPTY : thinkContentIncrement);
+                                }
+                            }
+                            return new SseMessage();
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus()));
+        processedFlux
+                .concatWith(Mono.just(new SseMessage().setStatus(SseStatus.FINISH.getName()).setContent(StringUtils.EMPTY).setReasoningContent(StringUtils.EMPTY)))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        String messageData = (String) message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
+                        String tempContent = (String) message.getContent();
+                        String tempReasoningContent = message.getReasoningContent();
+                        if (StringUtils.isNotEmpty(tempContent)) {
+                            content.set(content.get() + tempContent);
+                        } else if (StringUtils.isNotEmpty(tempReasoningContent)) {
+                            reasoningContent.set(reasoningContent.get() + tempReasoningContent);
                         }
                     } catch (IOException e) {
-                        log.error(e.getMessage());
+                        log.error("数据传输异常: {}", e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
                 .doOnError(e -> {
-                    log.error(e.getMessage());
+                    log.error("数据传输异常:{}", e.getMessage());
                     throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
                     time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(content.get()), new AssistantMessage(reasoningContent.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -447,6 +484,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream, String systemPrompt) {
+        // 参数验证
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -458,16 +496,17 @@ public class AiChatServiceImpl implements AiChatService {
             throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
         }
         // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
+        AtomicReference<String> content = new AtomicReference<>("");
+        AtomicReference<String> reasoningContent = new AtomicReference<>("");
         AtomicLong time = new AtomicLong();
-        // 消耗Token
         AtomicInteger usage = new AtomicInteger();
+        // 非DeepSeek协议深度思考流解析器
+        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        ChatManager.getChatClient(model)
+        Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -481,34 +520,79 @@ public class AiChatServiceImpl implements AiChatService {
                     }
                 })
                 .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
+                .chatResponse();
+        // 公共的流处理逻辑
+        Flux<SseMessage> processedFlux = model instanceof DeepSeekChatEntity ?
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                                String tempContent = output.getText();
+                                String tempReasoningContent = output.getReasoningContent();
+                                return new SseMessage()
+                                        .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                        .setContent(StringUtils.isBlank(tempContent) ? StringUtils.EMPTY : tempContent)
+                                        .setReasoningContent(StringUtils.isBlank(tempReasoningContent) ? StringUtils.EMPTY : tempReasoningContent);
+                            } else {
+                                return new SseMessage();
+                            }
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus())) :
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            String assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .map(AssistantMessage::getText)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                reasonStreamParser.processChunk(assistantMessage);
+                                String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
+                                String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
+                                if (replyContentIncrement.isEmpty() || thinkContentIncrement.isEmpty()) {
+                                    return new SseMessage()
+                                            .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                            .setContent(StringUtils.isEmpty(replyContentIncrement) ? StringUtils.EMPTY : replyContentIncrement)
+                                            .setReasoningContent(StringUtils.isEmpty(thinkContentIncrement) ? StringUtils.EMPTY : thinkContentIncrement);
+                                }
+                            }
+                            return new SseMessage();
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus()));
+        processedFlux
+                .concatWith(Mono.just(new SseMessage().setStatus(SseStatus.FINISH.getName()).setContent(StringUtils.EMPTY).setReasoningContent(StringUtils.EMPTY)))
                 .doOnNext(message -> {
                     try {
                         for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
                             sseEmitterEntry.getValue().send(message);
                         }
-                        String messageData = (String) message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
+                        String tempContent = (String) message.getContent();
+                        String tempReasoningContent = message.getReasoningContent();
+                        if (StringUtils.isNotEmpty(tempContent)) {
+                            content.set(content.get() + tempContent);
+                        } else if (StringUtils.isNotEmpty(tempReasoningContent)) {
+                            reasoningContent.set(reasoningContent.get() + tempReasoningContent);
                         }
                     } catch (IOException e) {
-                        log.error(e.getMessage());
+                        log.error("数据传输异常: {}", e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
                 .doOnError(e -> {
-                    log.error(e.getMessage());
+                    log.error("数据传输异常:{}", e.getMessage());
                     throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
                     time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    usage.set(new TikTokenUtils(EncodingType.CL100K_BASE).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(content.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -547,6 +631,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, String token, ChatModelBase model, String prompt, MimeType mimeType, InputStream inputStream, String systemPrompt) {
+        // 参数验证
         if (StringUtils.isBlank(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
@@ -558,16 +643,17 @@ public class AiChatServiceImpl implements AiChatService {
             throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
         }
         // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
+        AtomicReference<String> content = new AtomicReference<>("");
+        AtomicReference<String> reasoningContent = new AtomicReference<>("");
         AtomicLong time = new AtomicLong();
-        // 消耗Token
         AtomicInteger usage = new AtomicInteger();
+        // 非DeepSeek协议深度思考流解析器
+        ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
         // 获取大模型回复
-        ChatManager.getChatClient(model)
+        Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt()
                 .system(s -> {
                     if (StringUtils.isNotBlank(systemPrompt)) {
@@ -581,32 +667,77 @@ public class AiChatServiceImpl implements AiChatService {
                     }
                 })
                 .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
+                .chatResponse();
+        // 公共的流处理逻辑
+        Flux<SseMessage> processedFlux = model instanceof DeepSeekChatEntity ?
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            AssistantMessage assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                                String tempContent = output.getText();
+                                String tempReasoningContent = output.getReasoningContent();
+                                return new SseMessage()
+                                        .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                        .setContent(StringUtils.isBlank(tempContent) ? StringUtils.EMPTY : tempContent)
+                                        .setReasoningContent(StringUtils.isBlank(tempReasoningContent) ? StringUtils.EMPTY : tempReasoningContent);
+                            } else {
+                                return new SseMessage();
+                            }
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus())) :
+                chatResponseFlux
+                        .index((i, chatResponse) -> {
+                            String assistantMessage = Optional.ofNullable(chatResponse)
+                                    .map(ChatResponse::getResult)
+                                    .map(Generation::getOutput)
+                                    .map(AssistantMessage::getText)
+                                    .orElse(null);
+                            if (Objects.nonNull(assistantMessage)) {
+                                reasonStreamParser.processChunk(assistantMessage);
+                                String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
+                                String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
+                                if (replyContentIncrement.isEmpty() || thinkContentIncrement.isEmpty()) {
+                                    return new SseMessage()
+                                            .setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName())
+                                            .setContent(StringUtils.isEmpty(replyContentIncrement) ? StringUtils.EMPTY : replyContentIncrement)
+                                            .setReasoningContent(StringUtils.isEmpty(thinkContentIncrement) ? StringUtils.EMPTY : thinkContentIncrement);
+                                }
+                            }
+                            return new SseMessage();
+                        })
+                        .filter(sseMessage -> Objects.nonNull(sseMessage.getStatus()));
+        processedFlux
+                .concatWith(Mono.just(new SseMessage().setStatus(SseStatus.FINISH.getName()).setContent(StringUtils.EMPTY).setReasoningContent(StringUtils.EMPTY)))
                 .doOnNext(message -> {
                     try {
                         sseEmitter.send(message);
-                        String messageData = (String) message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
+                        String tempContent = (String) message.getContent();
+                        String tempReasoningContent = message.getReasoningContent();
+                        if (StringUtils.isNotEmpty(tempContent)) {
+                            content.set(content.get() + tempContent);
+                        } else if (StringUtils.isNotEmpty(tempReasoningContent)) {
+                            reasoningContent.set(reasoningContent.get() + tempReasoningContent);
                         }
                     } catch (IOException e) {
-                        log.error(e.getMessage());
+                        log.error("数据传输异常: {}", e.getMessage());
                         throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                     }
                 })
                 .doOnError(e -> {
-                    log.error(e.getMessage());
+                    log.error("数据传输异常: {}", e.getMessage());
                     throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
                 })
                 .doOnTerminate(() -> {
                     sw.stop();
                     time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(result.get())));
+                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(new UserMessage(prompt), new AssistantMessage(content.get())));
                 })
                 .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
     }
 
     @Override
@@ -814,19 +945,81 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatString(ChatModelBase model, Prompt prompt) {
+        return chatString(model, prompt, null, null, null);
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, Prompt prompt, String systemPrompt) {
+        return chatString(model, prompt, null, null, systemPrompt);
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, Prompt prompt, MultipartFile multipartFile) {
+        return chatString(model, prompt, multipartFile, null);
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, Prompt prompt, MultipartFile multipartFile, String systemPrompt) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String contentType = multipartFile.getContentType();
+            if (StringUtils.isBlank(contentType)) {
+                throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "文件类型异常");
+            }
+            MimeType mimeType = MimeTypeUtils.parseMimeType(contentType);
+            return chatString(model, prompt, mimeType, inputStream, systemPrompt);
+        } catch (IOException e) {
+            throw new CustomizeAiException(ReturnCode.EXCEPTION_OCCURRED_IN_AI_MODULE, "读取文件异常");
+        }
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, Prompt prompt, MimeType mimeType, InputStream inputStream) {
+        return chatString(model, prompt, mimeType, inputStream, null);
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, Prompt prompt, MimeType mimeType, InputStream inputStream, String systemPrompt) {
         if (Objects.isNull(prompt)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
         }
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
-        String result = ChatManager.getChatClient(model)
+        ChatResponse chatResponse = ChatManager.getChatClient(model)
                 .prompt(prompt)
+                .system(s -> {
+                    if (StringUtils.isNotBlank(systemPrompt)) {
+                        s.text(systemPrompt);
+                    }
+                })
+                .user(u -> {
+                    if (ObjectUtils.allNotNull(mimeType, inputStream)) {
+                        u.media(mimeType, new InputStreamResource(inputStream));
+                    }
+                })
                 .call()
-                .content();
+                .chatResponse();
+        String content = StringUtils.EMPTY;
+        String reasonContent = StringUtils.EMPTY;
+        AssistantMessage assistantMessage = chatResponse != null && chatResponse.getResult() != null
+                ? chatResponse.getResult().getOutput()
+                : null;
+        if (Objects.nonNull(assistantMessage)) {
+            if (model instanceof DeepSeekChatEntity) {
+                DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
+                content = output.getText() != null ? output.getText() : StringUtils.EMPTY;
+                reasonContent = output.getReasoningContent() != null ? output.getReasoningContent() : StringUtils.EMPTY;
+            } else {
+                String text = assistantMessage.getText() != null ? assistantMessage.getText() : StringUtils.EMPTY;
+                ReasonStreamParser reasonStreamParser = new ReasonStreamParser();
+                reasonStreamParser.processChunk(text);
+                content = reasonStreamParser.getReplyContent();
+                reasonContent = reasonStreamParser.getThinkContent();
+            }
+        }
+        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getPromptTokenNumber(prompt);
         sw.stop();
-        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt.getInstructions());
-        return new ChatResult(result, sw.getDuration().toMillis(), usage, prompt);
+        return new ChatResult(content, reasonContent, sw.getDuration().toMillis(), usage, prompt);
     }
 
     @Override
@@ -1007,6 +1200,20 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .blockLast();
         return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+    }
+
+    private static Prompt toPrompt(String str) {
+        return Prompt
+                .builder()
+                .content(str)
+                .build();
+    }
+
+    private static Prompt toPrompt(Message... messages){
+        return Prompt
+                .builder()
+                .messages(messages)
+                .build();
     }
 
 }
