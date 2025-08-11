@@ -30,6 +30,7 @@ import org.springframework.ai.tool.resolution.DelegatingToolCallbackResolver;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
@@ -37,6 +38,7 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * AI Chat管理器
@@ -116,9 +118,9 @@ public class ChatManager {
         return DeepSeekChatModel.builder()
                 .deepSeekApi(
                         DeepSeekApi.builder()
+                                .restClientBuilder(getRestClient(entity))
                                 .baseUrl(entity.getBaseUrl())
                                 .apiKey(new SimpleApiKey(entity.getApiKey()))
-                                .restClientBuilder(RestClient.builder())
                                 .build()
                 )
                 .defaultOptions(
@@ -144,9 +146,9 @@ public class ChatManager {
         return OpenAiChatModel.builder()
                 .openAiApi(
                         OpenAiApi.builder()
+                                .restClientBuilder(getRestClient(entity))
                                 .baseUrl(entity.getBaseUrl())
                                 .apiKey(new SimpleApiKey(entity.getApiKey()))
-                                .restClientBuilder(RestClient.builder())
                                 .build())
                 .defaultOptions(
                         OpenAiChatOptions.builder()
@@ -171,6 +173,7 @@ public class ChatManager {
         return OllamaChatModel.builder()
                 .ollamaApi(
                         OllamaApi.builder()
+                                .restClientBuilder(getRestClient(entity))
                                 .baseUrl(entity.getBaseUrl())
                                 .build()
                 )
@@ -290,6 +293,17 @@ public class ChatManager {
                 .toolCallingManager(DefaultToolCallingManager.builder().build())
                 .observationRegistry(ObservationRegistry.NOOP)
                 .build();
+    }
+
+    /**
+     * 获取请求构造类
+     */
+    private static RestClient.Builder getRestClient(ChatModelBase model) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        if (Objects.nonNull(model.getReadTimeout())) {
+            requestFactory.setReadTimeout(model.getReadTimeout());
+        }
+        return RestClient.builder().requestFactory(requestFactory);
     }
 
 }

@@ -35,13 +35,20 @@ public abstract class ChatModelBase {
     @Setter
     protected Double topP;
 
-    public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP) {
+    /**
+     * 模型响应超时时间
+     */
+    @Setter
+    protected Integer readTimeout;
+
+    public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP, Integer readTimeout) {
         if (Objects.isNull(chatServiceType)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatServiceType]不能为空");
         }
         this.chatServiceType = chatServiceType;
         this.temperature = Objects.isNull(temperature) ? 0.8 : temperature;
         this.topP = Objects.isNull(topP) ? 0.9 : temperature;
+        this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
     }
 
 }

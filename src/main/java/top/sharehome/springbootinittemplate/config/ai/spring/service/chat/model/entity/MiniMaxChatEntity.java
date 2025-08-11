@@ -40,19 +40,35 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
     private String model;
 
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null);
+    }
+
+    public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Integer readTimeout) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, readTimeout);
     }
 
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP, null);
+    }
+
+    public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Integer readTimeout) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP, readTimeout);
     }
 
     public MiniMaxChatEntity(String model, String apiKey) {
-        this(model, apiKey, null, null);
+        this(model, apiKey, null, null, null);
+    }
+
+    public MiniMaxChatEntity(String model, String apiKey, Integer readTimeout) {
+        this(model, apiKey, null, null, readTimeout);
     }
 
     public MiniMaxChatEntity(String model, String apiKey, Double temperature, Double topP) {
-        super(ChatServiceType.MiniMax, temperature, topP);
+        this(model, apiKey, temperature, topP, null);
+    }
+
+    public MiniMaxChatEntity(String model, String apiKey, Double temperature, Double topP, Integer readTimeout) {
+        super(ChatServiceType.MiniMax, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

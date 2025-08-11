@@ -12,6 +12,7 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiExcep
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * DeepSeek Chat模型类
@@ -49,19 +50,35 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
     private String baseUrl;
 
     public DeepSeekChatEntity(String model, String apiKey) {
-        this(model, apiKey, null, null, null);
+        this(model, apiKey, null, null, null, null);
+    }
+
+    public DeepSeekChatEntity(String model, String apiKey, Integer readTimeout) {
+        this(model, apiKey, null, null, null, readTimeout);
     }
 
     public DeepSeekChatEntity(String model, String apiKey, Double temperature, Double topP) {
-        this(model, apiKey, null, temperature, topP);
+        this(model, apiKey, null, temperature, topP, null);
+    }
+
+    public DeepSeekChatEntity(String model, String apiKey, Double temperature, Double topP, Integer readTimeout) {
+        this(model, apiKey, null, temperature, topP, readTimeout);
     }
 
     public DeepSeekChatEntity(String model, String apiKey, String baseUrl) {
-        this(model, apiKey, baseUrl, null, null);
+        this(model, apiKey, baseUrl, null, null, null);
+    }
+
+    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Integer readTimeout) {
+        this(model, apiKey, baseUrl, null, null, readTimeout);
     }
 
     public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP) {
-        super(ChatServiceType.DeepSeek, temperature, topP);
+        this(model, apiKey, baseUrl, temperature, topP, null);
+    }
+
+    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+        super(ChatServiceType.DeepSeek, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }
