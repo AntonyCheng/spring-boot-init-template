@@ -344,8 +344,8 @@ public class SpringChatTest {
                 new SystemMessage("你是一个诚实的大语言模型，你一定要准确表达出你的真实意思"),
                 new UserMessage("你是什么模型？")
         };
-        List<String> deepSeek = aiChatService.chatStream(deepSeekChatEntity, messages).toList();
-        for (String s : deepSeek) {
+        List<ChatResultChunk> deepSeek = aiChatService.chatStream(deepSeekChatEntity, messages).toList();
+        for (ChatResultChunk s : deepSeek) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -354,8 +354,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> openAi = aiChatService.chatStream(openAiChatEntity, messages).toList();
-        for (String s : openAi) {
+        List<ChatResultChunk> openAi = aiChatService.chatStream(openAiChatEntity, messages).toList();
+        for (ChatResultChunk s : openAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -364,8 +364,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> ollama = aiChatService.chatStream(ollamaChatEntity, messages).toList();
-        for (String s : ollama) {
+        List<ChatResultChunk> ollama = aiChatService.chatStream(ollamaChatEntity, messages).toList();
+        for (ChatResultChunk s : ollama) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -374,8 +374,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, messages).toList();
-        for (String s : zhiPuAi) {
+        List<ChatResultChunk> zhiPuAi = aiChatService.chatStream(zhiPuAiChatEntity, messages).toList();
+        for (ChatResultChunk s : zhiPuAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -384,8 +384,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> mistralAi = aiChatService.chatStream(mistralAiChatEntity, messages).toList();
-        for (String s : mistralAi) {
+        List<ChatResultChunk> mistralAi = aiChatService.chatStream(mistralAiChatEntity, messages).toList();
+        for (ChatResultChunk s : mistralAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -394,8 +394,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> miniMax = aiChatService.chatStream(miniMaxChatEntity, messages).toList();
-        for (String s : miniMax) {
+        List<ChatResultChunk> miniMax = aiChatService.chatStream(miniMaxChatEntity, messages).toList();
+        for (ChatResultChunk s : miniMax) {
             System.out.println(s);
             try {
                 Thread.sleep(200);
@@ -404,8 +404,8 @@ public class SpringChatTest {
             }
         }
         System.out.println();
-        List<String> azureOpenAi = aiChatService.chatStream(azureOpenAiChatEntity, messages).toList();
-        for (String s : azureOpenAi) {
+        List<ChatResultChunk> azureOpenAi = aiChatService.chatStream(azureOpenAiChatEntity, messages).toList();
+        for (ChatResultChunk s : azureOpenAi) {
             System.out.println(s);
             try {
                 Thread.sleep(200);

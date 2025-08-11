@@ -298,205 +298,242 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatString(ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        // 计时器
-        StopWatch sw = new StopWatch();
-        sw.start();
-        String result = ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .call()
-                .content();
-        sw.stop();
-        Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(prompt);
-        return new ChatResult(result, sw.getDuration().toMillis(), usage, prompt);
+        return chatString(model, null, (byte[]) null, null, toPrompt(prompt));
     }
 
     @Override
-    public Stream<String> chatStream(ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        return ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .stream()
-                .content()
-                .toStream();
+    public ChatResult chatString(ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatString(model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
     }
 
     @Override
-    public Flux<String> chatFlux(ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        return ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .stream()
-                .content();
+    public ChatResult chatString(ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatString(model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatString(model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatString(model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatString(model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatString(model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatString(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatString(model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, Message... prompt) {
+        return chatStream(model, null, (byte[]) null, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatStream(model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatStream(model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatStream(model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatStream(model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatStream(model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatStream(model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Stream<ChatResultChunk> chatStream(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatStream(model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, Message... prompt) {
+        return chatFlux(model, null, (byte[]) null, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatFlux(model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatFlux(model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatFlux(model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatFlux(model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatFlux(model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatFlux(model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatFlux(model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
     @Override
     public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
-        }
-        // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
-        AtomicLong time = new AtomicLong();
-        // 消耗Token
-        AtomicInteger usage = new AtomicInteger();
-        // 计时器
-        StopWatch sw = new StopWatch();
-        sw.start();
-        // 获取大模型回复
-        ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
-                .doOnNext(message -> {
-                    try {
-                        sseEmitter.send(message);
-                        Object messageData = message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
-                        }
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    }
-                })
-                .doOnError(e -> {
-                    log.error(e.getMessage());
-                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                })
-                .doOnTerminate(() -> {
-                    sw.stop();
-                    time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                })
-                .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return chatFlux(sseEmitter, model, null, (byte[]) null, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatFlux(sseEmitter, model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatFlux(sseEmitter, model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatFlux(sseEmitter, model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatFlux(sseEmitter, model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatFlux(sseEmitter, model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatFlux(sseEmitter, model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatFlux(sseEmitter, model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
     @Override
     public ChatResult chatFlux(Long userId, ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        Map<String, SseEmitter> sseEmitters = SseUtils.getSseEmitter(userId);
-        if (Objects.isNull(sseEmitters)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
-        }
-        // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
-        AtomicLong time = new AtomicLong();
-        // 消耗Token
-        AtomicInteger usage = new AtomicInteger();
-        // 计时器
-        StopWatch sw = new StopWatch();
-        sw.start();
-        // 获取大模型回复
-        ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
-                .doOnNext(message -> {
-                    try {
-                        for (Map.Entry<String, SseEmitter> sseEmitterEntry : sseEmitters.entrySet()) {
-                            sseEmitterEntry.getValue().send(message);
-                        }
-                        Object messageData = message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
-                        }
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    }
-                })
-                .doOnError(e -> {
-                    log.error(e.getMessage());
-                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                })
-                .doOnTerminate(() -> {
-                    sw.stop();
-                    time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                })
-                .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return chatFlux(userId, model, null, (byte[]) null, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatFlux(userId, model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatFlux(userId, model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatFlux(userId, model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
     @Override
     public ChatResult chatFlux(Long userId, String token, ChatModelBase model, Message... prompt) {
-        if (ArrayUtils.isEmpty(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        SseEmitter sseEmitter = SseUtils.getSseEmitter(userId, token);
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
-        }
-        // 结果总汇
-        AtomicReference<String> result = new AtomicReference<>("");
-        // 消耗时间
-        AtomicLong time = new AtomicLong();
-        // 消耗Token
-        AtomicInteger usage = new AtomicInteger();
-        // 计时器
-        StopWatch sw = new StopWatch();
-        sw.start();
-        // 获取大模型回复
-        ChatManager.getChatClient(model)
-                .prompt()
-                .messages(prompt)
-                .stream()
-                .content()
-                .index((i, message) -> new SseMessage().setStatus(i == 0 ? SseStatus.START.getName() : SseStatus.PROCESS.getName()).setContent(message))
-                .concatWith(Flux.just(new SseMessage().setStatus(SseStatus.FINISH.getName())))
-                .doOnNext(message -> {
-                    try {
-                        sseEmitter.send(message);
-                        Object messageData = message.getContent();
-                        if (Objects.nonNull(messageData)) {
-                            result.set(result.get() + messageData);
-                        }
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                    }
-                })
-                .doOnError(e -> {
-                    log.error(e.getMessage());
-                    throw new CustomizeAiException(ReturnCode.FAIL, "数据传输异常");
-                })
-                .doOnTerminate(() -> {
-                    sw.stop();
-                    time.set(sw.getDuration().toMillis());
-                    usage.set(new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(ArrayUtils.add(prompt, new AssistantMessage(result.get()))));
-                })
-                .blockLast();
-        return new ChatResult(result.get(), time.get(), usage.get(), prompt);
+        return chatFlux(userId, token, model, null, (byte[]) null, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, token, model, null, (byte[]) null, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MultipartFile multipartFile, Message... prompt) {
+        return chatFlux(userId, token, model, multipartFile, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MultipartFile multipartFile, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, token, model, multipartFile, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MimeType mimeType, InputStream inputStream, Message... prompt) {
+        return chatFlux(userId, token, model, mimeType, inputStream, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MimeType mimeType, InputStream inputStream, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, token, model, mimeType, inputStream, systemPrompt, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MimeType mimeType, byte[] byteArray, Message... prompt) {
+        return chatFlux(userId, token, model, mimeType, byteArray, null, toPrompt(prompt));
+    }
+
+    @Override
+    public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Message... prompt) {
+        return chatFlux(userId, token, model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
     // ======================================================================
