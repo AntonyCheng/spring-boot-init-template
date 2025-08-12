@@ -18,10 +18,10 @@
                     label-width="80px"
                   >
                     <el-form-item label="接口URI">
-                      <el-input v-model="queryForm.uri" placeholder="请输入接口URI" style="width: 200px" />
+                      <el-input v-model="queryForm.uri" placeholder="请输入接口URI" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="操作描述">
-                      <el-input v-model="queryForm.description" placeholder="请输入操作描述" style="width: 200px" />
+                      <el-input v-model="queryForm.description" placeholder="请输入操作描述" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="操作类型">
                       <el-select v-model="queryForm.operator" placeholder="请选择操作类型" clearable>
@@ -44,13 +44,13 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="方法名称">
-                      <el-input v-model="queryForm.method" placeholder="请输入方法名称" style="width: 200px" />
+                      <el-input v-model="queryForm.method" placeholder="请输入方法名称" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="用户账号">
-                      <el-input v-model="queryForm.userAccount" placeholder="请输入用户账号" style="width: 200px" />
+                      <el-input v-model="queryForm.userAccount" placeholder="请输入用户账号" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="用户地点">
-                      <el-input v-model="queryForm.location" placeholder="请输入用户地点" style="width: 200px" />
+                      <el-input v-model="queryForm.location" placeholder="请输入用户地点" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="操作结果">
                       <el-select v-model="queryForm.result" placeholder="请选择操作结果" clearable>
@@ -151,7 +151,8 @@
           width="180"
         >
           <template v-slot="scope">
-            <el-input type="textarea" :rows="6" resize="none" disabled style="font-size: small" :value="JSON.stringify(JSON.parse(scope.row.param), null, '  ')" />
+            <el-input type="textarea" :rows="6" resize="none" disabled style="font-size: small"
+                      :value="JSON.stringify(JSON.parse(scope.row.param), null, '  ')"/>
           </template>
         </el-table-column>
         <el-table-column
@@ -182,7 +183,7 @@
               <el-button v-if="scope.row.result === 0" slot="reference" type="success" size="mini">查看内容</el-button>
               <el-button v-else slot="reference" type="danger" size="mini">查看内容</el-button>
               <!--              <el-input type="textarea" :rows="10" :value="JSON.stringify(JSON.parse(scope.row.json), null, '\t')" />-->
-              <el-input type="textarea" :rows="10" :value="scope.row.json" />
+              <el-input type="textarea" :rows="10" :value="scope.row.json"/>
             </el-popover>
           </template>
         </el-table-column>
@@ -222,8 +223,8 @@
 </template>
 
 <script>
-import { adminClearLog, adminDeleteLog, adminExportExcel, adminPageLog } from '@/api/log'
-import { Loading, Message } from 'element-ui'
+import {adminClearLog, adminDeleteLog, adminExportExcel, adminPageLog} from '@/api/log'
+import {Loading, Message} from 'element-ui'
 
 export default {
   name: 'LogManage',

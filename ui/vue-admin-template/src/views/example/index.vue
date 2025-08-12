@@ -42,7 +42,7 @@
                         autocomplete="off"
                       />
                       <span class="show-pwd" @click="showPwd('passwordType')">
-                        <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+                        <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
                       </span>
                     </el-form-item>
                     <el-form-item
@@ -60,7 +60,7 @@
                         autocomplete="off"
                       />
                       <span class="show-pwd" @click="showPwd('checkPasswordType')">
-                        <svg-icon :icon-class="checkPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                        <svg-icon :icon-class="checkPasswordType === 'password' ? 'eye' : 'eye-open'"/>
                       </span>
                     </el-form-item>
                     <el-form-item
@@ -136,7 +136,7 @@
                         autocomplete="off"
                       />
                       <span class="show-pwd" @click="showPwd('newPasswordType')">
-                        <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                        <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'"/>
                       </span>
                     </el-form-item>
                     <el-form-item
@@ -154,7 +154,7 @@
                         autocomplete="off"
                       />
                       <span class="show-pwd" @click="showPwd('checkNewPasswordType')">
-                        <svg-icon :icon-class="checkNewPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                        <svg-icon :icon-class="checkNewPasswordType === 'password' ? 'eye' : 'eye-open'"/>
                       </span>
                     </el-form-item>
                     <el-form-item
@@ -277,7 +277,7 @@
                     autocomplete="off"
                   />
                   <span class="show-pwd" @click="showPwd('encryptPasswordType')">
-                    <svg-icon :icon-class="encryptPasswordType === 'password' ? 'eye' : 'eye-open'" />
+                    <svg-icon :icon-class="encryptPasswordType === 'password' ? 'eye' : 'eye-open'"/>
                   </span>
                 </el-form-item>
                 <el-form-item
@@ -388,7 +388,7 @@
                     >获取Word段落
                     </el-button>
                   </el-upload>
-                  <el-divider />
+                  <el-divider/>
                   <el-upload
                     action=""
                     :limit="1"
@@ -405,7 +405,7 @@
                     >获取Word表格
                     </el-button>
                   </el-upload>
-                  <el-divider />
+                  <el-divider/>
                   <el-upload
                     action=""
                     :limit="1"
@@ -462,7 +462,7 @@
                   </el-button>
                 </el-col>
               </el-row>
-              <el-divider />
+              <el-divider/>
               <el-row :gutter="20">
                 <el-col :span="12" align="right">
                   <el-upload
@@ -537,7 +537,7 @@
                   </el-input>
                 </el-form-item>
               </el-form>
-              <el-divider />
+              <el-divider/>
               <el-button
                 :loading="ipLoading"
                 type="primary"
@@ -556,8 +556,8 @@
 
 <script>
 
-import { checkEmailCode, getEmailCode, register } from '@/api/auth'
-import { Message } from 'element-ui'
+import {checkEmailCode, getEmailCode, register} from '@/api/auth'
+import {Message} from 'element-ui'
 import {
   captcha,
   checkCaptcha,
@@ -567,14 +567,15 @@ import {
   exportPdfByThymeleafTemplate,
   exportWordByTemplate,
   getImagesZipInPdf,
-  getImagesZipInWord, getIpAndRegionByRequest,
+  getImagesZipInWord,
+  getIpAndRegionByRequest,
   getParagraphsTxtInPdf,
   getParagraphsTxtInWord,
   getRegionByIp,
   getRsaPublicKey,
   getTablesZipInWord
 } from '@/api/example'
-import { JSEncrypt } from 'jsencrypt'
+import {JSEncrypt} from 'jsencrypt'
 
 export default {
   name: 'Example',
@@ -868,7 +869,7 @@ export default {
     },
     getWordParagraphs(wordFile) {
       this.wordLoading = true
-      const { file } = wordFile
+      const {file} = wordFile
       const formData = new FormData()
       formData.append('file', file)
       getParagraphsTxtInWord(formData).then(async data => {
@@ -895,7 +896,7 @@ export default {
     getWordTables(wordFile) {
       this.wordLoading = true
       console.log(wordFile)
-      const { file } = wordFile
+      const {file} = wordFile
       const formData = new FormData()
       formData.append('file', file)
       getTablesZipInWord(formData).then(async data => {
@@ -921,7 +922,7 @@ export default {
     },
     getWordImages(wordFile) {
       this.wordLoading = true
-      const { file } = wordFile
+      const {file} = wordFile
       const formData = new FormData()
       formData.append('file', file)
       getImagesZipInWord(formData).then(async data => {
@@ -1027,7 +1028,7 @@ export default {
     },
     getPdfParagraphs(pdfFile) {
       this.pdfLoading = true
-      const { file } = pdfFile
+      const {file} = pdfFile
       const formData = new FormData()
       formData.append('file', file)
       getParagraphsTxtInPdf(formData).then(async data => {
@@ -1053,7 +1054,7 @@ export default {
     },
     getPdfImages(pdfFile) {
       this.pdfLoading = true
-      const { file } = pdfFile
+      const {file} = pdfFile
       const formData = new FormData()
       formData.append('file', file)
       getImagesZipInPdf(formData).then(async data => {
@@ -1131,6 +1132,7 @@ export default {
   .code-container {
     padding-top: 5px;
     display: inline-block;
+
     img {
       height: 30px;
       width: 100px;

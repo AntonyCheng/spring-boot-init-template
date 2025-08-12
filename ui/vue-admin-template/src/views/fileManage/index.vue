@@ -18,10 +18,10 @@
                     label-width="80px"
                   >
                     <el-form-item label="原名称">
-                      <el-input v-model="queryForm.originalName" placeholder="请输入原名称" style="width: 200px" />
+                      <el-input v-model="queryForm.originalName" placeholder="请输入原名称" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="扩展名">
-                      <el-input v-model="queryForm.suffix" placeholder="请输入扩展名" style="width: 200px" />
+                      <el-input v-model="queryForm.suffix" placeholder="请输入扩展名" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="OSS类型">
                       <el-select v-model="queryForm.ossType" placeholder="请选择OSS类型" clearable>
@@ -176,7 +176,7 @@
           :http-request="handleSubmit"
           :on-success="handleSuccess"
         >
-          <i class="el-icon-upload" />
+          <i class="el-icon-upload"/>
           <div class="el-upload__text"><em>点击上传</em>（文件不超过10MB）</div>
         </el-upload>
         <div slot="footer" class="dialog-footer">
@@ -188,8 +188,8 @@
 </template>
 
 <script>
-import { adminAddFile, adminDeleteFile, adminExportExcel, adminPageFile } from '@/api/file'
-import { Loading, Message } from 'element-ui'
+import {adminAddFile, adminDeleteFile, adminExportExcel, adminPageFile} from '@/api/file'
+import {Loading, Message} from 'element-ui'
 
 export default {
   name: 'FileManage',
@@ -312,7 +312,7 @@ export default {
       return isLt20M
     },
     async handleSubmit(options) {
-      const { file } = options
+      const {file} = options
       const formData = new FormData()
       formData.append('file', file)
       try {

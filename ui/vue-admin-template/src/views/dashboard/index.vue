@@ -20,13 +20,13 @@
                 :http-request="handleSubmit"
                 :on-success="handleSuccess"
               >
-                <el-avatar v-if="avatar" :size="100" :src="avatar" class="avatar-class" />
+                <el-avatar v-if="avatar" :size="100" :src="avatar" class="avatar-class"/>
                 <el-avatar v-else :size="100" style="font-size: xxx-large">{{ name.at(0) }}</el-avatar>
                 <div slot="tip" class="el-upload__tip">点击上传（仅支持jpg/png文件，且不超过1MB）</div>
               </el-upload>
             </el-col>
             <el-col>
-              <el-divider />
+              <el-divider/>
             </el-col>
             <el-col>
               <el-descriptions :column="1" border>
@@ -35,7 +35,7 @@
                 </template>
                 <el-descriptions-item>
                   <template slot="label">
-                    <i class="el-icon-info" />
+                    <i class="el-icon-info"/>
                     ID
                   </template>
                   <template>
@@ -48,7 +48,7 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
-                    <i class="el-icon-user-solid" />
+                    <i class="el-icon-user-solid"/>
                     账号
                   </template>
                   <template>
@@ -65,7 +65,7 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
-                    <i class="el-icon-star-on" />
+                    <i class="el-icon-star-on"/>
                     名称
                   </template>
                   <template>
@@ -81,7 +81,7 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
-                    <i class="el-icon-s-comment" />
+                    <i class="el-icon-s-comment"/>
                     邮箱
                   </template>
                   <template>
@@ -97,7 +97,7 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                   <template slot="label">
-                    <i class="el-icon-s-opportunity" />
+                    <i class="el-icon-s-opportunity"/>
                     角色
                   </template>
                   <template>
@@ -124,7 +124,7 @@
       >
         <el-form v-if="dialogType==='account'" ref="updateAccountForm" :model="updateAccountForm" label-width="80px">
           <el-form-item label="旧帐号">
-            <el-input v-model="account" disabled="disabled" style="font-weight: bold" />
+            <el-input v-model="account" disabled="disabled" style="font-weight: bold"/>
           </el-form-item>
           <el-form-item
             label="新账号"
@@ -134,7 +134,7 @@
               {min:2,max:16,message: '新账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateAccountForm.newAccount" autocomplete="off" placeholder="请输入新账号" />
+            <el-input v-model="updateAccountForm.newAccount" autocomplete="off" placeholder="请输入新账号"/>
           </el-form-item>
         </el-form>
         <el-form v-if="dialogType==='password'" ref="updatePasswordForm" :model="updatePasswordForm" label-width="80px">
@@ -153,7 +153,7 @@
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('old')">
-              <svg-icon :icon-class="oldPasswordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="oldPasswordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
           <el-form-item
@@ -172,7 +172,7 @@
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('new')">
-              <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
           <el-form-item
@@ -190,13 +190,13 @@
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('check')">
-              <svg-icon :icon-class="checkNewPasswordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="checkNewPasswordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
         </el-form>
         <el-form v-if="dialogType==='name'" ref="updateNameForm" :model="updateNameForm" label-width="80px">
           <el-form-item label="旧名称">
-            <el-input v-model="name" disabled="disabled" style="font-weight: bold" />
+            <el-input v-model="name" disabled="disabled" style="font-weight: bold"/>
           </el-form-item>
           <el-form-item
             label="新名称"
@@ -206,12 +206,12 @@
               {min:1,max:16,message: '新名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateNameForm.newName" placeholder="请输入新名称" autocomplete="off" />
+            <el-input v-model="updateNameForm.newName" placeholder="请输入新名称" autocomplete="off"/>
           </el-form-item>
         </el-form>
         <el-form v-if="dialogType==='email'" ref="updateEmailForm" :model="updateEmailForm" label-width="80px">
           <el-form-item label="旧邮箱">
-            <el-input v-model="email" disabled="disabled" placeholder="请输入旧邮箱" style="font-weight: bold" />
+            <el-input v-model="email" disabled="disabled" placeholder="请输入旧邮箱" style="font-weight: bold"/>
           </el-form-item>
           <el-form-item
             label="新邮箱"
@@ -220,7 +220,7 @@
               {required:true,message:'新邮箱不能为空',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateEmailForm.newEmail" placeholder="请输入新邮箱" autocomplete="off" />
+            <el-input v-model="updateEmailForm.newEmail" placeholder="请输入新邮箱" autocomplete="off"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -233,9 +233,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { updateAccount, updateAvatar, updateEmail, updateName, updatePassword } from '@/api/user'
-import { Message } from 'element-ui'
+import {mapGetters} from 'vuex'
+import {updateAccount, updateAvatar, updateEmail, updateName, updatePassword} from '@/api/user'
+import {Message} from 'element-ui'
 
 export default {
   name: 'Dashboard',
@@ -287,7 +287,7 @@ export default {
       return (isJPG || isPNG) && isLt1M
     },
     handleSubmit(options) {
-      const { file } = options
+      const {file} = options
       const formData = new FormData()
       formData.append('file', file)
       return updateAvatar(formData).then(response => {
@@ -311,7 +311,7 @@ export default {
         case 'account': {
           this.$refs['updateAccountForm'].validate(valid => {
             if (valid) {
-              const data = { newAccount: this.updateAccountForm.newAccount }
+              const data = {newAccount: this.updateAccountForm.newAccount}
               updateAccount(data).then(response => {
                 this.getUserInfo()
                 this.resetUpdateForm()
@@ -347,7 +347,7 @@ export default {
         case 'name': {
           this.$refs['updateNameForm'].validate(valid => {
             if (valid) {
-              const data = { newName: this.updateNameForm.newName }
+              const data = {newName: this.updateNameForm.newName}
               updateName(data).then(response => {
                 this.getUserInfo()
                 this.resetUpdateForm()
@@ -363,7 +363,7 @@ export default {
         case 'email': {
           this.$refs['updateEmailForm'].validate(valid => {
             if (valid) {
-              const data = { newEmail: this.updateEmailForm.newEmail }
+              const data = {newEmail: this.updateEmailForm.newEmail}
               updateEmail(data).then(response => {
                 this.getUserInfo()
                 this.resetUpdateForm()
@@ -455,14 +455,14 @@ export default {
   }
 }
 
-.avatar-class{
-  img{
+.avatar-class {
+  img {
     width: 100%;
     background-size: cover;
   }
 }
 
-.show-pwd{
+.show-pwd {
   position: absolute;
   right: 10px;
   top: 2px;

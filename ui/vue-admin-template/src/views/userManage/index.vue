@@ -18,13 +18,13 @@
                     label-width="80px"
                   >
                     <el-form-item label="账号">
-                      <el-input v-model="queryForm.account" placeholder="请输入账号" style="width: 200px" />
+                      <el-input v-model="queryForm.account" placeholder="请输入账号" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="名称">
-                      <el-input v-model="queryForm.name" placeholder="请输入名称" style="width: 200px" />
+                      <el-input v-model="queryForm.name" placeholder="请输入名称" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="邮箱">
-                      <el-input v-model="queryForm.email" placeholder="请输入邮箱" style="width: 200px" />
+                      <el-input v-model="queryForm.email" placeholder="请输入邮箱" style="width: 200px"/>
                     </el-form-item>
                     <el-form-item label="角色">
                       <el-select v-model="queryForm.role" placeholder="请选择角色" clearable>
@@ -50,10 +50,13 @@
                 </el-col>
                 <el-col :span="6" style="text-align: center">
                   <template>
-                    <el-button :loading="queryLoading" type="primary" size="small" style="width: 80px" @click="handleQuery">查询</el-button>
+                    <el-button :loading="queryLoading" type="primary" size="small" style="width: 80px"
+                               @click="handleQuery">查询
+                    </el-button>
                   </template>
                   <template>
-                    <el-button :loading="queryLoading" size="small" style="width: 80px" @click="handleReset">重置</el-button>
+                    <el-button :loading="queryLoading" size="small" style="width: 80px" @click="handleReset">重置
+                    </el-button>
                   </template>
                 </el-col>
               </el-row>
@@ -69,7 +72,8 @@
               <el-button type="primary" size="small" style="width: 100px" @click="openAddDialog">添加用户</el-button>
             </template>
             <template>
-              <el-button type="primary" size="small" style="width: 150px" @click="openImportDialog">导入用户信息</el-button>
+              <el-button type="primary" size="small" style="width: 150px" @click="openImportDialog">导入用户信息
+              </el-button>
             </template>
             <template>
               <el-button type="success" size="small" style="width: 100px" @click="handleExport">导出用户信息</el-button>
@@ -107,7 +111,7 @@
           label="头像"
         >
           <template v-slot="scope">
-            <el-avatar v-if="scope.row.avatar" :size="35" :src="scope.row.avatar" class="avatar-class" />
+            <el-avatar v-if="scope.row.avatar" :size="35" :src="scope.row.avatar" class="avatar-class"/>
             <el-avatar v-else :size="35" style="font-size: large">{{ scope.row.name.at(0) }}</el-avatar>
           </template>
         </el-table-column>
@@ -151,7 +155,7 @@
                 <el-dropdown-item command="password">密码</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-divider direction="vertical" />
+            <el-divider direction="vertical"/>
             <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -180,7 +184,7 @@
               {min:2,max:16,message: '账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="addForm.account" autocomplete="off" placeholder="请输入用户账号" />
+            <el-input v-model="addForm.account" autocomplete="off" placeholder="请输入用户账号"/>
           </el-form-item>
           <el-form-item
             label="用户密码"
@@ -198,7 +202,7 @@
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('add')">
-              <svg-icon :icon-class="addPasswordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="addPasswordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
           <el-form-item
@@ -209,7 +213,7 @@
               {min:1,max:16,message: '名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="addForm.name" autocomplete="off" placeholder="请输入用户名称" />
+            <el-input v-model="addForm.name" autocomplete="off" placeholder="请输入用户名称"/>
           </el-form-item>
           <el-form-item
             label="用户邮箱"
@@ -218,7 +222,7 @@
               {required:true,message:'邮箱不能为空',trigger: 'blur'},
             ]"
           >
-            <el-input v-model="addForm.email" autocomplete="off" placeholder="请输入用户邮箱" />
+            <el-input v-model="addForm.email" autocomplete="off" placeholder="请输入用户邮箱"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -240,7 +244,7 @@
           :http-request="handleSubmit"
           :on-success="handleSuccess"
         >
-          <i class="el-icon-upload" />
+          <i class="el-icon-upload"/>
           <div class="el-upload__text"><em>点击上传</em>（仅支持xls/xlsx文件，且不超过200KB）</div>
         </el-upload>
         <div slot="footer" class="dialog-footer">
@@ -250,13 +254,14 @@
       </el-dialog>
     </template>
     <template>
-      <el-dialog :show-close="false" :title="updateType === 'info'?'修改信息':'修改密码'" :visible.sync="updateDialogVisible" @close="handleCancelUpdate">
+      <el-dialog :show-close="false" :title="updateType === 'info'?'修改信息':'修改密码'"
+                 :visible.sync="updateDialogVisible" @close="handleCancelUpdate">
         <el-form v-if="updateType==='info'" ref="updateForm" :model="updateForm" label-width="80px">
           <el-form-item
             label="用户ID"
             prop="id"
           >
-            <el-input v-model="updateForm.id" disabled />
+            <el-input v-model="updateForm.id" disabled/>
           </el-form-item>
           <el-form-item
             label="用户账号"
@@ -266,7 +271,7 @@
               {min:2,max:16,message: '新账号长度介于2-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateForm.account" autocomplete="off" placeholder="请输入用户账号" />
+            <el-input v-model="updateForm.account" autocomplete="off" placeholder="请输入用户账号"/>
           </el-form-item>
           <el-form-item
             label="用户名称"
@@ -276,7 +281,7 @@
               {min:1,max:16,message: '新名称长度介于1-16位之间',trigger: 'blur'}
             ]"
           >
-            <el-input v-model="updateForm.name" autocomplete="off" placeholder="请输入用户名称" />
+            <el-input v-model="updateForm.name" autocomplete="off" placeholder="请输入用户名称"/>
           </el-form-item>
           <el-form-item
             label="用户邮箱"
@@ -285,7 +290,7 @@
               {required:true,message:'新邮箱不能为空',trigger: 'blur'},
             ]"
           >
-            <el-input v-model="updateForm.email" autocomplete="off" placeholder="请输入用户邮箱" />
+            <el-input v-model="updateForm.email" autocomplete="off" placeholder="请输入用户邮箱"/>
           </el-form-item>
         </el-form>
         <el-form v-else ref="updateForm" :model="updateForm" label-width="80px">
@@ -293,7 +298,7 @@
             label="用户账号"
             prop="account"
           >
-            <el-input v-model="updateForm.account" disabled />
+            <el-input v-model="updateForm.account" disabled/>
           </el-form-item>
           <el-form-item
             label="新密码"
@@ -311,7 +316,7 @@
               autocomplete="off"
             />
             <span class="show-pwd" @click="showPwd('update')">
-              <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="newPasswordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
         </el-form>
@@ -325,18 +330,19 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import {
   adminAddUser,
   adminDeleteUser,
   adminExportExcel,
-  adminExportUserTemplate, adminImportUser,
+  adminExportUserTemplate,
+  adminImportUser,
   adminPageUser,
   adminResetPassword,
   adminUpdateInfo,
   adminUpdateState
 } from '@/api/user'
-import { Loading, Message } from 'element-ui'
+import {Loading, Message} from 'element-ui'
 
 export default {
   name: 'UserManage',
@@ -531,7 +537,7 @@ export default {
       return (isXLS || isXLSX) && isLt20K
     },
     async handleSubmit(options) {
-      const { file } = options
+      const {file} = options
       const formData = new FormData()
       formData.append('file', file)
       try {
@@ -759,7 +765,7 @@ export default {
   }
 }
 
-.show-pwd{
+.show-pwd {
   position: absolute;
   right: 10px;
   top: 2px;
