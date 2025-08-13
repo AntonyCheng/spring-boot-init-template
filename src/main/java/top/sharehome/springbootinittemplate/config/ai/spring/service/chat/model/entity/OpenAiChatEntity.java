@@ -53,7 +53,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, null);
     }
 
-    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Integer readTimeout) {
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Long readTimeout) {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, readTimeout);
     }
 
@@ -61,7 +61,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, null);
     }
 
-    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Integer readTimeout) {
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Long readTimeout) {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, readTimeout);
     }
 
@@ -69,7 +69,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, null);
     }
 
-    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Integer readTimeout) {
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Long readTimeout) {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, readTimeout);
     }
 
@@ -77,7 +77,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, null);
     }
 
-    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout) {
         this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, readTimeout);
     }
 
@@ -85,7 +85,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, null, null, null, null);
     }
 
-    public OpenAiChatEntity(String model, String apiKey, Integer readTimeout) {
+    public OpenAiChatEntity(String model, String apiKey, Long readTimeout) {
         this(model, apiKey, null, null, null, readTimeout);
     }
 
@@ -93,7 +93,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, baseUrl, null, null, null);
     }
 
-    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Integer readTimeout) {
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Long readTimeout) {
         this(model, apiKey, baseUrl, null, null, readTimeout);
     }
 
@@ -101,7 +101,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, baseUrl, temperature, topP, null);
     }
 
-    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout) {
         super(ChatServiceType.OpenAI, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");

@@ -39,9 +39,9 @@ public abstract class ChatModelBase {
      * 模型响应超时时间
      */
     @Setter
-    protected Integer readTimeout;
+    protected Long readTimeout;
 
-    public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP, Integer readTimeout) {
+    public ChatModelBase(ChatServiceType chatServiceType, Double temperature, Double topP, Long readTimeout) {
         if (Objects.isNull(chatServiceType)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatServiceType]不能为空");
         }

@@ -57,63 +57,123 @@ public class AzureOpenAiTranscriptionEntity extends TranscriptionModelBase imple
     private AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format;
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey) {
-        this(azureOpenAiTranscriptionType, apiKey, null, null, null, null);
+        this(azureOpenAiTranscriptionType, apiKey, null, null, null, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, null, null, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String endpoint) {
-        this(azureOpenAiTranscriptionType, apiKey, null, endpoint, null, null);
+        this(azureOpenAiTranscriptionType, apiKey, null, endpoint, null, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String endpoint, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, endpoint, null, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format) {
-        this(azureOpenAiTranscriptionType, apiKey, format, null, null, null);
+        this(azureOpenAiTranscriptionType, apiKey, format, null, null, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, null, null, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, null, null, null, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, null, null, null, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, null, null, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, format, null, null, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, format, null, null, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, null, null, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, LanguageType language) {
-        this(azureOpenAiTranscriptionType, apiKey, null, null, language, null);
+        this(azureOpenAiTranscriptionType, apiKey, null, null, language, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, LanguageType language, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, null, language, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, LanguageType language) {
-        this(azureOpenAiTranscriptionType, apiKey, format, null, language, null);
+        this(azureOpenAiTranscriptionType, apiKey, format, null, language, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, LanguageType language, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, null, language, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, LanguageType language, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, null, null, language, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, null, null, language, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, LanguageType language, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, null, language, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, LanguageType language, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, format, null, language, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, format, null, language, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, LanguageType language, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, null, language, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, null, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, null, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, null, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String baseUrl, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, null, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, null, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String baseUrl, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, null, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, LanguageType language) {
-        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, null);
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String baseUrl, LanguageType language) {
-        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, language, null);
+        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, language, null, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String baseUrl, LanguageType language, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, format, baseUrl, language, null, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Float temperature) {
-        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, temperature);
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Float temperature, Long readTimeout) {
+        this(azureOpenAiTranscriptionType, apiKey, null, baseUrl, language, temperature, readTimeout);
     }
 
     public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String endpoint, LanguageType language, Float temperature) {
-        super(TranscriptionServiceType.AzureOpenAI);
+        this(azureOpenAiTranscriptionType, apiKey, format, endpoint, language, temperature, null);
+    }
+
+    public AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType azureOpenAiTranscriptionType, String apiKey, AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat format, String endpoint, LanguageType language, Float temperature, Long readTimeout) {
+        super(TranscriptionServiceType.AzureOpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

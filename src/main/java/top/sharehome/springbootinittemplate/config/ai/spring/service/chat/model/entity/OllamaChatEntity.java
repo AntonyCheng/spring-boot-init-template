@@ -38,7 +38,7 @@ public class OllamaChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? "" : chatModel.getName(), baseUrl, null, null, null);
     }
 
-    public OllamaChatEntity(OllamaModel chatModel, String baseUrl, Integer readTimeout) {
+    public OllamaChatEntity(OllamaModel chatModel, String baseUrl, Long readTimeout) {
         this(Objects.isNull(chatModel) ? "" : chatModel.getName(), baseUrl, null, null, readTimeout);
     }
 
@@ -46,7 +46,7 @@ public class OllamaChatEntity extends ChatModelBase implements Serializable {
         this(Objects.isNull(chatModel) ? "" : chatModel.getName(), baseUrl, temperature, topP, null);
     }
 
-    public OllamaChatEntity(OllamaModel chatModel, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+    public OllamaChatEntity(OllamaModel chatModel, String baseUrl, Double temperature, Double topP, Long readTimeout) {
         this(Objects.isNull(chatModel) ? "" : chatModel.getName(), baseUrl, temperature, topP, readTimeout);
     }
 
@@ -54,7 +54,7 @@ public class OllamaChatEntity extends ChatModelBase implements Serializable {
         this(model, baseUrl, null, null, null);
     }
 
-    public OllamaChatEntity(String model, String baseUrl, Integer readTimeout) {
+    public OllamaChatEntity(String model, String baseUrl, Long readTimeout) {
         this(model, baseUrl, null, null, readTimeout);
     }
 
@@ -62,7 +62,7 @@ public class OllamaChatEntity extends ChatModelBase implements Serializable {
         this(model, baseUrl, temperature, topP, null);
     }
 
-    public OllamaChatEntity(String model, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+    public OllamaChatEntity(String model, String baseUrl, Double temperature, Double topP, Long readTimeout) {
         super(ChatServiceType.Ollama, temperature, topP, readTimeout);
         if (StringUtils.isBlank(model)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]不能为空");

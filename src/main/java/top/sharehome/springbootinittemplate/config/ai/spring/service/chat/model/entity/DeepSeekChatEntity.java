@@ -53,7 +53,7 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, null, null, null, null);
     }
 
-    public DeepSeekChatEntity(String model, String apiKey, Integer readTimeout) {
+    public DeepSeekChatEntity(String model, String apiKey, Long readTimeout) {
         this(model, apiKey, null, null, null, readTimeout);
     }
 
@@ -61,7 +61,7 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, null, temperature, topP, null);
     }
 
-    public DeepSeekChatEntity(String model, String apiKey, Double temperature, Double topP, Integer readTimeout) {
+    public DeepSeekChatEntity(String model, String apiKey, Double temperature, Double topP, Long readTimeout) {
         this(model, apiKey, null, temperature, topP, readTimeout);
     }
 
@@ -69,7 +69,7 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, baseUrl, null, null, null);
     }
 
-    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Integer readTimeout) {
+    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Long readTimeout) {
         this(model, apiKey, baseUrl, null, null, readTimeout);
     }
 
@@ -77,7 +77,7 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
         this(model, apiKey, baseUrl, temperature, topP, null);
     }
 
-    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Integer readTimeout) {
+    public DeepSeekChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout) {
         super(ChatServiceType.DeepSeek, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");

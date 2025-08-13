@@ -45,7 +45,11 @@ public class AzureOpenAiEmbeddingEntity extends EmbeddingModelBase implements Se
     private String endpoint;
 
     public AzureOpenAiEmbeddingEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint) {
-        super(EmbeddingServiceType.AzureOpenAI);
+        this(model, modelVersion, apiKey, endpoint, null);
+    }
+
+    public AzureOpenAiEmbeddingEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Long readTimeout) {
+        super(EmbeddingServiceType.AzureOpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

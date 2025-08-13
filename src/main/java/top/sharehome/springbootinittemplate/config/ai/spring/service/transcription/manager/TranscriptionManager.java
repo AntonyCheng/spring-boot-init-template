@@ -3,6 +3,8 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.transcript
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.HttpClient;
+import com.azure.core.util.HttpClientOptions;
 import org.springframework.ai.audio.transcription.AudioTranscriptionPrompt;
 import org.springframework.ai.audio.transcription.AudioTranscriptionResponse;
 import org.springframework.ai.azure.openai.AzureOpenAiAudioTranscriptionModel;
@@ -12,14 +14,17 @@ import org.springframework.ai.openai.OpenAiAudioTranscriptionModel;
 import org.springframework.ai.openai.OpenAiAudioTranscriptionOptions;
 import org.springframework.ai.openai.api.OpenAiAudioApi;
 import org.springframework.ai.retry.RetryUtils;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.TranscriptionModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.AzureOpenAiTranscriptionEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.OpenAiTranscriptionEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -47,6 +52,7 @@ public class TranscriptionManager {
      */
     private static OpenAiAudioTranscriptionModel getOpenAiAudioTranscriptionModel(OpenAiTranscriptionEntity entity) {
         OpenAiAudioApi openAiAudioApi = OpenAiAudioApi.builder()
+                .restClientBuilder(getRestClient(entity))
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(entity.getApiKey())
                 .restClientBuilder(RestClient.builder())
@@ -65,6 +71,9 @@ public class TranscriptionManager {
      */
     private static AzureOpenAiAudioTranscriptionModel getAzureOpenAiAudioTranscriptionModel(AzureOpenAiTranscriptionEntity entity) {
         OpenAIClient openAiClient = new OpenAIClientBuilder()
+                .httpClient(HttpClient.createDefault(
+                        new HttpClientOptions().setReadTimeout(Duration.ofMillis(entity.getReadTimeout()))
+                ))
                 .credential(new AzureKeyCredential(entity.getApiKey()))
                 .endpoint(entity.getEndpoint())
                 .buildClient();
@@ -74,6 +83,17 @@ public class TranscriptionManager {
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
                 .build());
+    }
+
+    /**
+     * 获取请求构造类
+     */
+    private static RestClient.Builder getRestClient(TranscriptionModelBase model) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        if (Objects.nonNull(model.getReadTimeout())) {
+            requestFactory.setReadTimeout(Duration.ofMillis(model.getReadTimeout()));
+        }
+        return RestClient.builder().requestFactory(requestFactory);
     }
 
 }

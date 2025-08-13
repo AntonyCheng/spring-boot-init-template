@@ -61,35 +61,67 @@ public class StabilityAiImageEntity extends ImageModelBase implements Serializab
     private StyleEnum styleEnum;
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey) {
-        this(stabilityAiImageType, apiKey, null, null, null);
+        this(stabilityAiImageType, apiKey, null, null, null, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, null, null, null, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, StyleEnum styleEnum) {
-        this(stabilityAiImageType, apiKey, null, null, styleEnum);
+        this(stabilityAiImageType, apiKey, null, null, styleEnum, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, StyleEnum styleEnum, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, null, null, styleEnum, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, Integer n) {
-        this(stabilityAiImageType, apiKey, null, n, null);
+        this(stabilityAiImageType, apiKey, null, n, null, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, Integer n, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, null, n, null, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, Integer n, StyleEnum styleEnum) {
-        this(stabilityAiImageType, apiKey, null, n, styleEnum);
+        this(stabilityAiImageType, apiKey, null, n, styleEnum, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, Integer n, StyleEnum styleEnum, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, null, n, styleEnum, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl) {
-        this(stabilityAiImageType, apiKey, baseUrl, null, null);
+        this(stabilityAiImageType, apiKey, baseUrl, null, null, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, baseUrl, null, null, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, StyleEnum styleEnum) {
-        this(stabilityAiImageType, apiKey, baseUrl, null, styleEnum);
+        this(stabilityAiImageType, apiKey, baseUrl, null, styleEnum, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, StyleEnum styleEnum, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, baseUrl, null, styleEnum, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Integer n) {
-        this(stabilityAiImageType, apiKey, baseUrl, n, null);
+        this(stabilityAiImageType, apiKey, baseUrl, n, null, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Integer n, Long readTimeout) {
+        this(stabilityAiImageType, apiKey, baseUrl, n, null, readTimeout);
     }
 
     public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Integer n, StyleEnum styleEnum) {
-        super(ImageServiceType.Stability);
+        this(stabilityAiImageType, apiKey, baseUrl, n, styleEnum, null);
+    }
+
+    public StabilityAiImageEntity(StabilityAiImageType stabilityAiImageType, String apiKey, String baseUrl, Integer n, StyleEnum styleEnum, Long readTimeout) {
+        super(ImageServiceType.Stability, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

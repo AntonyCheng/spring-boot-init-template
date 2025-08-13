@@ -56,31 +56,59 @@ public class OpenAiTtsEntity extends TtsModelBase implements Serializable {
     private OpenAiAudioApi.SpeechRequest.AudioResponseFormat format;
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey) {
-        this(openAiTtsType, apiKey, null, null, null);
+        this(openAiTtsType, apiKey, null, null, null, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, Long readTimeout) {
+        this(openAiTtsType, apiKey, null, null, null, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format) {
-        this(openAiTtsType, apiKey, format, null, null);
+        this(openAiTtsType, apiKey, format, null, null, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format, Long readTimeout) {
+        this(openAiTtsType, apiKey, format, null, null, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, String baseUrl) {
-        this(openAiTtsType, apiKey, null, baseUrl, null);
+        this(openAiTtsType, apiKey, null, baseUrl, null, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, String baseUrl, Long readTimeout) {
+        this(openAiTtsType, apiKey, null, baseUrl, null, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format, String baseUrl) {
-        this(openAiTtsType, apiKey, format, baseUrl, null);
+        this(openAiTtsType, apiKey, format, baseUrl, null, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format, String baseUrl, Long readTimeout) {
+        this(openAiTtsType, apiKey, format, baseUrl, null, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.Voice voice) {
-        this(openAiTtsType, apiKey, null, null, voice);
+        this(openAiTtsType, apiKey, null, null, voice, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.Voice voice, Long readTimeout) {
+        this(openAiTtsType, apiKey, null, null, voice, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, String baseUrl, OpenAiAudioApi.SpeechRequest.Voice voice) {
-        this(openAiTtsType, apiKey, null, baseUrl, voice);
+        this(openAiTtsType, apiKey, null, baseUrl, voice, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, String baseUrl, OpenAiAudioApi.SpeechRequest.Voice voice, Long readTimeout) {
+        this(openAiTtsType, apiKey, null, baseUrl, voice, readTimeout);
     }
 
     public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format, String baseUrl, OpenAiAudioApi.SpeechRequest.Voice voice) {
-        super(TtsServiceType.OpenAI);
+        this(openAiTtsType, apiKey, format, baseUrl, voice, null);
+    }
+
+    public OpenAiTtsEntity(OpenAiTtsType openAiTtsType, String apiKey, OpenAiAudioApi.SpeechRequest.AudioResponseFormat format, String baseUrl, OpenAiAudioApi.SpeechRequest.Voice voice, Long readTimeout) {
+        super(TtsServiceType.OpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

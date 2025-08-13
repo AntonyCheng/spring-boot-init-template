@@ -177,13 +177,11 @@ public class SpringImageTest {
         OpenAiImageEntity openAiImageEntity = new OpenAiImageEntity(OpenAiImageType.DallE2_256_256, "sk-xxx");
         StabilityAiImageEntity stabilityAiImageEntity = new StabilityAiImageEntity(StabilityAiImageType.SD_1_6_1344_768, "sk-xxx");
         ZhiPuAiImageEntity zhiPuAiImageEntity = new ZhiPuAiImageEntity(ZhiPuAiImageType.CogView_3_Flash, "xxx.xxx", "xxx");
-        QianFanImageEntity qianFanImageEntity = new QianFanImageEntity(QianFanImageType.SD_XL_1024_1024, "xxx", "xxx");
         AzureOpenAiImageEntity azureOpenAiImageEntity = new AzureOpenAiImageEntity(AzureOpenAiImageType.DallE3_1024_1024, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         String prompt = "a dog and two cat";
         System.out.println(aiImageService.imageToTempUrl(openAiImageEntity, prompt));
         System.out.println(aiImageService.imageToTempUrl(stabilityAiImageEntity, prompt));
         System.out.println(aiImageService.imageToTempUrl(zhiPuAiImageEntity, prompt));
-        System.out.println(aiImageService.imageToTempUrl(qianFanImageEntity, prompt));
         System.out.println(aiImageService.imageToTempUrl(azureOpenAiImageEntity, prompt));
     }
 
@@ -192,13 +190,11 @@ public class SpringImageTest {
         OpenAiImageEntity openAiImageEntity = new OpenAiImageEntity(OpenAiImageType.DallE2_256_256, "sk-xxx");
         StabilityAiImageEntity stabilityAiImageEntity = new StabilityAiImageEntity(StabilityAiImageType.SD_1_6_1344_768, "sk-xxx");
         ZhiPuAiImageEntity zhiPuAiImageEntity = new ZhiPuAiImageEntity(ZhiPuAiImageType.CogView_3_Flash, "xxx.xxx", "xxx");
-        QianFanImageEntity qianFanImageEntity = new QianFanImageEntity(QianFanImageType.SD_XL_1024_1024, "xxx", "xxx");
         AzureOpenAiImageEntity azureOpenAiImageEntity = new AzureOpenAiImageEntity(AzureOpenAiImageType.DallE3_1024_1024, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
         String prompt = "a dog and two cat";
         System.out.println(Arrays.toString(aiImageService.imageToByteArray(openAiImageEntity, prompt).get(0)));
         System.out.println(Arrays.toString(aiImageService.imageToByteArray(stabilityAiImageEntity, prompt).get(0)));
         System.out.println(Arrays.toString(aiImageService.imageToByteArray(zhiPuAiImageEntity, prompt).get(0)));
-        System.out.println(Arrays.toString(aiImageService.imageToByteArray(qianFanImageEntity, prompt).get(0)));
         System.out.println(Arrays.toString(aiImageService.imageToByteArray(azureOpenAiImageEntity, prompt).get(0)));
     }
 

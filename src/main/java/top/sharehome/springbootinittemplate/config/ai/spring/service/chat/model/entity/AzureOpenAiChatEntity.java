@@ -48,7 +48,7 @@ public class AzureOpenAiChatEntity extends ChatModelBase implements Serializable
         this(model, modelVersion, apiKey, endpoint, null, null, null);
     }
 
-    public AzureOpenAiChatEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Integer readTimeout) {
+    public AzureOpenAiChatEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Long readTimeout) {
         this(model, modelVersion, apiKey, endpoint, null, null, readTimeout);
     }
 
@@ -56,7 +56,7 @@ public class AzureOpenAiChatEntity extends ChatModelBase implements Serializable
         this(model, modelVersion, apiKey, endpoint, temperature, topP, null);
     }
 
-    public AzureOpenAiChatEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Double temperature, Double topP, Integer readTimeout) {
+    public AzureOpenAiChatEntity(String model, OpenAIServiceVersion modelVersion, String apiKey, String endpoint, Double temperature, Double topP, Long readTimeout) {
         super(ChatServiceType.AzureOpenAI, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");

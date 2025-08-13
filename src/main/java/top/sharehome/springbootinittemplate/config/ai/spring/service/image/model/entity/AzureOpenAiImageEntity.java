@@ -47,11 +47,19 @@ public class AzureOpenAiImageEntity extends ImageModelBase implements Serializab
 
 
     public AzureOpenAiImageEntity(AzureOpenAiImageType azureOpenAiImageType, String apiKey, String endpoint) {
-        this(azureOpenAiImageType, apiKey, endpoint, null);
+        this(azureOpenAiImageType, apiKey, endpoint, null, null);
+    }
+
+    public AzureOpenAiImageEntity(AzureOpenAiImageType azureOpenAiImageType, String apiKey, String endpoint, Long readTimeout) {
+        this(azureOpenAiImageType, apiKey, endpoint, null, readTimeout);
     }
 
     public AzureOpenAiImageEntity(AzureOpenAiImageType azureOpenAiImageType, String apiKey, String endpoint, Integer n) {
-        super(ImageServiceType.AzureOpenAI);
+        this(azureOpenAiImageType, apiKey, endpoint, n, null);
+    }
+
+    public AzureOpenAiImageEntity(AzureOpenAiImageType azureOpenAiImageType, String apiKey, String endpoint, Integer n, Long readTimeout) {
+        super(ImageServiceType.AzureOpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

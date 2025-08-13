@@ -44,7 +44,7 @@ public class MiniMaxEmbeddingEntity extends EmbeddingModelBase implements Serial
     }
 
     public MiniMaxEmbeddingEntity(String model, String apiKey) {
-        super(EmbeddingServiceType.MiniMax);
+        super(EmbeddingServiceType.MiniMax, null);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

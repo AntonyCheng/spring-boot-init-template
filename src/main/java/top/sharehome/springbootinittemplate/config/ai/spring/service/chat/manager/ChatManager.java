@@ -2,6 +2,8 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.manag
 
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.HttpClient;
+import com.azure.core.util.HttpClientOptions;
 import com.knuddels.jtokkit.api.EncodingType;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
@@ -37,6 +39,7 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.entity.*;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -279,6 +282,9 @@ public class ChatManager {
         return AzureOpenAiChatModel.builder()
                 .openAIClientBuilder(
                         new OpenAIClientBuilder()
+                                .httpClient(HttpClient.createDefault(
+                                        new HttpClientOptions().setReadTimeout(Duration.ofMillis(entity.getReadTimeout()))
+                                ))
                                 .credential(new AzureKeyCredential(entity.getApiKey()))
                                 .endpoint(entity.getEndpoint())
                                 .serviceVersion(entity.getModelVersion())
@@ -301,7 +307,7 @@ public class ChatManager {
     private static RestClient.Builder getRestClient(ChatModelBase model) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         if (Objects.nonNull(model.getReadTimeout())) {
-            requestFactory.setReadTimeout(model.getReadTimeout());
+            requestFactory.setReadTimeout(Duration.ofMillis(model.getReadTimeout()));
         }
         return RestClient.builder().requestFactory(requestFactory);
     }

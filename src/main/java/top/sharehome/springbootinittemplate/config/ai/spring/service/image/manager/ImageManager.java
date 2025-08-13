@@ -3,6 +3,8 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mana
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.HttpClient;
+import com.azure.core.util.HttpClientOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.azure.openai.AzureOpenAiImageModel;
 import org.springframework.ai.azure.openai.AzureOpenAiImageOptions;
@@ -17,6 +19,7 @@ import org.springframework.ai.stabilityai.api.StabilityAiImageOptions;
 import org.springframework.ai.zhipuai.ZhiPuAiImageModel;
 import org.springframework.ai.zhipuai.ZhiPuAiImageOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiImageApi;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -27,6 +30,7 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.ZhiPuAiImageEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -58,6 +62,7 @@ public class ImageManager {
      */
     private static OpenAiImageModel getOpenAiImageModel(OpenAiImageEntity entity) {
         OpenAiImageApi openAiImageApi = OpenAiImageApi.builder()
+                .restClientBuilder(getRestClient(entity))
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(entity.getApiKey())
                 .restClientBuilder(RestClient.builder())
@@ -77,6 +82,9 @@ public class ImageManager {
      */
     private static AzureOpenAiImageModel getAzureOpenAiImageModel(AzureOpenAiImageEntity entity) {
         OpenAIClient openAiClient = new OpenAIClientBuilder()
+                .httpClient(HttpClient.createDefault(
+                        new HttpClientOptions().setReadTimeout(Duration.ofMillis(entity.getReadTimeout()))
+                ))
                 .credential(new AzureKeyCredential(entity.getApiKey()))
                 .endpoint(entity.getEndpoint())
                 .buildClient();
@@ -94,7 +102,12 @@ public class ImageManager {
      * @apiNote 如果直接使用Stability官方的模型，则不支持仅包含中文的提示词（会触发审核系统），推荐直接使用英文提示词
      */
     private static StabilityAiImageModel getStabilityAiImageModel(StabilityAiImageEntity entity) {
-        StabilityAiApi stabilityAiApi = new StabilityAiApi(entity.getApiKey(), entity.getStabilityAiImageType().getImageModel(), entity.getBaseUrl(), RestClient.builder());
+        StabilityAiApi stabilityAiApi = new StabilityAiApi(
+                entity.getApiKey(),
+                entity.getStabilityAiImageType().getImageModel(),
+                entity.getBaseUrl(),
+                getRestClient(entity)
+        );
         return new StabilityAiImageModel(stabilityAiApi, StabilityAiImageOptions.builder()
                 .model(entity.getStabilityAiImageType().getImageModel())
                 .N(entity.getN())
@@ -113,6 +126,17 @@ public class ImageManager {
                 .model(entity.getZhiPuAiImageType().getImageModel())
                 .user(StringUtils.isBlank(entity.getUser()) ? null : entity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
+    }
+
+    /**
+     * 获取请求构造类
+     */
+    private static RestClient.Builder getRestClient(ImageModelBase model) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        if (Objects.nonNull(model.getReadTimeout())) {
+            requestFactory.setReadTimeout(Duration.ofMillis(model.getReadTimeout()));
+        }
+        return RestClient.builder().requestFactory(requestFactory);
     }
 
 }

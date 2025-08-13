@@ -51,19 +51,35 @@ public class OpenAiImageEntity extends ImageModelBase implements Serializable {
     private Integer n;
 
     public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey) {
-        this(openAiImageType, apiKey, null, null);
+        this(openAiImageType, apiKey, null, null, null);
+    }
+
+    public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, Long readTimeout) {
+        this(openAiImageType, apiKey, null, null, readTimeout);
     }
 
     public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, Integer n) {
-        this(openAiImageType, apiKey, null, n);
+        this(openAiImageType, apiKey, null, n, null);
+    }
+
+    public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, Integer n, Long readTimeout) {
+        this(openAiImageType, apiKey, null, n, readTimeout);
     }
 
     public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, String baseUrl) {
-        this(openAiImageType, apiKey, baseUrl, null);
+        this(openAiImageType, apiKey, baseUrl, null, null);
+    }
+
+    public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, String baseUrl, Long readTimeout) {
+        this(openAiImageType, apiKey, baseUrl, null, readTimeout);
     }
 
     public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, String baseUrl, Integer n) {
-        super(ImageServiceType.OpenAI);
+        this(openAiImageType, apiKey, baseUrl, n, null);
+    }
+
+    public OpenAiImageEntity(OpenAiImageType openAiImageType, String apiKey, String baseUrl, Integer n, Long readTimeout) {
+        super(ImageServiceType.OpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

@@ -44,7 +44,7 @@ public class ZhiPuAiImageEntity extends ImageModelBase implements Serializable {
     }
 
     public ZhiPuAiImageEntity(ZhiPuAiImageType zhiPuAiImageType, String apiKey, String user) {
-        super(ImageServiceType.ZhiPuAI);
+        super(ImageServiceType.ZhiPuAI, null);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

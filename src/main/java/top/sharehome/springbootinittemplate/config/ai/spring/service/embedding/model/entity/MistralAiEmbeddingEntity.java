@@ -44,7 +44,7 @@ public class MistralAiEmbeddingEntity extends EmbeddingModelBase implements Seri
     }
 
     public MistralAiEmbeddingEntity(String model, String apiKey) {
-        super(EmbeddingServiceType.MistralAI);
+        super(EmbeddingServiceType.MistralAI, null);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

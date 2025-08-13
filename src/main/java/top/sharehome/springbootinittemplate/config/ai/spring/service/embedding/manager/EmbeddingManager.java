@@ -2,6 +2,8 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.
 
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.HttpClient;
+import com.azure.core.util.HttpClientOptions;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.azure.openai.AzureOpenAiEmbeddingModel;
 import org.springframework.ai.azure.openai.AzureOpenAiEmbeddingOptions;
@@ -24,13 +26,17 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingModel;
 import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.model.EmbeddingModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.model.entity.*;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * AI Embedding管理器
@@ -72,6 +78,7 @@ public class EmbeddingManager {
      */
     private static OpenAiEmbeddingModel getOpenAiEmbeddingModel(OpenAiEmbeddingEntity entity) {
         OpenAiApi openAiApi = OpenAiApi.builder()
+                .restClientBuilder(getRestClient(entity))
                 .baseUrl(entity.getBaseUrl())
                 .apiKey(entity.getApiKey())
                 .build();
@@ -85,6 +92,7 @@ public class EmbeddingManager {
      */
     private static OllamaEmbeddingModel getOllamaEmbeddingModel(OllamaEmbeddingEntity entity) {
         OllamaApi ollamaApi = OllamaApi.builder()
+                .restClientBuilder(getRestClient(entity))
                 .baseUrl(entity.getBaseUrl())
                 .build();
         return new OllamaEmbeddingModel(ollamaApi, OllamaOptions.builder()
@@ -127,10 +135,27 @@ public class EmbeddingManager {
      * 获取AzureOpenAiEmbeddingModel
      */
     private static AzureOpenAiEmbeddingModel getAzureOpenAiEmbeddingModel(AzureOpenAiEmbeddingEntity entity) {
-        OpenAIClientBuilder clientBuilder = new OpenAIClientBuilder().credential(new AzureKeyCredential(entity.getApiKey())).endpoint(entity.getEndpoint()).serviceVersion(entity.getModelVersion());
+        OpenAIClientBuilder clientBuilder = new OpenAIClientBuilder()
+                .httpClient(HttpClient.createDefault(
+                        new HttpClientOptions().setReadTimeout(Duration.ofMillis(entity.getReadTimeout()))
+                ))
+                .credential(new AzureKeyCredential(entity.getApiKey()))
+                .endpoint(entity.getEndpoint())
+                .serviceVersion(entity.getModelVersion());
         return new AzureOpenAiEmbeddingModel(clientBuilder.buildClient(), MetadataMode.EMBED, AzureOpenAiEmbeddingOptions.builder()
                 .deploymentName(entity.getModel())
                 .build(), ObservationRegistry.NOOP);
+    }
+
+    /**
+     * 获取请求构造类
+     */
+    private static RestClient.Builder getRestClient(EmbeddingModelBase model) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        if (Objects.nonNull(model.getReadTimeout())) {
+            requestFactory.setReadTimeout(Duration.ofMillis(model.getReadTimeout()));
+        }
+        return RestClient.builder().requestFactory(requestFactory);
     }
 
 }

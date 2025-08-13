@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.TranscriptionServiceType;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.TtsServiceType;
@@ -23,11 +24,18 @@ public abstract class TtsModelBase {
      */
     protected TtsServiceType ttsServiceType;
 
-    public TtsModelBase(TtsServiceType ttsServiceType) {
+    /**
+     * 模型响应超时时间
+     */
+    @Setter
+    protected Long readTimeout;
+
+    public TtsModelBase(TtsServiceType ttsServiceType, Long readTimeout) {
         if (Objects.isNull(ttsServiceType)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[ttsServiceType]不能为空");
         }
         this.ttsServiceType = ttsServiceType;
+        this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
     }
 
 }

@@ -50,19 +50,35 @@ public class OpenAiEmbeddingEntity extends EmbeddingModelBase implements Seriali
     private String baseUrl;
 
     public OpenAiEmbeddingEntity(OpenAiApi.EmbeddingModel embeddingModel, String apiKey) {
-        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, null);
+        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, null, null);
+    }
+
+    public OpenAiEmbeddingEntity(OpenAiApi.EmbeddingModel embeddingModel, String apiKey, Long readTimeout) {
+        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, null, readTimeout);
     }
 
     public OpenAiEmbeddingEntity(OpenAiApi.EmbeddingModel embeddingModel, String apiKey, String baseUrl) {
-        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, baseUrl);
+        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, baseUrl, null);
+    }
+
+    public OpenAiEmbeddingEntity(OpenAiApi.EmbeddingModel embeddingModel, String apiKey, String baseUrl, Long readTimeout) {
+        this(Objects.isNull(embeddingModel) ? DEFAULT_MODEL : embeddingModel.getValue(), apiKey, baseUrl, readTimeout);
     }
 
     public OpenAiEmbeddingEntity(String model, String apiKey) {
-        this(model, apiKey, null);
+        this(model, apiKey, null, null);
+    }
+
+    public OpenAiEmbeddingEntity(String model, String apiKey, Long readTimeout) {
+        this(model, apiKey, null, readTimeout);
     }
 
     public OpenAiEmbeddingEntity(String model, String apiKey, String baseUrl) {
-        super(EmbeddingServiceType.OpenAI);
+        this(model, apiKey, baseUrl, null);
+    }
+
+    public OpenAiEmbeddingEntity(String model, String apiKey, String baseUrl, Long readTimeout) {
+        super(EmbeddingServiceType.OpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

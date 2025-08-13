@@ -44,7 +44,7 @@ public class ZhiPuAiEmbeddingEntity extends EmbeddingModelBase implements Serial
     }
 
     public ZhiPuAiEmbeddingEntity(String model, String apiKey) {
-        super(EmbeddingServiceType.ZhiPuAI);
+        super(EmbeddingServiceType.ZhiPuAI, null);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

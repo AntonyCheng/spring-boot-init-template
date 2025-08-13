@@ -2,6 +2,7 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.transcript
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.TranscriptionServiceType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
@@ -22,11 +23,18 @@ public abstract class TranscriptionModelBase {
      */
     protected TranscriptionServiceType transcriptionServiceType;
 
-    public TranscriptionModelBase(TranscriptionServiceType transcriptionServiceType) {
+    /**
+     * 模型响应超时时间
+     */
+    @Setter
+    protected Long readTimeout;
+
+    public TranscriptionModelBase(TranscriptionServiceType transcriptionServiceType, Long readTimeout) {
         if (Objects.isNull(transcriptionServiceType)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[transcriptionServiceType]不能为空");
         }
         this.transcriptionServiceType = transcriptionServiceType;
+        this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
     }
 
 }

@@ -62,63 +62,123 @@ public class OpenAiTranscriptionEntity extends TranscriptionModelBase implements
     private OpenAiAudioApi.TranscriptResponseFormat format;
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey) {
-        this(openAiTranscriptionType, apiKey, null, null, null, null);
+        this(openAiTranscriptionType, apiKey, null, null, null, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, null, null, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl) {
-        this(openAiTranscriptionType, apiKey, null, baseUrl, null, null);
+        this(openAiTranscriptionType, apiKey, null, baseUrl, null, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, baseUrl, null, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format) {
-        this(openAiTranscriptionType, apiKey, format, null, null, null);
+        this(openAiTranscriptionType, apiKey, format, null, null, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, null, null, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, Float temperature) {
-        this(openAiTranscriptionType, apiKey, null, null, null, temperature);
+        this(openAiTranscriptionType, apiKey, null, null, null, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, null, null, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, Float temperature) {
-        this(openAiTranscriptionType, apiKey, format, null, null, temperature);
+        this(openAiTranscriptionType, apiKey, format, null, null, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, null, null, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, LanguageType language) {
-        this(openAiTranscriptionType, apiKey, null, null, language, null);
+        this(openAiTranscriptionType, apiKey, null, null, language, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, LanguageType language, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, null, language, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, LanguageType language) {
-        this(openAiTranscriptionType, apiKey, format, null, language, null);
+        this(openAiTranscriptionType, apiKey, format, null, language, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, LanguageType language, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, null, language, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, LanguageType language, Float temperature) {
-        this(openAiTranscriptionType, apiKey, null, null, language, temperature);
+        this(openAiTranscriptionType, apiKey, null, null, language, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, LanguageType language, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, null, language, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, LanguageType language, Float temperature) {
-        this(openAiTranscriptionType, apiKey, format, null, language, temperature);
+        this(openAiTranscriptionType, apiKey, format, null, language, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, LanguageType language, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, null, language, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, Float temperature) {
-        this(openAiTranscriptionType, apiKey, null, baseUrl, null, temperature);
+        this(openAiTranscriptionType, apiKey, null, baseUrl, null, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, baseUrl, null, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, Float temperature) {
-        this(openAiTranscriptionType, apiKey, format, baseUrl, null, temperature);
+        this(openAiTranscriptionType, apiKey, format, baseUrl, null, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, baseUrl, null, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, LanguageType language) {
-        this(openAiTranscriptionType, apiKey, null, baseUrl, language, null);
+        this(openAiTranscriptionType, apiKey, null, baseUrl, language, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, baseUrl, language, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, LanguageType language) {
-        this(openAiTranscriptionType, apiKey, format, baseUrl, language, null);
+        this(openAiTranscriptionType, apiKey, format, baseUrl, language, null, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, LanguageType language, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, format, baseUrl, language, null, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Float temperature) {
-        this(openAiTranscriptionType, apiKey, null, baseUrl, language, temperature);
+        this(openAiTranscriptionType, apiKey, null, baseUrl, language, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, String baseUrl, LanguageType language, Float temperature, Long readTimeout) {
+        this(openAiTranscriptionType, apiKey, null, baseUrl, language, temperature, readTimeout);
     }
 
     public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, LanguageType language, Float temperature) {
-        super(TranscriptionServiceType.OpenAI);
+        this(openAiTranscriptionType, apiKey, format, baseUrl, language, temperature, null);
+    }
+
+    public OpenAiTranscriptionEntity(OpenAiTranscriptionType openAiTranscriptionType, String apiKey, OpenAiAudioApi.TranscriptResponseFormat format, String baseUrl, LanguageType language, Float temperature, Long readTimeout) {
+        super(TranscriptionServiceType.OpenAI, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }

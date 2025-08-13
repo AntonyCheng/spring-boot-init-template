@@ -33,7 +33,11 @@ public class OllamaEmbeddingEntity extends EmbeddingModelBase implements Seriali
     private String baseUrl;
 
     public OllamaEmbeddingEntity(String model, String baseUrl) {
-        super(EmbeddingServiceType.Ollama);
+        this(model, baseUrl, null);
+    }
+
+    public OllamaEmbeddingEntity(String model, String baseUrl, Long readTimeout) {
+        super(EmbeddingServiceType.Ollama, readTimeout);
         if (StringUtils.isBlank(model)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[model]不能为空");
         }
