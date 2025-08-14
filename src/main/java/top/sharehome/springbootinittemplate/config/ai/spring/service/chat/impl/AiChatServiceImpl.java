@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.chat.impl;
 
 import com.knuddels.jtokkit.api.EncodingType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -623,7 +622,7 @@ public class AiChatServiceImpl implements AiChatService {
         messages.add(new AssistantMessage(reasoningContent));
         Integer usage = new TikTokenUtils(ChatManager.getEncodingType(model)).getMessageTokenNumber(messages);
         sw.stop();
-        return new ChatResult(content.trim(), reasoningContent.trim(), sw.getDuration().toMillis(), usage, prompt);
+        return new ChatResult(content.trim(), reasoningContent.trim(), sw.getDuration().toMillis(), usage, model.getChatServiceType().getValue(), model.getModel(), prompt);
     }
 
     @Override
@@ -694,7 +693,7 @@ public class AiChatServiceImpl implements AiChatService {
                                     : null;
                             if (Objects.nonNull(assistantMessage)) {
                                 DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
-                                return new ChatResultChunk(output.getText(), output.getReasoningContent());
+                                return new ChatResultChunk(output.getText(), output.getReasoningContent(), model.getChatServiceType().getValue(), ((DeepSeekChatEntity) model).getModel());
                             } else {
                                 return null;
                             }
@@ -710,7 +709,7 @@ public class AiChatServiceImpl implements AiChatService {
                                 String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
                                 String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
                                 if (!replyContentIncrement.isEmpty() || !thinkContentIncrement.isEmpty()) {
-                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
+                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement, model.getChatServiceType().getValue(), model.getModel());
                                 }
                             }
                             return null;
@@ -786,7 +785,7 @@ public class AiChatServiceImpl implements AiChatService {
                                     : null;
                             if (Objects.nonNull(assistantMessage)) {
                                 DeepSeekAssistantMessage output = (DeepSeekAssistantMessage) assistantMessage;
-                                return new ChatResultChunk(output.getText(), output.getReasoningContent());
+                                return new ChatResultChunk(output.getText(), output.getReasoningContent(), model.getChatServiceType().getValue(), model.getModel());
                             } else {
                                 return null;
                             }
@@ -801,7 +800,7 @@ public class AiChatServiceImpl implements AiChatService {
                                 String replyContentIncrement = reasonStreamParser.getReplyContentIncrement();
                                 String thinkContentIncrement = reasonStreamParser.getThinkContentIncrement();
                                 if (!replyContentIncrement.isEmpty() || !thinkContentIncrement.isEmpty()) {
-                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement);
+                                    return new ChatResultChunk(replyContentIncrement, thinkContentIncrement, model.getChatServiceType().getValue(), model.getModel());
                                 }
                             }
                             return null;
@@ -960,7 +959,7 @@ public class AiChatServiceImpl implements AiChatService {
                             }));
                 })
                 .blockLast();
-        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), model.getChatServiceType().getValue(), model.getModel(), prompt);
     }
 
     @Override
@@ -1121,7 +1120,7 @@ public class AiChatServiceImpl implements AiChatService {
                             }));
                 })
                 .blockLast();
-        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), model.getChatServiceType().getValue(), model.getModel(), prompt);
     }
 
     @Override
@@ -1280,7 +1279,7 @@ public class AiChatServiceImpl implements AiChatService {
                             }));
                 })
                 .blockLast();
-        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), prompt);
+        return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), model.getChatServiceType().getValue(), model.getModel(), prompt);
     }
 
     /**

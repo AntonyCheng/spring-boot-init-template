@@ -33,11 +33,6 @@ public enum EmbeddingServiceType {
     MistralAI("MistralAI", "mistralai"),
 
     /**
-     * QianFan服务
-     */
-    QianFan("千帆AI", "qianfan"),
-
-    /**
      * MiniMax服务
      */
     MiniMax("MiniMax", "minimax"),

@@ -33,19 +33,9 @@ public enum ChatServiceType {
     ZhiPuAI("智谱AI", "zhipu"),
 
     /**
-     * Moonshot服务
-     */
-    Moonshot("月之暗面", "moonshot"),
-
-    /**
      * MistralAi服务
      */
     MistralAI("MistralAI", "mistralai"),
-
-    /**
-     * QianFan服务
-     */
-    QianFan("千帆AI", "qianfan"),
 
     /**
      * MiniMax服务

@@ -43,27 +43,43 @@ public class ChatResult implements Serializable {
      */
     private Prompt prompt;
 
-    public ChatResult(String content, String reasoningContent, Long time, Integer usage, String prompt) {
+    /**
+     * 服务名称
+     */
+    private String modelService;
+
+    /**
+     * 模型名称
+     */
+    private String modelName;
+
+    public ChatResult(String content, String reasoningContent, Long time, Integer usage, String modelService, String modelName, String prompt) {
         this.content = content;
         this.reasoningContent = reasoningContent;
         this.time = time;
         this.usage = usage;
+        this.modelService = modelService;
+        this.modelName = modelName;
         this.prompt = new Prompt(new UserMessage(prompt));
     }
 
-    public ChatResult(String content, String reasoningContent, Long time, Integer usage, Message... prompt) {
+    public ChatResult(String content, String reasoningContent, Long time, Integer usage, String modelService, String modelName, Message... prompt) {
         this.content = content;
         this.reasoningContent = reasoningContent;
         this.time = time;
         this.usage = usage;
+        this.modelService = modelService;
+        this.modelName = modelName;
         this.prompt = new Prompt(prompt);
     }
 
-    public ChatResult(String content, String reasoningContent, Long time, Integer usage, Prompt prompt) {
+    public ChatResult(String content, String reasoningContent, Long time, Integer usage, String modelService, String modelName, Prompt prompt) {
         this.content = content;
         this.reasoningContent = reasoningContent;
         this.time = time;
         this.usage = usage;
+        this.modelService = modelService;
+        this.modelName = modelName;
         this.prompt = prompt;
     }
 

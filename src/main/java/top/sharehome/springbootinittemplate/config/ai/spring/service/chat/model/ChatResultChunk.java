@@ -25,9 +25,21 @@ public class ChatResultChunk implements Serializable {
      */
     private String reasoningContent;
 
-    public ChatResultChunk(String content, String reasoningContent) {
+    /**
+     * 服务名称（新增）
+     */
+    private String modelService;
+
+    /**
+     * 模型名称（新增）
+     */
+    private String modelName;
+
+    public ChatResultChunk(String content, String reasoningContent, String modelService, String modelName) {
         this.content = content;
         this.reasoningContent = reasoningContent;
+        this.modelService = modelService;
+        this.modelName = modelName;
     }
 
     @Serial

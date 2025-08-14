@@ -28,11 +28,6 @@ public enum ImageServiceType {
     ZhiPuAI("智谱AI", "zhipu"),
 
     /**
-     * QianFan服务
-     */
-    QianFan("千帆AI", "qianfan"),
-
-    /**
      * Stability服务
      */
     Stability("Stability", "stability");

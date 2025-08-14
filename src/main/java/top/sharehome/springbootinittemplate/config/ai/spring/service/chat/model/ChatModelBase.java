@@ -47,8 +47,10 @@ public abstract class ChatModelBase {
         }
         this.chatServiceType = chatServiceType;
         this.temperature = Objects.isNull(temperature) ? 0.8 : temperature;
-        this.topP = Objects.isNull(topP) ? 0.9 : temperature;
+        this.topP = Objects.isNull(topP) ? 0.9 : topP;
         this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
     }
+
+    public abstract String getModel();
 
 }

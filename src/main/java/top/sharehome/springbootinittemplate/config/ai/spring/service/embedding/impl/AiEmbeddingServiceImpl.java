@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.stereotype.Service;
@@ -26,59 +25,64 @@ public class AiEmbeddingServiceImpl implements AiEmbeddingService {
 
     @Override
     public float[] embedToArray(EmbeddingModelBase model, String text) {
-        if (StringUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        return EmbeddingManager.getEmbeddingResponse(model, List.of(text)).getResult().getOutput();
+        this.validateText(text);
+        return EmbeddingManager
+                .getEmbeddingResponse(model, List.of(text))
+                .getResult()
+                .getOutput();
     }
 
     @Override
     public List<float[]> embedToArrayList(EmbeddingModelBase model, String... text) {
-        if (ArrayUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        return EmbeddingManager.getEmbeddingResponse(model, List.of(text)).getResults().stream().map(Embedding::getOutput).toList();
+        return embedToArrayList(model, List.of(text));
     }
 
     @Override
     public List<float[]> embedToArrayList(EmbeddingModelBase model, List<String> text) {
-        if (CollectionUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        return EmbeddingManager.getEmbeddingResponse(model, text).getResults().stream().map(Embedding::getOutput).toList();
+        this.validateText(text);
+        return EmbeddingManager
+                .getEmbeddingResponse(model, text)
+                .getResults()
+                .stream()
+                .map(Embedding::getOutput)
+                .toList();
     }
 
     @Override
     public List<Embedding> embedToEmbeddingList(EmbeddingModelBase model, String... text) {
-        if (ArrayUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        return EmbeddingManager.getEmbeddingResponse(model, List.of(text)).getResults();
+        return embedToEmbeddingList(model, List.of(text));
     }
 
     @Override
     public List<Embedding> embedToEmbeddingList(EmbeddingModelBase model, List<String> text) {
-        if (CollectionUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        return EmbeddingManager.getEmbeddingResponse(model, text).getResults();
+        this.validateText(text);
+        return EmbeddingManager
+                .getEmbeddingResponse(model, text)
+                .getResults();
     }
 
     @Override
     public EmbeddingResult embedToResult(EmbeddingModelBase model, String... text) {
-        if (ArrayUtils.isEmpty(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        List<String> textList = List.of(text);
-        return EmbeddingResult.buildResult(EmbeddingManager.getEmbeddingResponse(model, textList), textList);
+        return embedToResult(model, List.of(text));
     }
 
     @Override
     public EmbeddingResult embedToResult(EmbeddingModelBase model, List<String> text) {
+        this.validateText(text);
+        return EmbeddingResult
+                .buildResult(EmbeddingManager.getEmbeddingResponse(model, text), text);
+    }
+
+    private void validateText(String text) {
+        if (StringUtils.isEmpty(text)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
+        }
+    }
+
+    private void validateText(List<String> text) {
         if (CollectionUtils.isEmpty(text)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
         }
-        return EmbeddingResult.buildResult(EmbeddingManager.getEmbeddingResponse(model, text), text);
     }
 
 }
