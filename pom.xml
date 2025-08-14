@@ -54,8 +54,9 @@
         <java.version>17</java.version>
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
-        <!-- Spring AI相关 -->
+        <!-- AI相关 -->
         <spring.ai.version>1.0.1</spring.ai.version>
+        <langgraph4j.version>1.6.0</langgraph4j.version>
         <!-- Netty相关 -->
         <netty.version>4.1.114.Final</netty.version>
         <!-- 数据驱动层相关 -->
@@ -232,6 +233,11 @@
         </dependency>
 
         <!-- AI 其他依赖配置 -->
+        <dependency>
+            <groupId>org.bsc.langgraph4j</groupId>
+            <artifactId>langgraph4j-core</artifactId>
+            <version>${langgraph4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>

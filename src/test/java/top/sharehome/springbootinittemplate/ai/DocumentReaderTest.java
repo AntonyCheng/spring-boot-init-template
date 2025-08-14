@@ -17,7 +17,7 @@ public class DocumentReaderTest {
     private final static String PROJECT_PATH = System.getProperty("user.dir");
 
     public static void main(String[] args) throws FileNotFoundException {
-        ByteArrayInputStream inputStream1 = new ByteArrayInputStream(JSON.toJSONString(Map.of("name", "伍程成", "age", "18")).getBytes());
+        ByteArrayInputStream inputStream1 = new ByteArrayInputStream(JSON.toJSONString(Map.of("name", "AntonyCheng", "age", "18")).getBytes());
         List<Document> documents1 = DocumentReader.readJson(inputStream1, "name", "age");
         documents1.forEach(document -> System.out.println(document.getText()));
 
