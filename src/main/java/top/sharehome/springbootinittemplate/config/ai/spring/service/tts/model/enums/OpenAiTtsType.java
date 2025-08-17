@@ -25,6 +25,6 @@ public enum OpenAiTtsType {
     /**
      * OpenAI文字转语音模型
      */
-    private final String ttsModel;
+    private final String model;
 
 }

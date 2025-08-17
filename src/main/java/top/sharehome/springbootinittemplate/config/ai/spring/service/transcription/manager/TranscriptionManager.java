@@ -18,7 +18,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.TranscriptionModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.AzureOpenAiTranscriptionEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.OpenAiTranscriptionEntity;
@@ -60,7 +59,7 @@ public class TranscriptionManager {
                 .build();
         return new OpenAiAudioTranscriptionModel(openAiAudioApi, OpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
-                .model(entity.getOpenAiTranscriptionType().getTranscriptionModel())
+                .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -79,7 +78,7 @@ public class TranscriptionManager {
                 .buildClient();
         return new AzureOpenAiAudioTranscriptionModel(openAiClient, AzureOpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
-                .deploymentName(entity.getAzureOpenAiTranscriptionType().getTranscriptionModel())
+                .deploymentName(entity.getModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
                 .build());

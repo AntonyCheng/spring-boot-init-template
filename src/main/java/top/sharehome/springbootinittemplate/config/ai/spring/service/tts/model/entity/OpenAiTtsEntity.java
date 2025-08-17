@@ -122,7 +122,11 @@ public class OpenAiTtsEntity extends TtsModelBase implements Serializable {
         this.voice = Objects.isNull(voice) ? OpenAiAudioApi.SpeechRequest.Voice.ALLOY : voice;
     }
 
+    @Override
+    public String getModel() {
+        return openAiTtsType.getModel();
+    }
+
     @Serial
     private static final long serialVersionUID = -7448156234178317721L;
-
 }

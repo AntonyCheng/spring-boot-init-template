@@ -89,10 +89,26 @@ public class OpenAiImageEntity extends ImageModelBase implements Serializable {
         this.apiKey = apiKey;
         this.openAiImageType = openAiImageType;
         this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL : baseUrl;
-        this.n = OpenAiImageApi.ImageModel.DALL_E_3.getValue().equals(openAiImageType.getImageModel()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+        this.n = OpenAiImageApi.ImageModel.DALL_E_3.getValue().equals(openAiImageType.getModel()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+    }
+
+    @Override
+    public String getModel() {
+        return openAiImageType.getModel();
+    }
+
+    public Integer getWidth() {
+        return openAiImageType.getWidth();
+    }
+
+    public Integer getHeight() {
+        return openAiImageType.getHeight();
+    }
+
+    public String getQuality() {
+        return openAiImageType.getQuality();
     }
 
     @Serial
     private static final long serialVersionUID = 5714491181503496584L;
-
 }

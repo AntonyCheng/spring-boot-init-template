@@ -30,7 +30,7 @@ public enum AzureOpenAiImageType {
     /**
      * OpenAI图像模型
      */
-    private final String imageModel;
+    private final String model;
 
     /**
      * 图像宽度

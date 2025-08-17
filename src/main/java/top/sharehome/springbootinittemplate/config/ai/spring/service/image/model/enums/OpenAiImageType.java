@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mode
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.ai.openai.api.OpenAiImageApi;
 
 /**
  * OpenAI Image类型
@@ -61,7 +60,7 @@ public enum OpenAiImageType {
     /**
      * OpenAI图像模型
      */
-    private final String imageModel;
+    private final String model;
 
     /**
      * 图像宽度

@@ -28,12 +28,7 @@ public class StabilityAiImageEntity extends ImageModelBase implements Serializab
     /**
      * 默认StabilityAI API接口地址
      */
-    private static final String DEFAULT_BASE_URL = "https://api.stability.ai";
-
-    /**
-     * 默认StabilityAI API接口URI地址
-     */
-    private static final String DEFAULT_BASE_URI = "/v1";
+    private static final String DEFAULT_BASE_URL = "https://api.stability.ai/v1";
 
     /**
      * StabilityAI密钥
@@ -130,12 +125,24 @@ public class StabilityAiImageEntity extends ImageModelBase implements Serializab
         }
         this.apiKey = apiKey;
         this.stabilityAiImageType = stabilityAiImageType;
-        this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL + DEFAULT_BASE_URI : baseUrl + stabilityAiImageType.getBaseUri();
+        this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL : baseUrl;
         this.n = Objects.isNull(n) || n < 1 || n > 4 ? 1 : n;
         this.styleEnum = styleEnum;
     }
 
+    @Override
+    public String getModel() {
+        return stabilityAiImageType.getModel();
+    }
+
+    public Integer getWidth(){
+        return stabilityAiImageType.getWidth();
+    }
+
+    public Integer getHeight(){
+        return stabilityAiImageType.getHeight();
+    }
+
     @Serial
     private static final long serialVersionUID = -6281265478943674439L;
-
 }

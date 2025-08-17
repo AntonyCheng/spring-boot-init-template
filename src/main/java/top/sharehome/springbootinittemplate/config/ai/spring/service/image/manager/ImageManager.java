@@ -69,11 +69,11 @@ public class ImageManager {
                 .responseErrorHandler(new DefaultResponseErrorHandler())
                 .build();
         return new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder()
-                .model(entity.getOpenAiImageType().getImageModel())
-                .quality(entity.getOpenAiImageType().getQuality())
+                .model(entity.getModel())
+                .quality(entity.getQuality())
                 .N(entity.getN())
-                .height(entity.getOpenAiImageType().getHeight())
-                .width(entity.getOpenAiImageType().getWidth())
+                .height(entity.getHeight())
+                .width(entity.getWidth())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
 
@@ -89,10 +89,10 @@ public class ImageManager {
                 .endpoint(entity.getEndpoint())
                 .buildClient();
         return new AzureOpenAiImageModel(openAiClient, AzureOpenAiImageOptions.builder()
-                .deploymentName(entity.getAzureOpenAiImageType().getImageModel())
+                .deploymentName(entity.getModel())
                 .N(entity.getN())
-                .height(entity.getAzureOpenAiImageType().getHeight())
-                .width(entity.getAzureOpenAiImageType().getWidth())
+                .height(entity.getHeight())
+                .width(entity.getWidth())
                 .build());
     }
 
@@ -104,15 +104,15 @@ public class ImageManager {
     private static StabilityAiImageModel getStabilityAiImageModel(StabilityAiImageEntity entity) {
         StabilityAiApi stabilityAiApi = new StabilityAiApi(
                 entity.getApiKey(),
-                entity.getStabilityAiImageType().getImageModel(),
+                entity.getModel(),
                 entity.getBaseUrl(),
                 getRestClient(entity)
         );
         return new StabilityAiImageModel(stabilityAiApi, StabilityAiImageOptions.builder()
-                .model(entity.getStabilityAiImageType().getImageModel())
+                .model(entity.getModel())
                 .N(entity.getN())
-                .height(entity.getStabilityAiImageType().getHeight())
-                .width(entity.getStabilityAiImageType().getWidth())
+                .height(entity.getHeight())
+                .width(entity.getWidth())
                 .stylePreset(Objects.isNull(entity.getStyleEnum()) ? null : entity.getStyleEnum().toString())
                 .build());
     }
@@ -123,7 +123,7 @@ public class ImageManager {
     private static ZhiPuAiImageModel getZhiPuAiImageModel(ZhiPuAiImageEntity entity) {
         ZhiPuAiImageApi zhiPuAiImageApi = new ZhiPuAiImageApi(entity.getApiKey());
         return new ZhiPuAiImageModel(zhiPuAiImageApi, ZhiPuAiImageOptions.builder()
-                .model(entity.getZhiPuAiImageType().getImageModel())
+                .model(entity.getModel())
                 .user(StringUtils.isBlank(entity.getUser()) ? null : entity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }

@@ -37,4 +37,6 @@ public abstract class ImageModelBase {
         this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
     }
 
+    public abstract String getModel();
+
 }

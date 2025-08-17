@@ -8,7 +8,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.TranscriptionModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.TtsModelBase;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.entity.OpenAiTtsEntity;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeAiException;
@@ -43,7 +42,7 @@ public class TtsManager {
                 .responseErrorHandler(new DefaultResponseErrorHandler())
                 .build();
         return new OpenAiAudioSpeechModel(openAiAudioApi, OpenAiAudioSpeechOptions.builder()
-                .model(entity.getOpenAiTtsType().getTtsModel())
+                .model(entity.getModel())
                 .voice(entity.getVoice())
                 .responseFormat(entity.getFormat())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);

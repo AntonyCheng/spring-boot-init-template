@@ -32,9 +32,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     @Override
     public List<String> imageToTempUrl(ImageModelBase model, String prompt) {
-        if (StringUtils.isBlank(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
+        this.validateParams(prompt);
         List<String> res = new ArrayList<>();
         for (ImageGeneration result : ImageManager.getImageModel(model).call(new ImagePrompt(prompt)).getResults()) {
             if (StringUtils.isBlank(result.getOutput().getUrl())) {
@@ -56,9 +54,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     @Override
     public List<byte[]> imageToByteArray(ImageModelBase model, String prompt) {
-        if (StringUtils.isBlank(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
+        this.validateParams(prompt);
         List<byte[]> res = new ArrayList<>();
         for (ImageGeneration result : ImageManager.getImageModel(model).call(new ImagePrompt(prompt)).getResults()) {
             if (StringUtils.isBlank(result.getOutput().getUrl())) {
@@ -79,6 +75,12 @@ public class AiImageServiceImpl implements AiImageService {
             }
         }
         return res;
+    }
+
+    private void validateParams(String prompt) {
+        if (StringUtils.isBlank(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
     }
 
 }

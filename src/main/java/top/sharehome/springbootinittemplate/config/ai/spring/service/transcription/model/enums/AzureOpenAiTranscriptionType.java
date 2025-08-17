@@ -20,6 +20,6 @@ public enum AzureOpenAiTranscriptionType {
     /**
      * AzureOpenAI语音转文字模型
      */
-    private final String transcriptionModel;
+    private final String model;
 
 }

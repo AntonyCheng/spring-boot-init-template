@@ -56,7 +56,11 @@ public class ZhiPuAiImageEntity extends ImageModelBase implements Serializable {
         this.user = user;
     }
 
+    @Override
+    public String getModel() {
+        return zhiPuAiImageType.getModel();
+    }
+
     @Serial
     private static final long serialVersionUID = -4023461810627194329L;
-
 }

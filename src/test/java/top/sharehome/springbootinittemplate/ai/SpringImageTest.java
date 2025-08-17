@@ -27,7 +27,10 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.impl.AiImageServiceImpl;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.entity.*;
-import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.*;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.AzureOpenAiImageType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.OpenAiImageType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.StabilityAiImageType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.ZhiPuAiImageType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +60,7 @@ public class SpringImageTest {
                 .responseErrorHandler(new DefaultResponseErrorHandler())
                 .build();
         OpenAiImageModel imageModel = new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder()
-                .model(entity.getOpenAiImageType().getImageModel())
+                .model(entity.getOpenAiImageType().getModel())
                 .quality(entity.getOpenAiImageType().getQuality())
                 .N(entity.getN())
                 .height(entity.getOpenAiImageType().getHeight())
@@ -90,7 +93,7 @@ public class SpringImageTest {
                 .endpoint(entity.getEndpoint())
                 .buildClient();
         AzureOpenAiImageModel imageModel = new AzureOpenAiImageModel(openAiClient, AzureOpenAiImageOptions.builder()
-                .deploymentName(entity.getAzureOpenAiImageType().getImageModel())
+                .deploymentName(entity.getAzureOpenAiImageType().getModel())
                 .N(1)
                 .height(entity.getAzureOpenAiImageType().getHeight())
                 .width(entity.getAzureOpenAiImageType().getWidth())
@@ -119,7 +122,7 @@ public class SpringImageTest {
         StabilityAiImageEntity stabilityAiImageEntity = new StabilityAiImageEntity(StabilityAiImageType.SD_1_6_1344_768, "sk-xxx");
         StabilityAiApi stabilityAiApi = new StabilityAiApi(stabilityAiImageEntity.getApiKey());
         StabilityAiImageModel imageModel = new StabilityAiImageModel(stabilityAiApi, StabilityAiImageOptions.builder()
-                .model(stabilityAiImageEntity.getStabilityAiImageType().getImageModel())
+                .model(stabilityAiImageEntity.getStabilityAiImageType().getModel())
                 .N(stabilityAiImageEntity.getN())
                 .height(stabilityAiImageEntity.getStabilityAiImageType().getHeight())
                 .width(stabilityAiImageEntity.getStabilityAiImageType().getWidth())
@@ -150,7 +153,7 @@ public class SpringImageTest {
         ZhiPuAiImageEntity zhiPuAiImageEntity = new ZhiPuAiImageEntity(ZhiPuAiImageType.CogView_3_Flash, "xxx.xxx", "xxx");
         ZhiPuAiImageApi zhiPuAiImageApi = new ZhiPuAiImageApi(zhiPuAiImageEntity.getApiKey());
         ZhiPuAiImageModel imageModel = new ZhiPuAiImageModel(zhiPuAiImageApi, ZhiPuAiImageOptions.builder()
-                .model(zhiPuAiImageEntity.getZhiPuAiImageType().getImageModel())
+                .model(zhiPuAiImageEntity.getZhiPuAiImageType().getModel())
                 .user(StringUtils.isBlank(zhiPuAiImageEntity.getUser()) ? null : zhiPuAiImageEntity.getUser())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
         ImageResponse imageResponse = imageModel.call(new ImagePrompt("a dog and two cat"));

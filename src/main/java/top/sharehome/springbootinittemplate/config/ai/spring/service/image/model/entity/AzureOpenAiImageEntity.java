@@ -72,10 +72,22 @@ public class AzureOpenAiImageEntity extends ImageModelBase implements Serializab
         this.apiKey = apiKey;
         this.azureOpenAiImageType = azureOpenAiImageType;
         this.endpoint = endpoint;
-        this.n = OpenAiImageApi.ImageModel.DALL_E_3.getValue().equals(azureOpenAiImageType.getImageModel()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+        this.n = OpenAiImageApi.ImageModel.DALL_E_3.getValue().equals(azureOpenAiImageType.getModel()) || Objects.isNull(n) || n < 1 || n > 10 ? 1 : n;
+    }
+
+    @Override
+    public String getModel() {
+        return azureOpenAiImageType.getModel();
+    }
+
+    public Integer getWidth(){
+        return azureOpenAiImageType.getWidth();
+    }
+
+    public Integer getHeight(){
+        return azureOpenAiImageType.getHeight();
     }
 
     @Serial
     private static final long serialVersionUID = -9206031514959163500L;
-
 }

@@ -23,6 +23,6 @@ public enum ZhiPuAiImageType {
     /**
      * ZhiPuAI图像模型
      */
-    private final String imageModel;
+    private final String model;
 
 }

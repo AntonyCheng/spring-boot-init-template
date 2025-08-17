@@ -47,7 +47,7 @@ public class SpringTranscriptionTest {
                 .build();
         OpenAiAudioTranscriptionModel model = new OpenAiAudioTranscriptionModel(openAiAudioApi, OpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
-                .model(entity.getOpenAiTranscriptionType().getTranscriptionModel())
+                .model(entity.getOpenAiTranscriptionType().getModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -64,7 +64,7 @@ public class SpringTranscriptionTest {
                 .buildClient();
         AzureOpenAiAudioTranscriptionModel model = new AzureOpenAiAudioTranscriptionModel(openAiClient, AzureOpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
-                .deploymentName(entity.getAzureOpenAiTranscriptionType().getTranscriptionModel())
+                .deploymentName(entity.getAzureOpenAiTranscriptionType().getModel())
                 .temperature(entity.getTemperature())
                 .responseFormat(entity.getFormat())
                 .build());

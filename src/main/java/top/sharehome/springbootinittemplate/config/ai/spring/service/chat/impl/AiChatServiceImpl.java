@@ -293,8 +293,6 @@ public class AiChatServiceImpl implements AiChatService {
         return chatFlux(userId, token, model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
-    // ======================================================================
-
     @Override
     public ChatResult chatString(ChatModelBase model, Message... prompt) {
         return chatString(model, null, (byte[]) null, null, toPrompt(prompt));
@@ -535,8 +533,6 @@ public class AiChatServiceImpl implements AiChatService {
         return chatFlux(userId, token, model, mimeType, byteArray, systemPrompt, toPrompt(prompt));
     }
 
-    // ======================================================================
-
     @Override
     public ChatResult chatString(ChatModelBase model, Prompt prompt) {
         return chatString(model, null, (byte[]) null, null, prompt);
@@ -579,9 +575,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatString(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
+        this.validateParams(prompt);
         // 计时器
         StopWatch sw = new StopWatch();
         sw.start();
@@ -667,9 +661,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public Stream<ChatResultChunk> chatStream(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
+        this.validateParams(prompt);
         Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .system(s -> {
@@ -759,9 +751,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public Flux<ChatResultChunk> chatFlux(ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
+        this.validateParams(prompt);
         Flux<ChatResponse> chatResponseFlux = ChatManager.getChatClient(model)
                 .prompt(prompt)
                 .system(s -> {
@@ -849,13 +839,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(SseEmitter sseEmitter, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        // 参数验证
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
-        }
+        this.validateParams(prompt, sseEmitter);
         // 结果总汇
         AtomicReference<String> content = new AtomicReference<>("");
         AtomicReference<String> reasoningContent = new AtomicReference<>("");
@@ -1004,17 +988,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        // 参数验证
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        Map<String, SseEmitter> sseEmitters = SseUtils.getSseEmitter(userId);
-        if (Objects.isNull(sseEmitters)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
-        }
+        Map<String, SseEmitter> sseEmitters = this.validateParams(prompt,userId);
         // 结果总汇
         AtomicReference<String> content = new AtomicReference<>("");
         AtomicReference<String> reasoningContent = new AtomicReference<>("");
@@ -1165,17 +1139,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatResult chatFlux(Long userId, String token, ChatModelBase model, MimeType mimeType, byte[] byteArray, String systemPrompt, Prompt prompt) {
-        // 参数验证
-        if (Objects.isNull(prompt)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        SseEmitter sseEmitter = SseUtils.getSseEmitter(userId, token);
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
-        }
+        SseEmitter sseEmitter = this.validateParams(prompt, userId, token);
         // 结果总汇
         AtomicReference<String> content = new AtomicReference<>("");
         AtomicReference<String> reasoningContent = new AtomicReference<>("");
@@ -1280,6 +1244,61 @@ public class AiChatServiceImpl implements AiChatService {
                 })
                 .blockLast();
         return new ChatResult(content.get().trim(), reasoningContent.get().trim(), time.get(), usage.get(), model.getChatServiceType().getValue(), model.getModel(), prompt);
+    }
+
+    /**
+     * 校验参数
+     */
+    private void validateParams(Prompt prompt) {
+        if (Objects.isNull(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+    }
+
+    /**
+     * 校验参数
+     */
+    private void validateParams(Prompt prompt, SseEmitter sseEmitter) {
+        if (Objects.isNull(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (Objects.isNull(sseEmitter)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
+        }
+    }
+
+    /**
+     * 校验参数
+     */
+    private Map<String, SseEmitter> validateParams(Prompt prompt,Long userId){
+        if (Objects.isNull(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (!LoginUtils.isLogin(userId)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
+        }
+        Map<String, SseEmitter> sseEmitters = SseUtils.getSseEmitter(userId);
+        if (Objects.isNull(sseEmitters)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
+        }
+        return sseEmitters;
+    }
+
+    /**
+     * 校验参数
+     */
+    private SseEmitter validateParams(Prompt prompt,Long userId, String token){
+        if (Objects.isNull(prompt)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (!LoginUtils.isLogin(userId)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
+        }
+        SseEmitter sseEmitter = SseUtils.getSseEmitter(userId, token);
+        if (Objects.isNull(sseEmitter)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
+        }
+        return sseEmitter;
     }
 
     /**

@@ -191,7 +191,11 @@ public class AzureOpenAiTranscriptionEntity extends TranscriptionModelBase imple
         this.temperature = Objects.isNull(temperature) || temperature < 0 || temperature > 0 ? 0f : temperature;
     }
 
+    @Override
+    public String getModel() {
+        return azureOpenAiTranscriptionType.getModel();
+    }
+
     @Serial
     private static final long serialVersionUID = 3190604993674221440L;
-
 }

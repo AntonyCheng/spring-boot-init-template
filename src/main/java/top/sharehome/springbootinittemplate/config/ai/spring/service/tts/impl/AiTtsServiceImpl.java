@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
@@ -38,9 +39,7 @@ public class AiTtsServiceImpl implements AiTtsService {
 
     @Override
     public byte[] speechBytes(TtsModelBase model, String text) {
-        if (StringUtils.isBlank(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
+        this.validateParams(text);
         if (model instanceof OpenAiTtsEntity entity) {
             return TtsManager.getTtsModel(entity).call(text);
         } else {
@@ -50,9 +49,7 @@ public class AiTtsServiceImpl implements AiTtsService {
 
     @Override
     public OutputStream speechStream(TtsModelBase model, String text) {
-        if (StringUtils.isBlank(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
+        this.validateParams(text);
         try {
             if (model instanceof OpenAiTtsEntity entity) {
                 ByteArrayOutputStream res = new ByteArrayOutputStream();
@@ -68,12 +65,7 @@ public class AiTtsServiceImpl implements AiTtsService {
 
     @Override
     public TtsResult speechFlux(SseEmitter sseEmitter, TtsModelBase model, String text) {
-        if (StringUtils.isBlank(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
-        }
+        this.validateParams(text, sseEmitter);
         // 结果总汇
         AtomicReference<byte[]> result = new AtomicReference<>(null);
         // 消耗时间
@@ -115,16 +107,7 @@ public class AiTtsServiceImpl implements AiTtsService {
 
     @Override
     public TtsResult speechFlux(Long userId, TtsModelBase model, String text) {
-        if (StringUtils.isBlank(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        Map<String, SseEmitter> sseEmitters = SseUtils.getSseEmitter(userId);
-        if (Objects.isNull(sseEmitters)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
-        }
+        Map<String, SseEmitter> sseEmitters = this.validateParams(text, userId);
         // 结果总汇
         AtomicReference<byte[]> result = new AtomicReference<>(null);
         // 消耗时间
@@ -168,16 +151,7 @@ public class AiTtsServiceImpl implements AiTtsService {
 
     @Override
     public TtsResult speechFlux(Long userId, String token, TtsModelBase model, String text) {
-        if (StringUtils.isBlank(text)) {
-            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
-        }
-        if (!LoginUtils.isLogin(userId)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
-        }
-        SseEmitter sseEmitter = SseUtils.getSseEmitter(userId, token);
-        if (Objects.isNull(sseEmitter)) {
-            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
-        }
+        SseEmitter sseEmitter = this.validateParams(text, userId, token);
         // 结果总汇
         AtomicReference<byte[]> result = new AtomicReference<>(null);
         // 消耗时间
@@ -209,6 +183,61 @@ public class AiTtsServiceImpl implements AiTtsService {
                 })
                 .blockLast();
         return new TtsResult(result.get(), takeTime.get(), text);
+    }
+
+    /**
+     * 校验参数
+     */
+    private void validateParams(String text) {
+        if (StringUtils.isBlank(text)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
+        }
+    }
+
+    /**
+     * 校验参数
+     */
+    private void validateParams(String text, SseEmitter sseEmitter) {
+        if (StringUtils.isBlank(text)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[prompt]不能为空");
+        }
+        if (Objects.isNull(sseEmitter)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "参数[sseEmitter]不能为空");
+        }
+    }
+
+    /**
+     * 校验参数
+     */
+    private Map<String, SseEmitter> validateParams(String text, Long userId) {
+        if (StringUtils.isBlank(text)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
+        }
+        if (!LoginUtils.isLogin(userId)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
+        }
+        Map<String, SseEmitter> sseEmitters = SseUtils.getSseEmitter(userId);
+        if (Objects.isNull(sseEmitters)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未连接");
+        }
+        return sseEmitters;
+    }
+
+    /**
+     * 校验参数
+     */
+    private SseEmitter validateParams(String text, Long userId, String token) {
+        if (StringUtils.isBlank(text)) {
+            throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[text]不能为空");
+        }
+        if (!LoginUtils.isLogin(userId)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + "]未登录");
+        }
+        SseEmitter sseEmitter = SseUtils.getSseEmitter(userId, token);
+        if (Objects.isNull(sseEmitter)) {
+            throw new CustomizeAiException(ReturnCode.FAIL, "目标用户[" + userId + ":" + token + "]未连接");
+        }
+        return sseEmitter;
     }
 
 }

@@ -38,7 +38,7 @@ public class SpringTtsTest {
                     .responseErrorHandler(new DefaultResponseErrorHandler())
                     .build();
             OpenAiAudioSpeechModel model = new OpenAiAudioSpeechModel(openAiAudioApi, OpenAiAudioSpeechOptions.builder()
-                    .model(entity.getOpenAiTtsType().getTtsModel())
+                    .model(entity.getOpenAiTtsType().getModel())
                     .voice(entity.getVoice())
                     .responseFormat(entity.getFormat())
                     .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);

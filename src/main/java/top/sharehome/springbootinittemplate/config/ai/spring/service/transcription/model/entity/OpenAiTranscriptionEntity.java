@@ -193,7 +193,11 @@ public class OpenAiTranscriptionEntity extends TranscriptionModelBase implements
         this.temperature = Objects.isNull(temperature) || temperature < 0 || temperature > 0 ? 0f : temperature;
     }
 
+    @Override
+    public String getModel() {
+        return openAiTranscriptionType.getModel();
+    }
+
     @Serial
     private static final long serialVersionUID = -1432011716496457507L;
-
 }
