@@ -55,6 +55,36 @@ services:
 #      docker_net:
 #        ipv4_address: 177.177.177.101
 #
+##############################   m3e   ################################
+#  mariadb:
+#    image: mariadb:12-ubi10
+#    container_name: mariadb
+#    environment:
+#      # 时区上海
+#      TZ: Asia/Shanghai
+#      # root 密码
+#      MYSQL_ROOT_PASSWORD: 123456
+#      # 初始化数据库
+#      MYSQL_DATABASE: init_db
+#    ports:
+#      - "13306:3306"
+#    volumes:
+#      # 数据挂载
+#      - ./data/mariadb/data/:/var/lib/mysql/
+#      # 配置挂载
+#      - ./data/mariadb/conf/:/etc/mysql/conf.d/
+#    command:
+#      # MariaDB配置参数
+#      --character-set-server=utf8mb4
+#      --collation-server=utf8mb4_general_ci
+#      --explicit_defaults_for_timestamp=true
+#      --lower_case_table_names=1
+#      --skip-name-resolve
+#    privileged: true
+#    networks:
+#      docker_net:
+#        ipv4_address: 177.177.177.102
+#
 ############################   Redis   ###############################
 #  redis:
 #    image: redis:7.4.1
@@ -73,7 +103,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.102
+#        ipv4_address: 177.177.177.103
 #
 ############################   MinIO   ###############################
 #  minio:
@@ -109,7 +139,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.103
+#        ipv4_address: 177.177.177.104
 #
 ###########################   RabbitMQ   #############################
 #  rabbitmq:
@@ -130,7 +160,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.104
+#        ipv4_address: 177.177.177.105
 #
 ##############################   ELK   ################################
 #  elasticsearch:
@@ -152,7 +182,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.105
+#        ipv4_address: 177.177.177.106
 #
 #  logstash:
 #    image: logstash:7.14.0
@@ -168,7 +198,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.106
+#        ipv4_address: 177.177.177.107
 #
 #  kibana:
 #    image: kibana:7.14.0
@@ -188,7 +218,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.107
+#        ipv4_address: 177.177.177.108
 #
 ############################   MongoDB   ##############################
 #  mongodb:
@@ -204,7 +234,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.108
+#        ipv4_address: 177.177.177.109
 #
 #############################   Ollama   ##############################
 #  ollama:
@@ -217,7 +247,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.109
+#        ipv4_address: 177.177.177.110
 #
 #############################   NewAPI   ##############################
 #  newapi:
@@ -233,7 +263,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.110
+#        ipv4_address: 177.177.177.111
 #
 ##############################   m3e   ################################
 #  m3e:
@@ -253,79 +283,7 @@ services:
 #    privileged: true
 #    networks:
 #      docker_net:
-#        ipv4_address: 177.177.177.111
-#
-############################   Milvus   ###############################
-#  milvus-etcd:
-#    container_name: milvus-etcd
-#    image: quay.io/coreos/etcd:v3.5.18
-#    environment:
-#      TZ: Asia/Shanghai
-#      ETCD_AUTO_COMPACTION_MODE: revision
-#      ETCD_AUTO_COMPACTION_RETENTION: 1000
-#      ETCD_QUOTA_BACKEND_BYTES: 4294967296
-#      ETCD_SNAPSHOT_COUNT: 50000
-#    volumes:
-#      - ./data/milvus/etcd:/etcd
-#    command: etcd -advertise-client-urls=http://177.177.177.112:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
-#    healthcheck:
-#      test: ["CMD", "etcdctl", "endpoint", "health"]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
-#    privileged: true
-#    networks:
-#      docker_net:
 #        ipv4_address: 177.177.177.112
-#
-#  milvus-minio:
-#    container_name: milvus-minio
-#    image: minio/minio:RELEASE.2024-09-13T20-26-02Z
-#    environment:
-#      TZ: Asia/Shanghai
-#      MINIO_ACCESS_KEY: minioadmin
-#      MINIO_SECRET_KEY: minioadmin
-#    volumes:
-#      - ./data/milvus/minio:/minio_data
-#    command: minio server /minio_data --console-address ":9001"
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
-#    privileged: true
-#    networks:
-#      docker_net:
-#        ipv4_address: 177.177.177.113
-#
-#  milvus-standalone:
-#    container_name: milvus-standalone
-#    image: milvusdb/milvus:v2.5.10
-#    command: ["milvus", "run", "standalone"]
-#    security_opt:
-#      - seccomp:unconfined
-#    environment:
-#      TZ: Asia/Shanghai
-#      ETCD_ENDPOINTS: 177.177.177.112:2379
-#      MINIO_ADDRESS: 177.177.177.113:9000
-#    volumes:
-#      - ./data/milvus/data:/var/lib/milvus
-#      - ./data/milvus/milvus.yaml:/milvus/configs/milvus.yaml
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
-#      interval: 30s
-#      timeout: 20s
-#      retries: 3
-#    ports:
-#      - "19530:19530"
-#      - "9091:9091"
-#    depends_on:
-#      - "milvus-etcd"
-#      - "milvus-minio"
-#    privileged: true
-#    networks:
-#      docker_net:
-#        ipv4_address: 177.177.177.114
 networks:
   docker_net:
     external: true

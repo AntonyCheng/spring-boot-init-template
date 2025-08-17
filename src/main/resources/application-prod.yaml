@@ -212,11 +212,11 @@ spring:
     # 获取消息最大等待时间（单位：毫秒）
     max-await-timeout: 3000
     # 单机 RabbitMQ IP（单价模式配置和集群模式配置只能存在一个）
-    host: 177.177.177.104
+    host: 177.177.177.105
     # 单机 RabbitMQ 端口
     port: 5672
     # 集群RabbitMQ（单价模式配置和集群模式配置只能存在一个）
-    #addresses: 177.177.177.104:5672,177.177.177.104:5673,177.177.177.104:5674
+    #addresses: 177.177.177.105:5672,177.177.177.105:5673,177.177.177.105:5674
     # 虚拟主机
     virtual-host: /
     # 用户名
@@ -248,18 +248,18 @@ spring:
     # 系统缓存Redis配置（这里的Redis配置主要用于鉴权认证等模板自带服务的系统缓存服务，要求Redis版本在7.0以上）
     redis:
       # 单机地址（单价模式配置和集群模式配置只能存在一个）
-      host: 177.177.177.102
+      host: 177.177.177.103
       # 单机端口，默认为6379
       port: 6379
       # 集群地址（单价模式配置和集群模式配置只能存在一个）
       #cluster:
       #  nodes:
-      #    - 177.177.177.102:6379
-      #    - 177.177.177.102:6380
-      #    - 177.177.177.102:6381
-      #    - 177.177.177.102:6382
-      #    - 177.177.177.102:6383
-      #    - 177.177.177.102:6384
+      #    - 177.177.177.103:6379
+      #    - 177.177.177.103:6380
+      #    - 177.177.177.103:6381
+      #    - 177.177.177.103:6382
+      #    - 177.177.177.103:6383
+      #    - 177.177.177.103:6384
       # 数据库索引
       database: 0
       # 密码（考虑是否需要密码）
@@ -288,17 +288,24 @@ spring:
     # 多数据源
     dynamic:
       # 默认master数据源
-      primary: master
+      primary: mysql
       datasource:
-           # ShardingSphere MySQL数据源
-        master:
+        # ShardingSphere MySQL数据源
+        mysql:
           driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
           url: jdbc:shardingsphere:classpath:mysql/mysql-prod.yaml
           type: com.zaxxer.hikari.HikariDataSource
         # PostgreSQL数据源
-        slave:
+        postgresql:
           driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://177.177.177.101:5432/init_db?ssl=false
+          url: jdbc:postgresql://177.177.177.101:5432/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+          username: root
+          password: 123456
+          type: com.zaxxer.hikari.HikariDataSource
+        # MariaDB数据源
+        mariadb:
+          driver-class-name: org.mariadb.jdbc.Driver
+          url: jdbc:mariadb://177.177.177.102:13306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
           username: root
           password: 123456
           type: com.zaxxer.hikari.HikariDataSource
@@ -350,23 +357,6 @@ spring:
         test-on-borrow: false
         test-on-return: false
 
-# Milvus向量数据库
-milvus:
-  # todo 是否启动Milvus向量数据库（预先关闭）
-  enable: false
-  # URL
-  url: http://177.177.177.114:19530
-  # 用户名称
-  username: root
-  # 密码
-  password: 123456
-  # 数据库名称
-  database-name: default
-  # 数据库集合名称
-  collection-name: vector_store
-  # 嵌入维度
-  embedding-dimension: 2048
-
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
 redisson:
@@ -379,7 +369,7 @@ redisson:
     # todo 是否启动单机Redis（Redisson）缓存（预先关闭）
     enable-single: false
     # 单机地址（一定要在redis协议下）
-    address: redis://177.177.177.102:6379
+    address: redis://177.177.177.103:6379
     # 数据库索引
     database: 1
     # 密码（考虑是否需要密码）
@@ -400,12 +390,12 @@ redisson:
     enable-cluster: false
     # Redis集群节点（一定要在Redis协议下）
     node-addresses:
-      - redis://177.177.177.102:6379
-      - redis://177.177.177.102:6380
-      - redis://177.177.177.102:6381
-      - redis://177.177.177.102:6382
-      - redis://177.177.177.102:6383
-      - redis://177.177.177.102:6384
+      - redis://177.177.177.103:6379
+      - redis://177.177.177.103:6380
+      - redis://177.177.177.103:6381
+      - redis://177.177.177.103:6382
+      - redis://177.177.177.103:6383
+      - redis://177.177.177.103:6384
     # 密码（考虑是否需要密码）
     password: 123456
     # master最小空闲连接数
@@ -455,7 +445,7 @@ oss:
     # todo 是否开启（预先关闭）
     enable: false
     # 域名（格式：【ip:port】）
-    endpoint: 177.177.177.103:9000
+    endpoint: 177.177.177.104:9000
     # 是否开启TLS
     enable-tls: false
     # 用户的 SecretId
@@ -510,7 +500,7 @@ easy-es:
   # todo 是否启动（预先关闭）
   enable: false
   # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
-  address: 177.177.177.105:9200
+  address: 177.177.177.106:9200
   ## 如果无账号密码则可不配置此行
   #username:
   ## 如果无账号密码则可不配置此行
@@ -519,7 +509,7 @@ easy-es:
   #dynamic:
   #  datasource:
   #    ds1:
-  #      address: 177.177.177.105:9201
+  #      address: 177.177.177.106:9201
   #      # 如果无账号密码则可不配置此行
   #      username:
   #      # 如果无账号密码则可不配置此行

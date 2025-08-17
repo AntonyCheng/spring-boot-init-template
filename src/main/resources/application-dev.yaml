@@ -288,18 +288,25 @@ spring:
     # 多数据源
     dynamic:
       # 默认master数据源
-      primary: master
+      primary: mysql
       datasource:
         # ShardingSphere MySQL数据源
-        master:
+        mysql:
           driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
           url: jdbc:shardingsphere:classpath:mysql/mysql-dev.yaml
           type: com.zaxxer.hikari.HikariDataSource
         # PostgreSQL数据源
-        #slave:
+        #postgresql:
         #  driver-class-name: org.postgresql.Driver
-        #  url: jdbc:postgresql://127.0.0.1:5432/init_db?ssl=false
-        #  username: postgres
+        #  url: jdbc:postgresql://127.0.0.1:5432/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        #  username: root
+        #  password: 123456
+        #  type: com.zaxxer.hikari.HikariDataSource
+        # MariaDB数据源
+        #mariadb:
+        #  driver-class-name: org.mariadb.jdbc.Driver
+        #  url: jdbc:mariadb://127.0.0.1:13306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
+        #  username: root
         #  password: 123456
         #  type: com.zaxxer.hikari.HikariDataSource
       # HikariCP连接池配置（首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
@@ -349,23 +356,6 @@ spring:
         test-while-idle: true
         test-on-borrow: false
         test-on-return: false
-
-# Milvus向量数据库
-milvus:
-  # todo 是否启动Milvus向量数据库（预先关闭）
-  enable: false
-  # URL
-  url: http://127.0.0.1:19530
-  # 用户名称
-  username: root
-  # 密码
-  password: 123456
-  # 数据库名称
-  database-name: default
-  # 数据库集合名称
-  collection-name: vector_store
-  # 嵌入维度
-  embedding-dimension: 2048
 
 # 业务缓存Redisson配置（这里的Redisson配置主要用来系统业务逻辑的缓存服务，要求Redis版本在7.0以上）
 # 如果同时开启单机版本和集群版本，只有单机版本生效
