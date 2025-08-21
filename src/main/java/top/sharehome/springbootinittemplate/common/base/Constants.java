@@ -176,4 +176,9 @@ public interface Constants {
      */
     String UNKNOWN_FILE_CONTENT_TYPE = "application/octet-stream";
 
+    /**
+     * 数据库不允许为NULL时，默认的ID
+     */
+    Long NULL_ID = -1L;
+
 }

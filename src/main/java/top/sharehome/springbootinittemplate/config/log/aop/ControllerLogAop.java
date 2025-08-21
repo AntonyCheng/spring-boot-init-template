@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
@@ -33,6 +34,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * 日志的切面类
@@ -139,7 +141,8 @@ public class ControllerLogAop {
             }
             // 设置操作用户ID
             Long userId = LoginUtils.getLoginUserId();
-            log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
+            Long threadId = USER_ID_THREAD_LOCAL.get();
+            log.setUserId(Objects.isNull(userId) ? (Objects.isNull(threadId) ? Constants.NULL_ID : threadId) : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (Objects.isNull(servletRequestAttributes)) {
@@ -245,7 +248,8 @@ public class ControllerLogAop {
             log.setJson(json);
             // 设置操作用户ID
             Long userId = LoginUtils.getLoginUserId();
-            log.setUserId(Objects.isNull(userId) ? USER_ID_THREAD_LOCAL.get() : userId);
+            Long threadId = USER_ID_THREAD_LOCAL.get();
+            log.setUserId(Objects.isNull(userId) ? (Objects.isNull(threadId) ? Constants.NULL_ID : threadId) : userId);
             // 设置接口URI
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (Objects.isNull(servletRequestAttributes)) {

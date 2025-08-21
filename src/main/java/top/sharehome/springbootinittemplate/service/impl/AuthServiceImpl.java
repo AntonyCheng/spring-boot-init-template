@@ -72,6 +72,7 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         }
         // 插入新用户数据
         User user = new User()
+                .setAvatarId(Constants.NULL_ID)
                 .setAccount(authRegisterDto.getAccount())
                 // 注册之后，默认名称是账号
                 .setName(authRegisterDto.getAccount())
@@ -191,8 +192,8 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         }
         AuthLoginVo authLoginVo = new AuthLoginVo();
         BeanUtils.copyProperties(userInDatabase, authLoginVo);
-        File file = fileMapper.selectById(authLoginVo.getAvatarId());
-        authLoginVo.setAvatar(Objects.isNull(file) ? null : file.getUrl());
+        File avatarFile = Objects.equals(authLoginVo.getAvatarId(), Constants.NULL_ID) ? null : fileMapper.selectById(authLoginVo.getAvatarId());
+        authLoginVo.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
         return authLoginVo;
     }
 

@@ -8,15 +8,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
+import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
 import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;
@@ -78,7 +79,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
                 .setOperator(Operator.getLabelByValue(log.getOperator()))
                 .setRequestMethod(log.getRequestMethod())
                 .setMethod(log.getMethod())
-                .setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息")
+                .setUserAccount(Objects.equals(log.getUserId(), Constants.NULL_ID) ? "该操作不记录用户信息" : (Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "用户信息不存在"))
                 .setIp(log.getIp())
                 .setLocation(log.getLocation())
                 .setParam(log.getParam())
@@ -120,7 +121,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
             adminLogExportVo.setOperator(Operator.getLabelByValue(log.getOperator()));
             adminLogExportVo.setRequestMethod(log.getRequestMethod());
             adminLogExportVo.setMethod(log.getMethod());
-            adminLogExportVo.setUserAccount(Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "该操作不记录用户信息");
+            adminLogExportVo.setUserAccount(Objects.equals(log.getUserId(), Constants.NULL_ID) ? "该操作不记录用户信息" : (Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "用户信息不存在"));
             adminLogExportVo.setIp(log.getIp());
             adminLogExportVo.setLocation(log.getLocation());
             adminLogExportVo.setParam(log.getParam());

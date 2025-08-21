@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 返回值处理（Entity ==> Vo）
         List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> {
-            File avatarFile = fileMapper.selectById(user.getAvatarId());
+            File avatarFile = Objects.equals(user.getAvatarId(), Constants.NULL_ID) ? null : fileMapper.selectById(user.getAvatarId());
             return new AdminUserPageVo()
                     .setId(user.getId())
                     .setAccount(user.getAccount())
@@ -104,6 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 插入数据库
         User user = new User()
+                .setAvatarId(Constants.NULL_ID)
                 .setAccount(adminUserAddDto.getAccount())
                 .setPassword(adminUserAddDto.getPassword())
                 .setEmail(adminUserAddDto.getEmail())
@@ -136,7 +137,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         logMapper.delete(logLambdaQueryWrapper);
         LoginUtils.logout(id);
         // 如果业务上有需求在删除用户之后删除用户头像...
-        //MinioUtils.delete(userInDatabase.getAvatar());
+        //if (!Objects.equals(userInDatabase.getAvatarId(), Constants.NULL_ID)) {
+        //    MinioUtils.delete(userInDatabase.getAvatarId());
+        //}
     }
 
     @Override
@@ -239,7 +242,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             adminUserExportVo.setAccount(user.getAccount());
             adminUserExportVo.setEmail(user.getEmail());
             adminUserExportVo.setName(user.getName());
-            File avatarFile = fileMapper.selectById(user.getAvatarId());
+            File avatarFile = Objects.equals(user.getAvatarId(), Constants.NULL_ID) ? null : fileMapper.selectById(user.getAvatarId());
             adminUserExportVo.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
             adminUserExportVo.setRole(StringUtils.equals(user.getRole(), Constants.ROLE_ADMIN) ? "管理员" : "用户");
             adminUserExportVo.setState(!Objects.equals(user.getState(), Constants.USER_DISABLE_STATE) ? "启用" : "禁用");
@@ -366,6 +369,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "账号或工号已经存在[账号：" + user.getAccount() + " 名称：" + user.getName() + "]");
                 }
                 return new User()
+                        .setAvatarId(Constants.NULL_ID)
                         .setAccount(user.getAccount())
                         .setPassword("123456")
                         .setName(user.getName())
