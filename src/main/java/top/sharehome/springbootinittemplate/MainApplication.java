@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author AntonyCheng
  */
 @SpringBootApplication(scanBasePackages = {"top.sharehome.springbootinittemplate.**"})
-@MapperScan(basePackages = {"top.sharehome.springbootinittemplate.mapper"})
+@MapperScan(basePackages = {"top.sharehome.springbootinittemplate.mapper","top.sharehome.springbootinittemplate.config.ai.spring.vector.mapper"})
 @EsMapperScan(value = "top.sharehome.springbootinittemplate.elasticsearch.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)

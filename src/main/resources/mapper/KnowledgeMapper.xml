@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.sharehome.springbootinittemplate.config.ai.spring.vector.mapper.KnowledgeMapper">
+    <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.config.ai.spring.vector.model.entity.Knowledge">
+        <id column="knowledge_id" jdbcType="BIGINT" property="id"/>
+        <result column="knowledge_user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="knowledge_name" jdbcType="VARCHAR" property="name"/>
+        <result column="knowledge_description" jdbcType="VARCHAR" property="description"/>
+        <result column="knowledge_state" jdbcType="INTEGER" property="state"/>
+        <result column="knowledge_model_id" jdbcType="BIGINT" property="modelId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="INTEGER" property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        knowledge_id,
+        knowledge_user_id,
+        knowledge_name,
+        knowledge_description,
+        knowledge_state,
+        knowledge_model_id,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+</mapper>

@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.controller.example.entity;
+package top.sharehome.springbootinittemplate.controller.example.model;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

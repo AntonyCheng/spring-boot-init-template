@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.controller.example.entity;
+package top.sharehome.springbootinittemplate.controller.example.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

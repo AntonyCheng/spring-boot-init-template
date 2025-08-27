@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.sharehome.springbootinittemplate.config.ai.spring.vector.mapper.ChunkMapper">
+    <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.config.ai.spring.vector.model.entity.Chunk">
+        <id column="chunk_id" jdbcType="BIGINT" property="id"/>
+        <result column="chunk_document_id" jdbcType="BIGINT" property="documentId"/>
+        <result column="chunk_knowledge_id" jdbcType="BIGINT" property="knowledgeId"/>
+        <result column="chunk_user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="chunk_content" jdbcType="VARCHAR" property="content"/>
+        <result column="chunk_embedding" jdbcType="OTHER" property="embedding" typeHandler="top.sharehome.springbootinittemplate.config.ai.spring.vector.handler.FloatArrayTypeHandler"/>
+        <result column="chunk_state" jdbcType="INTEGER" property="state"/>
+        <result column="chunk_dimension" jdbcType="INTEGER" property="dimension"/>
+        <result column="chunk_fail_reason" jdbcType="VARCHAR" property="failReason"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="INTEGER" property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        chunk_id,
+        chunk_document_id,
+        chunk_knowledge_id,
+        chunk_user_id,
+        chunk_content,
+        chunk_embedding,
+        chunk_state,
+        chunk_dimension,
+        chunk_fail_reason,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+</mapper>
