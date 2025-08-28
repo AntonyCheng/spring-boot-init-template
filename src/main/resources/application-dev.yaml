@@ -295,17 +295,17 @@ spring:
           driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
           url: jdbc:shardingsphere:classpath:mysql/mysql-dev.yaml
           type: com.zaxxer.hikari.HikariDataSource
-        # PostgreSQL数据源
-        #postgresql:
+        # PostgreSQL向量数据源
+        #postgresql-embed:
         #  driver-class-name: org.postgresql.Driver
-        #  url: jdbc:postgresql://127.0.0.1:5432/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        #  url: jdbc:postgresql://127.0.0.1:5432/init_embed?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
         #  username: root
         #  password: 123456
         #  type: com.zaxxer.hikari.HikariDataSource
-        # MariaDB数据源
-        #mariadb:
+        # MariaDB向量数据源
+        #mariadb-embed:
         #  driver-class-name: org.mariadb.jdbc.Driver
-        #  url: jdbc:mariadb://127.0.0.1:13306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
+        #  url: jdbc:mariadb://127.0.0.1:13306/init_embed?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
         #  username: root
         #  password: 123456
         #  type: com.zaxxer.hikari.HikariDataSource
@@ -724,7 +724,9 @@ mybatis-plus:
   # 对应的 XML 文件位置
   mapper-locations: classpath:mapper/*Mapper.xml
   # 实体扫描，多个package用逗号或者分号分隔
-  type-aliases-package: top.sharehome.*.*.entity
+  type-aliases-package: top.sharehome.springbootinittemplate.model.entity,top.sharehome.springbootinittemplate.config.ai.spring.vector.model.entity
+  # 类型处理器扫描
+  type-handlers-package: top.sharehome.springbootinittemplate.config.ai.spring.vector.handler
   configuration:
     # 自动驼峰命名规则（camel case）映射
     map-underscore-to-camel-case: false

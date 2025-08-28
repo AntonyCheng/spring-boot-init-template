@@ -295,20 +295,20 @@ spring:
           driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
           url: jdbc:shardingsphere:classpath:mysql/mysql-prod.yaml
           type: com.zaxxer.hikari.HikariDataSource
-        # PostgreSQL数据源
-        postgresql:
-          driver-class-name: org.postgresql.Driver
-          url: jdbc:postgresql://177.177.177.101:5432/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
-          username: root
-          password: 123456
-          type: com.zaxxer.hikari.HikariDataSource
-        # MariaDB数据源
-        mariadb:
-          driver-class-name: org.mariadb.jdbc.Driver
-          url: jdbc:mariadb://177.177.177.102:13306/init_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
-          username: root
-          password: 123456
-          type: com.zaxxer.hikari.HikariDataSource
+        # PostgreSQL向量数据源
+        #postgresql-embed:
+        #  driver-class-name: org.postgresql.Driver
+        #  url: jdbc:postgresql://177.177.177.101:5432/init_embed?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        #  username: root
+        #  password: 123456
+        #  type: com.zaxxer.hikari.HikariDataSource
+        ## MariaDB向量数据源
+        #mariadb-embed:
+        #  driver-class-name: org.mariadb.jdbc.Driver
+        #  url: jdbc:mariadb://177.177.177.102:13306/init_embed?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true
+        #  username: root
+        #  password: 123456
+        #  type: com.zaxxer.hikari.HikariDataSource
       # HikariCP连接池配置（首选【dataSourceClassName: com.zaxxer.hikari.HikariDataSource】）
       hikari:
         # 连接池最小连接数量
