@@ -4,8 +4,12 @@ import cn.hutool.core.lang.Snowflake;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
+import org.springframework.ai.embedding.Embedding;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.impl.AiEmbeddingServiceImpl;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.model.EmbeddingModelBase;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.embedding.model.EmbeddingResult;
 import top.sharehome.springbootinittemplate.config.ai.spring.vector.mapper.ChunkMapper;
 import top.sharehome.springbootinittemplate.config.ai.spring.vector.model.bo.ChunkRetrievalBo;
 import top.sharehome.springbootinittemplate.config.ai.spring.vector.model.entity.Chunk;
@@ -24,6 +28,9 @@ import java.util.List;
 public class ChunkServiceImpl extends ServiceImpl<ChunkMapper, Chunk> implements ChunkService {
 
     @Resource
+    private AiEmbeddingServiceImpl aiEmbeddingService;
+
+    @Resource
     private ChunkMapper chunkMapper;
 
     @Resource
@@ -31,20 +38,13 @@ public class ChunkServiceImpl extends ServiceImpl<ChunkMapper, Chunk> implements
 
     @Override
     @DS("postgresql-embed")
-    public void addChunk(List<Tuple2<String, float[]>> data) {
-        List<Chunk> list = data.stream().map(d -> new Chunk()
-                .setDocumentId(Snowflake.DEFAULT_TIME_OFFSET)
-                .setKnowledgeId(Snowflake.DEFAULT_TIME_OFFSET)
-                .setUserId(Snowflake.DEFAULT_TIME_OFFSET)
-                .setContent(d.getT1())
-                .setEmbedding(d.getT2())
-                .setState(2)
-                .setDimension(d.getT2().length)
-                .setFailReason("")
-                .setCreateTime(LocalDateTime.now())
-                .setUpdateTime(LocalDateTime.now())
-                .setDeleted(0)).toList();
-        chunkMapper.insert(list);
+    public void addChunk(Long userId, Long knowledgeId, Long documentId, List<String> text) {
+        chunkMapper.insert(text.stream().map(t-> new Chunk()
+                .setUserId(userId)
+                .setKnowledgeId(knowledgeId)
+                .setDocumentId(documentId)
+                .setContent(t)
+                .setState(0)).toList());
     }
 
     /**
