@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function adminPageLog(data) {
   return request({
-    url: '/admin/log/page',
+    url: '/log/page',
     method: 'get',
     params: data
   })
@@ -10,21 +10,21 @@ export function adminPageLog(data) {
 
 export function adminClearLog() {
   return request({
-    url: '/admin/log/clear',
+    url: '/log/clear',
     method: 'delete'
   })
 }
 
 export function adminDeleteLog(data) {
   return request({
-    url: '/admin/log/delete/' + data,
+    url: '/log/delete/' + data,
     method: 'delete'
   })
 }
 
 export function adminExportExcel() {
   return request({
-    url: '/admin/log/export',
+    url: '/log/export',
     method: 'get',
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'

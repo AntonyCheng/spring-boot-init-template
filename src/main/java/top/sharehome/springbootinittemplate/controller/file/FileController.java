@@ -27,15 +27,14 @@ import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import java.util.List;
 
 /**
- * 管理员管理文件控制器
+ * 文件控制器
  *
  * @author AntonyCheng
  */
 @RestController
-@RequestMapping("/admin/file")
+@RequestMapping("/file")
 @SaCheckLogin
-@SaCheckRole(value = {Constants.ROLE_ADMIN})
-public class AdminFileController {
+public class FileController {
 
     /**
      * 文件最大大小
@@ -54,6 +53,7 @@ public class AdminFileController {
      */
     @GetMapping("/page")
     @ControllerLog(description = "管理员查询文件信息", operator = Operator.QUERY)
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Page<AdminFilePageVo>> pageFile(AdminFilePageDto adminFilePageDto, PageModel pageModel) {
         // 处理一下文件后缀名查询条件，如果存在则转为小写
         if (StringUtils.isNotBlank(adminFilePageDto.getOssType())) {
@@ -71,6 +71,7 @@ public class AdminFileController {
      */
     @PostMapping("/add")
     @ControllerLog(description = "管理员添加文件信息", operator = Operator.INSERT)
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> addFile(@Validated({PostGroup.class}) AdminFileAddDto adminFileAddDto) {
         MultipartFile file = adminFileAddDto.getFile();
         if (file.getSize() == 0 || file.getSize() > FILE_MAX_SIZE) {
@@ -88,6 +89,7 @@ public class AdminFileController {
      */
     @DeleteMapping("/delete/{id}")
     @ControllerLog(description = "管理员删除文件信息", operator = Operator.DELETE)
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> deleteFile(@PathVariable("id") Long id) {
         fileService.adminDeleteFile(id);
         return R.ok("删除成功");
@@ -100,6 +102,7 @@ public class AdminFileController {
      */
     @GetMapping("/export")
     @ControllerLog(description = "管理员导出文件表格", operator = Operator.QUERY)
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportFile(HttpServletResponse response) {
         List<AdminFileExportVo> list = fileService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "文件表", AdminFileExportVo.class, response);

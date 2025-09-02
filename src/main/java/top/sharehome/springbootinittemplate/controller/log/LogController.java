@@ -18,15 +18,14 @@ import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import java.util.List;
 
 /**
- * 管理员管理日志控制器
+ * 日志控制器
  *
  * @author AntonyCheng
  */
 @RestController
-@RequestMapping("/admin/log")
+@RequestMapping("/log")
 @SaCheckLogin
-@SaCheckRole(value = {Constants.ROLE_ADMIN})
-public class AdminLogController {
+public class LogController {
 
     @Resource
     private LogService logService;
@@ -39,6 +38,7 @@ public class AdminLogController {
      * @return 分页查询结果
      */
     @GetMapping("/page")
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Page<AdminLogPageVo>> pageLog(AdminLogPageDto adminLogPageDto, PageModel pageModel) {
         Page<AdminLogPageVo> page = logService.adminPageLog(adminLogPageDto, pageModel);
         return R.ok(page);
@@ -51,6 +51,7 @@ public class AdminLogController {
      * @return 删除结果
      */
     @DeleteMapping("/delete/{id}")
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> deleteLog(@PathVariable("id") Long id) {
         logService.adminDeleteLog(id);
         return R.ok("删除成功");
@@ -62,6 +63,7 @@ public class AdminLogController {
      * @return 清空结果
      */
     @DeleteMapping("/clear")
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> clearLog() {
         logService.adminClearLog();
         return R.ok("清空日志成功");
@@ -73,6 +75,7 @@ public class AdminLogController {
      * @return 导出表格
      */
     @GetMapping("/export")
+    @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportLog(HttpServletResponse response) {
         List<AdminLogExportVo> list = logService.adminExportExcelList();
         ExcelUtils.exportHttpServletResponse(list, "日志表", AdminLogExportVo.class, response);

@@ -42,7 +42,7 @@ export function updateAvatar(data) {
 
 export function adminPageUser(data) {
   return request({
-    url: '/admin/user/page',
+    url: '/user/page',
     method: 'get',
     params: data
   })
@@ -50,7 +50,7 @@ export function adminPageUser(data) {
 
 export function adminAddUser(data) {
   return request({
-    url: '/admin/user/add',
+    url: '/user/add',
     method: 'post',
     data
   })
@@ -58,14 +58,14 @@ export function adminAddUser(data) {
 
 export function adminDeleteUser(data) {
   return request({
-    url: '/admin/user/delete/' + data,
+    url: '/user/delete/' + data,
     method: 'delete'
   })
 }
 
 export function adminUpdateInfo(data) {
   return request({
-    url: '/admin/user/update/info',
+    url: '/user/update/info',
     method: 'put',
     data
   })
@@ -73,7 +73,7 @@ export function adminUpdateInfo(data) {
 
 export function adminUpdateState(data) {
   return request({
-    url: '/admin/user/update/state',
+    url: '/user/update/state',
     method: 'put',
     data
   })
@@ -81,7 +81,7 @@ export function adminUpdateState(data) {
 
 export function adminResetPassword(data) {
   return request({
-    url: '/admin/user/reset/password',
+    url: '/user/reset/password',
     method: 'put',
     data
   })
@@ -89,7 +89,7 @@ export function adminResetPassword(data) {
 
 export function adminExportExcel() {
   return request({
-    url: '/admin/user/export',
+    url: '/user/export',
     method: 'get',
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
@@ -98,7 +98,7 @@ export function adminExportExcel() {
 
 export function adminExportUserTemplate() {
   return request({
-    url: '/admin/user/template',
+    url: '/user/template',
     method: 'get',
     // 后端传来二进制流是需要修改为blob类型
     responseType: 'blob'
@@ -107,7 +107,7 @@ export function adminExportUserTemplate() {
 
 export function adminImportUser(data) {
   return request({
-    url: '/admin/user/import',
+    url: '/user/import',
     method: 'post',
     data
   })
