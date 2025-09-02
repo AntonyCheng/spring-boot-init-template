@@ -11,7 +11,3 @@ import top.sharehome.springbootinittemplate.model.entity.File;
 public interface FileMapper extends BaseMapper<File> {
 
 }
-
-
-
-

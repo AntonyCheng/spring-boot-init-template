@@ -11,7 +11,3 @@ import top.sharehome.springbootinittemplate.model.entity.Log;
 public interface LogMapper extends BaseMapper<Log> {
 
 }
-
-
-
-

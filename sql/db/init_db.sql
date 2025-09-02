@@ -84,6 +84,7 @@ CREATE TABLE `t_model`
     `model_n`            int                                                           NULL     DEFAULT NULL COMMENT '模型结果数量（图像模型参数）',
     `model_info_name`    varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型信息名称（图像模型、语音转文字模型、文字转语音模型参数）',
     `model_version`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型版本（AzureOpenAI模型参数）',
+    `model_state`        tinyint                                                       NOT NULL COMMENT '模型状态（0表示启用，1表示禁用）',
     `create_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_deleted`         tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',

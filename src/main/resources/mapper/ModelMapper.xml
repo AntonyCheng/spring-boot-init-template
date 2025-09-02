@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.sharehome.springbootinittemplate.mapper.ModelMapper">
+    <resultMap id="BaseResultMap" type="top.sharehome.springbootinittemplate.model.entity.Model">
+        <id column="model_id" jdbcType="BIGINT" property="id"/>
+        <result column="model_type" jdbcType="VARCHAR" property="type"/>
+        <result column="model_service" jdbcType="VARCHAR" property="service"/>
+        <result column="model_name" jdbcType="VARCHAR" property="name"/>
+        <result column="model_base_url" jdbcType="VARCHAR" property="baseUrl"/>
+        <result column="model_api_key" jdbcType="VARCHAR" property="apiKey"/>
+        <result column="model_read_timeout" jdbcType="INTEGER" property="readTimeout"/>
+        <result column="model_temperature" jdbcType="DECIMAL" property="temperature"/>
+        <result column="model_top_p" jdbcType="DECIMAL" property="topP"/>
+        <result column="model_n" jdbcType="INTEGER" property="n"/>
+        <result column="model_info_name" jdbcType="VARCHAR" property="infoName"/>
+        <result column="model_version" jdbcType="VARCHAR" property="version"/>
+        <result column="model_state" jdbcType="TINYINT" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        model_id,
+        model_type,
+        model_service,
+        model_name,
+        model_base_url,
+        model_api_key,
+        model_read_timeout,
+        model_temperature,
+        model_top_p,
+        model_n,
+        model_info_name,
+        model_version,
+        model_state,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+</mapper>
