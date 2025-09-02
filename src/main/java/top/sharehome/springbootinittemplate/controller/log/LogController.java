@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.R;
-import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
+import top.sharehome.springbootinittemplate.model.dto.log.LogPageDto;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
-import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
+import top.sharehome.springbootinittemplate.model.vo.log.LogExportVo;
+import top.sharehome.springbootinittemplate.model.vo.log.LogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 
@@ -33,14 +33,14 @@ public class LogController {
     /**
      * 管理员分页查询日志信息
      *
-     * @param adminLogPageDto 日志信息查询条件
+     * @param logPageDto 日志信息查询条件
      * @param pageModel       分页模型
      * @return 分页查询结果
      */
     @GetMapping("/page")
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<Page<AdminLogPageVo>> pageLog(AdminLogPageDto adminLogPageDto, PageModel pageModel) {
-        Page<AdminLogPageVo> page = logService.adminPageLog(adminLogPageDto, pageModel);
+    public R<Page<LogPageVo>> pageLog(LogPageDto logPageDto, PageModel pageModel) {
+        Page<LogPageVo> page = logService.pageLog(logPageDto, pageModel);
         return R.ok(page);
     }
 
@@ -53,7 +53,7 @@ public class LogController {
     @DeleteMapping("/delete/{id}")
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> deleteLog(@PathVariable("id") Long id) {
-        logService.adminDeleteLog(id);
+        logService.deleteLog(id);
         return R.ok("删除成功");
     }
 
@@ -65,7 +65,7 @@ public class LogController {
     @DeleteMapping("/clear")
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> clearLog() {
-        logService.adminClearLog();
+        logService.clearLog();
         return R.ok("清空日志成功");
     }
 
@@ -77,8 +77,8 @@ public class LogController {
     @GetMapping("/export")
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportLog(HttpServletResponse response) {
-        List<AdminLogExportVo> list = logService.adminExportExcelList();
-        ExcelUtils.exportHttpServletResponse(list, "日志表", AdminLogExportVo.class, response);
+        List<LogExportVo> list = logService.exportExcelList();
+        ExcelUtils.exportHttpServletResponse(list, "日志表", LogExportVo.class, response);
         return R.empty();
     }
 

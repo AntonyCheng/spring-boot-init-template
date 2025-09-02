@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminFileExportVo implements Serializable {
+public class FileExportVo implements Serializable {
 
     /**
      * ID

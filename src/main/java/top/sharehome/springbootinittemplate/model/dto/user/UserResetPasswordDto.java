@@ -20,7 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserResetPasswordDto implements Serializable {
+public class UserResetPasswordDto implements Serializable {
 
     /**
      * ID

@@ -20,7 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminFileAddDto implements Serializable {
+public class FileAddDto implements Serializable {
 
     /**
      * 文件信息（大小：10MB；格式：任意）

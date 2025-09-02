@@ -24,7 +24,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserAddDto implements Serializable {
+public class UserAddDto implements Serializable {
 
     /**
      * 账号

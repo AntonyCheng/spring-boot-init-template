@@ -2,7 +2,6 @@ package top.sharehome.springbootinittemplate.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaMode;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
@@ -22,8 +21,8 @@ import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserExportVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
@@ -78,29 +77,29 @@ public class UserController {
     /**
      * 管理员分页查询用户信息
      *
-     * @param adminUserPageDto 用户信息查询条件
+     * @param userPageDto 用户信息查询条件
      * @param pageModel        分页模型
      * @return 分页查询结果
      */
     @GetMapping("/page")
     @ControllerLog(description = "管理员查询用户信息", operator = Operator.QUERY)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<Page<AdminUserPageVo>> pageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel) {
-        Page<AdminUserPageVo> page = userService.adminPageUser(adminUserPageDto, pageModel);
+    public R<Page<UserPageVo>> pageUser(UserPageDto userPageDto, PageModel pageModel) {
+        Page<UserPageVo> page = userService.pageUser(userPageDto, pageModel);
         return R.ok(page);
     }
 
     /**
      * 管理员添加用户
      *
-     * @param adminUserAddDto 被添加用户信息
+     * @param userAddDto 被添加用户信息
      * @return 添加结果
      */
     @PostMapping("/add")
     @ControllerLog(description = "管理员添加用户信息", operator = Operator.INSERT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> addUser(@RequestBody @Validated({PostGroup.class}) AdminUserAddDto adminUserAddDto) {
-        userService.adminAddUser(adminUserAddDto);
+    public R<String> addUser(@RequestBody @Validated({PostGroup.class}) UserAddDto userAddDto) {
+        userService.addUser(userAddDto);
         return R.ok("添加成功");
     }
 
@@ -114,49 +113,49 @@ public class UserController {
     @ControllerLog(description = "管理员删除用户信息", operator = Operator.DELETE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> deleteUser(@PathVariable("id") Long id) {
-        userService.adminDeleteUser(id);
+        userService.deleteUser(id);
         return R.ok("删除成功");
     }
 
     /**
      * 管理员修改用户信息
      *
-     * @param adminUserUpdateInfoDto 被修改后的用户信息
+     * @param userUpdateInfoDto 被修改后的用户信息
      * @return 修改结果
      */
     @PutMapping("/update/info")
     @ControllerLog(description = "管理员修改用户信息", operator = Operator.UPDATE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> updateInfo(@RequestBody @Validated({PutGroup.class}) AdminUserUpdateInfoDto adminUserUpdateInfoDto) {
-        userService.adminUpdateInfo(adminUserUpdateInfoDto);
+    public R<String> updateInfo(@RequestBody @Validated({PutGroup.class}) UserUpdateInfoDto userUpdateInfoDto) {
+        userService.updateInfo(userUpdateInfoDto);
         return R.ok("修改信息成功");
     }
 
     /**
      * 管理员修改用户状态
      *
-     * @param adminUserUpdateStateDto 被修改用户的ID对象
+     * @param userUpdateStateDto 被修改用户的ID对象
      * @return 修改结果
      */
     @PutMapping("/update/state")
     @ControllerLog(description = "管理员修改用户状态", operator = Operator.UPDATE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> updateState(@RequestBody @Validated({PutGroup.class}) AdminUserUpdateStateDto adminUserUpdateStateDto) {
-        userService.adminUpdateState(adminUserUpdateStateDto);
+    public R<String> updateState(@RequestBody @Validated({PutGroup.class}) UserUpdateStateDto userUpdateStateDto) {
+        userService.updateState(userUpdateStateDto);
         return R.ok("修改状态成功");
     }
 
     /**
      * 管理员重置用户密码
      *
-     * @param adminUserResetPasswordDto 被重置密码信息
+     * @param userResetPasswordDto 被重置密码信息
      * @return 重置结果
      */
     @PutMapping("/reset/password")
     @ControllerLog(description = "管理员重置用户密码", operator = Operator.UPDATE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> resetPassword(@RequestBody @Validated({PutGroup.class}) AdminUserResetPasswordDto adminUserResetPasswordDto) {
-        userService.adminResetPassword(adminUserResetPasswordDto);
+    public R<String> resetPassword(@RequestBody @Validated({PutGroup.class}) UserResetPasswordDto userResetPasswordDto) {
+        userService.resetPassword(userResetPasswordDto);
         return R.ok("重置密码成功");
     }
 
@@ -169,8 +168,8 @@ public class UserController {
     @ControllerLog(description = "管理员导出用户表格", operator = Operator.EXPORT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportUser(HttpServletResponse response) {
-        List<AdminUserExportVo> list = userService.adminExportExcelList();
-        ExcelUtils.exportHttpServletResponse(list, "用户表", AdminUserExportVo.class, response);
+        List<UserExportVo> list = userService.exportExcelList();
+        ExcelUtils.exportHttpServletResponse(list, "用户表", UserExportVo.class, response);
         return R.empty();
     }
 
@@ -183,21 +182,21 @@ public class UserController {
     @ControllerLog(description = "管理员导出用户表格模板", operator = Operator.EXPORT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportUserTemplate(HttpServletResponse response) {
-        ExcelUtils.exportTemplateHttpServletResponse("用户信息表", AdminUserTemplateDto.class, response);
+        ExcelUtils.exportTemplateHttpServletResponse("用户信息表", UserTemplateDto.class, response);
         return R.empty();
     }
 
     /**
      * 导入用户信息表
      *
-     * @param adminUserExcelDto 导入用户信息表Dto类
+     * @param userExcelDto 导入用户信息表Dto类
      * @return 导入结果
      */
     @PostMapping("/import")
     @ControllerLog(description = "管理员导入用户信息表", operator = Operator.INSERT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> importUser(@Validated({PostGroup.class}) AdminUserExcelDto adminUserExcelDto){
-        MultipartFile file = adminUserExcelDto.getFile();
+    public R<String> importUser(@Validated({PostGroup.class}) UserExcelDto userExcelDto){
+        MultipartFile file = userExcelDto.getFile();
         if (file.getSize() == 0 || file.getSize() > IMPORT_MAX_SIZE) {
             throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_IS_TOO_LARGE, "用户信息表不得大于200KB");
         }
@@ -206,7 +205,7 @@ public class UserController {
         if (!IMPORT_SUFFIX_LIST.contains(suffix)) {
             throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_TYPE_MISMATCH, "用户信息表仅支持xls和xlsx格式");
         }
-        userService.adminImportUser(file);
+        userService.importUser(file);
         return R.ok("导入成功，默认密码为123456");
     }
 

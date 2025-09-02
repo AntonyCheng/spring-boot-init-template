@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminFilePageVo implements Serializable {
+public class FilePageVo implements Serializable {
 
     /**
      * ID

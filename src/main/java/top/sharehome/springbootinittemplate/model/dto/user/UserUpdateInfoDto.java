@@ -22,7 +22,7 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_N
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserUpdateInfoDto implements Serializable {
+public class UserUpdateInfoDto implements Serializable {
 
     /**
      * ID

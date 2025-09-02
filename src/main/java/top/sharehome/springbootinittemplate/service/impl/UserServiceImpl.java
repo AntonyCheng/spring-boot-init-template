@@ -23,8 +23,8 @@ import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.auth.AuthLoginVo;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserExportVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
@@ -55,18 +55,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public Page<AdminUserPageVo> adminPageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel) {
+    public Page<UserPageVo> pageUser(UserPageDto userPageDto, PageModel pageModel) {
         Page<User> page = pageModel.build();
-        Page<AdminUserPageVo> res = pageModel.build();
+        Page<UserPageVo> res = pageModel.build();
 
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         // 构造查询条件
         userLambdaQueryWrapper
-                .eq(StringUtils.isNotBlank(adminUserPageDto.getRole()), User::getRole, adminUserPageDto.getRole())
-                .eq(Objects.nonNull(adminUserPageDto.getState()), User::getState, adminUserPageDto.getState())
-                .like(StringUtils.isNotBlank(adminUserPageDto.getAccount()), User::getAccount, adminUserPageDto.getAccount())
-                .like(StringUtils.isNotBlank(adminUserPageDto.getName()), User::getName, adminUserPageDto.getName())
-                .like(StringUtils.isNotBlank(adminUserPageDto.getEmail()), User::getEmail, adminUserPageDto.getEmail());
+                .eq(StringUtils.isNotBlank(userPageDto.getRole()), User::getRole, userPageDto.getRole())
+                .eq(Objects.nonNull(userPageDto.getState()), User::getState, userPageDto.getState())
+                .like(StringUtils.isNotBlank(userPageDto.getAccount()), User::getAccount, userPageDto.getAccount())
+                .like(StringUtils.isNotBlank(userPageDto.getName()), User::getName, userPageDto.getName())
+                .like(StringUtils.isNotBlank(userPageDto.getEmail()), User::getEmail, userPageDto.getEmail());
         // 构造查询排序（默认按照创建时间升序排序）
         userLambdaQueryWrapper.orderByAsc(User::getCreateTime);
 
@@ -74,9 +74,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.selectPage(page, userLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminUserPageVo> newRecords = page.getRecords().stream().map(user -> {
+        List<UserPageVo> newRecords = page.getRecords().stream().map(user -> {
             File avatarFile = Objects.equals(user.getAvatarId(), Constants.NULL_ID) ? null : fileMapper.selectById(user.getAvatarId());
-            return new AdminUserPageVo()
+            return new UserPageVo()
                     .setId(user.getId())
                     .setAccount(user.getAccount())
                     .setName(user.getName())
@@ -95,9 +95,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminAddUser(AdminUserAddDto adminUserAddDto) {
+    public void addUser(UserAddDto userAddDto) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getAccount, adminUserAddDto.getAccount());
+        userLambdaQueryWrapper.eq(User::getAccount, userAddDto.getAccount());
         // 禁止添加已存在同名账号
         if (userMapper.exists(userLambdaQueryWrapper)) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS);
@@ -105,10 +105,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 插入数据库
         User user = new User()
                 .setAvatarId(Constants.NULL_ID)
-                .setAccount(adminUserAddDto.getAccount())
-                .setPassword(adminUserAddDto.getPassword())
-                .setEmail(adminUserAddDto.getEmail())
-                .setName(adminUserAddDto.getName());
+                .setAccount(userAddDto.getAccount())
+                .setPassword(userAddDto.getPassword())
+                .setEmail(userAddDto.getEmail())
+                .setName(userAddDto.getName());
         int insertResult = userMapper.insert(user);
         if (insertResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -117,7 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminDeleteUser(Long id) {
+    public void deleteUser(Long id) {
         User userInDatabase = userMapper.selectById(id);
         // 无法对非存在或管理员账号进行操作
         if (Objects.isNull(userInDatabase)) {
@@ -144,8 +144,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminUpdateInfo(AdminUserUpdateInfoDto adminUserUpdateInfoDto) {
-        User userInDatabase = userMapper.selectById(adminUserUpdateInfoDto.getId());
+    public void updateInfo(UserUpdateInfoDto userUpdateInfoDto) {
+        User userInDatabase = userMapper.selectById(userUpdateInfoDto.getId());
         // 无法对非存在或管理员账号进行操作
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_DOES_NOT_EXIST);
@@ -155,34 +155,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 禁止添加非自身的已存在同名账号
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userLambdaQueryWrapper.eq(User::getAccount, adminUserUpdateInfoDto.getAccount());
-        userLambdaQueryWrapper.ne(User::getId, adminUserUpdateInfoDto.getId());
+        userLambdaQueryWrapper.eq(User::getAccount, userUpdateInfoDto.getAccount());
+        userLambdaQueryWrapper.ne(User::getId, userUpdateInfoDto.getId());
         if (userMapper.exists(userLambdaQueryWrapper)) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS);
         }
         // 数据只有发生更新之后才可以进行数据库操作
-        if (Objects.equals(adminUserUpdateInfoDto.getAccount(), userInDatabase.getAccount())
-                && Objects.equals(adminUserUpdateInfoDto.getName(), userInDatabase.getName())
-                && Objects.equals(adminUserUpdateInfoDto.getEmail(), userInDatabase.getEmail())) {
+        if (Objects.equals(userUpdateInfoDto.getAccount(), userInDatabase.getAccount())
+                && Objects.equals(userUpdateInfoDto.getName(), userInDatabase.getName())
+                && Objects.equals(userUpdateInfoDto.getEmail(), userInDatabase.getEmail())) {
             throw new CustomizeReturnException(ReturnCode.USERNAME_ALREADY_EXISTS, "信息未发生更改");
         }
         User user = new User()
-                .setId(adminUserUpdateInfoDto.getId())
-                .setAccount(adminUserUpdateInfoDto.getAccount())
-                .setEmail(adminUserUpdateInfoDto.getEmail())
-                .setName(adminUserUpdateInfoDto.getName());
+                .setId(userUpdateInfoDto.getId())
+                .setAccount(userUpdateInfoDto.getAccount())
+                .setEmail(userUpdateInfoDto.getEmail())
+                .setName(userUpdateInfoDto.getName());
         int updateResult = userMapper.updateById(user);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
         // 用户信息发生修改之后需要重新登陆
-        LoginUtils.logout(adminUserUpdateInfoDto.getId());
+        LoginUtils.logout(userUpdateInfoDto.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminUpdateState(AdminUserUpdateStateDto adminUserUpdateStateDto) {
-        Long id = adminUserUpdateStateDto.getId();
+    public void updateState(UserUpdateStateDto userUpdateStateDto) {
+        Long id = userUpdateStateDto.getId();
         User userInDatabase = userMapper.selectById(id);
         // 无法对非存在或管理员账号进行操作
         if (Objects.isNull(userInDatabase)) {
@@ -211,8 +211,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminResetPassword(AdminUserResetPasswordDto adminUserResetPasswordDto) {
-        User userInDatabase = userMapper.selectById(adminUserResetPasswordDto.getId());
+    public void resetPassword(UserResetPasswordDto userResetPasswordDto) {
+        User userInDatabase = userMapper.selectById(userResetPasswordDto.getId());
         // 无法对非存在或管理员账号进行操作
         if (Objects.isNull(userInDatabase)) {
             throw new CustomizeReturnException(ReturnCode.USER_ACCOUNT_DOES_NOT_EXIST);
@@ -223,8 +223,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 重置用户密码
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper
-                .set(User::getPassword, adminUserResetPasswordDto.getNewPassword())
-                .eq(User::getId, adminUserResetPasswordDto.getId());
+                .set(User::getPassword, userResetPasswordDto.getNewPassword())
+                .eq(User::getId, userResetPasswordDto.getId());
         int updateResult = userMapper.update(userLambdaUpdateWrapper);
         if (updateResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -234,21 +234,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<AdminUserExportVo> adminExportExcelList() {
+    public List<UserExportVo> exportExcelList() {
         List<User> usersInDatabase = userMapper.selectList(null);
         return usersInDatabase.stream().map(user -> {
-            AdminUserExportVo adminUserExportVo = new AdminUserExportVo();
-            adminUserExportVo.setId(user.getId());
-            adminUserExportVo.setAccount(user.getAccount());
-            adminUserExportVo.setEmail(user.getEmail());
-            adminUserExportVo.setName(user.getName());
+            UserExportVo userExportVo = new UserExportVo();
+            userExportVo.setId(user.getId());
+            userExportVo.setAccount(user.getAccount());
+            userExportVo.setEmail(user.getEmail());
+            userExportVo.setName(user.getName());
             File avatarFile = Objects.equals(user.getAvatarId(), Constants.NULL_ID) ? null : fileMapper.selectById(user.getAvatarId());
-            adminUserExportVo.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
-            adminUserExportVo.setRole(StringUtils.equals(user.getRole(), Constants.ROLE_ADMIN) ? "管理员" : "用户");
-            adminUserExportVo.setState(!Objects.equals(user.getState(), Constants.USER_DISABLE_STATE) ? "启用" : "禁用");
-            adminUserExportVo.setCreateTime(user.getCreateTime());
-            adminUserExportVo.setUpdateTime(user.getUpdateTime());
-            return adminUserExportVo;
+            userExportVo.setAvatar(Objects.isNull(avatarFile) ? null : avatarFile.getUrl());
+            userExportVo.setRole(StringUtils.equals(user.getRole(), Constants.ROLE_ADMIN) ? "管理员" : "用户");
+            userExportVo.setState(!Objects.equals(user.getState(), Constants.USER_DISABLE_STATE) ? "启用" : "禁用");
+            userExportVo.setCreateTime(user.getCreateTime());
+            userExportVo.setUpdateTime(user.getUpdateTime());
+            return userExportVo;
         }).toList();
     }
 
@@ -340,9 +340,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminImportUser(MultipartFile file) {
+    public void importUser(MultipartFile file) {
         try {
-            List<AdminUserImportDto> userImportDtoList = ExcelUtils.importStreamSyncAndClose(file.getInputStream(), AdminUserImportDto.class);
+            List<UserImportDto> userImportDtoList = ExcelUtils.importStreamSyncAndClose(file.getInputStream(), UserImportDto.class);
             List<User> list = userImportDtoList.stream().map(user -> {
                 if (StringUtils.isBlank(user.getAccount())) {
                     throw new CustomizeReturnException(ReturnCode.EXCEL_FILE_ERROR, "存在账号[账号：" + user.getAccount() + " 邮箱：" + user.getEmail() + " 名称：" + user.getName() + "]不完整");

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserPageVo implements Serializable {
+public class UserPageVo implements Serializable {
 
     /**
      * 用户ID

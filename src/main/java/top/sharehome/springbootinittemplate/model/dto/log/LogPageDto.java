@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminLogPageDto implements Serializable {
+public class LogPageDto implements Serializable {
 
     /**
      * 接口URI（like）

@@ -6,8 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.model.dto.user.*;
 import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserExportVo;
-import top.sharehome.springbootinittemplate.model.vo.user.AdminUserPageVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserExportVo;
+import top.sharehome.springbootinittemplate.model.vo.user.UserPageVo;
 
 import java.util.List;
 
@@ -21,46 +21,46 @@ public interface UserService extends IService<User> {
     /**
      * 管理员分页查询用户信息
      *
-     * @param adminUserPageDto 用户信息查询条件
+     * @param userPageDto 用户信息查询条件
      * @param pageModel        分页模型
      * @return 分页查询结果
      */
-    Page<AdminUserPageVo> adminPageUser(AdminUserPageDto adminUserPageDto, PageModel pageModel);
+    Page<UserPageVo> pageUser(UserPageDto userPageDto, PageModel pageModel);
 
     /**
      * 管理员添加用户
      *
-     * @param adminUserAddDto 被添加用户信息
+     * @param userAddDto 被添加用户信息
      */
-    void adminAddUser(AdminUserAddDto adminUserAddDto);
+    void addUser(UserAddDto userAddDto);
 
     /**
      * 管理员根据ID删除用户
      *
      * @param id 被删除用户的ID
      */
-    void adminDeleteUser(Long id);
+    void deleteUser(Long id);
 
     /**
      * 管理员修改用户信息
      *
-     * @param adminUserUpdateInfoDto 被修改后的用户信息
+     * @param userUpdateInfoDto 被修改后的用户信息
      */
-    void adminUpdateInfo(AdminUserUpdateInfoDto adminUserUpdateInfoDto);
+    void updateInfo(UserUpdateInfoDto userUpdateInfoDto);
 
     /**
      * 管理员修改用户状态
      *
-     * @param adminUserUpdateStateDto 被修改用户的ID对象
+     * @param userUpdateStateDto 被修改用户的ID对象
      */
-    void adminUpdateState(AdminUserUpdateStateDto adminUserUpdateStateDto);
+    void updateState(UserUpdateStateDto userUpdateStateDto);
 
     /**
      * 管理员重置用户密码
      *
-     * @param adminUserResetPasswordDto 被重置密码信息
+     * @param userResetPasswordDto 被重置密码信息
      */
-    void adminResetPassword(AdminUserResetPasswordDto adminUserResetPasswordDto);
+    void resetPassword(UserResetPasswordDto userResetPasswordDto);
 
     /**
      * 管理员导出用户表格
@@ -70,7 +70,7 @@ public interface UserService extends IService<User> {
      *
      * @return 用户列表结果
      */
-    List<AdminUserExportVo> adminExportExcelList();
+    List<UserExportVo> exportExcelList();
 
     /**
      * 更新账号
@@ -112,5 +112,5 @@ public interface UserService extends IService<User> {
      *
      * @param file 用户信息表文件
      */
-    void adminImportUser(MultipartFile file);
+    void importUser(MultipartFile file);
 }

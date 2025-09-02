@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserPageDto implements Serializable {
+public class UserPageDto implements Serializable {
 
     /**
      * 用户账号（like）

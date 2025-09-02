@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminUserExportVo implements Serializable {
+public class UserExportVo implements Serializable {
 
     /**
      * ID

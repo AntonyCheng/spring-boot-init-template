@@ -15,11 +15,11 @@ import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnE
 import top.sharehome.springbootinittemplate.mapper.LogMapper;
 import top.sharehome.springbootinittemplate.mapper.UserMapper;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.dto.log.AdminLogPageDto;
+import top.sharehome.springbootinittemplate.model.dto.log.LogPageDto;
 import top.sharehome.springbootinittemplate.model.entity.Log;
 import top.sharehome.springbootinittemplate.model.entity.User;
-import top.sharehome.springbootinittemplate.model.vo.log.AdminLogExportVo;
-import top.sharehome.springbootinittemplate.model.vo.log.AdminLogPageVo;
+import top.sharehome.springbootinittemplate.model.vo.log.LogExportVo;
+import top.sharehome.springbootinittemplate.model.vo.log.LogPageVo;
 import top.sharehome.springbootinittemplate.service.LogService;
 
 import java.util.List;
@@ -41,23 +41,23 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public Page<AdminLogPageVo> adminPageLog(AdminLogPageDto adminLogPageDto, PageModel pageModel) {
+    public Page<LogPageVo> pageLog(LogPageDto logPageDto, PageModel pageModel) {
         Page<Log> page = pageModel.build();
-        Page<AdminLogPageVo> res = pageModel.build();
+        Page<LogPageVo> res = pageModel.build();
 
         LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
         // 构建查询条件
         logLambdaQueryWrapper
-                .eq(Objects.nonNull(adminLogPageDto.getOperator()), Log::getOperator, adminLogPageDto.getOperator())
-                .eq(StringUtils.isNotBlank(adminLogPageDto.getRequestMethod()), Log::getRequestMethod, adminLogPageDto.getRequestMethod())
-                .eq(Objects.nonNull(adminLogPageDto.getResult()), Log::getResult, adminLogPageDto.getResult())
-                .like(StringUtils.isNotBlank(adminLogPageDto.getUri()), Log::getUri, adminLogPageDto.getUri())
-                .like(StringUtils.isNotBlank(adminLogPageDto.getDescription()), Log::getDescription, adminLogPageDto.getDescription())
-                .like(StringUtils.isNotBlank(adminLogPageDto.getMethod()), Log::getMethod, adminLogPageDto.getMethod())
-                .like(StringUtils.isNotBlank(adminLogPageDto.getLocation()), Log::getLocation, adminLogPageDto.getLocation());
-        if (StringUtils.isNotBlank(adminLogPageDto.getUserAccount())) {
+                .eq(Objects.nonNull(logPageDto.getOperator()), Log::getOperator, logPageDto.getOperator())
+                .eq(StringUtils.isNotBlank(logPageDto.getRequestMethod()), Log::getRequestMethod, logPageDto.getRequestMethod())
+                .eq(Objects.nonNull(logPageDto.getResult()), Log::getResult, logPageDto.getResult())
+                .like(StringUtils.isNotBlank(logPageDto.getUri()), Log::getUri, logPageDto.getUri())
+                .like(StringUtils.isNotBlank(logPageDto.getDescription()), Log::getDescription, logPageDto.getDescription())
+                .like(StringUtils.isNotBlank(logPageDto.getMethod()), Log::getMethod, logPageDto.getMethod())
+                .like(StringUtils.isNotBlank(logPageDto.getLocation()), Log::getLocation, logPageDto.getLocation());
+        if (StringUtils.isNotBlank(logPageDto.getUserAccount())) {
             LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            userLambdaQueryWrapper.like(User::getAccount, adminLogPageDto.getUserAccount());
+            userLambdaQueryWrapper.like(User::getAccount, logPageDto.getUserAccount());
             List<Long> userIdList = userMapper.selectList(userLambdaQueryWrapper).stream().map(User::getId).toList();
             if (userIdList.isEmpty()) {
                 return res;
@@ -72,7 +72,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
         logMapper.selectPage(page, logLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminLogPageVo> newRecords = page.getRecords().stream().map(log -> new AdminLogPageVo()
+        List<LogPageVo> newRecords = page.getRecords().stream().map(log -> new LogPageVo()
                 .setId(log.getId())
                 .setUri(log.getUri())
                 .setDescription(log.getDescription())
@@ -95,7 +95,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminDeleteLog(Long id) {
+    public void deleteLog(Long id) {
         int deleteResult = logMapper.deleteById(id);
         if (deleteResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -104,33 +104,33 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminClearLog() {
+    public void clearLog() {
         LambdaQueryWrapper<Log> logLambdaQueryWrapper = new LambdaQueryWrapper<>();
         logLambdaQueryWrapper.isNotNull(Log::getId);
         logMapper.delete(logLambdaQueryWrapper);
     }
 
     @Override
-    public List<AdminLogExportVo> adminExportExcelList() {
+    public List<LogExportVo> exportExcelList() {
         List<Log> logsInDatabase = logMapper.selectList(null);
         return logsInDatabase.stream().map(log -> {
-            AdminLogExportVo adminLogExportVo = new AdminLogExportVo();
-            adminLogExportVo.setId(log.getId());
-            adminLogExportVo.setUri(log.getUri());
-            adminLogExportVo.setDescription(log.getDescription());
-            adminLogExportVo.setOperator(Operator.getLabelByValue(log.getOperator()));
-            adminLogExportVo.setRequestMethod(log.getRequestMethod());
-            adminLogExportVo.setMethod(log.getMethod());
-            adminLogExportVo.setUserAccount(Objects.equals(log.getUserId(), Constants.NULL_ID) ? "该操作不记录用户信息" : (Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "用户信息不存在"));
-            adminLogExportVo.setIp(log.getIp());
-            adminLogExportVo.setLocation(log.getLocation());
-            adminLogExportVo.setParam(log.getParam());
-            adminLogExportVo.setResult(log.getResult() == 0 ? "正常" : "异常");
-            adminLogExportVo.setJson(log.getJson());
-            adminLogExportVo.setTime(log.getTime());
-            adminLogExportVo.setCreateTime(log.getCreateTime());
-            adminLogExportVo.setUpdateTime(log.getUpdateTime());
-            return adminLogExportVo;
+            LogExportVo logExportVo = new LogExportVo();
+            logExportVo.setId(log.getId());
+            logExportVo.setUri(log.getUri());
+            logExportVo.setDescription(log.getDescription());
+            logExportVo.setOperator(Operator.getLabelByValue(log.getOperator()));
+            logExportVo.setRequestMethod(log.getRequestMethod());
+            logExportVo.setMethod(log.getMethod());
+            logExportVo.setUserAccount(Objects.equals(log.getUserId(), Constants.NULL_ID) ? "该操作不记录用户信息" : (Objects.nonNull(userMapper.selectById(log.getUserId())) ? userMapper.selectById(log.getUserId()).getAccount() : "用户信息不存在"));
+            logExportVo.setIp(log.getIp());
+            logExportVo.setLocation(log.getLocation());
+            logExportVo.setParam(log.getParam());
+            logExportVo.setResult(log.getResult() == 0 ? "正常" : "异常");
+            logExportVo.setJson(log.getJson());
+            logExportVo.setTime(log.getTime());
+            logExportVo.setCreateTime(log.getCreateTime());
+            logExportVo.setUpdateTime(log.getUpdateTime());
+            return logExportVo;
         }).toList();
     }
 

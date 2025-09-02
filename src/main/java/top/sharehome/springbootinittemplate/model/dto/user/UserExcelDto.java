@@ -20,7 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserExcelDto implements Serializable {
+public class UserExcelDto implements Serializable {
 
     /**
      * 用户信息表（大小：200KB；格式：xls或xlsx）

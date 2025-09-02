@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminUserUpdateStateDto implements Serializable {
+public class UserUpdateStateDto implements Serializable {
 
     /**
      * ID

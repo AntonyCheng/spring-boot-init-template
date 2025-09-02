@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.mapper.FileMapper;
-import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
+import top.sharehome.springbootinittemplate.model.dto.file.FilePageDto;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.vo.file.AdminFileExportVo;
-import top.sharehome.springbootinittemplate.model.vo.file.AdminFilePageVo;
+import top.sharehome.springbootinittemplate.model.vo.file.FileExportVo;
+import top.sharehome.springbootinittemplate.model.vo.file.FilePageVo;
 import top.sharehome.springbootinittemplate.service.FileService;
 import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
 
@@ -35,16 +35,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public Page<AdminFilePageVo> adminPageFile(AdminFilePageDto adminFilePageDto, PageModel pageModel) {
+    public Page<FilePageVo> pageFile(FilePageDto filePageDto, PageModel pageModel) {
         Page<File> page = pageModel.build();
-        Page<AdminFilePageVo> res = pageModel.build();
+        Page<FilePageVo> res = pageModel.build();
 
         LambdaQueryWrapper<File> fileLambdaQueryWrapper = new LambdaQueryWrapper<>();
         // 构建查询条件
         fileLambdaQueryWrapper
-                .eq(StringUtils.isNotBlank(adminFilePageDto.getSuffix()), File::getSuffix, adminFilePageDto.getSuffix())
-                .eq(StringUtils.isNotBlank(adminFilePageDto.getOssType()), File::getOssType, adminFilePageDto.getOssType())
-                .like(StringUtils.isNotBlank(adminFilePageDto.getOriginalName()), File::getOriginalName, adminFilePageDto.getOriginalName());
+                .eq(StringUtils.isNotBlank(filePageDto.getSuffix()), File::getSuffix, filePageDto.getSuffix())
+                .eq(StringUtils.isNotBlank(filePageDto.getOssType()), File::getOssType, filePageDto.getOssType())
+                .like(StringUtils.isNotBlank(filePageDto.getOriginalName()), File::getOriginalName, filePageDto.getOriginalName());
         // 构造查询排序（默认按照创建时间降序排序）
         fileLambdaQueryWrapper.orderByDesc(File::getCreateTime);
 
@@ -52,7 +52,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileMapper.selectPage(page, fileLambdaQueryWrapper);
 
         // 返回值处理（Entity ==> Vo）
-        List<AdminFilePageVo> newRecords = page.getRecords().stream().map(file -> new AdminFilePageVo()
+        List<FilePageVo> newRecords = page.getRecords().stream().map(file -> new FilePageVo()
                 .setId(file.getId())
                 .setOriginalName(file.getOriginalName())
                 .setSuffix(file.getSuffix())
@@ -68,32 +68,32 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void adminDeleteFile(Long id) {
+    public void deleteFile(Long id) {
         // 直接使用对象存储工具类删除文件信息相比使用FileMapper而言，前者可以保证对象存储服务器文件也能得到同步删除
         MinioUtils.delete(id);
     }
 
     @Override
-    public List<AdminFileExportVo> adminExportExcelList() {
+    public List<FileExportVo> exportExcelList() {
         List<File> filesInDatabase = fileMapper.selectList(null);
         return filesInDatabase.stream().map(file -> {
-            AdminFileExportVo adminFileExportVo = new AdminFileExportVo();
-            adminFileExportVo.setId(file.getId());
-            adminFileExportVo.setUniqueKey(file.getUniqueKey());
-            adminFileExportVo.setName(file.getName());
-            adminFileExportVo.setOriginalName(file.getOriginalName());
-            adminFileExportVo.setSuffix(file.getSuffix());
-            adminFileExportVo.setSize(getFileSizeStr(file.getSize()));
-            adminFileExportVo.setUrl(file.getUrl());
-            adminFileExportVo.setOssType(file.getOssType());
-            adminFileExportVo.setCreateTime(file.getCreateTime());
-            adminFileExportVo.setUpdateTime(file.getUpdateTime());
-            return adminFileExportVo;
+            FileExportVo fileExportVo = new FileExportVo();
+            fileExportVo.setId(file.getId());
+            fileExportVo.setUniqueKey(file.getUniqueKey());
+            fileExportVo.setName(file.getName());
+            fileExportVo.setOriginalName(file.getOriginalName());
+            fileExportVo.setSuffix(file.getSuffix());
+            fileExportVo.setSize(getFileSizeStr(file.getSize()));
+            fileExportVo.setUrl(file.getUrl());
+            fileExportVo.setOssType(file.getOssType());
+            fileExportVo.setCreateTime(file.getCreateTime());
+            fileExportVo.setUpdateTime(file.getUpdateTime());
+            return fileExportVo;
         }).toList();
     }
 
     @Override
-    public void adminAddFile(MultipartFile file) {
+    public void addFile(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String filePath = "file/" + date;
         MinioUtils.upload(file, filePath);

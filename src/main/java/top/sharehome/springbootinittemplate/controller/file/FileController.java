@@ -16,11 +16,11 @@ import top.sharehome.springbootinittemplate.common.validate.PostGroup;
 import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
-import top.sharehome.springbootinittemplate.model.dto.file.AdminFileAddDto;
-import top.sharehome.springbootinittemplate.model.dto.file.AdminFilePageDto;
+import top.sharehome.springbootinittemplate.model.dto.file.FileAddDto;
+import top.sharehome.springbootinittemplate.model.dto.file.FilePageDto;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.vo.file.AdminFileExportVo;
-import top.sharehome.springbootinittemplate.model.vo.file.AdminFilePageVo;
+import top.sharehome.springbootinittemplate.model.vo.file.FileExportVo;
+import top.sharehome.springbootinittemplate.model.vo.file.FilePageVo;
 import top.sharehome.springbootinittemplate.service.FileService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 
@@ -47,37 +47,37 @@ public class FileController {
     /**
      * 管理员分页查询文件信息
      *
-     * @param adminFilePageDto 文件信息查询条件
-     * @param pageModel        分页模型
+     * @param filePageDto 文件信息查询条件
+     * @param pageModel   分页模型
      * @return 分页查询结果
      */
     @GetMapping("/page")
     @ControllerLog(description = "管理员查询文件信息", operator = Operator.QUERY)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<Page<AdminFilePageVo>> pageFile(AdminFilePageDto adminFilePageDto, PageModel pageModel) {
+    public R<Page<FilePageVo>> pageFile(FilePageDto filePageDto, PageModel pageModel) {
         // 处理一下文件后缀名查询条件，如果存在则转为小写
-        if (StringUtils.isNotBlank(adminFilePageDto.getOssType())) {
-            adminFilePageDto.setOssType(adminFilePageDto.getOssType().toLowerCase());
+        if (StringUtils.isNotBlank(filePageDto.getOssType())) {
+            filePageDto.setOssType(filePageDto.getOssType().toLowerCase());
         }
-        Page<AdminFilePageVo> file = fileService.adminPageFile(adminFilePageDto, pageModel);
+        Page<FilePageVo> file = fileService.pageFile(filePageDto, pageModel);
         return R.ok(file);
     }
 
     /**
      * 管理员添加文件信息
      *
-     * @param adminFileAddDto 被添加文件信息
+     * @param fileAddDto 被添加文件信息
      * @return 添加结果
      */
     @PostMapping("/add")
     @ControllerLog(description = "管理员添加文件信息", operator = Operator.INSERT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> addFile(@Validated({PostGroup.class}) AdminFileAddDto adminFileAddDto) {
-        MultipartFile file = adminFileAddDto.getFile();
+    public R<String> addFile(@Validated({PostGroup.class}) FileAddDto fileAddDto) {
+        MultipartFile file = fileAddDto.getFile();
         if (file.getSize() == 0 || file.getSize() > FILE_MAX_SIZE) {
             throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_IS_TOO_LARGE, "文件不得大于10MB");
         }
-        fileService.adminAddFile(file);
+        fileService.addFile(file);
         return R.ok("添加成功");
     }
 
@@ -91,7 +91,7 @@ public class FileController {
     @ControllerLog(description = "管理员删除文件信息", operator = Operator.DELETE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<String> deleteFile(@PathVariable("id") Long id) {
-        fileService.adminDeleteFile(id);
+        fileService.deleteFile(id);
         return R.ok("删除成功");
     }
 
@@ -104,8 +104,8 @@ public class FileController {
     @ControllerLog(description = "管理员导出文件表格", operator = Operator.QUERY)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
     public R<Void> exportFile(HttpServletResponse response) {
-        List<AdminFileExportVo> list = fileService.adminExportExcelList();
-        ExcelUtils.exportHttpServletResponse(list, "文件表", AdminFileExportVo.class, response);
+        List<FileExportVo> list = fileService.exportExcelList();
+        ExcelUtils.exportHttpServletResponse(list, "文件表", FileExportVo.class, response);
         return R.empty();
     }
 

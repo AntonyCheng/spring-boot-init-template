@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminUserTemplateDto implements Serializable {
+public class UserTemplateDto implements Serializable {
 
     /**
      * 账号

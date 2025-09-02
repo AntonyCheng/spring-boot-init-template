@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class AdminFilePageDto implements Serializable {
+public class FilePageDto implements Serializable {
 
     /**
      * 原名称（like）
