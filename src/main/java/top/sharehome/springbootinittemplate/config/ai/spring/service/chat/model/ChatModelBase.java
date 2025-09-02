@@ -36,7 +36,7 @@ public abstract class ChatModelBase {
     protected Double topP;
 
     /**
-     * 模型响应超时时间
+     * 模型响应超时时间，默认3*60*1000毫秒
      */
     @Setter
     protected Long readTimeout;

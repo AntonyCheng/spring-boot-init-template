@@ -3,6 +3,10 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mode
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * StabilityAI Image类型
  *
@@ -58,5 +62,13 @@ public enum StabilityAiImageType {
      * 图像高度
      */
     private final Integer height;
+
+    public static StabilityAiImageType getTypeByName(String name) {
+        List<StabilityAiImageType> list = Arrays.stream(StabilityAiImageType.values()).filter(stabilityAiImageType -> Objects.equals(stabilityAiImageType.name(), name)).toList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 
 }

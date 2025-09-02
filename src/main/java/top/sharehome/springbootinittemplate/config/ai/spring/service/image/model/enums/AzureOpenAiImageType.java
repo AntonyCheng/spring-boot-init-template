@@ -3,6 +3,10 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mode
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * AzureOpenAI Image类型
  *
@@ -41,5 +45,13 @@ public enum AzureOpenAiImageType {
      * 图像高度
      */
     private final Integer height;
+
+    public static AzureOpenAiImageType getTypeByName(String name) {
+        List<AzureOpenAiImageType> list = Arrays.stream(AzureOpenAiImageType.values()).filter(azureOpenAiImageType -> Objects.equals(azureOpenAiImageType.name(), name)).toList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 
 }

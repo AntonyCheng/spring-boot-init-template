@@ -3,6 +3,10 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mode
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * ZhiPuAI Image类型
  *
@@ -24,5 +28,13 @@ public enum ZhiPuAiImageType {
      * ZhiPuAI图像模型
      */
     private final String model;
+
+    public static ZhiPuAiImageType getTypeByName(String name) {
+        List<ZhiPuAiImageType> list = Arrays.stream(ZhiPuAiImageType.values()).filter(zhiPuAiImageType -> Objects.equals(zhiPuAiImageType.name(), name)).toList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 
 }

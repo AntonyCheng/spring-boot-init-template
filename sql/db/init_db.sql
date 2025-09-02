@@ -67,6 +67,33 @@ CREATE TABLE `t_log`
   ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for t_model
+-- ----------------------------
+DROP TABLE IF EXISTS `t_model`;
+CREATE TABLE `t_model`
+(
+    `model_id`           bigint                                                        NOT NULL COMMENT '模型ID',
+    `model_type`         varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型类型（对话-chat，向量-embedding，图片-image，语音转文字-transcription，文字转语音-tts）',
+    `model_service`      varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）',
+    `model_name`         varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型名称',
+    `model_base_url`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT NULL COMMENT '模型服务URL（同AzureOpenAI模型endpoint参数）',
+    `model_api_key`      varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT NULL COMMENT '模型密钥',
+    `model_read_timeout` int                                                           NULL     DEFAULT NULL COMMENT '模型响应超时时间',
+    `model_temperature`  decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型温度（对话模型、语音转文字模型参数）',
+    `model_top_p`        decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型TopP（对话模型参数）',
+    `model_n`            int                                                           NULL     DEFAULT NULL COMMENT '模型结果数量（图像模型参数）',
+    `model_info_name`    varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型信息名称（图像模型、语音转文字模型、文字转语音模型参数）',
+    `model_version`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型版本（AzureOpenAI模型参数）',
+    `create_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_deleted`         tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+    PRIMARY KEY (`model_id`) USING BTREE
+) ENGINE = InnoDB
+  CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for t_user
 -- ----------------------------
 DROP TABLE IF EXISTS `t_user`;

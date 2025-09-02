@@ -3,6 +3,10 @@ package top.sharehome.springbootinittemplate.config.ai.spring.service.image.mode
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * OpenAI Image类型
  *
@@ -76,5 +80,13 @@ public enum OpenAiImageType {
      * 图像分辨率
      */
     private final String quality;
+
+    public static OpenAiImageType getTypeByName(String name) {
+        List<OpenAiImageType> list = Arrays.stream(OpenAiImageType.values()).filter(openAiImageType -> Objects.equals(openAiImageType.name(), name)).toList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 
 }
