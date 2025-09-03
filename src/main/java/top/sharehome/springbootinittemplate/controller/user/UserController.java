@@ -27,7 +27,6 @@ import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,23 +52,12 @@ public class UserController {
     /**
      * 头像文件后缀集合
      */
-    private static final List<String> AVATAR_SUFFIX_LIST = new ArrayList<>() {
-        {
-            add("png");
-            add("jpg");
-            add("jpeg");
-        }
-    };
+    private static final List<String> AVATAR_SUFFIX_LIST = List.of("png", "jpg", "jpeg");
 
     /**
      * 用户信息表扩展名集合
      */
-    private static final List<String> IMPORT_SUFFIX_LIST = new ArrayList<>() {
-        {
-            add("xls");
-            add("xlsx");
-        }
-    };
+    private static final List<String> IMPORT_SUFFIX_LIST = List.of("xls", "xlsx");
 
     @Resource
     private UserService userService;
@@ -77,8 +65,8 @@ public class UserController {
     /**
      * 管理员分页查询用户信息
      *
-     * @param userPageDto 用户信息查询条件
-     * @param pageModel        分页模型
+     * @param userPageDto   用户信息查询条件
+     * @param pageModel     分页模型
      * @return 分页查询结果
      */
     @GetMapping("/page")
@@ -195,7 +183,7 @@ public class UserController {
     @PostMapping("/import")
     @ControllerLog(description = "管理员导入用户信息表", operator = Operator.INSERT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> importUser(@Validated({PostGroup.class}) UserExcelDto userExcelDto){
+    public R<String> importUser(@Validated({PostGroup.class}) UserExcelDto userExcelDto) {
         MultipartFile file = userExcelDto.getFile();
         if (file.getSize() == 0 || file.getSize() > IMPORT_MAX_SIZE) {
             throw new CustomizeReturnException(ReturnCode.USER_UPLOADED_FILE_IS_TOO_LARGE, "用户信息表不得大于200KB");

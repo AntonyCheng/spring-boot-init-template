@@ -35,7 +35,7 @@ public class Model implements Serializable {
     private String type;
 
     /**
-     * 模型服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）
+     * 服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）
      */
     @TableField(value = "model_service")
     private String service;
@@ -47,50 +47,49 @@ public class Model implements Serializable {
     private String name;
 
     /**
-     * 模型服务URL（同AzureOpenAI模型endpoint参数）
+     * 服务URL（同AzureOpenAI模型endpoint参数）
      */
     @TableField(value = "model_base_url")
     private String baseUrl;
 
     /**
-     * 模型密钥
+     * 密钥
      */
     @TableField(value = "model_api_key")
     private String apiKey;
 
-
     /**
-     * 模型响应超时时间
+     * 响应超时时间
      */
     @TableField(value = "model_read_timeout")
     private Integer readTimeout;
 
     /**
-     * 模型温度（对话模型、语音转文字模型参数）
+     * 温度（对话模型、语音转文字模型参数）
      */
     @TableField(value = "model_temperature")
     private Double temperature;
 
     /**
-     * 模型TopP（对话模型参数）
+     * TopP（对话模型参数）
      */
     @TableField(value = "model_top_p")
     private Double topP;
 
     /**
-     * 模型结果数量（图像模型参数）
+     * 结果数量（图像模型参数）
      */
     @TableField(value = "model_n")
     private Integer n;
 
     /**
-     * 模型信息名称（图像模型、语音转文字模型、文字转语音模型参数）
+     * 信息名称（图像模型、语音转文字模型、文字转语音模型参数）
      */
     @TableField(value = "model_info_name")
     private String infoName;
 
     /**
-     * 模型版本（AzureOpenAI模型参数）
+     * 版本（AzureOpenAI模型参数）
      */
     @TableField(value = "model_version")
     private String version;

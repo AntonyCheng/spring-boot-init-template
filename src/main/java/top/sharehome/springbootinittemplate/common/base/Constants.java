@@ -167,6 +167,18 @@ public interface Constants {
     Pattern REGEX_MAC_PATTERN = Pattern.compile(REGEX_MAC_STR);
 
     /**
+     * 模型服务的正则表达式
+     */
+    String REGEX_MODEL_TYPE_STR = "chat|embedding|image|transcription|tts";
+    Pattern REGEX_MODEL_TYPE_PATTERN = Pattern.compile(REGEX_MODEL_TYPE_STR);
+
+    /**
+     * 模型类型的正则表达式
+     */
+    String REGEX_MODEL_SERVICE_STR = "deepseek|openai|ollama|zhipu|mistralai|minimax|azureopenai";
+    Pattern REGEX_MODEL_SERVICE_PATTERN = Pattern.compile(REGEX_MODEL_SERVICE_STR);
+
+    /**
      * 未知文件类型后缀
      */
     String UNKNOWN_FILE_TYPE_SUFFIX = "unknown";

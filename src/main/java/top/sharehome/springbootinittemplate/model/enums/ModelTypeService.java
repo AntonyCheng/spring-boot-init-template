@@ -85,4 +85,12 @@ public enum ModelTypeService {
         return Objects.nonNull(enumByName) ? enumByName.getServices() : Map.of();
     }
 
+    public static Boolean hasServiceByTypeName(String typeName, String serviceName) {
+        return getServicesByName(typeName).containsValue(serviceName);
+    }
+
+    public static Boolean hasServiceByTypeId(Integer typeId, String serviceName) {
+        return getServicesById(typeId).containsValue(serviceName);
+    }
+
 }
