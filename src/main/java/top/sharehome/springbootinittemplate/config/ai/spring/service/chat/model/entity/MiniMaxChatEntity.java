@@ -27,7 +27,7 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：abab5.5-chat
      */
-    private static final String DEFAULT_MODEL = MiniMaxApi.ChatModel.ABAB_5_5_Chat.getValue();
+    public static final String DEFAULT_MODEL = MiniMaxApi.ChatModel.ABAB_5_5_Chat.getValue();
 
     /**
      * MiniMax密钥

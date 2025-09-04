@@ -27,7 +27,7 @@ public class MistralAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：ministral-8b-latest
      */
-    private static final String DEFAULT_MODEL = MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getValue();
+    public static final String DEFAULT_MODEL = MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getValue();
 
     /**
      * MistralAi密钥

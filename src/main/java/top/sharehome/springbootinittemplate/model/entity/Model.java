@@ -62,7 +62,7 @@ public class Model implements Serializable {
      * 响应超时时间
      */
     @TableField(value = "model_read_timeout")
-    private Integer readTimeout;
+    private Long readTimeout;
 
     /**
      * 温度（对话模型、语音转文字模型参数）
@@ -75,12 +75,6 @@ public class Model implements Serializable {
      */
     @TableField(value = "model_top_p")
     private Double topP;
-
-    /**
-     * 结果数量（图像模型参数）
-     */
-    @TableField(value = "model_n")
-    private Integer n;
 
     /**
      * 信息名称（图像模型、语音转文字模型、文字转语音模型参数）

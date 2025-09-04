@@ -53,7 +53,7 @@ public class ModelPageVo implements Serializable {
     /**
      * 模型响应超时时间
      */
-    private Integer readTimeout;
+    private Long readTimeout;
 
     /**
      * 模型温度（对话模型、语音转文字模型参数）

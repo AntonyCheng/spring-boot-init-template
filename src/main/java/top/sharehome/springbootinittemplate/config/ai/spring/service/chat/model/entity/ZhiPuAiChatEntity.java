@@ -27,7 +27,7 @@ public class ZhiPuAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：glm-4-flash
      */
-    private static final String DEFAULT_MODEL = ZhiPuAiApi.ChatModel.GLM_4_Flash.getValue();
+    public static final String DEFAULT_MODEL = ZhiPuAiApi.ChatModel.GLM_4_Flash.getValue();
 
     /**
      * ZhiPuAI密钥

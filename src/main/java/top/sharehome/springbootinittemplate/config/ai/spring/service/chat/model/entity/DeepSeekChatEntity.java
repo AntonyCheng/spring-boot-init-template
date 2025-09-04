@@ -27,12 +27,12 @@ public class DeepSeekChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：deepseek-r1
      */
-    private static final String DEFAULT_MODEL = "deepseek-r1";
+    public static final String DEFAULT_MODEL = "deepseek-r1";
 
     /**
      * 默认DeepSeek API接口地址
      */
-    private static final String DEFAULT_BASE_URL = "https://api.deepseek.com";
+    public static final String DEFAULT_BASE_URL = "https://api.deepseek.com";
 
     /**
      * 默认DeepSeek密钥

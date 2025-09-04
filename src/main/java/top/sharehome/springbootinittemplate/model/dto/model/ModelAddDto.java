@@ -59,7 +59,7 @@ public class ModelAddDto implements Serializable {
     /**
      * 响应超时时间
      */
-    private Integer readTimeout;
+    private Long readTimeout;
 
     /**
      * 温度（对话模型、语音转文字模型参数）
@@ -70,11 +70,6 @@ public class ModelAddDto implements Serializable {
      * TopP（对话模型参数）
      */
     private Double topP;
-
-    /**
-     * 结果数量（图像模型参数）
-     */
-    private Integer n;
 
     /**
      * 信息名称（图像模型、语音转文字模型、文字转语音模型参数）

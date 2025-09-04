@@ -27,12 +27,12 @@ public class OpenAiEmbeddingEntity extends EmbeddingModelBase implements Seriali
     /**
      * 默认模型名称：text-embedding-3-small
      */
-    private static final String DEFAULT_MODEL = OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue();
+    public static final String DEFAULT_MODEL = OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue();
 
     /**
      * 默认OpenAI API接口地址
      */
-    private static final String DEFAULT_BASE_URL = "https://api.openai.com";
+    public static final String DEFAULT_BASE_URL = "https://api.openai.com";
 
     /**
      * OpenAI密钥

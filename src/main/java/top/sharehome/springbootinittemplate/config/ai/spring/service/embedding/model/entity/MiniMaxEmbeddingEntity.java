@@ -27,7 +27,7 @@ public class MiniMaxEmbeddingEntity extends EmbeddingModelBase implements Serial
     /**
      * 默认模型名称：embo-01
      */
-    private static final String DEFAULT_MODEL = MiniMaxApi.EmbeddingModel.Embo_01.getValue();
+    public static final String DEFAULT_MODEL = MiniMaxApi.EmbeddingModel.Embo_01.getValue();
 
     /**
      * MiniMax密钥

@@ -27,12 +27,12 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
     /**
      * 默认模型名称：gpt-3.5-turbo
      */
-    private static final String DEFAULT_MODEL = OpenAiApi.ChatModel.GPT_3_5_TURBO.getValue();
+    public static final String DEFAULT_MODEL = OpenAiApi.ChatModel.GPT_3_5_TURBO.getValue();
 
     /**
      * 默认OpenAI API接口地址
      */
-    private static final String DEFAULT_BASE_URL = "https://api.openai.com";
+    public static final String DEFAULT_BASE_URL = "https://api.openai.com";
 
     /**
      * OpenAI密钥

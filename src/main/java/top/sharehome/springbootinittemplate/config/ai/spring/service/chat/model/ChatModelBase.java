@@ -19,6 +19,21 @@ import java.util.Objects;
 public abstract class ChatModelBase {
 
     /**
+     * 默认模型温度：0.8
+     */
+    public static final Double DEFAULT_TEMPERATURE = 0.8;
+
+    /**
+     * 默认模型top-p：0.9
+     */
+    public static final Double DEFAULT_TOP_P = 0.9;
+
+    /**
+     * 默认模型响应超时时间：3*60*1000毫秒
+     */
+    public static final Long DEFAULT_READ_TIMEOUT = 3 * 60 * 1000L;
+
+    /**
      * Chat模型服务方
      */
     protected ChatServiceType chatServiceType;
@@ -46,9 +61,9 @@ public abstract class ChatModelBase {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[chatServiceType]不能为空");
         }
         this.chatServiceType = chatServiceType;
-        this.temperature = Objects.isNull(temperature) ? 0.8 : temperature;
-        this.topP = Objects.isNull(topP) ? 0.9 : topP;
-        this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? 3 * 60 * 1000 : readTimeout;
+        this.temperature = Objects.isNull(temperature) ? DEFAULT_TEMPERATURE : temperature;
+        this.topP = Objects.isNull(topP) ? DEFAULT_TOP_P : topP;
+        this.readTimeout = Objects.isNull(readTimeout) || readTimeout <= 0 ? DEFAULT_READ_TIMEOUT : readTimeout;
     }
 
     public abstract String getModel();

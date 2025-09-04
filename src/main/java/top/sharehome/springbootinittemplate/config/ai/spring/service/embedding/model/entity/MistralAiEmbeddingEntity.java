@@ -27,7 +27,7 @@ public class MistralAiEmbeddingEntity extends EmbeddingModelBase implements Seri
     /**
      * 默认模型名称：mistral-embed
      */
-    private static final String DEFAULT_MODEL = MistralAiApi.EmbeddingModel.EMBED.getValue();
+    public static final String DEFAULT_MODEL = MistralAiApi.EmbeddingModel.EMBED.getValue();
 
     /**
      * MistralAi密钥

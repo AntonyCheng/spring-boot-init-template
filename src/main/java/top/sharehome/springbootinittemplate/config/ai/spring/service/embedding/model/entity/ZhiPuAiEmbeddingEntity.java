@@ -27,7 +27,7 @@ public class ZhiPuAiEmbeddingEntity extends EmbeddingModelBase implements Serial
     /**
      * 默认模型名称：Embedding-2
      */
-    private static final String DEFAULT_MODEL = ZhiPuAiApi.EmbeddingModel.Embedding_2.getValue();
+    public static final String DEFAULT_MODEL = ZhiPuAiApi.EmbeddingModel.Embedding_2.getValue();
 
     /**
      * ZhiPuAI密钥
