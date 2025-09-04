@@ -14,6 +14,10 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.OpenAiImageType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.StabilityAiImageType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.ZhiPuAiImageType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.TranscriptionModelBase;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.enums.AzureOpenAiTranscriptionType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.enums.OpenAiTranscriptionType;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.enums.OpenAiTtsType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.ModelMapper;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
@@ -100,7 +104,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             Double realTemperature = Objects.isNull(temperature) ? ChatModelBase.DEFAULT_TEMPERATURE : temperature;
             Double realTopP = Objects.isNull(topP) ? ChatModelBase.DEFAULT_TEMPERATURE : topP;
             if (ChatServiceType.DeepSeek.getValue().equals(service)
-                || ChatServiceType.OpenAI.getValue().equals(service)) {
+                    || ChatServiceType.OpenAI.getValue().equals(service)) {
                 if (StringUtils.isAnyBlank(baseUrl, apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
@@ -120,8 +124,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         .setTopP(realTopP)
                         .setReadTimeout(realReadTimeout);
             } else if (ChatServiceType.ZhiPuAI.getValue().equals(service)
-                       || ChatServiceType.MistralAI.getValue().equals(service)
-                       || ChatServiceType.MiniMax.getValue().equals(service)) {
+                    || ChatServiceType.MistralAI.getValue().equals(service)
+                    || ChatServiceType.MiniMax.getValue().equals(service)) {
                 if (StringUtils.isBlank(apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
@@ -161,8 +165,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         .setBaseUrl(baseUrl)
                         .setReadTimeout(realReadTimeout);
             } else if (EmbeddingServiceType.ZhiPuAI.getValue().equals(service)
-                       || EmbeddingServiceType.MistralAI.getValue().equals(service)
-                       || EmbeddingServiceType.MiniMax.getValue().equals(service)) {
+                    || EmbeddingServiceType.MistralAI.getValue().equals(service)
+                    || EmbeddingServiceType.MiniMax.getValue().equals(service)) {
                 if (StringUtils.isBlank(apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
@@ -222,16 +226,40 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }
         } else if ("transcription".equals(type)) {
+            Double realTemperature = Objects.isNull(temperature) ? TranscriptionModelBase.DEFAULT_TEMPERATURE : temperature;
             if (TranscriptionServiceType.OpenAI.getValue().equals(service)) {
-
-            } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)) {
-
-            } else {
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(OpenAiTranscriptionType.getTypeByName(infoName))) {
+                    throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
+                }
+                model.setType(type).setService(service).setName(name)
+                        .setBaseUrl(baseUrl)
+                        .setApiKey(apiKey)
+                        .setTemperature(realTemperature)
+                        .setInfoName(infoName)
+                        .setReadTimeout(realReadTimeout);
+            } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)){
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(AzureOpenAiTranscriptionType.getTypeByName(infoName))) {
+                    throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
+                }
+                model.setType(type).setService(service).setName(name)
+                        .setBaseUrl(baseUrl)
+                        .setApiKey(apiKey)
+                        .setTemperature(realTemperature)
+                        .setInfoName(infoName)
+                        .setReadTimeout(realReadTimeout);
+            }else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }
         } else if ("tts".equals(type)) {
             if (TtsServiceType.OpenAI.getValue().equals(service)) {
-
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(OpenAiTtsType.getTypeByName(infoName))) {
+                    throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
+                }
+                model.setType(type).setService(service).setName(name)
+                        .setBaseUrl(baseUrl)
+                        .setApiKey(apiKey)
+                        .setInfoName(infoName)
+                        .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }

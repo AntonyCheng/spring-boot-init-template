@@ -60,7 +60,7 @@ public class TranscriptionManager {
         return new OpenAiAudioTranscriptionModel(openAiAudioApi, OpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .model(entity.getModel())
-                .temperature(entity.getTemperature())
+                .temperature(entity.getTemperature().floatValue())
                 .responseFormat(entity.getFormat())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
     }
@@ -79,7 +79,7 @@ public class TranscriptionManager {
         return new AzureOpenAiAudioTranscriptionModel(openAiClient, AzureOpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .deploymentName(entity.getModel())
-                .temperature(entity.getTemperature())
+                .temperature(entity.getTemperature().floatValue())
                 .responseFormat(entity.getFormat())
                 .build());
     }
