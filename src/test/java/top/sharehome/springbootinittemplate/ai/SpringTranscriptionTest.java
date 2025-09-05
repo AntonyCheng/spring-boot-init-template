@@ -48,7 +48,7 @@ public class SpringTranscriptionTest {
         OpenAiAudioTranscriptionModel model = new OpenAiAudioTranscriptionModel(openAiAudioApi, OpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .model(entity.getOpenAiTranscriptionType().getModel())
-                .temperature(entity.getTemperature())
+                .temperature(entity.getTemperature().floatValue())
                 .responseFormat(entity.getFormat())
                 .build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
         InputStreamResource resource = new InputStreamResource(new FileInputStream("D:\\tts.mp3"));
@@ -65,7 +65,7 @@ public class SpringTranscriptionTest {
         AzureOpenAiAudioTranscriptionModel model = new AzureOpenAiAudioTranscriptionModel(openAiClient, AzureOpenAiAudioTranscriptionOptions.builder()
                 .language(Objects.isNull(entity.getLanguage()) ? null : entity.getLanguage().getValue())
                 .deploymentName(entity.getAzureOpenAiTranscriptionType().getModel())
-                .temperature(entity.getTemperature())
+                .temperature(entity.getTemperature().floatValue())
                 .responseFormat(entity.getFormat())
                 .build());
         InputStreamResource resource = new InputStreamResource(new FileInputStream("D:\\tts.mp3"));

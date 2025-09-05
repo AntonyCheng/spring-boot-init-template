@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.18</version>
+		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>top.sharehome</groupId>
@@ -13,8 +13,8 @@
 	<name>spring-boot-admin</name>
 	<description>spring-boot-admin</description>
 	<properties>
-		<java.version>11</java.version>
-		<spring.boot.admin.version>2.7.9</spring.boot.admin.version>
+		<java.version>17</java.version>
+		<spring.boot.admin.version>3.2.3</spring.boot.admin.version>
 		<lombok.version>1.18.30</lombok.version>
 	</properties>
 

@@ -1,9 +1,11 @@
 package top.sharehome.springbootinittemplate.model.dto.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +20,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class ModelUpdateInfoDto implements Serializable {
+
+    /**
+     * ID
+     */
+    @NotNull(message = "ID不能为空", groups = {PutGroup.class})
+    private Long id;
 
     @Serial
     private static final long serialVersionUID = -2692918850582813695L;
