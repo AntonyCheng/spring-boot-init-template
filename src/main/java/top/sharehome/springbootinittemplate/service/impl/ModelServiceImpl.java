@@ -74,7 +74,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 .setReadTimeout(model.getReadTimeout())
                 .setTemperature(model.getTemperature())
                 .setTopP(model.getTopP())
-                .setInfoName(model.getInfoName())
+                .setInfo(model.getInfo())
                 .setVersion(model.getVersion())
                 .setState(model.getState())
                 .setCreateTime(model.getCreateTime())).toList();
@@ -187,40 +187,44 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             }
         } else if ("image".equals(type)) {
             if (ImageServiceType.OpenAI.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(OpenAiImageType.getTypeByName(infoName))) {
+                OpenAiImageType imageType = OpenAiImageType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(imageType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfoName(infoName)
+                        .setInfo(imageType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.Stability.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(StabilityAiImageType.getTypeByName(infoName))) {
+                StabilityAiImageType imageType = StabilityAiImageType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(imageType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfoName(infoName)
+                        .setInfo(imageType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.ZhiPuAI.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(ZhiPuAiImageType.getTypeByName(infoName))) {
+                ZhiPuAiImageType imageType = ZhiPuAiImageType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(imageType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfoName(infoName)
+                        .setInfo(imageType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.AzureOpenAI.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(AzureOpenAiImageType.getTypeByName(infoName))) {
+                AzureOpenAiImageType imageType = AzureOpenAiImageType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(imageType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfoName(infoName)
+                        .setInfo(imageType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -228,43 +232,50 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         } else if ("transcription".equals(type)) {
             Double realTemperature = Objects.isNull(temperature) ? TranscriptionModelBase.DEFAULT_TEMPERATURE : temperature;
             if (TranscriptionServiceType.OpenAI.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(OpenAiTranscriptionType.getTypeByName(infoName))) {
+                OpenAiTranscriptionType transcriptionType = OpenAiTranscriptionType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(transcriptionType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(transcriptionType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
                         .setTemperature(realTemperature)
-                        .setInfoName(infoName)
+                        .setInfo(transcriptionType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)){
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(AzureOpenAiTranscriptionType.getTypeByName(infoName))) {
+                AzureOpenAiTranscriptionType transcriptionType = AzureOpenAiTranscriptionType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(transcriptionType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(transcriptionType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
                         .setTemperature(realTemperature)
-                        .setInfoName(infoName)
+                        .setInfo(transcriptionType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
             }else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }
         } else if ("tts".equals(type)) {
             if (TtsServiceType.OpenAI.getValue().equals(service)) {
-                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(OpenAiTtsType.getTypeByName(infoName))) {
+                OpenAiTtsType ttsType = OpenAiTtsType.getTypeByName(infoName);
+                if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(ttsType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
-                model.setType(type).setService(service).setName(name)
+                model.setType(type).setService(service).setName(ttsType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfoName(infoName)
+                        .setInfo(ttsType.getModel())
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }
         } else {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型类型");
+        }
+        int insertResult = modelMapper.insert(model);
+        if (insertResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
     }
 

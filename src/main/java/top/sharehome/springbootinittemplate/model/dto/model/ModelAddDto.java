@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.dto.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -72,7 +73,7 @@ public class ModelAddDto implements Serializable {
     private Double topP;
 
     /**
-     * 信息名称（图像模型、语音转文字模型、文字转语音模型参数）
+     * 模型信息（主要用于数据扩展，推荐用JSON格式）
      */
     private String infoName;
 

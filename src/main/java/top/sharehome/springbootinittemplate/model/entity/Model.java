@@ -77,10 +77,10 @@ public class Model implements Serializable {
     private Double topP;
 
     /**
-     * 信息名称（图像模型、语音转文字模型、文字转语音模型参数）
+     * 模型信息（主要用于数据扩展，推荐用JSON格式）
      */
-    @TableField(value = "model_info_name")
-    private String infoName;
+    @TableField(value = "model_info")
+    private String info;
 
     /**
      * 版本（AzureOpenAI模型参数）

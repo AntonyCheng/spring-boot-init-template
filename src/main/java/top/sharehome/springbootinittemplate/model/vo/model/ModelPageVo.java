@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.vo.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -71,9 +72,9 @@ public class ModelPageVo implements Serializable {
     private Integer n;
 
     /**
-     * 模型信息名称（图像模型、语音转文字模型、文字转语音模型参数）
+     * 模型信息（主要用于数据扩展，推荐用JSON格式）
      */
-    private String infoName;
+    private String info;
 
     /**
      * 模型版本（AzureOpenAI模型参数）

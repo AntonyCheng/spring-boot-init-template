@@ -81,7 +81,7 @@ CREATE TABLE `t_model`
     `model_read_timeout` int                                                           NULL     DEFAULT NULL COMMENT '模型响应超时时间',
     `model_temperature`  decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型温度（对话模型、语音转文字模型参数）',
     `model_top_p`        decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型TopP（对话模型参数）',
-    `model_info_name`    varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型信息名称（图像模型、语音转文字模型、文字转语音模型参数）',
+    `model_info`         text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci         NULL COMMENT '模型信息（主要用于数据扩展，推荐用JSON格式）',
     `model_version`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型版本（AzureOpenAI模型参数）',
     `model_state`        tinyint                                                       NOT NULL COMMENT '模型状态（0表示启用，1表示禁用）',
     `create_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
