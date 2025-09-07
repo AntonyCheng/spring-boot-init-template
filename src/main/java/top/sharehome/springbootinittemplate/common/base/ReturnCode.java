@@ -140,6 +140,11 @@ public enum ReturnCode {
     ACCOUNT_AND_EMAIL_DO_NOT_MATCH(11020, "用户账户和邮箱不匹配"),
 
     /**
+     * 数据不存在 11021
+     */
+    DATA_DOES_NOT_EXIST(11021,"数据不存在"),
+
+    /**
      * 手机格式校验失败 12000
      */
     PHONE_FORMAT_VERIFICATION_FAILED(12000, "手机格式校验失败"),

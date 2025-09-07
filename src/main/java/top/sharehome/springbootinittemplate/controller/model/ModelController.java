@@ -17,9 +17,8 @@ import top.sharehome.springbootinittemplate.config.log.annotation.ControllerLog;
 import top.sharehome.springbootinittemplate.config.log.enums.Operator;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelAddDto;
+import top.sharehome.springbootinittemplate.model.dto.model.ModelAddOrUpdateDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelPageDto;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateInfoDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateStateDto;
 import top.sharehome.springbootinittemplate.model.enums.ModelTypeService;
 import top.sharehome.springbootinittemplate.model.vo.model.ModelExportVo;
@@ -60,17 +59,17 @@ public class ModelController {
     /**
      * 管理员添加模型
      *
-     * @param modelAddDto 被添加模型信息
+     * @param modelAddOrUpdateDto 被添加模型信息
      * @return 添加结果
      */
     @PostMapping("/add")
     @ControllerLog(description = "管理员添加模型信息", operator = Operator.INSERT)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> addModel(@RequestBody @Validated({PostGroup.class}) ModelAddDto modelAddDto) {
-        if (!ModelTypeService.hasServiceByTypeName(modelAddDto.getType(), modelAddDto.getService())) {
+    public R<String> addModel(@RequestBody @Validated({PostGroup.class}) ModelAddOrUpdateDto modelAddOrUpdateDto) {
+        if (!ModelTypeService.hasServiceByTypeName(modelAddOrUpdateDto.getType(), modelAddOrUpdateDto.getService())) {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "该模型类型不支持该类型服务");
         }
-        modelService.addModel(modelAddDto);
+        modelService.addModel(modelAddOrUpdateDto);
         return R.ok("添加成功");
     }
 
@@ -91,14 +90,14 @@ public class ModelController {
     /**
      * 管理员修改模型信息
      *
-     * @param modelUpdateInfoDto 被修改后的模型信息
+     * @param modelAddOrUpdateDto 被修改后的模型信息
      * @return 修改结果
      */
     @PutMapping("/update/info")
     @ControllerLog(description = "管理员修改模型信息", operator = Operator.UPDATE)
     @SaCheckRole(value = {Constants.ROLE_ADMIN})
-    public R<String> updateInfo(@RequestBody @Validated({PutGroup.class}) ModelUpdateInfoDto modelUpdateInfoDto) {
-        modelService.updateInfo(modelUpdateInfoDto);
+    public R<String> updateInfo(@RequestBody @Validated({PutGroup.class}) ModelAddOrUpdateDto modelAddOrUpdateDto) {
+        modelService.updateInfo(modelAddOrUpdateDto);
         return R.ok("修改信息成功");
     }
 

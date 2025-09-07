@@ -1,12 +1,14 @@
 package top.sharehome.springbootinittemplate.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.ai.spring.enums.*;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.chat.model.ChatModelBase;
@@ -21,11 +23,11 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.e
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.ModelMapper;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelAddDto;
+import top.sharehome.springbootinittemplate.model.dto.model.ModelAddOrUpdateDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelPageDto;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateInfoDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateStateDto;
 import top.sharehome.springbootinittemplate.model.entity.Model;
+import top.sharehome.springbootinittemplate.model.entity.User;
 import top.sharehome.springbootinittemplate.model.vo.model.ModelExportVo;
 import top.sharehome.springbootinittemplate.model.vo.model.ModelPageVo;
 import top.sharehome.springbootinittemplate.service.ModelService;
@@ -45,6 +47,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     private ModelMapper modelMapper;
 
     @Override
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
     public Page<ModelPageVo> pageModel(ModelPageDto modelPageDto, PageModel pageModel) {
         Page<Model> page = pageModel.build();
         Page<ModelPageVo> res = pageModel.build();
@@ -85,20 +88,70 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     }
 
     @Override
-    public void addModel(ModelAddDto modelAddDto) {
+    @Transactional(rollbackFor = Exception.class)
+    public void addModel(ModelAddOrUpdateDto modelAddOrUpdateDto) {
+        Model model = this.getModelByDto(modelAddOrUpdateDto);
+        int insertResult = modelMapper.insert(model);
+        if (insertResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+    }
+
+    @Override
+    public void deleteModel(Long id) {
+        Model modelInDatabase = modelMapper.selectById(id);
+        if (Objects.isNull(modelInDatabase)) {
+            throw new CustomizeReturnException(ReturnCode.DATA_DOES_NOT_EXIST);
+        }
+        int modelDeleteResult = modelMapper.deleteById(id);
+        if (modelDeleteResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+        // 删除其他和模型关联的数据
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateInfo(ModelAddOrUpdateDto modelAddOrUpdateDto) {
+        Model modelInDatabase = modelMapper.selectById(modelAddOrUpdateDto.getId());
+        if (Objects.isNull(modelInDatabase)) {
+            throw new CustomizeReturnException(ReturnCode.DATA_DOES_NOT_EXIST);
+        }
+        Model model = this.getModelByDto(modelAddOrUpdateDto);
+        int updateResult = modelMapper.updateById(model);
+        if (updateResult == 0) {
+            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+        }
+    }
+
+    @Override
+    public void updateState(ModelUpdateStateDto modelUpdateStateDto) {
+        Long id = modelUpdateStateDto.getId();
+        LambdaUpdateWrapper<Model> modelLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+
+    }
+
+    @Override
+    public List<ModelExportVo> exportExcelList() {
+        return List.of();
+    }
+
+    private Model getModelByDto(ModelAddOrUpdateDto modelAddOrUpdateDto) {
         // 获取参数
-        String type = modelAddDto.getType();
-        String service = modelAddDto.getService();
-        String name = modelAddDto.getName();
-        String baseUrl = modelAddDto.getBaseUrl();
-        String apiKey = modelAddDto.getApiKey();
-        Long readTimeout = modelAddDto.getReadTimeout();
-        Double temperature = modelAddDto.getTemperature();
-        Double topP = modelAddDto.getTopP();
-        String infoName = modelAddDto.getInfoName();
-        String version = modelAddDto.getVersion();
+        Long id = modelAddOrUpdateDto.getId();
+        String type = modelAddOrUpdateDto.getType();
+        String service = modelAddOrUpdateDto.getService();
+        String name = modelAddOrUpdateDto.getName();
+        String baseUrl = modelAddOrUpdateDto.getBaseUrl();
+        String apiKey = modelAddOrUpdateDto.getApiKey();
+        Long readTimeout = modelAddOrUpdateDto.getReadTimeout();
+        Double temperature = modelAddOrUpdateDto.getTemperature();
+        Double topP = modelAddOrUpdateDto.getTopP();
+        String infoName = modelAddOrUpdateDto.getInfoName();
+        String version = modelAddOrUpdateDto.getVersion();
         // 构建实体类
         Model model = new Model();
+        model.setId(id);
         Long realReadTimeout = Objects.isNull(readTimeout) ? ChatModelBase.DEFAULT_READ_TIMEOUT : readTimeout;
         if ("chat".equals(type)) {
             Double realTemperature = Objects.isNull(temperature) ? ChatModelBase.DEFAULT_TEMPERATURE : temperature;
@@ -242,7 +295,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         .setTemperature(realTemperature)
                         .setInfo(transcriptionType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
-            } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)){
+            } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)) {
                 AzureOpenAiTranscriptionType transcriptionType = AzureOpenAiTranscriptionType.getTypeByName(infoName);
                 if (StringUtils.isAnyBlank(baseUrl, apiKey, infoName) || Objects.isNull(transcriptionType)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
@@ -253,7 +306,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         .setTemperature(realTemperature)
                         .setInfo(transcriptionType.toJsonStr())
                         .setReadTimeout(realReadTimeout);
-            }else {
+            } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
             }
         } else if ("tts".equals(type)) {
@@ -273,31 +326,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         } else {
             throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型类型");
         }
-        int insertResult = modelMapper.insert(model);
-        if (insertResult == 0) {
-            throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
-        }
+        return model;
     }
-
-    @Override
-    public void deleteModel(Long id) {
-
-    }
-
-    @Override
-    public void updateInfo(ModelUpdateInfoDto modelUpdateInfoDto) {
-
-    }
-
-    @Override
-    public void updateState(ModelUpdateStateDto modelUpdateStateDto) {
-
-    }
-
-    @Override
-    public List<ModelExportVo> exportExcelList() {
-        return List.of();
-    }
-
 
 }

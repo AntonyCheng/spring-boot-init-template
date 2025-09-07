@@ -3,9 +3,8 @@ package top.sharehome.springbootinittemplate.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.sharehome.springbootinittemplate.model.common.PageModel;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelAddDto;
+import top.sharehome.springbootinittemplate.model.dto.model.ModelAddOrUpdateDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelPageDto;
-import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateInfoDto;
 import top.sharehome.springbootinittemplate.model.dto.model.ModelUpdateStateDto;
 import top.sharehome.springbootinittemplate.model.entity.Model;
 import top.sharehome.springbootinittemplate.model.vo.model.ModelExportVo;
@@ -32,9 +31,9 @@ public interface ModelService extends IService<Model> {
     /**
      * 管理员添加模型
      *
-     * @param modelAddDto 被添加模型信息
+     * @param modelAddOrUpdateDto 被添加模型信息
      */
-    void addModel(ModelAddDto modelAddDto);
+    void addModel(ModelAddOrUpdateDto modelAddOrUpdateDto);
 
     /**
      * 管理员根据ID删除模型
@@ -46,9 +45,9 @@ public interface ModelService extends IService<Model> {
     /**
      * 管理员修改模型信息
      *
-     * @param modelUpdateInfoDto 被修改后的模型信息
+     * @param modelAddOrUpdateDto 被修改后的模型信息
      */
-    void updateInfo(ModelUpdateInfoDto modelUpdateInfoDto);
+    void updateInfo(ModelAddOrUpdateDto modelAddOrUpdateDto);
 
     /**
      * 管理员修改模型状态

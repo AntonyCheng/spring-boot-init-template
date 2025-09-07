@@ -82,7 +82,7 @@ public class ModelPageVo implements Serializable {
     private String version;
 
     /**
-     * 模型状态（0表示启用，1表示禁用）
+     * 模型状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）
      */
     private Integer state;
 

@@ -1,7 +1,7 @@
 package top.sharehome.springbootinittemplate.model.dto.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import top.sharehome.springbootinittemplate.common.validate.GetGroup;
 import top.sharehome.springbootinittemplate.common.validate.PostGroup;
+import top.sharehome.springbootinittemplate.common.validate.PutGroup;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -25,26 +26,32 @@ import static top.sharehome.springbootinittemplate.common.base.Constants.REGEX_M
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class ModelAddDto implements Serializable {
+public class ModelAddOrUpdateDto implements Serializable {
+
+    /**
+     * ID
+     */
+    @NotNull(message = "ID不能为空", groups = {PutGroup.class})
+    private Long id;
 
     /**
      * 类型（对话-chat，向量-embedding，图片-image，语音转文字-transcription，文字转语音-tts）
      */
-    @NotBlank(message = "类型不能为空", groups = {PostGroup.class})
-    @Pattern(regexp = REGEX_MODEL_TYPE_STR, message = "无此模型类型", groups = {GetGroup.class})
+    @NotBlank(message = "类型不能为空", groups = {PostGroup.class, PutGroup.class})
+    @Pattern(regexp = REGEX_MODEL_TYPE_STR, message = "无此模型类型", groups = {GetGroup.class, PutGroup.class})
     private String type;
 
     /**
      * 服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）
      */
-    @NotBlank(message = "服务不能为空", groups = {PostGroup.class})
-    @Pattern(regexp = REGEX_MODEL_SERVICE_STR, message = "无此模型服务", groups = {GetGroup.class})
+    @NotBlank(message = "服务不能为空", groups = {PostGroup.class, PutGroup.class})
+    @Pattern(regexp = REGEX_MODEL_SERVICE_STR, message = "无此模型服务", groups = {GetGroup.class, PutGroup.class})
     private String service;
 
     /**
      * 名称
      */
-    @NotBlank(message = "名称不能为空", groups = {PostGroup.class})
+    @NotBlank(message = "名称不能为空", groups = {PostGroup.class, PutGroup.class})
     private String name;
 
     /**

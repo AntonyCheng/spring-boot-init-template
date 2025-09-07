@@ -89,7 +89,7 @@ public class Model implements Serializable {
     private String version;
 
     /**
-     * 状态（0表示启用，1表示禁用）
+     * 状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）
      */
     @TableField(value = "model_state", fill = FieldFill.INSERT)
     private Integer state;
