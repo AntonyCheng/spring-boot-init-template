@@ -49,59 +49,120 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
      */
     private String baseUrl;
 
+    /**
+     * 最大响应Token数
+     */
+    private Integer maxTokens;
+
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, null, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, null, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Long readTimeout) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, readTimeout);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Long readTimeout, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, null, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, null, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Long readTimeout) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, readTimeout);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Long readTimeout, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, temperature, topP, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, null, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, null, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Long readTimeout) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, readTimeout);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Long readTimeout, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, null, null, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, null, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, null, maxTokens);
     }
 
     public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, readTimeout);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(OpenAiApi.ChatModel chatModel, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, baseUrl, temperature, topP, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey) {
-        this(model, apiKey, null, null, null, null);
+        this(model, apiKey, null, null, null, null, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, Integer maxTokens) {
+        this(model, apiKey, null, null, null, null, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey, Long readTimeout) {
-        this(model, apiKey, null, null, null, readTimeout);
+        this(model, apiKey, null, null, null, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, Long readTimeout, Integer maxTokens) {
+        this(model, apiKey, null, null, null, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl) {
-        this(model, apiKey, baseUrl, null, null, null);
+        this(model, apiKey, baseUrl, null, null, null, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Integer maxTokens) {
+        this(model, apiKey, baseUrl, null, null, null, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl, Long readTimeout) {
-        this(model, apiKey, baseUrl, null, null, readTimeout);
+        this(model, apiKey, baseUrl, null, null, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Long readTimeout, Integer maxTokens) {
+        this(model, apiKey, baseUrl, null, null, readTimeout, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP) {
-        this(model, apiKey, baseUrl, temperature, topP, null);
+        this(model, apiKey, baseUrl, temperature, topP, null, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Integer maxTokens) {
+        this(model, apiKey, baseUrl, temperature, topP, null, maxTokens);
     }
 
     public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout) {
+        this(model, apiKey, baseUrl, temperature, topP, readTimeout, null);
+    }
+
+    public OpenAiChatEntity(String model, String apiKey, String baseUrl, Double temperature, Double topP, Long readTimeout, Integer maxTokens) {
         super(ChatServiceType.OpenAI, temperature, topP, readTimeout);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
@@ -109,6 +170,7 @@ public class OpenAiChatEntity extends ChatModelBase implements Serializable {
         this.apiKey = apiKey;
         this.model = StringUtils.isBlank(model) ? DEFAULT_MODEL : model;
         this.baseUrl = StringUtils.isBlank(baseUrl) ? DEFAULT_BASE_URL : baseUrl;
+        this.maxTokens = maxTokens;
     }
 
     public void setName(OpenAiApi.ChatModel chatModel) {

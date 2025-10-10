@@ -55,7 +55,7 @@
         <!-- SpringBoot相关 -->
         <spring.boot.version>3.2.5</spring.boot.version>
         <!-- AI相关 -->
-        <spring.ai.version>1.0.1</spring.ai.version>
+        <spring.ai.version>1.0.3</spring.ai.version>
         <langgraph4j.version>1.6.0</langgraph4j.version>
         <!-- Netty相关 -->
         <netty.version>4.1.114.Final</netty.version>

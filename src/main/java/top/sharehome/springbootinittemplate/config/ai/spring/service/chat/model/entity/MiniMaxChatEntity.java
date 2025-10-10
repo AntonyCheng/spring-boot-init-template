@@ -39,25 +39,47 @@ public class MiniMaxChatEntity extends ChatModelBase implements Serializable {
      */
     private String model;
 
+    /**
+     * 最大响应Token数
+     */
+    private Integer maxTokens;
+
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, null);
+    }
+
+    public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, null, null, maxTokens);
     }
 
     public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Double temperature, Double topP) {
-        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP);
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP, null);
+    }
+
+    public MiniMaxChatEntity(MiniMaxApi.ChatModel chatModel, String apiKey, Double temperature, Double topP, Integer maxTokens) {
+        this(Objects.isNull(chatModel) ? DEFAULT_MODEL : chatModel.getValue(), apiKey, temperature, topP, maxTokens);
     }
 
     public MiniMaxChatEntity(String model, String apiKey) {
-        this(model, apiKey, null, null);
+        this(model, apiKey, null, null, null);
+    }
+
+    public MiniMaxChatEntity(String model, String apiKey, Integer maxTokens) {
+        this(model, apiKey, null, null, maxTokens);
     }
 
     public MiniMaxChatEntity(String model, String apiKey, Double temperature, Double topP) {
+        this(DEFAULT_MODEL, apiKey, temperature, topP, null);
+    }
+
+    public MiniMaxChatEntity(String model, String apiKey, Double temperature, Double topP, Integer maxTokens) {
         super(ChatServiceType.MiniMax, temperature, topP, null);
         if (StringUtils.isBlank(apiKey)) {
             throw new CustomizeAiException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "参数[apiKey]不能为空");
         }
         this.apiKey = apiKey;
         this.model = StringUtils.isBlank(model) ? DEFAULT_MODEL : model;
+        this.maxTokens = maxTokens;
     }
 
     public void setName(MiniMaxApi.ChatModel chatModel) {

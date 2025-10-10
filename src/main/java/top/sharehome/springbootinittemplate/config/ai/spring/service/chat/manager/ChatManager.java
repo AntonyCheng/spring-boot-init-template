@@ -131,6 +131,7 @@ public class ChatManager {
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP())
+                                .maxTokens(entity.getMaxTokens())
                                 .build()
                 ).build();
     }
@@ -158,6 +159,7 @@ public class ChatManager {
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP())
+                                .maxTokens(entity.getMaxTokens())
                                 .build()
                 ).build();
     }
@@ -220,6 +222,7 @@ public class ChatManager {
                         .model(entity.getModel())
                         .temperature(entity.getTemperature())
                         .topP(entity.getTopP())
+                        .maxTokens(entity.getMaxTokens())
                         .build()
         );
     }
@@ -242,6 +245,7 @@ public class ChatManager {
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP())
+                                .maxTokens(entity.getMaxTokens())
                                 .build()
                 )
                 .build();
@@ -264,6 +268,7 @@ public class ChatManager {
                         .model(entity.getModel())
                         .temperature(entity.getTemperature())
                         .topP(entity.getTopP())
+                        .maxTokens(entity.getMaxTokens())
                         .build()
         );
     }
@@ -294,6 +299,7 @@ public class ChatManager {
                                 .deploymentName(entity.getModel())
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP())
+                                .maxTokens(entity.getMaxTokens())
                                 .build()
                 )
                 .toolCallingManager(DefaultToolCallingManager.builder().build())
