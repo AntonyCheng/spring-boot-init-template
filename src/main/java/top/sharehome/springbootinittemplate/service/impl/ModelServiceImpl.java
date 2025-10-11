@@ -33,9 +33,13 @@ import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model
 import top.sharehome.springbootinittemplate.config.ai.spring.service.image.model.enums.ZhiPuAiImageType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.impl.AiTranscriptionServiceImpl;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.TranscriptionModelBase;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.AzureOpenAiTranscriptionEntity;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.entity.OpenAiTranscriptionEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.enums.AzureOpenAiTranscriptionType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.transcription.model.enums.OpenAiTranscriptionType;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.impl.AiTtsServiceImpl;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.TtsModelBase;
+import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.entity.OpenAiTtsEntity;
 import top.sharehome.springbootinittemplate.config.ai.spring.service.tts.model.enums.OpenAiTtsType;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeReturnException;
 import top.sharehome.springbootinittemplate.mapper.ModelMapper;
@@ -442,6 +446,28 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             if (CollectionUtils.isEmpty(result)){
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
             }
+        } else if ("transcription".equals(type)){
+            TranscriptionModelBase transcriptionModel;
+            if (TranscriptionServiceType.OpenAI.getValue().equals(service)){
+                transcriptionModel = new OpenAiTranscriptionEntity(OpenAiTranscriptionType.getTypeByName(model.getName()), model.getApiKey());
+            } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)) {
+                transcriptionModel = new AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType.getTypeByName(model.getName()), model.getApiKey());
+            }else {
+                throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
+            }
+        } else if ("tts".equals(type)) {
+            TtsModelBase ttsModelBase;
+            if (TtsServiceType.OpenAI.getValue().equals(service)){
+                ttsModelBase = new OpenAiTtsEntity(OpenAiTtsType.getTypeByName(model.getName()), model.getApiKey());
+            }else {
+                throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
+            }
+            byte[] result = ttsService.speechBytes(ttsModelBase, "hi");
+            if (ArrayUtils.isEmpty(result)) {
+                throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
+            }
+        }else {
+            throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型不存在");
         }
     }
 
