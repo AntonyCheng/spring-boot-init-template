@@ -10,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
@@ -52,6 +53,8 @@ import top.sharehome.springbootinittemplate.model.vo.model.ModelExportVo;
 import top.sharehome.springbootinittemplate.model.vo.model.ModelPageVo;
 import top.sharehome.springbootinittemplate.service.ModelService;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -455,6 +458,15 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             }else {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
             }
+            String result;
+            try {
+               result = transcriptionService.transcribe(transcriptionModel, new ClassPathResource("transcription" + File.separator + "example.mp3").getInputStream(), "example.mp3");
+            } catch (IOException e) {
+                throw new CustomizeReturnException(ReturnCode.FAIL, "读取音频样本文件异常");
+            }
+            if (StringUtils.isEmpty(result)){
+                throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
+            }
         } else if ("tts".equals(type)) {
             TtsModelBase ttsModelBase;
             if (TtsServiceType.OpenAI.getValue().equals(service)){
@@ -462,18 +474,13 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             }else {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
             }
-            byte[] result = ttsService.speechBytes(ttsModelBase, "hi");
+            byte[] result = ttsService.speechBytes(ttsModelBase, ".");
             if (ArrayUtils.isEmpty(result)) {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
             }
         }else {
             throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型不存在");
         }
-    }
-
-    public static void main(String[] args) {
-
-        System.out.println();
     }
 
 }

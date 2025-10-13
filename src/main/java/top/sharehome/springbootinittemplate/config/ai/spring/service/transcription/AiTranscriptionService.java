@@ -35,7 +35,7 @@ public interface AiTranscriptionService {
      * @param model transcription模型信息
      * @param bytes 输入字节
      */
-    String transcribe(TranscriptionModelBase model, byte[] bytes);
+    String transcribe(TranscriptionModelBase model, byte[] bytes,String fileName);
 
     /**
      * AI转录功能
@@ -43,6 +43,6 @@ public interface AiTranscriptionService {
      * @param model         transcription模型信息
      * @param inputStream   输入流
      */
-    String transcribe(TranscriptionModelBase model, InputStream inputStream);
+    String transcribe(TranscriptionModelBase model, InputStream inputStream,String fileName);
 
 }

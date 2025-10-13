@@ -723,6 +723,7 @@
                     <include>mapper/**</include>
                     <include>templates/**</include>
                     <include>tokenizers/**</include>
+                    <include>transcription/**</include>
                     <include>banner.txt</include>
                 </includes>
                 <filtering>false</filtering>

@@ -76,8 +76,8 @@ public class SpringTranscriptionTest {
     public void testTranscribe() throws FileNotFoundException {
         OpenAiTranscriptionEntity openAiTranscriptionEntity = new OpenAiTranscriptionEntity(OpenAiTranscriptionType.Whisper, "sk-xxx");
         AzureOpenAiTranscriptionEntity azureOpenAiTranscriptionEntity = new AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType.Whisper, "xxx", "https://xxx-xxx-swedencentral.cognitiveservices.azure.com/");
-        System.out.println(aiTranscriptionService.transcribe(openAiTranscriptionEntity, new FileInputStream("D:\\tts.mp3")));
-        System.out.println(aiTranscriptionService.transcribe(azureOpenAiTranscriptionEntity, new FileInputStream("D:\\tts.mp3")));
+        System.out.println(aiTranscriptionService.transcribe(openAiTranscriptionEntity, new FileInputStream("D:\\tts.mp3"), "tts.mp3"));
+        System.out.println(aiTranscriptionService.transcribe(azureOpenAiTranscriptionEntity, new FileInputStream("D:\\tts.mp3"), "tts.mp3"));
     }
 
 }
