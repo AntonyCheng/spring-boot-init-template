@@ -27,7 +27,7 @@ import top.sharehome.springbootinittemplate.model.vo.user.UserExportVo;
 import top.sharehome.springbootinittemplate.model.vo.user.UserPageVo;
 import top.sharehome.springbootinittemplate.service.UserService;
 import top.sharehome.springbootinittemplate.utils.document.excel.ExcelUtils;
-import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
+import top.sharehome.springbootinittemplate.utils.oss.local.OssLocalUtils;
 import top.sharehome.springbootinittemplate.utils.satoken.LoginUtils;
 
 import java.io.IOException;
@@ -323,7 +323,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateAvatar(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String avatarPath = "avatar/" + date;
-        File avatarFile = MinioUtils.upload(file, avatarPath);
+        File avatarFile = OssLocalUtils.upload(file, avatarPath);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.set(User::getAvatarId, avatarFile.getId());
         userLambdaUpdateWrapper.eq(User::getId, LoginUtils.getLoginUserIdOrThrow());
@@ -333,7 +333,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         AuthLoginVo loginUser = (AuthLoginVo) SaHolder.getStorage().get(Constants.LOGIN_USER_KEY);
         if (fileMapper.exists(new LambdaQueryWrapper<File>().eq(File::getId, loginUser.getAvatarId()))) {
-            MinioUtils.delete(loginUser.getAvatarId());
+            OssLocalUtils.delete(loginUser.getAvatarId());
         }
         LoginUtils.syncLoginUser();
     }

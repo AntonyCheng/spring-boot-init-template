@@ -22,7 +22,7 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
 import top.sharehome.springbootinittemplate.config.oss.service.ali.condition.OssAliCondition;
-import top.sharehome.springbootinittemplate.config.oss.service.ali.properties.AliProperties;
+import top.sharehome.springbootinittemplate.config.oss.service.ali.properties.OssAliProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -41,13 +41,13 @@ import java.util.UUID;
  * @author AntonyCheng
  */
 @Configuration
-@EnableConfigurationProperties(AliProperties.class)
+@EnableConfigurationProperties(OssAliProperties.class)
 @AllArgsConstructor
 @Slf4j
 @Conditional(OssAliCondition.class)
-public class AliConfiguration {
+public class OssAliConfiguration {
 
-    private final AliProperties aliProperties;
+    private final OssAliProperties ossAliProperties;
 
     private final FileService fileService;
 
@@ -70,7 +70,7 @@ public class AliConfiguration {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((AliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
+        return ((OssAliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -87,7 +87,7 @@ public class AliConfiguration {
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((AliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
+        return ((OssAliConfiguration) AopContext.currentProxy()).uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -128,9 +128,9 @@ public class AliConfiguration {
             // 封装输出流为ByteArrayInputStream
             ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
             // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, tempInputStream).withProgressListener(new PutObjectProgressListener()));
+            ossClient.putObject(new PutObjectRequest(ossAliProperties.getBucketName(), key, tempInputStream).withProgressListener(new PutObjectProgressListener()));
             // 添加新文件
-            String url = Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
+            String url = Constants.HTTPS + ossAliProperties.getBucketName() + "." + ossAliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
             File newFile = new File()
                     .setUniqueKey(uniqueKey)
                     .setName(key)
@@ -194,13 +194,13 @@ public class AliConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
         OSS ossClient = getOssClient();
-        String[] split = url.split(aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/");
+        String[] split = url.split(ossAliProperties.getBucketName() + "." + ossAliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/");
         if (split.length != 2) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
         }
         String key = split[1];
         try {
-            ossClient.deleteObject(aliProperties.getBucketName(), key);
+            ossClient.deleteObject(ossAliProperties.getBucketName(), key);
         } catch (OSSException | ClientException e) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
         }
@@ -212,9 +212,9 @@ public class AliConfiguration {
      * @return 返回OSSClient客户端
      */
     private OSS getOssClient() {
-        CredentialsProvider credentialsProvider = new DefaultCredentialProvider(aliProperties.getSecretId(), aliProperties.getSecretKey());
+        CredentialsProvider credentialsProvider = new DefaultCredentialProvider(ossAliProperties.getSecretId(), ossAliProperties.getSecretKey());
         // 获取配置类中的域名
-        String endpoint = aliProperties.getEndpoint();
+        String endpoint = ossAliProperties.getEndpoint();
         // 创建ClientBuilderConfiguration。
         // ClientBuilderConfiguration是OSSClient的配置类，可配置代理、连接超时、最大连接数等参数。
         ClientBuilderConfiguration conf = new ClientBuilderConfiguration();

@@ -1,25 +1,25 @@
-package top.sharehome.springbootinittemplate.utils.oss.ali;
+package top.sharehome.springbootinittemplate.utils.oss.local;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.service.ali.AliConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.service.local.OssLocalConfiguration;
 import top.sharehome.springbootinittemplate.model.entity.File;
 
 import java.io.InputStream;
 
 /**
- * 阿里云OSS工具类
+ * 本地OSS工具类
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class AliUtils {
+public class OssLocalUtils {
 
     /**
      * 被封装的OSS对象
      */
-    private static final AliConfiguration ALI_CONFIGURATION = SpringContextHolder.getBean(AliConfiguration.class);
+    private static final OssLocalConfiguration OSS_LOCAL_CONFIGURATION = SpringContextHolder.getBean(OssLocalConfiguration.class);
 
     /**
      * 上传文件
@@ -29,7 +29,7 @@ public class AliUtils {
      * @return 文件所在路径
      */
     public static File upload(MultipartFile file, String rootPath) {
-        return ALI_CONFIGURATION.uploadToOss(file, rootPath);
+        return OSS_LOCAL_CONFIGURATION.uploadToOss(file, rootPath);
     }
 
     /**
@@ -41,7 +41,7 @@ public class AliUtils {
      * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String suffix, String rootPath) {
-        return ALI_CONFIGURATION.uploadToOss(bytes, null, suffix, rootPath);
+        return OSS_LOCAL_CONFIGURATION.uploadToOss(bytes, null, suffix, rootPath);
     }
 
     /**
@@ -54,7 +54,7 @@ public class AliUtils {
      * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String originalName, String suffix, String rootPath) {
-        return ALI_CONFIGURATION.uploadToOss(bytes, originalName, suffix, rootPath);
+        return OSS_LOCAL_CONFIGURATION.uploadToOss(bytes, originalName, suffix, rootPath);
     }
 
     /**
@@ -65,7 +65,7 @@ public class AliUtils {
      * @param rootPath    上传的路径
      */
     public static File upload(InputStream inputStream, String suffix, String rootPath) {
-        return ALI_CONFIGURATION.uploadToOss(inputStream, null, suffix, rootPath);
+        return OSS_LOCAL_CONFIGURATION.uploadToOss(inputStream, null, suffix, rootPath);
     }
 
     /**
@@ -77,7 +77,7 @@ public class AliUtils {
      * @param rootPath     上传的路径
      */
     public static File upload(InputStream inputStream, String originalName, String suffix, String rootPath) {
-        return ALI_CONFIGURATION.uploadToOss(inputStream, originalName, suffix, rootPath);
+        return OSS_LOCAL_CONFIGURATION.uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -86,7 +86,7 @@ public class AliUtils {
      * @param id 文件ID
      */
     public static void delete(Long id) {
-        ALI_CONFIGURATION.deleteInOss(id);
+        OSS_LOCAL_CONFIGURATION.deleteInOss(id);
     }
 
 }

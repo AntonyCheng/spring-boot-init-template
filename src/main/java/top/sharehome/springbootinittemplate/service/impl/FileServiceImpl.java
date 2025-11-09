@@ -16,7 +16,7 @@ import top.sharehome.springbootinittemplate.model.common.PageModel;
 import top.sharehome.springbootinittemplate.model.vo.file.FileExportVo;
 import top.sharehome.springbootinittemplate.model.vo.file.FilePageVo;
 import top.sharehome.springbootinittemplate.service.FileService;
-import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
+import top.sharehome.springbootinittemplate.utils.oss.minio.OssMinioUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -70,7 +70,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Transactional(rollbackFor = Exception.class)
     public void deleteFile(Long id) {
         // 直接使用对象存储工具类删除文件信息相比使用FileMapper而言，前者可以保证对象存储服务器文件也能得到同步删除
-        MinioUtils.delete(id);
+        OssMinioUtils.delete(id);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public void addFile(MultipartFile file) {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String filePath = "file/" + date;
-        MinioUtils.upload(file, filePath);
+        OssMinioUtils.upload(file, filePath);
     }
 
     /**

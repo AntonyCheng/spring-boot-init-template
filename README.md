@@ -676,7 +676,7 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.tencent.OssTencentUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合MinIO
 
@@ -709,7 +709,7 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.minio.OssMinioUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 ##### 整合阿里云OSS
 
@@ -739,7 +739,7 @@ oss:
     bucket-name: xxxxxxxx
 ```
 
-修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
+修改完之后即可使用模板中对象存储工具类 `top.sharehome.springbootinittemplate.utils.oss.ali.OssAliUtils` ，这个类中提供文件上传和文件删除的操作，至于文件下载，通常是上传后拿到文件地址，当需要下载时直接访问文件地址即可。
 
 #### 整合验证码
 

@@ -1,16 +1,16 @@
-package top.sharehome.springbootinittemplate.config.oss.service.ali.properties;
+package top.sharehome.springbootinittemplate.config.oss.service.minio.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 阿里云OSS配置属性
+ * Minio配置属性
  *
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "oss.ali")
-public class AliProperties {
+@ConfigurationProperties(prefix = "oss.minio")
+public class OssMinioProperties {
 
     /**
      * 是否开启
@@ -18,17 +18,22 @@ public class AliProperties {
     private Boolean enable = false;
 
     /**
-     * 域名
+     * 域名（一定是协议前缀+ip+port）
      */
     private String endpoint;
 
     /**
-     * 密钥ID
+     * 是否开启TLS
+     */
+    private Boolean enableTls = false;
+
+    /**
+     * 用户的 SecretId
      */
     private String secretId;
 
     /**
-     * 密钥KEY
+     * 用户的 SecretKey
      */
     private String secretKey;
 

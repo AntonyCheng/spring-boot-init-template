@@ -1,25 +1,25 @@
-package top.sharehome.springbootinittemplate.utils.oss.minio;
+package top.sharehome.springbootinittemplate.utils.oss.tencent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.service.minio.MinioConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.service.tencent.OssTencentConfiguration;
 import top.sharehome.springbootinittemplate.model.entity.File;
 
 import java.io.InputStream;
 
 /**
- * MinIO工具类
+ * 腾讯云COS工具类
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class MinioUtils {
+public class OssTencentUtils {
 
     /**
-     * 被封装的MinIO对象
+     * 被封装的COS对象
      */
-    private static final MinioConfiguration MINIO_CONFIGURATION = SpringContextHolder.getBean(MinioConfiguration.class);
+    private static final OssTencentConfiguration OSS_TENCENT_CONFIGURATION = SpringContextHolder.getBean(OssTencentConfiguration.class);
 
     /**
      * 上传文件
@@ -28,7 +28,7 @@ public class MinioUtils {
      * @param rootPath 文件根目录（注意不需要首尾斜杠，即如果保存文件到"/root/a/"文件夹中，只需要传入"root/a"字符串即可）
      */
     public static File upload(MultipartFile file, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(file, rootPath);
+        return OSS_TENCENT_CONFIGURATION.uploadToCos(file, rootPath);
     }
 
     /**
@@ -39,18 +39,19 @@ public class MinioUtils {
      * @param rootPath 上传的路径
      */
     public static File upload(byte[] bytes, String suffix, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(bytes, null, suffix, rootPath);
+        return OSS_TENCENT_CONFIGURATION.uploadToCos(bytes, null, suffix, rootPath);
     }
 
     /**
      * 上传文件
      *
-     * @param bytes    待上传的文件字节数组
-     * @param suffix   文件后缀
-     * @param rootPath 上传的路径
+     * @param bytes        待上传的文件字节数组
+     * @param originalName 文件原名称
+     * @param suffix       文件后缀
+     * @param rootPath     上传的路径
      */
     public static File upload(byte[] bytes, String originalName, String suffix, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(bytes, originalName, suffix, rootPath);
+        return OSS_TENCENT_CONFIGURATION.uploadToCos(bytes, originalName, suffix, rootPath);
     }
 
     /**
@@ -61,18 +62,19 @@ public class MinioUtils {
      * @param rootPath    上传的路径
      */
     public static File upload(InputStream inputStream, String suffix, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(inputStream, null, suffix, rootPath);
+        return OSS_TENCENT_CONFIGURATION.uploadToCos(inputStream, null, suffix, rootPath);
     }
 
     /**
      * 上传文件
      *
-     * @param inputStream 待上传的文件流
-     * @param suffix      文件后缀
-     * @param rootPath    上传的路径
+     * @param inputStream  待上传的文件流
+     * @param originalName 文件原名称
+     * @param suffix       文件后缀
+     * @param rootPath     上传的路径
      */
     public static File upload(InputStream inputStream, String originalName, String suffix, String rootPath) {
-        return MINIO_CONFIGURATION.uploadToMinio(inputStream, originalName, suffix, rootPath);
+        return OSS_TENCENT_CONFIGURATION.uploadToCos(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -81,7 +83,7 @@ public class MinioUtils {
      * @param id 文件ID
      */
     public static void delete(Long id) {
-        MINIO_CONFIGURATION.deleteInMinio(id);
+        OSS_TENCENT_CONFIGURATION.deleteInCos(id);
     }
 
 }

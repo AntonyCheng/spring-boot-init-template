@@ -428,18 +428,6 @@ caffeine:
 
 # 对象存储配置
 oss:
-  # 腾讯云COS配置
-  tencent:
-    # todo 是否开启（预先关闭）
-    enable: false
-    # 地域
-    region: ap-xxxxxxxx
-    # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secret-id: xxxxxxxx
-    # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
-    secret-key: xxxxxxxx
-    # 桶名称
-    bucket-name: xxxxxxxx
   # MinIO OSS配置
   minio:
     # todo 是否开启（预先关闭）
@@ -463,6 +451,18 @@ oss:
     # 用户的 SecretId
     secret-id: xxxxxxxx
     # 用户的 SecretKey
+    secret-key: xxxxxxxx
+    # 桶名称
+    bucket-name: xxxxxxxx
+  # 腾讯云COS配置
+  tencent:
+    # todo 是否开启（预先关闭）
+    enable: false
+    # 地域
+    region: ap-xxxxxxxx
+    # 用户的 SecretId，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
+    secret-id: xxxxxxxx
+    # 用户的 SecretKey，建议使用子账号密钥，授权遵循最小权限指引，降低使用风险。子账号密钥获取可参见 https://cloud.tencent.com/document/product/598/37140
     secret-key: xxxxxxxx
     # 桶名称
     bucket-name: xxxxxxxx

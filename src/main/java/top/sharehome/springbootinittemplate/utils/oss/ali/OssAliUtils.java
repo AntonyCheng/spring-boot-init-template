@@ -1,34 +1,35 @@
-package top.sharehome.springbootinittemplate.utils.oss.tencent;
+package top.sharehome.springbootinittemplate.utils.oss.ali;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.config.bean.SpringContextHolder;
-import top.sharehome.springbootinittemplate.config.oss.service.tencent.TencentConfiguration;
+import top.sharehome.springbootinittemplate.config.oss.service.ali.OssAliConfiguration;
 import top.sharehome.springbootinittemplate.model.entity.File;
 
 import java.io.InputStream;
 
 /**
- * 腾讯云COS工具类
+ * 阿里云OSS工具类
  *
  * @author AntonyCheng
  */
 @Slf4j
-public class TencentUtils {
+public class OssAliUtils {
 
     /**
-     * 被封装的COS对象
+     * 被封装的OSS对象
      */
-    private static final TencentConfiguration TENCENT_CONFIGURATION = SpringContextHolder.getBean(TencentConfiguration.class);
+    private static final OssAliConfiguration OSS_ALI_CONFIGURATION = SpringContextHolder.getBean(OssAliConfiguration.class);
 
     /**
      * 上传文件
      *
      * @param file     上传的文件数据
      * @param rootPath 文件根目录（注意不需要首尾斜杠，即如果保存文件到"/root/a/"文件夹中，只需要传入"root/a"字符串即可）
+     * @return 文件所在路径
      */
     public static File upload(MultipartFile file, String rootPath) {
-        return TENCENT_CONFIGURATION.uploadToCos(file, rootPath);
+        return OSS_ALI_CONFIGURATION.uploadToOss(file, rootPath);
     }
 
     /**
@@ -37,9 +38,10 @@ public class TencentUtils {
      * @param bytes    待上传的文件字节数组
      * @param suffix   文件后缀
      * @param rootPath 上传的路径
+     * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String suffix, String rootPath) {
-        return TENCENT_CONFIGURATION.uploadToCos(bytes, null, suffix, rootPath);
+        return OSS_ALI_CONFIGURATION.uploadToOss(bytes, null, suffix, rootPath);
     }
 
     /**
@@ -49,9 +51,10 @@ public class TencentUtils {
      * @param originalName 文件原名称
      * @param suffix       文件后缀
      * @param rootPath     上传的路径
+     * @return 文件所在路径
      */
     public static File upload(byte[] bytes, String originalName, String suffix, String rootPath) {
-        return TENCENT_CONFIGURATION.uploadToCos(bytes, originalName, suffix, rootPath);
+        return OSS_ALI_CONFIGURATION.uploadToOss(bytes, originalName, suffix, rootPath);
     }
 
     /**
@@ -62,7 +65,7 @@ public class TencentUtils {
      * @param rootPath    上传的路径
      */
     public static File upload(InputStream inputStream, String suffix, String rootPath) {
-        return TENCENT_CONFIGURATION.uploadToCos(inputStream, null, suffix, rootPath);
+        return OSS_ALI_CONFIGURATION.uploadToOss(inputStream, null, suffix, rootPath);
     }
 
     /**
@@ -74,7 +77,7 @@ public class TencentUtils {
      * @param rootPath     上传的路径
      */
     public static File upload(InputStream inputStream, String originalName, String suffix, String rootPath) {
-        return TENCENT_CONFIGURATION.uploadToCos(inputStream, originalName, suffix, rootPath);
+        return OSS_ALI_CONFIGURATION.uploadToOss(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -83,7 +86,7 @@ public class TencentUtils {
      * @param id 文件ID
      */
     public static void delete(Long id) {
-        TENCENT_CONFIGURATION.deleteInCos(id);
+        OSS_ALI_CONFIGURATION.deleteInOss(id);
     }
 
 }

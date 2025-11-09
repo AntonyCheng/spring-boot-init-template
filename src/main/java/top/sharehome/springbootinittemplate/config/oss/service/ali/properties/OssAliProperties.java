@@ -1,16 +1,16 @@
-package top.sharehome.springbootinittemplate.config.oss.service.tencent.properties;
+package top.sharehome.springbootinittemplate.config.oss.service.ali.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 腾讯云COS配置属性
+ * 阿里云OSS配置属性
  *
  * @author AntonyCheng
  */
 @Data
-@ConfigurationProperties(prefix = "oss.tencent")
-public class TencentProperties {
+@ConfigurationProperties(prefix = "oss.ali")
+public class OssAliProperties {
 
     /**
      * 是否开启
@@ -18,9 +18,9 @@ public class TencentProperties {
     private Boolean enable = false;
 
     /**
-     * 地域
+     * 域名
      */
-    private String region;
+    private String endpoint;
 
     /**
      * 密钥ID

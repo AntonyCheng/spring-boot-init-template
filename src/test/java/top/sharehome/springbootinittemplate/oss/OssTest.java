@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import top.sharehome.springbootinittemplate.utils.oss.ali.AliUtils;
-import top.sharehome.springbootinittemplate.utils.oss.minio.MinioUtils;
-import top.sharehome.springbootinittemplate.utils.oss.tencent.TencentUtils;
+import top.sharehome.springbootinittemplate.utils.oss.ali.OssAliUtils;
+import top.sharehome.springbootinittemplate.utils.oss.minio.OssMinioUtils;
+import top.sharehome.springbootinittemplate.utils.oss.tencent.OssTencentUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,14 +30,14 @@ public class OssTest {
         File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
-        System.out.println(TencentUtils.upload(multipartFile, "test/init"));
+        System.out.println(OssTencentUtils.upload(multipartFile, "test/init"));
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(TencentUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
+        System.out.println(OssTencentUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(TencentUtils.upload(bytes, file.getName(), suffix, "test/init"));
+        System.out.println(OssTencentUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**
@@ -45,9 +45,9 @@ public class OssTest {
      */
     @Test
     void testTencentUtilsDelete() {
-        TencentUtils.delete(1831860566961299458L);
-        TencentUtils.delete(1831860567590445057L);
-        TencentUtils.delete(1831860567653359617L);
+        OssTencentUtils.delete(1831860566961299458L);
+        OssTencentUtils.delete(1831860567590445057L);
+        OssTencentUtils.delete(1831860567653359617L);
     }
 
     /**
@@ -58,14 +58,14 @@ public class OssTest {
         File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
-        System.out.println(AliUtils.upload(multipartFile, "test/init"));
+        System.out.println(OssAliUtils.upload(multipartFile, "test/init"));
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(AliUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
+        System.out.println(OssAliUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(AliUtils.upload(bytes, file.getName(), suffix, "test/init"));
+        System.out.println(OssAliUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**
@@ -73,9 +73,9 @@ public class OssTest {
      */
     @Test
     void testAliUtilsDelete() {
-        AliUtils.delete(1831862560094642177L);
-        AliUtils.delete(1831862560686039041L);
-        AliUtils.delete(1831862560820256770L);
+        OssAliUtils.delete(1831862560094642177L);
+        OssAliUtils.delete(1831862560686039041L);
+        OssAliUtils.delete(1831862560820256770L);
     }
 
     /**
@@ -86,14 +86,14 @@ public class OssTest {
         File file = new File("README.md");
         FileInputStream fileInputStream = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
-        System.out.println(MinioUtils.upload(multipartFile, "test/init"));
+        System.out.println(OssMinioUtils.upload(multipartFile, "test/init"));
 
         String suffix = FilenameUtils.getExtension(file.getName());
         FileInputStream fileInputStream1 = new FileInputStream(file);
-        System.out.println(MinioUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
+        System.out.println(OssMinioUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
 
         byte[] bytes = FileUtils.readFileToByteArray(file);
-        System.out.println(MinioUtils.upload(bytes, file.getName(), suffix, "test/init"));
+        System.out.println(OssMinioUtils.upload(bytes, file.getName(), suffix, "test/init"));
     }
 
     /**
@@ -101,9 +101,9 @@ public class OssTest {
      */
     @Test
     void testMinioUtilsDelete() {
-        MinioUtils.delete(1831893437080133633L);
-        MinioUtils.delete(1831893438057406466L);
-        MinioUtils.delete(1831893438258733058L);
+        OssMinioUtils.delete(1831893437080133633L);
+        OssMinioUtils.delete(1831893438057406466L);
+        OssMinioUtils.delete(1831893438258733058L);
     }
 
 }

@@ -13,6 +13,11 @@ import lombok.Getter;
 public enum OssType {
 
     /**
+     * Local
+     */
+    LOCAL("local"),
+
+    /**
      * MinIO
      */
     MINIO("minio"),

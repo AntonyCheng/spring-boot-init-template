@@ -30,7 +30,7 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
 import top.sharehome.springbootinittemplate.config.oss.service.tencent.condition.OssTencentCondition;
-import top.sharehome.springbootinittemplate.config.oss.service.tencent.properties.TencentProperties;
+import top.sharehome.springbootinittemplate.config.oss.service.tencent.properties.OssTencentProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -51,13 +51,13 @@ import java.util.concurrent.*;
  * @author AntonyCheng
  */
 @Configuration
-@EnableConfigurationProperties(TencentProperties.class)
+@EnableConfigurationProperties(OssTencentProperties.class)
 @AllArgsConstructor
 @Slf4j
 @Conditional(OssTencentCondition.class)
-public class TencentConfiguration {
+public class OssTencentConfiguration {
 
-    private final TencentProperties tencentProperties;
+    private final OssTencentProperties ossTencentProperties;
 
     private final FileService fileService;
 
@@ -80,7 +80,7 @@ public class TencentConfiguration {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((TencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
+        return ((OssTencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -97,7 +97,7 @@ public class TencentConfiguration {
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((TencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
+        return ((OssTencentConfiguration) AopContext.currentProxy()).uploadToCos(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -142,7 +142,7 @@ public class TencentConfiguration {
             // 这里创建一个 ByteArrayInputStream 来作为示例，实际中这里应该是您要上传的 InputStream 类型的流
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(tempInputStream.available());
-            PutObjectRequest putObjectRequest = new PutObjectRequest(tencentProperties.getBucketName(), key, tempInputStream, objectMetadata);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(ossTencentProperties.getBucketName(), key, tempInputStream, objectMetadata);
             // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
             // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
             putObjectRequest.setStorageClass(StorageClass.Standard_IA);
@@ -161,7 +161,7 @@ public class TencentConfiguration {
             // 详细代码参见本页：高级接口 -> 关闭 TransferManager
             shutdownTransferManager(transferManager);
             // 添加新文件
-            String url = Constants.HTTPS + tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/" + key;
+            String url = Constants.HTTPS + ossTencentProperties.getBucketName() + ".cos." + ossTencentProperties.getRegion() + ".myqcloud.com/" + key;
             File newFile = new File()
                     .setUniqueKey(uniqueKey)
                     .setName(key)
@@ -221,13 +221,13 @@ public class TencentConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
         COSClient cosClient = getCosClient();
-        String[] split = url.split(tencentProperties.getBucketName() + ".cos." + tencentProperties.getRegion() + ".myqcloud.com/");
+        String[] split = url.split(ossTencentProperties.getBucketName() + ".cos." + ossTencentProperties.getRegion() + ".myqcloud.com/");
         if (split.length != 2) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
         }
         String key = split[1];
         try {
-            cosClient.deleteObject(tencentProperties.getBucketName(), key);
+            cosClient.deleteObject(ossTencentProperties.getBucketName(), key);
         } catch (CosClientException e) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
         }
@@ -239,10 +239,10 @@ public class TencentConfiguration {
      * @return 返回COSClient客户端
      */
     private COSClient getCosClient() {
-        COSCredentials cred = new BasicCOSCredentials(tencentProperties.getSecretId(), tencentProperties.getSecretKey());
+        COSCredentials cred = new BasicCOSCredentials(ossTencentProperties.getSecretId(), ossTencentProperties.getSecretKey());
         // 设置 bucket 的地域
         // clientConfig 中包含了设置 region, https(默认 http), 超时, 代理等 set 方法, 使用可参见源码或者常见问题 Java SDK 部分。
-        Region region = new Region(tencentProperties.getRegion());
+        Region region = new Region(ossTencentProperties.getRegion());
         ClientConfig clientConfig = new ClientConfig(region);
         // 这里建议设置使用 https 协议
         // 从 5.6.54 版本开始，默认使用了 https

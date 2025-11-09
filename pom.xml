@@ -86,6 +86,7 @@
         <opencc4j.version>1.8.1</opencc4j.version>
         <sensitive.word.version>0.21.0</sensitive.word.version>
         <jtokkit.version>1.1.0</jtokkit.version>
+        <pdfbox.version>3.0.4</pdfbox.version>
         <!-- 权限校验相关 -->
         <sa.token.version>1.39.0</sa.token.version>
         <!-- 缓存相关 -->
@@ -288,7 +289,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>3.0.4</version>
+            <version>${pdfbox.version}</version>
         </dependency>
 
         <!-- 分词工具配置 -->

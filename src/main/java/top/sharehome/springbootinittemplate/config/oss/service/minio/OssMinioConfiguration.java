@@ -20,7 +20,7 @@ import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
 import top.sharehome.springbootinittemplate.config.oss.service.minio.condition.OssMinioCondition;
-import top.sharehome.springbootinittemplate.config.oss.service.minio.properties.MinioProperties;
+import top.sharehome.springbootinittemplate.config.oss.service.minio.properties.OssMinioProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
 import top.sharehome.springbootinittemplate.model.entity.File;
 import top.sharehome.springbootinittemplate.service.FileService;
@@ -39,13 +39,13 @@ import java.util.UUID;
  * @author AntonyCheng
  */
 @Configuration
-@EnableConfigurationProperties(MinioProperties.class)
+@EnableConfigurationProperties(OssMinioProperties.class)
 @AllArgsConstructor
 @Slf4j
 @Conditional(OssMinioCondition.class)
-public class MinioConfiguration {
+public class OssMinioConfiguration {
 
-    private final MinioProperties minioProperties;
+    private final OssMinioProperties ossMinioProperties;
 
     private final FileService fileService;
 
@@ -68,7 +68,7 @@ public class MinioConfiguration {
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
         }
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((MinioConfiguration) AopContext.currentProxy()).uploadToMinio(inputStream, originalName, suffix, rootPath);
+        return ((OssMinioConfiguration) AopContext.currentProxy()).uploadToMinio(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -85,7 +85,7 @@ public class MinioConfiguration {
         }
         InputStream inputStream = new ByteArrayInputStream(bytes);
         // 使用Aop代理类进行上传操作，保证事物生效
-        return ((MinioConfiguration) AopContext.currentProxy()).uploadToMinio(inputStream, originalName, suffix, rootPath);
+        return ((OssMinioConfiguration) AopContext.currentProxy()).uploadToMinio(inputStream, originalName, suffix, rootPath);
     }
 
     /**
@@ -125,12 +125,12 @@ public class MinioConfiguration {
             // 封装输出流为ByteArrayInputStream
             ByteArrayInputStream tempInputStream = new ByteArrayInputStream(dataBytes);
             minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(minioProperties.getBucketName())
+                    .bucket(ossMinioProperties.getBucketName())
                     .object(key)
                     .stream(tempInputStream, tempInputStream.available(), 5 * 1024 * 1024).build());
             // 添加新文件
-            String url = (minioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
-                    + minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/" + key;
+            String url = (ossMinioProperties.getEnableTls() ? Constants.HTTPS : Constants.HTTP)
+                    + ossMinioProperties.getEndpoint() + "/" + ossMinioProperties.getBucketName() + "/" + key;
             File newFile = new File()
                     .setUniqueKey(uniqueKey)
                     .setName(key)
@@ -190,14 +190,14 @@ public class MinioConfiguration {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
         }
         MinioClient minioClient = getMinioClient();
-        String[] split = url.split(minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/");
+        String[] split = url.split(ossMinioProperties.getEndpoint() + "/" + ossMinioProperties.getBucketName() + "/");
         if (split.length != 2) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
         }
         String key = split[1];
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket(minioProperties.getBucketName())
+                    .bucket(ossMinioProperties.getBucketName())
                     .object(key).build());
         } catch (Exception e) {
             throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
@@ -211,10 +211,10 @@ public class MinioConfiguration {
      */
     private MinioClient getMinioClient() {
         try {
-            String[] ipAndPort = minioProperties.getEndpoint().split(":");
+            String[] ipAndPort = ossMinioProperties.getEndpoint().split(":");
             return MinioClient.builder()
-                    .endpoint(ipAndPort[0], Integer.parseInt(ipAndPort[1]), minioProperties.getEnableTls())
-                    .credentials(minioProperties.getSecretId(), minioProperties.getSecretKey())
+                    .endpoint(ipAndPort[0], Integer.parseInt(ipAndPort[1]), ossMinioProperties.getEnableTls())
+                    .credentials(ossMinioProperties.getSecretId(), ossMinioProperties.getSecretKey())
                     .build();
         } catch (Exception e) {
             log.error("MinIO服务器构建异常：{}", e.getMessage());
