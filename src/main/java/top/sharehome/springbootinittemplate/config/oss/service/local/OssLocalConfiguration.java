@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
@@ -45,10 +46,9 @@ import java.util.UUID;
  */
 @Configuration
 @EnableConfigurationProperties(OssLocalProperties.class)
-//@AllArgsConstructor
 @Slf4j
 @Conditional(OssLocalCondition.class)
-public class OssLocalConfiguration {
+public class OssLocalConfiguration implements WebMvcConfigurer {
 
     @Value("${server.port}")
     private Integer port;

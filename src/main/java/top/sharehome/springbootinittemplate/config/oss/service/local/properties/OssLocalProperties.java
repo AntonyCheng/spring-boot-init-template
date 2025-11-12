@@ -32,4 +32,9 @@ public class OssLocalProperties {
      */
     private Boolean isHttps = false;
 
+    /**
+     * 本地存储访问接口前缀
+     */
+    private String prefix = "download";
+
 }

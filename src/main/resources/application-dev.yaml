@@ -438,6 +438,8 @@ oss:
     address: 127.0.0.1
     # 本地存储IP协议是否为https
     is-https: false
+    # 本地存储访问接口前缀
+    prefix: download
   # MinIO OSS配置
   minio:
     # todo 是否开启（预先关闭）
