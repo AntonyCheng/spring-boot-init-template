@@ -1,13 +1,15 @@
-package top.sharehome.springbootinittemplate.config.oss.service.local.interceptor;
+package top.sharehome.springbootinittemplate.config.oss.service.local.handler;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import top.sharehome.springbootinittemplate.config.oss.service.local.condition.OssLocalCondition;
 import top.sharehome.springbootinittemplate.config.oss.service.local.properties.OssLocalProperties;
 
 import java.io.File;
@@ -15,14 +17,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * 国际化拦截器Web配置类
+ * 本地OSS静态资源处理器
  *
  * @author AntonyCheng
  */
 @Configuration
 @EnableConfigurationProperties(OssLocalProperties.class)
 @Slf4j
-public class OssLocalInterceptor implements WebMvcConfigurer {
+@Conditional(OssLocalCondition.class)
+public class OssLocalResourceHandler implements WebMvcConfigurer {
 
     @Value("${server.port}")
     private Integer port;
@@ -42,13 +45,10 @@ public class OssLocalInterceptor implements WebMvcConfigurer {
 
         registry.addResourceHandler("/" + prefix + "/**")
                 .addResourceLocations(resourceLocation)
-                .setCachePeriod(3600)  // 缓存1小时
+                // 缓存一个小时
+                .setCachePeriod(3600)
                 .resourceChain(true);
-
-        log.info("静态资源映射配置成功:");
-        log.info("  - 请求路径: /{}/**", prefix);
-        log.info("  - 物理路径: {}", resourceLocation);
-        log.info("  - 操作系统: {}", System.getProperty("os.name"));
+        log.info("############ Local OSS static resource mapping is successful: /{}/** <==> {}", prefix, resourceLocation);
     }
 
     @PostConstruct
@@ -59,12 +59,12 @@ public class OssLocalInterceptor implements WebMvcConfigurer {
         if (!storageDir.exists()) {
             boolean created = storageDir.mkdirs();
             if (created) {
-                log.info("本地OSS存储目录创建成功: {}", storagePath);
+                log.info("############ Local OSS storage directory is successfully created: {}", storagePath);
             } else {
-                log.error("本地OSS存储目录创建失败: {}", storagePath);
+                log.error("############ Local OSS storage directory creation failed: {}", storagePath);
             }
         } else {
-            log.info("本地OSS存储目录已存在: {}", storagePath);
+            log.info("############ Local OSS storage directory already exists: {}", storagePath);
         }
         String basePath = "";
         if (this.contextPath.startsWith("/") && this.contextPath.length() > 1) {
@@ -79,15 +79,8 @@ public class OssLocalInterceptor implements WebMvcConfigurer {
         }
 
         String protocol = ossLocalProperties.getIsHttps() ? "https" : "http";
-        String accessUrl = String.format("%s://%s:%d/%s/%s/",
-                protocol,
-                ossLocalProperties.getAddress(),
-                port,
-                basePath,
-                ossLocalProperties.getPrefix());
-
-        log.info("本地OSS访问地址: {}", accessUrl);
-        log.info("示例: {}2024/11/example.jpg", accessUrl);
+        String accessUrl = String.format("%s://%s:%d/%s/%s/", protocol, ossLocalProperties.getAddress(), port, basePath, ossLocalProperties.getPrefix());
+        log.info("############ Local OSS access address: {}", accessUrl);
     }
 
     /**
@@ -97,17 +90,11 @@ public class OssLocalInterceptor implements WebMvcConfigurer {
      * @return 资源位置URL
      */
     private String buildResourceLocation(String storagePath) {
-        // 使用 Paths API 标准化路径（自动处理 \ 和 /）
         Path path = Paths.get(storagePath).toAbsolutePath().normalize();
-
-        // 转换为URI字符串（会自动处理平台差异）
         String fileUri = path.toUri().toString();
-
-        // 确保以斜杠结尾
         if (!fileUri.endsWith("/")) {
             fileUri += "/";
         }
-
         return fileUri;
     }
 

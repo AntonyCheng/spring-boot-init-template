@@ -1,8 +1,7 @@
 package top.sharehome.springbootinittemplate.config.oss.service.local;
 
-import cn.hutool.core.io.FileUtil;
-import com.aliyun.oss.*;
-import com.aliyun.oss.model.PutObjectRequest;
+import com.aliyun.oss.ClientException;
+import com.aliyun.oss.OSSException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.sharehome.springbootinittemplate.common.base.Constants;
 import top.sharehome.springbootinittemplate.common.base.ReturnCode;
 import top.sharehome.springbootinittemplate.config.oss.common.enums.OssType;
-import top.sharehome.springbootinittemplate.config.oss.service.ali.PutObjectProgressListener;
 import top.sharehome.springbootinittemplate.config.oss.service.local.condition.OssLocalCondition;
 import top.sharehome.springbootinittemplate.config.oss.service.local.properties.OssLocalProperties;
 import top.sharehome.springbootinittemplate.exception.customize.CustomizeFileException;
@@ -33,8 +31,6 @@ import top.sharehome.springbootinittemplate.utils.encrypt.SHA3Utils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -60,7 +56,7 @@ public class OssLocalConfiguration implements WebMvcConfigurer {
     private OssLocalProperties ossLocalProperties;
 
     @Resource
-    private  FileService fileService;
+    private FileService fileService;
 
     /**
      * 上传文件到OSS
@@ -140,31 +136,27 @@ public class OssLocalConfiguration implements WebMvcConfigurer {
             String path = ossLocalProperties.getPath();
             if (StringUtils.endsWith(path, "/")) {
                 path = path + key;
-            }else {
-                path = path + "/" +key;
+            } else {
+                path = path + "/" + key;
             }
             java.io.File existFile = new java.io.File(path);
-            if (!existFile.exists()){
+            if (!existFile.exists()) {
                 FileUtils.copyInputStreamToFile(tempInputStream, existFile);
             }
-            // 上传文件的同时指定进度条参数。此处PutObjectProgressListenerDemo为调用类的类名，请在实际使用时替换为相应的类名。
-//            ossClient.putObject(new PutObjectRequest(aliProperties.getBucketName(), key, tempInputStream).withProgressListener(new PutObjectProgressListener()));
-            // 添加新文件
-//            String url = Constants.HTTPS + aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/" + key;
+            String url = getAccessUrl() + key;
             File newFile = new File()
                     .setUniqueKey(uniqueKey)
                     .setName(key)
                     .setOriginalName(originalName)
                     .setSuffix(suffix)
                     .setSize(dataBytes.length)
-                    .setUrl("url")
+                    .setUrl(url)
                     .setOssType(OssType.LOCAL.getTypeName());
-//            if (fileService.save(newFile)) {
-//                return newFile;
-//            } else {
-//                throw new CustomizeFileException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
-//            }
-            return newFile;
+            if (fileService.save(newFile)) {
+                return newFile;
+            } else {
+                throw new CustomizeFileException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
+            }
         } catch (OSSException | ClientException | IOException e) {
             log.error(e.getMessage());
             throw new CustomizeFileException(ReturnCode.FILE_UPLOAD_EXCEPTION);
@@ -207,19 +199,22 @@ public class OssLocalConfiguration implements WebMvcConfigurer {
      * @param url 文件URL
      */
     private void deleteInOssDirect(String url) {
-//        if (StringUtils.isEmpty(url)) {
-//            throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
-//        }
-//        String[] split = url.split(aliProperties.getBucketName() + "." + aliProperties.getEndpoint().split(Constants.HTTPS)[1] + "/");
-//        if (split.length != 2) {
-//            throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL);
-//        }
-//        String key = split[1];
-//        try {
-//            ossClient.deleteObject(aliProperties.getBucketName(), key);
-//        } catch (OSSException | ClientException e) {
-//            throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
-//        }
+        if (StringUtils.isEmpty(url)) {
+            throw new CustomizeFileException(ReturnCode.USER_FILE_ADDRESS_IS_ABNORMAL, "被删除地址为空");
+        }
+        String uri = "/" + url.split(getAccessUrl())[1];
+        String basePath = ossLocalProperties.getPath().replace("\\", "/");
+        if (basePath.endsWith("/")) {
+            basePath = basePath.substring(0, basePath.length() - 1);
+        }
+        java.io.File existFile = new java.io.File(basePath + uri);
+        if (existFile.exists()) {
+            try {
+                FileUtils.delete(existFile);
+            } catch (IOException e) {
+                throw new CustomizeFileException(ReturnCode.USER_FILE_DELETION_IS_ABNORMAL);
+            }
+        }
     }
 
     /**
@@ -244,6 +239,25 @@ public class OssLocalConfiguration implements WebMvcConfigurer {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 获取外部访问基础地址
+     */
+    private String getAccessUrl() {
+        String basePath = "";
+        if (this.contextPath.startsWith("/") && this.contextPath.length() > 1) {
+            basePath = this.contextPath.substring(1);
+        }
+        if (this.contextPath.endsWith("/") && this.contextPath.length() > 1) {
+            if (basePath.isEmpty()) {
+                basePath = this.contextPath.substring(0, this.contextPath.length() - 1);
+            } else {
+                basePath = basePath.substring(0, basePath.length() - 1);
+            }
+        }
+        String protocol = ossLocalProperties.getIsHttps() ? "https" : "http";
+        return String.format("%s://%s:%d/%s/%s/", protocol, ossLocalProperties.getAddress(), port, basePath, ossLocalProperties.getPrefix());
     }
 
     /**

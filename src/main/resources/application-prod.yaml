@@ -428,6 +428,18 @@ caffeine:
 
 # 对象存储配置
 oss:
+  # 本地OSS配置
+  local:
+    # todo 是否开启（预先关闭）
+    enable: true
+    # 本地存储根目录
+    path: /antony/springbootinittemplate/upload
+    # 本地存储IP地址
+    address: 127.0.0.1
+    # 本地存储IP协议是否为https
+    is-https: false
+    # 本地存储访问接口前缀
+    prefix: download
   # MinIO OSS配置
   minio:
     # todo 是否开启（预先关闭）

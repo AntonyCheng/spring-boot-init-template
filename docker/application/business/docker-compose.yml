@@ -13,6 +13,7 @@ services:
     volumes:
       # 配置文件
       - ./data/spring-boot-init-template/logs/:/antony/springbootinittemplate/logs
+      - ./data/spring-boot-init-template/upload/:/antony/springbootinittemplate/upload
     privileged: true
     networks:
       docker_net:

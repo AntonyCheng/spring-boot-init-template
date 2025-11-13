@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import top.sharehome.springbootinittemplate.utils.oss.ali.OssAliUtils;
+import top.sharehome.springbootinittemplate.utils.oss.local.OssLocalUtils;
 import top.sharehome.springbootinittemplate.utils.oss.minio.OssMinioUtils;
 import top.sharehome.springbootinittemplate.utils.oss.tencent.OssTencentUtils;
 
@@ -21,6 +22,34 @@ import java.io.IOException;
  */
 @SpringBootTest
 public class OssTest {
+
+    /**
+     * 测试本地COS工具类——上传
+     */
+    @Test
+    void testLocalUtilsUpload() throws IOException {
+        File file = new File("README.md");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), fileInputStream);
+        System.out.println(OssLocalUtils.upload(multipartFile, "test/init"));
+
+        String suffix = FilenameUtils.getExtension(file.getName());
+        FileInputStream fileInputStream1 = new FileInputStream(file);
+        System.out.println(OssLocalUtils.upload(fileInputStream1, file.getName(), suffix, "test/init"));
+
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        System.out.println(OssLocalUtils.upload(bytes, file.getName(), suffix, "test/init"));
+    }
+
+    /**
+     * 测试本地COS工具类——删除
+     */
+    @Test
+    void testLocalUtilsDelete() {
+        OssLocalUtils.delete(1988886322658824194L);
+        OssLocalUtils.delete(1988886353872834561L);
+        OssLocalUtils.delete(1988886355105959938L);
+    }
 
     /**
      * 测试腾讯云COS工具类——上传
