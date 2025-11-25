@@ -48,7 +48,7 @@ public class OssLocalResourceHandler implements WebMvcConfigurer {
                 // 缓存一个小时
                 .setCachePeriod(3600)
                 .resourceChain(true);
-        log.info("############ Local OSS static resource mapping is successful: /{}/** <==> {}", prefix, resourceLocation);
+        log.info("############ Local OSS static resource mapping is successful: /{}/** <==> {}**", prefix, resourceLocation);
     }
 
     @PostConstruct

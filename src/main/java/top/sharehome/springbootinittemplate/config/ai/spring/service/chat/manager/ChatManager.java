@@ -23,7 +23,7 @@ import org.springframework.ai.model.SimpleApiKey;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
@@ -183,7 +183,7 @@ public class ChatManager {
                                 .build()
                 )
                 .defaultOptions(
-                        OllamaOptions.builder()
+                        OllamaChatOptions.builder()
                                 .model(entity.getModel())
                                 .temperature(entity.getTemperature())
                                 .topP(entity.getTopP())
@@ -217,7 +217,7 @@ public class ChatManager {
      */
     private static ChatModel getZhiPuAiModel(ZhiPuAiChatEntity entity) {
         return new ZhiPuAiChatModel(
-                new ZhiPuAiApi(entity.getApiKey()),
+                ZhiPuAiApi.builder().apiKey(entity.getApiKey()).build(),
                 ZhiPuAiChatOptions.builder()
                         .model(entity.getModel())
                         .temperature(entity.getTemperature())
@@ -239,7 +239,7 @@ public class ChatManager {
      */
     private static ChatModel getMistralAiModel(MistralAiChatEntity entity) {
         return MistralAiChatModel.builder()
-                .mistralAiApi(new MistralAiApi(entity.getApiKey()))
+                .mistralAiApi(MistralAiApi.builder().apiKey(entity.getApiKey()).build())
                 .defaultOptions(
                         MistralAiChatOptions.builder()
                                 .model(entity.getModel())

@@ -18,7 +18,7 @@ import org.springframework.ai.mistralai.MistralAiEmbeddingOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
@@ -95,7 +95,7 @@ public class EmbeddingManager {
                 .restClientBuilder(getRestClient(entity))
                 .baseUrl(entity.getBaseUrl())
                 .build();
-        return new OllamaEmbeddingModel(ollamaApi, OllamaOptions.builder()
+        return new OllamaEmbeddingModel(ollamaApi, OllamaEmbeddingOptions.builder()
                 .model(entity.getModel())
                 .build(), ObservationRegistry.NOOP, ModelManagementOptions.defaults());
     }
@@ -104,8 +104,8 @@ public class EmbeddingManager {
      * 获取ZhiPuAiEmbeddingModel
      */
     private static ZhiPuAiEmbeddingModel getZhiPuAiEmbeddingModel(ZhiPuAiEmbeddingEntity entity) {
-        ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
-        return new ZhiPuAiEmbeddingModel(zhiPuAiApi, MetadataMode.EMBED, ZhiPuAiEmbeddingOptions.builder()
+        return new ZhiPuAiEmbeddingModel(ZhiPuAiApi.builder().apiKey(entity.getApiKey()).build(),
+                MetadataMode.EMBED, ZhiPuAiEmbeddingOptions.builder()
                 .model(entity.getModel())
                 .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);
     }
@@ -114,8 +114,8 @@ public class EmbeddingManager {
      * 获取MistralAiEmbeddingModel
      */
     private static MistralAiEmbeddingModel getMistralAiEmbeddingModel(MistralAiEmbeddingEntity entity) {
-        MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
-        return new MistralAiEmbeddingModel(mistralAiApi, MetadataMode.EMBED, MistralAiEmbeddingOptions.builder()
+        return new MistralAiEmbeddingModel(MistralAiApi.builder().apiKey(entity.getApiKey()).build(),
+                MetadataMode.EMBED, MistralAiEmbeddingOptions.builder()
                 .withEncodingFormat("float")
                 .withModel(entity.getModel())
                 .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);

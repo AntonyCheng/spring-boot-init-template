@@ -36,6 +36,10 @@ public enum OpenAiTranscriptionType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj() {
+        return toJsonObject(this);
+    }
+
     public static OpenAiTranscriptionType getTypeById(Integer id) {
         List<OpenAiTranscriptionType> list = Arrays.stream(OpenAiTranscriptionType.values()).filter(openAiTranscriptionType -> Objects.equals(openAiTranscriptionType.getId(), id)).toList();
         if (list.isEmpty()) {

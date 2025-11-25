@@ -73,6 +73,10 @@ public enum StabilityAiImageType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj(){
+        return toJsonObject(this);
+    }
+
     public static StabilityAiImageType getTypeById(Integer id) {
         List<StabilityAiImageType> list = Arrays.stream(StabilityAiImageType.values()).filter(stabilityAiImageType -> Objects.equals(stabilityAiImageType.getId(), id)).toList();
         if (list.isEmpty()) {

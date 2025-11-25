@@ -39,6 +39,10 @@ public enum ZhiPuAiImageType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj(){
+        return toJsonObject(this);
+    }
+
     public static ZhiPuAiImageType getTypeById(Integer id) {
         List<ZhiPuAiImageType> list = Arrays.stream(ZhiPuAiImageType.values()).filter(zhiPuAiImageType -> Objects.equals(zhiPuAiImageType.getId(), id)).toList();
         if (list.isEmpty()) {

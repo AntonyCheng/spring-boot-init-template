@@ -91,6 +91,10 @@ public enum OpenAiImageType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj(){
+        return toJsonObject(this);
+    }
+
     public static OpenAiImageType getTypeById(Integer id) {
         List<OpenAiImageType> list = Arrays.stream(OpenAiImageType.values()).filter(openAiImageType -> Objects.equals(openAiImageType.getId(), id)).toList();
         if (list.isEmpty()) {

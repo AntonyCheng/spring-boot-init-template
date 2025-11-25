@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.entity;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -65,28 +66,10 @@ public class Model implements Serializable {
     private Long readTimeout;
 
     /**
-     * 温度（对话模型、语音转文字模型参数）
-     */
-    @TableField(value = "model_temperature")
-    private Double temperature;
-
-    /**
-     * TopP（对话模型参数）
-     */
-    @TableField(value = "model_top_p")
-    private Double topP;
-
-    /**
-     * 模型信息（主要用于数据扩展，推荐用JSON格式）
+     * 模型信息（保存不同类型模型特有的属性信息）
      */
     @TableField(value = "model_info")
-    private String info;
-
-    /**
-     * 版本（AzureOpenAI模型参数）
-     */
-    @TableField(value = "model_version")
-    private String version;
+    private JSONObject info;
 
     /**
      * 状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）

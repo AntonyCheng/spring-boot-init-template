@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.azure.ai.openai.OpenAIServiceVersion;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -115,10 +116,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 .setBaseUrl(model.getBaseUrl())
                 .setApiKey(model.getApiKey())
                 .setReadTimeout(model.getReadTimeout())
-                .setTemperature(model.getTemperature())
-                .setTopP(model.getTopP())
                 .setInfo(model.getInfo())
-                .setVersion(model.getVersion())
                 .setState(model.getState())
                 .setCreateTime(model.getCreateTime())).toList();
         BeanUtils.copyProperties(page, res, "records");
@@ -133,7 +131,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         Model model = this.getModelByDto(modelAddOrUpdateDto);
         int insertResult = modelMapper.insert(model);
         CompletableFuture.runAsync(() -> {
-
+            validateModel(model);
+            // todo 继续
         });
         if (insertResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
@@ -150,7 +149,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         if (modelDeleteResult == 0) {
             throw new CustomizeReturnException(ReturnCode.ERRORS_OCCURRED_IN_THE_DATABASE_SERVICE);
         }
-        // 删除其他和模型关联的数据
+        // todo 删除其他和模型关联的数据
     }
 
     @Override
@@ -207,8 +206,10 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(name)
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setTemperature(realTemperature)
-                        .setTopP(realTopP)
+                        .setInfo(JSONObject.of(
+                                "temperature", realTemperature,
+                                "top_p", realTopP
+                        ))
                         .setReadTimeout(realReadTimeout);
             } else if (ChatServiceType.Ollama.getValue().equals(service)) {
                 if (StringUtils.isBlank(baseUrl)) {
@@ -216,8 +217,10 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 }
                 model.setType(type).setService(service).setName(name)
                         .setBaseUrl(baseUrl)
-                        .setTemperature(realTemperature)
-                        .setTopP(realTopP)
+                        .setInfo(JSONObject.of(
+                                "temperature", realTemperature,
+                                "top_p", realTopP
+                        ))
                         .setReadTimeout(realReadTimeout);
             } else if (ChatServiceType.ZhiPuAI.getValue().equals(service)
                        || ChatServiceType.MistralAI.getValue().equals(service)
@@ -227,8 +230,10 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 }
                 model.setType(type).setService(service).setName(name)
                         .setApiKey(apiKey)
-                        .setTemperature(realTemperature)
-                        .setTopP(realTopP)
+                        .setInfo(JSONObject.of(
+                                "temperature", realTemperature,
+                                "top_p", realTopP
+                        ))
                         .setReadTimeout(realReadTimeout);
             } else if (ChatServiceType.AzureOpenAI.getValue().equals(service)) {
                 if (StringUtils.isAnyBlank(baseUrl, apiKey, version)) {
@@ -237,9 +242,11 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(name)
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setVersion(version)
-                        .setTemperature(realTemperature)
-                        .setTopP(realTopP)
+                        .setInfo(JSONObject.of(
+                                "temperature", realTemperature,
+                                "top_p", realTopP,
+                                "version", version
+                        ))
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -276,7 +283,9 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(name)
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setVersion(version)
+                        .setInfo(JSONObject.of(
+                                "version", version
+                        ))
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -290,7 +299,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfo(imageType.toJsonStr())
+                        .setInfo(imageType.toJsonObj())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.Stability.getValue().equals(service)) {
                 StabilityAiImageType imageType = StabilityAiImageType.getTypeByName(infoName);
@@ -300,7 +309,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfo(imageType.toJsonStr())
+                        .setInfo(imageType.toJsonObj())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.ZhiPuAI.getValue().equals(service)) {
                 ZhiPuAiImageType imageType = ZhiPuAiImageType.getTypeByName(infoName);
@@ -310,7 +319,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfo(imageType.toJsonStr())
+                        .setInfo(imageType.toJsonObj())
                         .setReadTimeout(realReadTimeout);
             } else if (ImageServiceType.AzureOpenAI.getValue().equals(service)) {
                 AzureOpenAiImageType imageType = AzureOpenAiImageType.getTypeByName(infoName);
@@ -320,7 +329,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(imageType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfo(imageType.toJsonStr())
+                        .setInfo(imageType.toJsonObj())
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -335,8 +344,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(transcriptionType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setTemperature(realTemperature)
-                        .setInfo(transcriptionType.toJsonStr())
+                        .setInfo(transcriptionType.toJsonObj().fluentPut("temperature", realTemperature))
                         .setReadTimeout(realReadTimeout);
             } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)) {
                 AzureOpenAiTranscriptionType transcriptionType = AzureOpenAiTranscriptionType.getTypeByName(infoName);
@@ -346,8 +354,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(transcriptionType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setTemperature(realTemperature)
-                        .setInfo(transcriptionType.toJsonStr())
+                        .setInfo(transcriptionType.toJsonObj().fluentPut("temperature", realTemperature))
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -361,7 +368,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 model.setType(type).setService(service).setName(ttsType.getModel())
                         .setBaseUrl(baseUrl)
                         .setApiKey(apiKey)
-                        .setInfo(ttsType.getModel())
+                        .setInfo(ttsType.toJsonObj())
                         .setReadTimeout(realReadTimeout);
             } else {
                 throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, "无此模型服务");
@@ -393,7 +400,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             } else if (ChatServiceType.AzureOpenAI.getValue().equals(service)) {
                 OpenAIServiceVersion res = OpenAIServiceVersion.valueOf(Arrays
                         .stream(OpenAIServiceVersion.values())
-                        .filter((x) -> model.getVersion().equals(x.getVersion()))
+                        .filter((x) -> model.getInfo().getString("version").equals(x.getVersion()))
                         .findFirst()
                         .orElseThrow(() -> new CustomizeReturnException(ReturnCode.FAIL, "Azure OpenAI模型版本无效"))
                         .name());
@@ -420,7 +427,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             } else if (EmbeddingServiceType.AzureOpenAI.getValue().equals(service)) {
                 OpenAIServiceVersion res = OpenAIServiceVersion.valueOf(Arrays
                         .stream(OpenAIServiceVersion.values())
-                        .filter((x) -> model.getVersion().equals(x.getVersion()))
+                        .filter((x) -> model.getInfo().getString("version").equals(x.getVersion()))
                         .findFirst()
                         .orElseThrow(() -> new CustomizeReturnException(ReturnCode.FAIL, "Azure OpenAI模型版本无效"))
                         .name());
@@ -441,44 +448,44 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             } else if (ImageServiceType.ZhiPuAI.getValue().equals(service)) {
                 imageModel = new ZhiPuAiImageEntity(ZhiPuAiImageType.getTypeByName(model.getName()), model.getApiKey());
             } else if (ImageServiceType.AzureOpenAI.getValue().equals(service)) {
-                imageModel = new AzureOpenAiImageEntity(AzureOpenAiImageType.getTypeByName(model.getName()),model.getApiKey(),model.getBaseUrl());
+                imageModel = new AzureOpenAiImageEntity(AzureOpenAiImageType.getTypeByName(model.getName()), model.getApiKey(), model.getBaseUrl());
             } else {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
             }
             List<byte[]> result = imageService.imageToByteArray(imageModel, prompt);
-            if (CollectionUtils.isEmpty(result)){
+            if (CollectionUtils.isEmpty(result)) {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
             }
-        } else if ("transcription".equals(type)){
+        } else if ("transcription".equals(type)) {
             TranscriptionModelBase transcriptionModel;
-            if (TranscriptionServiceType.OpenAI.getValue().equals(service)){
+            if (TranscriptionServiceType.OpenAI.getValue().equals(service)) {
                 transcriptionModel = new OpenAiTranscriptionEntity(OpenAiTranscriptionType.getTypeByName(model.getName()), model.getApiKey());
             } else if (TranscriptionServiceType.AzureOpenAI.getValue().equals(service)) {
                 transcriptionModel = new AzureOpenAiTranscriptionEntity(AzureOpenAiTranscriptionType.getTypeByName(model.getName()), model.getApiKey());
-            }else {
+            } else {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
             }
             String result;
             try {
-               result = transcriptionService.transcribe(transcriptionModel, new ClassPathResource("transcription" + File.separator + "example.mp3").getInputStream(), "example.mp3");
+                result = transcriptionService.transcribe(transcriptionModel, new ClassPathResource("transcription" + File.separator + "example.mp3").getInputStream(), "example.mp3");
             } catch (IOException e) {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "读取音频样本文件异常");
             }
-            if (StringUtils.isEmpty(result)){
+            if (StringUtils.isEmpty(result)) {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
             }
         } else if ("tts".equals(type)) {
             TtsModelBase ttsModelBase;
-            if (TtsServiceType.OpenAI.getValue().equals(service)){
+            if (TtsServiceType.OpenAI.getValue().equals(service)) {
                 ttsModelBase = new OpenAiTtsEntity(OpenAiTtsType.getTypeByName(model.getName()), model.getApiKey());
-            }else {
+            } else {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型和服务无法匹配");
             }
             byte[] result = ttsService.speechBytes(ttsModelBase, ".");
             if (ArrayUtils.isEmpty(result)) {
                 throw new CustomizeReturnException(ReturnCode.FAIL, "模型无法输出内容");
             }
-        }else {
+        } else {
             throw new CustomizeReturnException(ReturnCode.FAIL, "模型类型不存在");
         }
     }

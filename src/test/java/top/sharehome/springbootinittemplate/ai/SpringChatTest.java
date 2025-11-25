@@ -25,7 +25,7 @@ import org.springframework.ai.model.SimpleApiKey;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -106,7 +106,7 @@ public class SpringChatTest {
         OllamaApi ollamaApi = OllamaApi.builder()
                 .baseUrl(entity.getBaseUrl())
                 .build();
-        OllamaChatModel chatModel = new OllamaChatModel(ollamaApi, OllamaOptions.builder()
+        OllamaChatModel chatModel = new OllamaChatModel(ollamaApi, OllamaChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
                 .topP(entity.getTopP())
@@ -123,7 +123,7 @@ public class SpringChatTest {
     @Test
     public void testZhiPuAiChat() {
         ZhiPuAiChatEntity entity = new ZhiPuAiChatEntity(ZhiPuAiApi.ChatModel.GLM_4_Flash.getName(), "xxx.xxx");
-        ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
+        ZhiPuAiApi zhiPuAiApi = ZhiPuAiApi.builder().apiKey(entity.getApiKey()).build();
         ZhiPuAiChatModel chatModel = new ZhiPuAiChatModel(zhiPuAiApi, ZhiPuAiChatOptions.builder()
                 .model(entity.getModel())
                 .temperature(entity.getTemperature())
@@ -138,7 +138,7 @@ public class SpringChatTest {
     @Test
     public void testMistralAiChat() {
         MistralAiChatEntity entity = new MistralAiChatEntity(MistralAiApi.ChatModel.MINISTRAL_8B_LATEST.getName(), "xxx");
-        MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
+        MistralAiApi mistralAiApi = MistralAiApi.builder().apiKey(entity.getApiKey()).build();
         MistralAiChatModel chatModel = MistralAiChatModel.builder()
                 .mistralAiApi(mistralAiApi)
                 .defaultOptions(MistralAiChatOptions.builder()

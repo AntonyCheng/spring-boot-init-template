@@ -56,6 +56,10 @@ public enum AzureOpenAiImageType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj(){
+        return toJsonObject(this);
+    }
+
     public static AzureOpenAiImageType getTypeById(Integer id) {
         List<AzureOpenAiImageType> list = Arrays.stream(AzureOpenAiImageType.values()).filter(azureOpenAiImageType -> Objects.equals(azureOpenAiImageType.getId(), id)).toList();
         if (list.isEmpty()) {

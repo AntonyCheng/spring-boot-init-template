@@ -19,7 +19,7 @@ import org.springframework.ai.mistralai.MistralAiEmbeddingOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
@@ -87,7 +87,7 @@ public class SpringEmbeddingTest {
     @Test
     public void testMistralAiEmbedding() {
         MistralAiEmbeddingEntity entity = new MistralAiEmbeddingEntity(MistralAiApi.EmbeddingModel.EMBED, "xxx");
-        MistralAiApi mistralAiApi = new MistralAiApi(entity.getApiKey());
+        MistralAiApi mistralAiApi = MistralAiApi.builder().apiKey(entity.getApiKey()).build();
         MistralAiEmbeddingModel embeddingModel = new MistralAiEmbeddingModel(mistralAiApi, MetadataMode.EMBED, MistralAiEmbeddingOptions.builder()
                 .withEncodingFormat("float")
                 .withModel(entity.getModel())
@@ -119,7 +119,7 @@ public class SpringEmbeddingTest {
         OllamaApi ollamaApi = OllamaApi.builder()
                 .baseUrl(entity.getBaseUrl())
                 .build();
-        OllamaEmbeddingModel embeddingModel = new OllamaEmbeddingModel(ollamaApi, OllamaOptions.builder()
+        OllamaEmbeddingModel embeddingModel = new OllamaEmbeddingModel(ollamaApi, OllamaEmbeddingOptions.builder()
                 .model(entity.getModel())
                 .build(), ObservationRegistry.NOOP, ModelManagementOptions.defaults());
         EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of("Hello World", "你好,世界！"));
@@ -132,7 +132,7 @@ public class SpringEmbeddingTest {
     @Test
     public void testZhiPuAiEmbedding() {
         ZhiPuAiEmbeddingEntity entity = new ZhiPuAiEmbeddingEntity(ZhiPuAiApi.EmbeddingModel.Embedding_3, "xxx.xxx");
-        ZhiPuAiApi zhiPuAiApi = new ZhiPuAiApi(entity.getApiKey());
+        ZhiPuAiApi zhiPuAiApi = ZhiPuAiApi.builder().apiKey(entity.getApiKey()).build();
         ZhiPuAiEmbeddingModel embeddingModel = new ZhiPuAiEmbeddingModel(zhiPuAiApi, MetadataMode.EMBED, ZhiPuAiEmbeddingOptions.builder()
                 .model(entity.getModel())
                 .build(), RetryTemplate.defaultInstance(), ObservationRegistry.NOOP);

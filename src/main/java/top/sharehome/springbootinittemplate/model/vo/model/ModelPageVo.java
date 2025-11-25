@@ -1,5 +1,6 @@
 package top.sharehome.springbootinittemplate.model.vo.model;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,29 +58,9 @@ public class ModelPageVo implements Serializable {
     private Long readTimeout;
 
     /**
-     * 模型温度（对话模型、语音转文字模型参数）
+     * 模型信息（保存不同类型模型特有的属性信息）
      */
-    private Double temperature;
-
-    /**
-     * 模型TopP（对话模型参数）
-     */
-    private Double topP;
-
-    /**
-     * 模型结果数量（图像模型参数）
-     */
-    private Integer n;
-
-    /**
-     * 模型信息（主要用于数据扩展，推荐用JSON格式）
-     */
-    private String info;
-
-    /**
-     * 模型版本（AzureOpenAI模型参数）
-     */
-    private String version;
+    private JSONObject info;
 
     /**
      * 模型状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）

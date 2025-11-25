@@ -41,6 +41,10 @@ public enum OpenAiTtsType {
         return toJsonObject(this).toJSONString();
     }
 
+    public JSONObject toJsonObj() {
+        return toJsonObject(this);
+    }
+
     public static OpenAiTtsType getTypeById(Integer id) {
         List<OpenAiTtsType> list = Arrays.stream(OpenAiTtsType.values()).filter(openAiTtsType -> Objects.equals(openAiTtsType.getId(), id)).toList();
         if (list.isEmpty()) {
