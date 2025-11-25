@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.sharehome.springbootinittemplate.config.mybatisplus.handler.JSONObjectTypeHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -68,8 +69,14 @@ public class Model implements Serializable {
     /**
      * 模型信息（保存不同类型模型特有的属性信息）
      */
-    @TableField(value = "model_info")
+    @TableField(value = "model_info", typeHandler = JSONObjectTypeHandler.class)
     private JSONObject info;
+
+    /**
+     * 验证错误信息
+     */
+    @TableField(value = "model_error")
+    private String error;
 
     /**
      * 状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）

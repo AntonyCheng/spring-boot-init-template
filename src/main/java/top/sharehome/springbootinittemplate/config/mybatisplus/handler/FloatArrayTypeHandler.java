@@ -1,4 +1,4 @@
-package top.sharehome.springbootinittemplate.config.ai.spring.vector.handler;
+package top.sharehome.springbootinittemplate.config.mybatisplus.handler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;

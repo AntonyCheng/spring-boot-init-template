@@ -7,7 +7,7 @@
         <result column="chunk_knowledge_id" jdbcType="BIGINT" property="knowledgeId"/>
         <result column="chunk_user_id" jdbcType="BIGINT" property="userId"/>
         <result column="chunk_content" jdbcType="VARCHAR" property="content"/>
-        <result column="chunk_embedding" jdbcType="OTHER" property="embedding" typeHandler="top.sharehome.springbootinittemplate.config.ai.spring.vector.handler.FloatArrayTypeHandler"/>
+        <result column="chunk_embedding" jdbcType="OTHER" property="embedding" typeHandler="top.sharehome.springbootinittemplate.config.mybatisplus.handler.FloatArrayTypeHandler"/>
         <result column="chunk_state" jdbcType="INTEGER" property="state"/>
         <result column="chunk_dimension" jdbcType="INTEGER" property="dimension"/>
         <result column="chunk_fail_reason" jdbcType="VARCHAR" property="failReason"/>

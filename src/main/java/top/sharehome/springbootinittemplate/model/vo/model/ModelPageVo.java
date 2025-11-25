@@ -63,6 +63,11 @@ public class ModelPageVo implements Serializable {
     private JSONObject info;
 
     /**
+     * 验证错误信息
+     */
+    private String error;
+
+    /**
      * 模型状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）
      */
     private Integer state;

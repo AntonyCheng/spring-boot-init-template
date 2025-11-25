@@ -9,11 +9,8 @@
         <result column="model_base_url" jdbcType="VARCHAR" property="baseUrl"/>
         <result column="model_api_key" jdbcType="VARCHAR" property="apiKey"/>
         <result column="model_read_timeout" jdbcType="INTEGER" property="readTimeout"/>
-        <result column="model_temperature" jdbcType="DECIMAL" property="temperature"/>
-        <result column="model_top_p" jdbcType="DECIMAL" property="topP"/>
-        <result column="model_n" jdbcType="INTEGER" property="n"/>
-        <result column="model_info_name" jdbcType="VARCHAR" property="infoName"/>
-        <result column="model_version" jdbcType="VARCHAR" property="version"/>
+        <result column="model_info" jdbcType="VARCHAR" property="info" typeHandler="top.sharehome.springbootinittemplate.config.mybatisplus.handler.JSONObjectTypeHandler"/>
+        <result column="model_error" jdbcType="VARCHAR" property="error"/>
         <result column="model_state" jdbcType="TINYINT" property="state"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -27,11 +24,8 @@
         model_base_url,
         model_api_key,
         model_read_timeout,
-        model_temperature,
-        model_top_p,
-        model_n,
-        model_info_name,
-        model_version,
+        model_info,
+        model_error,
         model_state,
         create_time,
         update_time,

@@ -117,6 +117,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                 .setApiKey(model.getApiKey())
                 .setReadTimeout(model.getReadTimeout())
                 .setInfo(model.getInfo())
+                .setError(model.getError())
                 .setState(model.getState())
                 .setCreateTime(model.getCreateTime())).toList();
         BeanUtils.copyProperties(page, res, "records");
@@ -131,7 +132,11 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         Model model = this.getModelByDto(modelAddOrUpdateDto);
         int insertResult = modelMapper.insert(model);
         CompletableFuture.runAsync(() -> {
-            validateModel(model);
+            try {
+                validateModel(model);
+            } catch (CustomizeReturnException e) {
+
+            }
             // todo 继续
         });
         if (insertResult == 0) {
@@ -199,7 +204,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             Double realTemperature = Objects.isNull(temperature) ? ChatModelBase.DEFAULT_TEMPERATURE : temperature;
             Double realTopP = Objects.isNull(topP) ? ChatModelBase.DEFAULT_TEMPERATURE : topP;
             if (ChatServiceType.DeepSeek.getValue().equals(service)
-                || ChatServiceType.OpenAI.getValue().equals(service)) {
+                    || ChatServiceType.OpenAI.getValue().equals(service)) {
                 if (StringUtils.isAnyBlank(baseUrl, apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
@@ -223,8 +228,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         ))
                         .setReadTimeout(realReadTimeout);
             } else if (ChatServiceType.ZhiPuAI.getValue().equals(service)
-                       || ChatServiceType.MistralAI.getValue().equals(service)
-                       || ChatServiceType.MiniMax.getValue().equals(service)) {
+                    || ChatServiceType.MistralAI.getValue().equals(service)
+                    || ChatServiceType.MiniMax.getValue().equals(service)) {
                 if (StringUtils.isBlank(apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }
@@ -268,8 +273,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
                         .setBaseUrl(baseUrl)
                         .setReadTimeout(realReadTimeout);
             } else if (EmbeddingServiceType.ZhiPuAI.getValue().equals(service)
-                       || EmbeddingServiceType.MistralAI.getValue().equals(service)
-                       || EmbeddingServiceType.MiniMax.getValue().equals(service)) {
+                    || EmbeddingServiceType.MistralAI.getValue().equals(service)
+                    || EmbeddingServiceType.MiniMax.getValue().equals(service)) {
                 if (StringUtils.isBlank(apiKey)) {
                     throw new CustomizeReturnException(ReturnCode.PARAMETER_FORMAT_MISMATCH, service + "必要参数缺失/错误");
                 }

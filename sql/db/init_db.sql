@@ -1,9 +1,11 @@
-CREATE database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_general_ci;
+CREATE
+database if NOT EXISTS `init_db` default character set utf8mb4 collate utf8mb4_general_ci;
 use
-    `init_db`;
+`init_db`;
 
 SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+SET
+FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
 -- Table structure for t_file
@@ -23,9 +25,9 @@ CREATE TABLE `t_file`
     `update_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_deleted`         tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
     PRIMARY KEY (`file_id`) USING BTREE,
-    INDEX `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_suffix_create` (`is_deleted` ASC, `file_suffix` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_suffix_type_create` (`is_deleted` ASC, `file_suffix` ASC, `file_oss_type` ASC, `create_time`
+    INDEX                `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
+    INDEX                `idx_deleted_suffix_create` (`is_deleted` ASC, `file_suffix` ASC, `create_time` ASC) USING BTREE,
+    INDEX                `idx_deleted_suffix_type_create` (`is_deleted` ASC, `file_suffix` ASC, `file_oss_type` ASC, `create_time`
                                             ASC) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -53,13 +55,13 @@ CREATE TABLE `t_log`
     `log_time`           bigint                                                         NOT NULL COMMENT '日志接口访问耗时',
     `create_time`        datetime                                                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time`        datetime                                                       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `is_deleted`         tinyint UNSIGNED                                               NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+    `is_deleted`         tinyint                                                        NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
     PRIMARY KEY (`log_id`) USING BTREE,
-    INDEX `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_operator_create` (`is_deleted` ASC, `log_operator` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_operator_request_create` (`is_deleted` ASC, `log_operator` ASC, `log_request_method` ASC,
+    INDEX                `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
+    INDEX                `idx_deleted_operator_create` (`is_deleted` ASC, `log_operator` ASC, `create_time` ASC) USING BTREE,
+    INDEX                `idx_deleted_operator_request_create` (`is_deleted` ASC, `log_operator` ASC, `log_request_method` ASC,
                                                  `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_operator_request_result_create` (`is_deleted` ASC, `log_operator` ASC, `log_request_method` ASC,
+    INDEX                `idx_deleted_operator_request_result_create` (`is_deleted` ASC, `log_operator` ASC, `log_request_method` ASC,
                                                         `log_result` ASC, `create_time` ASC) USING BTREE
 ) ENGINE = InnoDB
   CHARACTER SET = utf8mb4
@@ -72,26 +74,24 @@ CREATE TABLE `t_log`
 DROP TABLE IF EXISTS `t_model`;
 CREATE TABLE `t_model`
 (
-    `model_id`           bigint                                                        NOT NULL COMMENT '模型ID',
-    `model_type`         varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型类型（对话-chat，向量-embedding，图片-image，语音转文字-transcription，文字转语音-tts）',
-    `model_service`      varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）',
-    `model_name`         varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NOT NULL COMMENT '模型名称',
-    `model_base_url`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT NULL COMMENT '模型服务URL（同AzureOpenAI模型endpoint参数）',
-    `model_api_key`      varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL     DEFAULT NULL COMMENT '模型密钥',
-    `model_read_timeout` int                                                           NULL     DEFAULT NULL COMMENT '模型响应超时时间',
-    `model_temperature`  decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型温度（对话模型、语音转文字模型参数）',
-    `model_top_p`        decimal(10, 5)                                                NULL     DEFAULT NULL COMMENT '模型TopP（对话模型参数）',
-    `model_info`         text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci         NULL COMMENT '模型信息（主要用于数据扩展，推荐用JSON格式）',
-    `model_version`      varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  NULL     DEFAULT NULL COMMENT '模型版本（AzureOpenAI模型参数）',
-    `model_state`        tinyint                                                       NOT NULL COMMENT '模型状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）',
-    `create_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`        datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `is_deleted`         tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
+    `model_id`           bigint UNSIGNED                                                NOT NULL COMMENT '模型ID',
+    `model_type`         varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci   NOT NULL COMMENT '模型类型（对话-chat，向量-embedding，图片-image，语音转文字-transcription，文字转语音-tts）',
+    `model_service`      varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci   NOT NULL COMMENT '模型服务（deepseek，openai，ollama，zhipu，mistralai，minimax，azureopenai）',
+    `model_name`         varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci   NOT NULL COMMENT '模型名称',
+    `model_base_url`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci           DEFAULT NULL COMMENT '模型服务URL（同AzureOpenAI模型endpoint参数）',
+    `model_api_key`      varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci           DEFAULT NULL COMMENT '模型密钥',
+    `model_read_timeout` int                                                                     DEFAULT NULL COMMENT '模型响应超时时间',
+    `model_info`         varchar(3000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模型信息（保存不同类型模型特有的属性信息）',
+    `model_error`        varchar(100) COLLATE utf8mb4_general_ci                                 DEFAULT NULL COMMENT '模型验证错误信息',
+    `model_state`        tinyint                                                        NOT NULL COMMENT '模型状态（0表示验证中，1表示启用，2表示不可用，3表示禁用）',
+    `create_time`        datetime                                                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        datetime                                                       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_deleted`         tinyint                                                        NOT NULL DEFAULT '0' COMMENT '逻辑删除（0表示未删除，1表示已删除）',
     PRIMARY KEY (`model_id`) USING BTREE
-) ENGINE = InnoDB
-  CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_general_ci
-  ROW_FORMAT = Dynamic;
+) ENGINE=InnoDB
+  CHARACTER SET CHARSET=utf8mb4
+  COLLATE=utf8mb4_general_ci
+  ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_user
@@ -112,10 +112,10 @@ CREATE TABLE `t_user`
     `update_time`    datetime                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_deleted`     tinyint                                                       NOT NULL DEFAULT 0 COMMENT '逻辑删除（0表示未删除，1表示已删除）',
     PRIMARY KEY (`user_id`) USING BTREE,
-    INDEX `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_role_create` (`is_deleted` ASC, `user_role` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_deleted_role_state_create` (`is_deleted` ASC, `user_role` ASC, `user_state` ASC, `create_time` ASC) USING BTREE,
-    INDEX `idx_all` (`is_deleted` ASC, `user_id` ASC, `user_account` ASC, `user_password` ASC, `user_email` ASC,
+    INDEX            `idx_deleted_create` (`is_deleted` ASC, `create_time` ASC) USING BTREE,
+    INDEX            `idx_deleted_role_create` (`is_deleted` ASC, `user_role` ASC, `create_time` ASC) USING BTREE,
+    INDEX            `idx_deleted_role_state_create` (`is_deleted` ASC, `user_role` ASC, `user_state` ASC, `create_time` ASC) USING BTREE,
+    INDEX            `idx_all` (`is_deleted` ASC, `user_id` ASC, `user_account` ASC, `user_password` ASC, `user_email` ASC,
                      `user_login_num` ASC, `user_name` ASC, `user_avatar_id` ASC, `user_role` ASC, `user_state` ASC,
                      `create_time` ASC, `update_time` ASC) USING BTREE
 ) ENGINE = InnoDB
@@ -232,4 +232,5 @@ INSERT INTO `t_user`
 VALUES (1832981147241373697, 'user33', 'xAXL594fo95Auh35w1kzIA==', '1911261716@qq.com', 0, 'Antony33', -1, 'user', 0,
         '2024-09-09 11:15:35', '2025-08-21 15:41:34', 0);
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET
+FOREIGN_KEY_CHECKS = 1;

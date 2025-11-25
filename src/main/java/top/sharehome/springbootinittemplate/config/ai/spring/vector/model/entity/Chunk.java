@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.sharehome.springbootinittemplate.config.mybatisplus.handler.FloatArrayTypeHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -55,7 +56,7 @@ public class Chunk implements Serializable {
     /**
      * 向量数据
      */
-    @TableField(value = "chunk_embedding")
+    @TableField(value = "chunk_embedding", typeHandler = FloatArrayTypeHandler.class)
     private float[] embedding;
 
     /**
